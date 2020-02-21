@@ -10,8 +10,7 @@ cache:
 
 before_script:
   - pip install pipenv
-  - pipenv install
-  - pipenv install pyfakefs
+  - pipenv install --dev
 
 test:
   script:
