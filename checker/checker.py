@@ -2,27 +2,14 @@ from dataclass.ResultToChecker import ResultToChecker
 from dataclass.TestResult import TestResult
 from dataclass.ResultToDB import ResultToDB
 
+from storage import get_correct_results
+
 
 def get_result(result_to_checker):
     test_ids = [x.test_id for x in result_to_checker.test_results]
     correct_results = get_correct_results(test_ids)
 
     result_to_db = check_result(result_to_checker.test_results, correct_results, result_to_checker.submission_id)
-
-
-def get_correct_results(test_ids_iterable):
-    def get_correct_result(_id):
-        path = f'../storage/test/{_id}/output.txt'
-
-        with open(path, 'r') as f:
-            return f.read()
-
-    output_data = []
-
-    for test_id in test_ids_iterable:
-        output_data.append(get_correct_result(test_id))
-
-    return output_data
 
 
 def check_result(test_results, correct_results, submission_id):
