@@ -1,7 +1,7 @@
-import asyncpg
 from datetime import datetime
-
 from os import getenv
+
+import asyncpg
 
 
 CONNECTION_STRING = getenv('PG_CONN')
@@ -18,29 +18,21 @@ async def get_connection():
     return pg_conn
 
 
-async def get_points_for_test(test_ids):
+async def get_points_for_tests(test_ids):
     with await get_connection() as conn:
         points = await conn.fetch('SELECT points FROM test'
                                   'WHERE test_id = any($1::int[])', test_ids)
 
-    points = [x['points'] for x in points]
-
-    return points
+    return [x['points'] for x in points]
 
 
 async def add_results_to_db(results):
-    data_to_query = []
-
-    for result in results:
-        status = result.status
-        points = result.points
-        submission_id = result.submission_id
-        test_id = result.test_id
-        wall_time = result.wall_time
-        cpu_time = result.cpu_time
-
-        data_to_query.append(
-            (status, points, submission_id, test_id, wall_time, cpu_time))
+    data_to_query = [(result.status,
+                      result.points,
+                      result.submission_id,
+                      result.test_id,
+                      result.wall_time,
+                      result.cpu_time) for result in results]
 
     with await get_connection() as conn:
         await conn.executemany('INSERT INTO result (status, points,'
@@ -60,9 +52,7 @@ async def get_test_ids(task_id):
             'SELECT test_id FROM test WHERE task_id = $1',
             task_id)
 
-    test_ids = [x['test_id'] for x in test_ids]
-
-    return test_ids
+    return [x['test_id'] for x in test_ids]
 
 
 async def add_submission(submission_to_db):
