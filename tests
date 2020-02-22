@@ -1,2 +1,2 @@
 #!/bin/sh
-pipenv run python -m unittest src/tests/*.py
+pipenv run python -m pytest src/tests/*.py
