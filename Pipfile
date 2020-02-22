@@ -7,8 +7,11 @@ verify_ssl = true
 python-language-server = {extras = ["all"],version = "*"}
 pyfakefs = "*"
 pytest = "*"
+pytest-asyncio = "*"
+pytest-pgsql = "*"
 
 [packages]
+asyncpg = "*"
 
 [requires]
 python_version = "3.7"
