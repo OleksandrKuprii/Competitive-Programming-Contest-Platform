@@ -1,15 +1,13 @@
-create schema coreschema;
+create schema if not exists coreschema;
 
-create table coreschema.users (
+create table if not exists coreschema.users (
   id serial primary key,
-  firebase_auth_uid varchar(128) unique,
   username varchar(50) unique,
   email varchar(255) unique,
-  display_name varchar(128),
   role varchar(50)
 );
 
-create table coreschema.tasks (
+create table if not exists coreschema.tasks (
   id serial primary key,
   alias varchar(128) unique,
   name varchar(128) unique,
@@ -18,7 +16,7 @@ create table coreschema.tasks (
   memory_limit int
 );
 
-create table coreschema.submissions (
+create table if not exists coreschema.submissions (
   id serial primary key,
   published_at timestamp,
   user_id int references coreschema.users(id),
@@ -27,13 +25,13 @@ create table coreschema.submissions (
   status varchar(50)
 );
 
-create table coreschema.tests (
+create table if not exists coreschema.tests (
   id serial primary key,
   points int,
   task_id int references coreschema.tasks(id)
 );
 
-create table coreschema.results (
+create table if not exists coreschema.results (
   id serial primary key,
   status varchar(50),
   points int,
