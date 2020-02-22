@@ -9,7 +9,7 @@ create table coreschema.users (
   role varchar(50)
 );
 
-create table tasks (
+create table coreschema.tasks (
   id serial primary key,
   alias varchar(128) unique,
   name varchar(128) unique,
@@ -18,27 +18,27 @@ create table tasks (
   memory_limit int
 );
 
-create table submissions (
+create table coreschema.submissions (
   id serial primary key,
   published_at timestamp,
-  user_id int references users(id),
+  user_id int references coreschema.users(id),
   lang varchar(50),
-  task_id int references tasks(id),
+  task_id int references coreschema.tasks(id),
   status varchar(50)
 );
 
-create table tests (
+create table coreschema.tests (
   id serial primary key,
   points int,
-  task_id int references tasks(id)
+  task_id int references coreschema.tasks(id)
 );
 
-create table results (
+create table coreschema.results (
   id serial primary key,
   status varchar(50),
   points int,
-  submission_id int references submissions(id),
-  test_id int references tests(id),
+  submission_id int references coreschema.submissions(id),
+  test_id int references coreschema.tests(id),
   wall_time real,
   cpu_time real
 );
