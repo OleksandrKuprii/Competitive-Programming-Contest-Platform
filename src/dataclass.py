@@ -27,11 +27,14 @@ class SubmissionToDB:
 
 
 @dataclass
-class SubmissionToQueue:
+class SubmissionToRunner:
     submission_id: int
     test_ids: list  # int[]
     lang: str
     code: str
+    wall_time_limit: float
+    cpu_time_limit: float
+    memory_limit: float
 
 
 @dataclass
