@@ -24,7 +24,8 @@ def add_code(submission_to_storage: SubmissionToStorage):
 
     assert ext is not None
 
-    path = f'{STORAGE_ROOT}/submission/{submission_to_storage.submission_id}/main.{ext}'
+    path = f'{STORAGE_ROOT}/submission/{submission_to_storage.submission_id}'\
+        '/main.{ext}'
 
     with open(path, 'w') as submission_file:
         submission_file.write(submission_to_storage.code)
