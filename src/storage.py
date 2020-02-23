@@ -19,7 +19,7 @@ def get_correct_results(test_ids_iterable):
 def add_code(submission_to_storage: SubmissionToStorage):
     ext = None
 
-    if submission_to_storage.lang == 'python3' or 'python2':
+    if submission_to_storage.lang in ('python3', 'python2'):
         ext = 'py'
 
     assert ext is not None
