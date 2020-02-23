@@ -17,7 +17,7 @@ async def establish_connection_params(**kwargs):
 
 async def get_points_for_tests(test_ids):
     points = await conn.fetch(
-        'select points from coreschema.tests where id = any($1::int[])',
+        'SELECT points FROM coreschema.tests WHERE id = ANY($1::int[])',
         test_ids)
 
     return [x['points'] for x in points]
@@ -31,19 +31,19 @@ async def add_results_to_db(results):
                       result.wall_time,
                       result.cpu_time) for result in results]
 
-    await conn.executemany('insert into coreschema.results (status, points,'
+    await conn.executemany('INSERT INTO coreschema.results (status, points,'
                            ' submission_id, test_id, wall_time, cpu_time) '
-                           'values ($1, $2, $3, $4, $5, $6)', data_to_query)
+                           'VALUES ($1, $2, $3, $4, $5, $6)', data_to_query)
 
 
 async def change_submission_status(submission_id, status):
-    await conn.execute('update coreschema.submissions set status = $1 '
-                       'where id = $2', status, submission_id)
+    await conn.execute('UPDATE coreschema.submissions SET status = $1 '
+                       'WHERE id = $2', status, submission_id)
 
 
 async def get_test_ids(task_id):
     test_ids = await conn.fetch(
-        'select id from test where task_id = $1',
+        'SELECT id FROM test WHERE task_id = $1',
         task_id)
 
     return [x['test_id'] for x in test_ids]
@@ -57,6 +57,6 @@ async def add_submission(submission_to_db):
     lang = submission_to_db.lang
 
     await conn.execute(
-        'insert into coreschema.submissions (date, user_id, task_id,'
-        ' lang, status) values ($1, $2, $3, $4, $5)',
+        'INSERT INTO coreschema.submissions (date, user_id, task_id,'
+        ' lang, status) VALUES ($1, $2, $3, $4, $5)',
         date, user_id, task_id, lang, 'None')
