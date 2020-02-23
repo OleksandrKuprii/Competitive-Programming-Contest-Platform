@@ -8,6 +8,7 @@ python-language-server = {extras = ["all"],version = "*"}
 pyfakefs = "*"
 pytest = "*"
 pytest-asyncio = "*"
+flake8 = "*"
 
 [packages]
 asyncpg = "*"
