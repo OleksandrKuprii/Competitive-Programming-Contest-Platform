@@ -1,6 +1,4 @@
 from datetime import datetime
-from os import getenv
-
 import asyncpg
 
 
@@ -18,7 +16,9 @@ async def establish_connection_params(**kwargs):
 
 
 async def get_points_for_tests(test_ids):
-    points = await conn.fetch('SELECT points FROM coreschema.tests WHERE id = ANY($1::int[])', test_ids)
+    points = await conn.fetch(
+        'select points from coreschema.tests where id = any($1::int[])',
+        test_ids)
 
     return [x['points'] for x in points]
 
@@ -31,19 +31,19 @@ async def add_results_to_db(results):
                       result.wall_time,
                       result.cpu_time) for result in results]
 
-    await conn.executemany('INSERT INTO coreschema.results (status, points,'
+    await conn.executemany('insert into coreschema.results (status, points,'
                            ' submission_id, test_id, wall_time, cpu_time) '
-                           'VALUES($1, $2, $3, $4, $5, $6)', data_to_query)
+                           'values ($1, $2, $3, $4, $5, $6)', data_to_query)
 
 
 async def change_submission_status(submission_id, status):
-    await conn.execute('UPDATE submission SET status = $1 '
-                       'WHERE submission_id = $2', status, submission_id)
+    await conn.execute('update coreschema.submissions set status = $1 '
+                       'where id = $2', status, submission_id)
 
 
 async def get_test_ids(task_id):
     test_ids = await conn.fetch(
-        'SELECT test_id FROM test WHERE task_id = $1',
+        'select id from test where task_id = $1',
         task_id)
 
     return [x['test_id'] for x in test_ids]
@@ -56,6 +56,7 @@ async def add_submission(submission_to_db):
     date = datetime.fromtimestamp(timestamp)
     lang = submission_to_db.lang
 
-    await conn.execute('INSERT INTO submission (date, user_id, task_id,'
-                       ' lang, status) VALUES($1, $2, $3, $4, $5)',
-                       date, user_id, task_id, lang, 'None')
+    await conn.execute(
+        'insert into coreschema.submissions (date, user_id, task_id,'
+        ' lang, status) values ($1, $2, $3, $4, $5)',
+        date, user_id, task_id, lang, 'None')
