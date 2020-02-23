@@ -12,12 +12,12 @@ postgres_db = os.getenv('POSTGRES_DB')
 postgres_user = os.getenv('POSTGRES_USER')
 postgres_password = os.getenv('POSTGRES_PASSWORD')
 
-database_uri = f'postgres://{postgres_user}:{postgres_password}'
-'@{postgres_host}:5432/{postgres_db}'
-
 
 async def setUpDatabase():
-    await db.establish_connection(database_uri)
+    await db.establish_connection_params(host=postgres_host,
+                                         user=postgres_user,
+                                         password=postgres_password,
+                                         database=postgres_db)
 
     with open('src/schema/coreschema.sql') as schema_file:
         with open('src/tests/dropall.sql') as dropall_file:
