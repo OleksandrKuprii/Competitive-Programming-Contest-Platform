@@ -13,7 +13,7 @@ postgres_user = os.getenv('POSTGRES_USER')
 postgres_password = os.getenv('POSTGRES_PASSWORD')
 
 database_uri = f'postgresql://{postgres_user}:{postgres_password}'
-'@{postgres_host}/{postgres_db}'
+'@{postgres_host}:5432/{postgres_db}'
 
 
 async def setUpDatabase():
