@@ -12,7 +12,7 @@ postgres_db = os.getenv('POSTGRES_DB')
 postgres_user = os.getenv('POSTGRES_USER')
 postgres_password = os.getenv('POSTGRES_PASSWORD')
 
-database_uri = f'postgresql://{postgres_user}:{postgres_password}'
+database_uri = f'postgres://{postgres_user}:{postgres_password}'
 '@{postgres_host}:5432/{postgres_db}'
 
 
