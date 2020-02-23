@@ -8,6 +8,14 @@ cache:
     - .cache/pip
     - venv/
 
+services:
+  - postgres:12.2-alpine
+
+variables:
+  POSTGRES_DB: nice_marmot
+  POSTGRES_USER: runner
+  POSTGRES_PASSWORD: "runner-password"
+
 before_script:
   - pip install pipenv
   - pipenv install --dev

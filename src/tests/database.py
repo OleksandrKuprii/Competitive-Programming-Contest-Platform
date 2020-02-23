@@ -2,11 +2,21 @@ import src.database as db
 import pytest
 import asyncpg
 from datetime import datetime
+import os
 
 from src.dataclass import ResultToDB
 
 
-async def setUpDatabase(database_uri):
+postgres_host = os.getenv('POSTGRES_HOST', 'postgres')
+postgres_db = os.getenv('POSTGRES_DB')
+postgres_user = os.getenv('POSTGRES_USER')
+postgres_password = os.getenv('POSTGRES_PASSWORD')
+
+database_uri = f'postgresql://{postgres_user}:{postgres_password}'
+'@{postgres_host}/{postgres_db}'
+
+
+async def setUpDatabase():
     await db.establish_connection(database_uri)
 
     with open('src/schema/coreschema.sql') as schema_file:
@@ -35,8 +45,8 @@ async def test_get_connection(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_get_points_for_test(database_uri):
-    await setUpDatabase(database_uri)
+async def test_get_points_for_test():
+    await setUpDatabase()
 
     tasks = (('first-task',  'My first task!',  0.2, 0.1, 256),
              ('second-task', 'My second task!', 0.3, 0.2, 256))
@@ -53,8 +63,8 @@ async def test_get_points_for_test(database_uri):
 
 
 @pytest.mark.asyncio
-async def test_add_results_to_db(database_uri):
-    await setUpDatabase(database_uri)
+async def test_add_results_to_db():
+    await setUpDatabase()
 
     users = (('myusername', 'example@example.com', 'regular'),)
 
