@@ -12,6 +12,11 @@ async def establish_connection(connection_string):
     conn = await asyncpg.connect(connection_string)
 
 
+async def establish_connection_params(**kwargs):
+    global conn
+    conn = await asyncpg.connect(**kwargs)
+
+
 async def get_points_for_tests(test_ids):
     points = await conn.fetch('SELECT points FROM coreschema.tests WHERE id = ANY($1::int[])', test_ids)
 
