@@ -1,6 +1,6 @@
 from os import getenv
 
-from dataclass import SubmissionToStorage
+from src.dataclass import SubmissionToStorage
 
 
 STORAGE_ROOT = getenv('STORAGE_ROOT')
