@@ -1,7 +1,6 @@
 from datetime import datetime
 import asyncpg
 
-
 conn = None
 
 
@@ -24,27 +23,25 @@ async def get_points_for_tests(test_ids):
 
 
 async def add_results_to_db(results):
-    data_to_query = [(result.status,
-                      result.points,
-                      result.submission_id,
-                      result.test_id,
-                      result.wall_time,
-                      result.cpu_time) for result in results]
+    data_to_query = [(result.status, result.points, result.submission_id,
+                      result.test_id, result.wall_time, result.cpu_time)
+                     for result in results]
 
-    await conn.executemany('INSERT INTO coreschema.results (status, points,'
-                           ' submission_id, test_id, wall_time, cpu_time) '
-                           'VALUES ($1, $2, $3, $4, $5, $6)', data_to_query)
+    await conn.executemany(
+        'INSERT INTO coreschema.results (status, points,'
+        ' submission_id, test_id, wall_time, cpu_time) '
+        'VALUES ($1, $2, $3, $4, $5, $6)', data_to_query)
 
 
 async def change_submission_status(submission_id, status):
-    await conn.execute('UPDATE coreschema.submissions SET status = $1 '
-                       'WHERE id = $2', status, submission_id)
+    await conn.execute(
+        'UPDATE coreschema.submissions SET status = $1 '
+        'WHERE id = $2', status, submission_id)
 
 
 async def get_test_ids(task_id):
     test_ids = await conn.fetch(
-        'SELECT id FROM coreschema.tests WHERE task_id = $1',
-        task_id)
+        'SELECT id FROM coreschema.tests WHERE task_id = $1', task_id)
 
     return [x['id'] for x in test_ids]
 
@@ -58,11 +55,12 @@ async def add_submission(submission_to_db):
 
     return await conn.fetch(
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
-        'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        date, user_id, task_id, lang, 'None')
+        'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
+        user_id, task_id, lang, 'None')
 
 
 async def get_limits(task_id):
-    return await conn.fetch('''SELECT wall_time_limit, cpu_time_limit, memory_limit 
-                                FROM coreschema.tasks
-                                WHERE id = $1''', task_id)
+    return await conn.fetch(
+        '''SELECT wall_time_limit, cpu_time_limit, memory_limit
+           FROM coreschema.tasks
+           WHERE id = $1''', task_id)
