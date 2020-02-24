@@ -1,10 +1,5 @@
 from dataclasses import dataclass
-
-
-@dataclass
-class ResultToChecker:
-    submission_id: int
-    test_results: list  # TestResults[]
+from typing import List
 
 
 @dataclass
@@ -26,11 +21,14 @@ class SubmissionToDB:
 
 
 @dataclass
-class SubmissionToQueue:
+class SubmissionToRunner:
     submission_id: int
-    test_ids: list  # int[]
+    test_ids: List[int]
     lang: str
     code: str
+    wall_time_limit: float
+    cpu_time_limit: float
+    memory_limit: float
 
 
 @dataclass
@@ -47,6 +45,12 @@ class TestResult:
     result: str
     wall_time: float
     cpu_time: float
+
+
+@dataclass
+class ResultToChecker:
+    submission_id: int
+    test_results: List[TestResult]
 
 
 @dataclass

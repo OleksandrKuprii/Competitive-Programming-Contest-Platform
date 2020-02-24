@@ -78,7 +78,7 @@ function run_test() {
 
   local i=0
 
-  for time in $(awk -f parse_time.awk $mountpoint/time)
+  for time in $(awk -f "$(pwd)"/parse_time.awk $mountpoint/time)
   do
     if [ $i == 0 ]; then
       cpu_time+=("$time")
