@@ -1,4 +1,0 @@
-#!/bin/sh
-
-flake8 **/*.py
-coverage run --source src -m pytest src/tests/*.py

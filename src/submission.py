@@ -1,16 +1,14 @@
-from src.dataclass import UserSubmission, SubmissionToRunner, SubmissionToStorage
-from src.database import add_submission as db_add_submission
-from src.database import establish_connection, get_test_ids, get_limits
-from src.storage import add_code
-from src.runner import add_submission as runner_add_submission
-
 import asyncio
+
+from src.database import add_submission as db_add_submission
+from src.database import get_limits, get_test_ids
+from src.dataclass import (SubmissionToRunner, SubmissionToStorage,
+                           UserSubmission)
+from src.runner import add_submission as runner_add_submission
+from src.storage import add_code
 
 
 async def add_submission(user_submission):
-    await establish_connection(
-        'postgres://cddsswrc:dSRcOWmF8c7KyEremoKSaik_0ZEIHzgE@balarama.db.elephantsql.com:5432/cddsswrc'
-    )
     submission_id = await db_add_submission(user_submission)
     submission_id = submission_id[0]['id']
 

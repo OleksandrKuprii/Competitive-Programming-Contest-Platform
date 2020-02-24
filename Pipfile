@@ -4,17 +4,16 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-coverage = "*"
-flake8 = "*"
-pyfakefs = "*"
-pytest = "*"
-pytest-asyncio = "*"
-python-language-server = {extras = ["all"],version = "*"}
 rope = "*"
 yapf = "*"
 
 [packages]
 asyncpg = "*"
+coverage = "*"
+flake8 = "*"
+pyfakefs = "*"
+pytest = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.7"
