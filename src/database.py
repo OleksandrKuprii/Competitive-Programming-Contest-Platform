@@ -56,7 +56,7 @@ async def add_submission(submission_to_db):
     date = datetime.fromtimestamp(timestamp)
     lang = submission_to_db.lang
 
-    await conn.execute(
-        'INSERT INTO coreschema.submissions (date, user_id, task_id,'
-        ' lang, status) VALUES ($1, $2, $3, $4, $5)',
+    return await conn.fetch(
+        'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
+        'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id',
         date, user_id, task_id, lang, 'None')
