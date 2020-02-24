@@ -43,10 +43,10 @@ async def change_submission_status(submission_id, status):
 
 async def get_test_ids(task_id):
     test_ids = await conn.fetch(
-        'SELECT id FROM test WHERE task_id = $1',
+        'SELECT id FROM coreschema.tests WHERE task_id = $1',
         task_id)
 
-    return [x['test_id'] for x in test_ids]
+    return [x['id'] for x in test_ids]
 
 
 async def add_submission(submission_to_db):
@@ -60,3 +60,9 @@ async def add_submission(submission_to_db):
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id',
         date, user_id, task_id, lang, 'None')
+
+
+async def get_limits(task_id):
+    return await conn.fetch('''SELECT wall_time_limit, cpu_time_limit, memory_limit 
+                                FROM coreschema.tasks
+                                WHERE id = $1''', task_id)
