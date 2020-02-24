@@ -25,7 +25,7 @@ test:
   script:
     - pipenv run ./tests
     - pipenv run coverage html
-    - pipenv run coverage python -m 
+    - pipenv run coverage report -m 
   artifacts:
     when: always
     paths:
