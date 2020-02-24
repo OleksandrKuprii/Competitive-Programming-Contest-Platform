@@ -8,13 +8,17 @@ import asyncio
 
 
 async def add_submission(user_submission):
-    await establish_connection('postgres://cddsswrc:dSRcOWmF8c7KyEremoKSaik_0ZEIHzgE@balarama.db.elephantsql.com:5432/cddsswrc')
+    await establish_connection(
+        'postgres://cddsswrc:dSRcOWmF8c7KyEremoKSaik_0ZEIHzgE@balarama.db.elephantsql.com:5432/cddsswrc'
+    )
     submission_id = await db_add_submission(user_submission)
     submission_id = submission_id[0]['id']
 
     test_ids = await get_test_ids(user_submission.task_id)
 
-    submission_to_storage = SubmissionToStorage(submission_id, user_submission.lang, user_submission.code)
+    submission_to_storage = SubmissionToStorage(submission_id,
+                                                user_submission.lang,
+                                                user_submission.code)
     add_code(submission_to_storage)
 
     limits = await get_limits(user_submission.task_id)
@@ -23,7 +27,11 @@ async def add_submission(user_submission):
     cpu_time_limit = limits[0]['cpu_time_limit']
     memory_limit = limits[0]['memory_limit']
 
-    submission_to_runner = SubmissionToRunner(submission_id, test_ids, user_submission.lang, user_submission.code, wall_time_limit, cpu_time_limit, memory_limit)
+    submission_to_runner = SubmissionToRunner(submission_id, test_ids,
+                                              user_submission.lang,
+                                              user_submission.code,
+                                              wall_time_limit, cpu_time_limit,
+                                              memory_limit)
 
     await runner_add_submission(submission_to_runner)
 

@@ -22,7 +22,7 @@ before_script:
 
 test:
   script:
-    - ./tests
+    - pipenv run ./tests
     - pipenv run coverage html
   artifacts:
     when: always
