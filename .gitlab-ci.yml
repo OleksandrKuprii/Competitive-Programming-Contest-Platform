@@ -19,14 +19,17 @@ variables:
 before_script:
   - pip install pipenv
   - pipenv install --dev
+  - rm .env
 
 test:
   script:
     - pipenv run ./tests
     - pipenv run coverage html
+    - pipenv run coverage python -m 
   artifacts:
     when: always
     paths:
       - htmlcov
     expire_in: 1 day
+  coverage: '/TOTAL.*\s+(\d+%)$/'
 
