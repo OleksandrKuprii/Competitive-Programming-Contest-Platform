@@ -18,18 +18,19 @@ variables:
 
 before_script:
   - pip install pipenv
-  - pipenv install --dev
+  - pipenv lock --dev --requirements > requirements.txt
+  - pip install -r requirements.txt
   - rm .env
 
 codestyle:
   script:
-    - pipenv run flake8 **/*.py
+    - python -m flake8 **/*.py
 
 test:
   script:
-    - pipenv run coverage run --source src -m pytest src/tests/*.py
-    - pipenv run coverage html
-    - pipenv run coverage report -m 
+    - python -m coverage run --source src -m pytest src/tests/*.py
+    - python -m coverage html
+    - python -m coverage report -m 
   artifacts:
     when: always
     paths:
