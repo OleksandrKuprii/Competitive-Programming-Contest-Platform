@@ -31,5 +31,4 @@ test:
     paths:
       - htmlcov
     expire_in: 1 day
-  coverage: '/TOTAL.*\s+(\d+%)$/'
-
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
