@@ -21,9 +21,13 @@ before_script:
   - pipenv install --dev
   - rm .env
 
+codestyle:
+  script:
+    - pipenv run flake8 **/*.py
+
 test:
   script:
-    - pipenv run ./tests
+    - coverage run --source src -m pytest src/tests/*.py
     - pipenv run coverage html
     - pipenv run coverage report -m 
   artifacts:
