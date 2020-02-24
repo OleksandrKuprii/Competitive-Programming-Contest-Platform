@@ -23,7 +23,6 @@ class SubmissionToDB:
     task_id: int
     timestamp: int
     lang: str
-    code: str
 
 
 @dataclass
