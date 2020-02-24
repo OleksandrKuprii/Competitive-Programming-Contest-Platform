@@ -14,6 +14,7 @@ yapf = "*"
 
 [packages]
 asyncpg = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.7"

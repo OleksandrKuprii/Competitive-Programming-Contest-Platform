@@ -1,4 +1,4 @@
 #!/bin/sh
 
 pipenv run flake8 **/*.py
-pipenv run python -m pytest src/tests/*.py
+pipenv run python -m coverage run -m pytest src/tests/*.py
