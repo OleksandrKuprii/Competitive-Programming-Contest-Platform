@@ -28,8 +28,8 @@ async def table_insert(name, columns, *rows):
         values = map(lambda x: f'${x}', range(1, len(columns) + 1))
 
         await db.conn.execute(
-            f'insert into {name} ({",".join(columns)}) '
-            f'values ({",".join(values)})', *row)
+            f'INSERT INTO {name} ({",".join(columns)}) '
+            f'VALUES ({",".join(values)})', *row)
 
 
 @pytest.mark.asyncio
@@ -103,4 +103,8 @@ async def test_add_results_to_db():
 
     await db.add_results_to_db(results)
 
-    assert True
+    fetched_results = await db.conn.fetch('SELECT * FROM coreschema.results')
+
+    assert len(fetched_results) == 1
+
+    await db.conn.close()
