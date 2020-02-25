@@ -11,8 +11,8 @@ create table if not exists coreschema.tasks (
   id serial primary key,
   alias varchar(128) unique,
   name varchar(128) unique,
-  wall_time_limit real,
-  cpu_time_limit real,
+  wall_time_limit int,
+  cpu_time_limit int,
   memory_limit int
 );
 
@@ -37,6 +37,6 @@ create table if not exists coreschema.results (
   points int,
   submission_id int references coreschema.submissions(id),
   test_id int references coreschema.tests(id),
-  wall_time real,
-  cpu_time real
+  wall_time int,
+  cpu_time int
 );
