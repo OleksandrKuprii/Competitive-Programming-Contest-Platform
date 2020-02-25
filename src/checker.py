@@ -17,7 +17,7 @@ async def get_result(result_to_checker):
     await change_submission_status(submission_id, 'Completed')
 
 
-def check_result(test_results, correct_results, submission_id, points):
+def check_result(test_results, correct_results, submission_id, points_list):
     def check_one(output, right):
         output = output.strip()
         right = right.strip()
@@ -29,7 +29,7 @@ def check_result(test_results, correct_results, submission_id, points):
     result_to_db = []
 
     for test_result, correct, point in\
-            zip(test_results, correct_results, points):
+            zip(test_results, correct_results, points_list):
         test_id = test_result.test_id
         status = test_result.status
         result = test_result.result
@@ -37,9 +37,9 @@ def check_result(test_results, correct_results, submission_id, points):
         cpu_time = test_result.cpu_time
         points = point
 
-        if status == 'C':
+        if status == 'SS':
             status = check_one(result, correct)
-            points = 10
+            points = point
 
         prepare_result = ResultToDB(
             submission_id, test_id, status, points, wall_time, cpu_time)

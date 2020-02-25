@@ -56,7 +56,7 @@ async def add_submission(submission_to_db):
     return await conn.fetch(
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
-        user_id, task_id, lang, 'None')
+        user_id, task_id, lang, 'Received')
 
 
 async def get_limits(task_id):
