@@ -18,6 +18,7 @@ class SubmissionToDB:
     task_id: int
     timestamp: int
     lang: str
+    status: str
 
 
 @dataclass
