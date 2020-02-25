@@ -95,8 +95,8 @@ async def test_add_results_to_db():
             'points': 10,
             'submission_id': 1,
             'test_id': 1,
-            'wall_time': 0.5,
-            'cpu_time': 0.3 }
+            'wall_time': 500,
+            'cpu_time': 300 }
     ]
 
     results = [
