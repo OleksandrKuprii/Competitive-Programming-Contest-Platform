@@ -1,4 +1,5 @@
-from os import getenv
+from os import getenv, makedirs
+from os.path import exists
 
 from src.dataclass import SubmissionToStorage
 
@@ -24,8 +25,11 @@ def add_code(submission_to_storage: SubmissionToStorage):
 
     assert ext is not None
 
-    path = f'{STORAGE_ROOT}/submission/{submission_to_storage.submission_id}'\
-        f'/main.{ext}'
+    path = f'{STORAGE_ROOT}/submission/{submission_to_storage.submission_id}/'
+    filename = f'main.{ext}'
 
-    with open(path, 'w') as submission_file:
+    if not exists(path):
+        makedirs(path)
+
+    with open(path + filename, 'w') as submission_file:
         submission_file.write(submission_to_storage.code)
