@@ -1,5 +1,3 @@
-import asyncio
-
 from src.database import add_submission as db_add_submission
 from src.database import get_limits, get_test_ids
 from src.dataclass import (SubmissionToRunner, SubmissionToStorage)
