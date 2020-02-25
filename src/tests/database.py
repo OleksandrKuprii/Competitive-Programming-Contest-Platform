@@ -90,15 +90,17 @@ async def test_add_results_to_db():
 
     await table_insert('coreschema.tests', ('points', 'task_id'), *tests)
 
-    results = [
-        ResultToDB(**result) for result in ({
+    test_data = [{
             'status': 'somestatus',
             'points': 10,
             'submission_id': 1,
             'test_id': 1,
             'wall_time': 0.5,
-            'cpu_time': 0.3
-        }, )
+            'cpu_time': 0.3 }
+    ]
+
+    results = [
+        ResultToDB(**result) for result in test_data
     ]
 
     await db.add_results_to_db(results)
@@ -106,5 +108,9 @@ async def test_add_results_to_db():
     fetched_results = await db.conn.fetch('SELECT * FROM coreschema.results')
 
     assert len(fetched_results) == 1
+
+    for row, test_item in zip(fetched_results, test_data):
+        for key in test_item.keys():
+            assert row[key] == test_item[key]
 
     await db.conn.close()
