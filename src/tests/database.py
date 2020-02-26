@@ -62,6 +62,8 @@ async def test_get_points_for_test():
 
     assert await db.get_points_for_tests([1, 2, 3]) == [10, 20, 30]
 
+    await db.conn.close()
+
 
 @pytest.mark.asyncio
 async def test_add_results_to_db():
@@ -72,8 +74,8 @@ async def test_add_results_to_db():
     await table_insert('coreschema.users', ('username', 'email', 'role'),
                        *users)
 
-    tasks = (('first-task', 'My first task!', 0.2, 0.1, 256),
-             ('second-task', 'My second task!', 0.3, 0.2, 256))
+    tasks = (('first-task', 'My first task!', 200, 100, 256),
+             ('second-task', 'My second task!', 300, 200, 256))
 
     await table_insert(
         'coreschema.tasks',
@@ -91,17 +93,15 @@ async def test_add_results_to_db():
     await table_insert('coreschema.tests', ('points', 'task_id'), *tests)
 
     test_data = [{
-            'status': 'somestatus',
-            'points': 10,
-            'submission_id': 1,
-            'test_id': 1,
-            'wall_time': 500,
-            'cpu_time': 300 }
-    ]
+        'status': 'somestatus',
+        'points': 10,
+        'submission_id': 1,
+        'test_id': 1,
+        'wall_time': 500,
+        'cpu_time': 300
+    }]
 
-    results = [
-        ResultToDB(**result) for result in test_data
-    ]
+    results = [ResultToDB(**result) for result in test_data]
 
     await db.add_results_to_db(results)
 
