@@ -15,7 +15,6 @@ variables:
 
 stages:
   - test
-  - coverage
 
 lint:
   stage: test
@@ -35,16 +34,6 @@ test:
     - echo coverage >> requirements.txt
     - pip install -r requirements.txt
     - python -m coverage run --source src -m --omit="src/tests/**/*.py" pytest src/tests/*.py
-  artifacts:
-    when: always
-    paths:
-      - .coverage
-
-
-coverage:
-  stage: coverage
-  script:
-    - pip install coverage
     - python -m coverage html 
     - python -m coverage report --skip-covered -m 
   artifacts:
