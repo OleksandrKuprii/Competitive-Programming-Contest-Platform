@@ -6,14 +6,14 @@ verify_ssl = true
 [dev-packages]
 rope = "*"
 yapf = "*"
-
-[packages]
-asyncpg = "*"
 coverage = "*"
 flake8 = "*"
 pyfakefs = "*"
 pytest = "*"
 pytest-asyncio = "*"
+
+[packages]
+asyncpg = "*"
 
 [requires]
 python_version = "3.7"
