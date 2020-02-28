@@ -5,12 +5,13 @@ import asyncpg
 from src.dataclass import ResultToDB, SubmissionToDB
 
 
-# Declaring global variable for connection 
+# Declaring global variable for connection
 conn = None
 
 
 async def establish_connection(connection_string: str) -> None:
-    """Establishes connection to the database with connection string and sets connection to global variable conn
+    """Establishes connection to the database with connection
+    string and sets connection to global variable conn
 
     Parameters
     ----------
@@ -22,7 +23,8 @@ async def establish_connection(connection_string: str) -> None:
 
 
 async def establish_connection_params(**kwargs: dict) -> None:
-    """Establishes connection to the database with connection parameters and sets connection to global variable conn
+    """Establishes connection to the database with connection
+    parameters and sets connection to global variable conn
 
     Parameters
     ----------
@@ -35,7 +37,8 @@ async def establish_connection_params(**kwargs: dict) -> None:
 
 
 async def get_points_for_tests(test_ids: List[int]) -> List[int]:
-    """Gets value of points for each test by test ids from database and returns it
+    """Gets value of points for each test by test ids
+    from database and returns it
 
     Parameters
     ----------
@@ -112,7 +115,8 @@ async def get_test_ids(task_id: int) -> List[int]:
 
 
 async def add_submission(submission_to_db: SubmissionToDB) -> int:
-    """Inserts submission to the submission table in the database and returns its id
+    """Inserts submission to the submission table in the database
+    and returns its id
 
     Parameters
     ----------
