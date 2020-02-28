@@ -73,7 +73,7 @@ def check_result(test_results: List[TestResult],
 
        Returns
        -------
-       status : str
+       _ : str
            The status for this checking
            OK - result is correct
            WA - result is incorrect
