@@ -3,91 +3,138 @@
 # Exit on error
 set -e
 
-# One argument should be passed
-if [ "$#" -ne 1 ]; then
-  echo '{"error":"Illegal number of arguments"}'
-fi
+# Script directory
+script_dir=$(dirname "$0")
 
-storage_root="storage"
-test_dir=$storage_root/test
-submission_dir=$storage_root/submission
-submission_id=$(echo $1 | jq -r '."submission_id"')
-lang=$(echo $1 | jq -r '.lang')
-
-base_image='none'
-
-case $lang in
-  'python3') base_image='python:3.8.1-slim-buster'
-esac
-
-if [ $base_image == 'none' ]; then
-  echo '{"error":"Unknown lang"}'
-fi
-
-container=$(buildah from --pull-never $base_image);
-mountpoint=$(buildah unshare buildah mount $container);
-
-mkdir -p $mountpoint/usr/app
-cp $submission_dir/$submission_id/main.py $mountpoint/usr/app/main.py
-
-buildah unshare buildah umount $container > /dev/null
-
+# Helper function that returns current unix timestamp
 function timestamp() {
   date +%s
 }
 
+# One argument should be passed
+if [ "$#" -ne 1 ]; then
+  echo '{"error":"Illegal number of arguments"}'
+  exit
+fi
+
+# Local storage root
+storage_root="storage"
+
+# Dir for tests (inputs)
+test_dir=$storage_root/test
+
+# Dir for submissions (user code)
+submission_dir=$storage_root/submission
+
+# Extract variables from JSON given to script as only argument
+submission_id=$(echo "$1" | jq -r '."submission_id"')
+lang=$(echo "$1" | jq -r '.lang')
+
+
+base_image="$lang-baseimage"
+
+# Run base image container
+container=$(buildah from --pull-never "$base_image")
+
+# Mount container
+mountpoint=$(buildah unshare buildah mount "$container")
+
+# Create dir for submission to run
+mkdir -p "$mountpoint"/usr/app
+
+# Copy sources
+cp $submission_dir/"$submission_id"/main.py "$mountpoint"/usr/app/main.py
+
+# Umount container
+buildah unshare buildah umount "$container" >/dev/null
+
+# Create unique image name
 image=$container-image-$(timestamp)
 
-buildah unshare buildah commit -q $container $image > /dev/null
+# Commit image
+buildah unshare buildah commit -q $container $image >/dev/null
 
+# Remove base container
+buildah rm "$container" >/dev/null
+
+# Runs when script ends whenever it finishes successfully or not
 function cleanup() {
-  echo "podman image rm $image" | at now + 1 minute 2> /dev/null
+  # Delay command execution using at
+  echo "podman image rm $image" | at now + 1 minute 2>/dev/null
 }
 
+# Trap cleanup
 trap cleanup EXIT
-
-buildah rm $container > /dev/null
 
 output=()
 status=()
 cpu_time=()
 wall_time=()
 
-limits=("$(echo $1 | jq -r '."limits"."wall_time"')" "$(echo $1 | jq -r '."limits"."cpu_time"')")
+wall_time_limit="$(echo "$1" | jq -r '."limits"."wall_time"')"
+cpu_time_limit="$(echo "$1" | jq -r '."limits"."cpu_time"')"
 
-function run_test() {
-  local container
-  container="$(podman run --rm -d --network=none $image sleep 100)"
+limits=("$wall_time_limit" "$cpu_time_limit")
 
-  local mountpoint
-  mountpoint=$(podman unshare podman mount $container)
+# Runs container, returns it's id
+# Takes image name
+function run_container() {
+  podman run --rm -d --network=none "$1" sleep 100
+}
 
-  cp $test_dir/$1/input.txt $mountpoint/usr/app/input.txt
+# Mounts container, returns mountpoint
+# Takes container id
+function mount_container() {
+  podman unshare podman mount "$1"
+}
 
-  local local_status='NULL'
+# Copy input.txt to container
+# Takes mountpoint and test id
+function copy_test_to_container() {
+  cp "$test_dir/$2/input.txt" "$1/usr/app/input.txt"
+}
 
-  if podman exec $container bash -c "cd /usr/app; (time timeout ${limits[1]}s python3 main.py) > /dev/null 2> /time" 2> /dev/null;
-  then
-    local_status='OK'
+# Executes submission code in container
+# Takes container id
+function execute_submission() {
+  if podman exec "$1" bash -c "cd /usr/app; (time timeout ${wall_time_limit}s python3 main.py) > /dev/null 2> /time" 2>/dev/null; then
+    echo 'SS'
   else
     case $? in
-      '124') local_status='TL'
+    # Was actually killed by timeout
+    '124')
+      echo 'TL'
       ;;
     esac
   fi
+}
+
+function run_test() {
+  local container
+  container=$(run_container "$image")
+
+  local mountpoint
+  mountpoint=$(mount_container "$container")
+
+  copy_test_to_container "$mountpoint" "$1"
+
+  local local_status
+  local_status=$(execute_submission "$container")
+
+  local execution_time
+  execution_time=$(awk -f "$script_dir"/parse_time.awk "$mountpoint"/time)
 
   local i=0
 
-  for time in $(awk -f "$(pwd)"/parse_time.awk $mountpoint/time)
-  do
+  for time in $execution_time; do
     if [ $i == 0 ]; then
       cpu_time+=("$time")
     elif [ $i == 1 ]; then
       wall_time+=("$time")
     fi
 
-    if [ $local_status == 'OK' ]; then
-      if (( $(echo "$time > ${limits[$i]}" |bc -l) )); then
+    if [ "$local_status" == 'SS' ]; then
+      if (($(echo "$time > ${limits[$i]}" | bc -l))); then
         if [ $i == 0 ]; then
           local_status='TL'
         elif [ $i == 1 ]; then
@@ -98,21 +145,24 @@ function run_test() {
       fi
     fi
 
-    i=$(($i+1))
+    i=$(($i + 1))
   done
 
   status+=("$local_status")
 
   if [ $local_status == 'OK' ]; then
-    output+=("$(cat $mountpoint/usr/app/output.txt)")
+    if test -f "$FILE"; then
+      output+=("$(cat "$mountpoint"/usr/app/output.txt)")
+    else
+      output+=(1)
+    fi
   else
     output+=(0)
   fi
 
-  podman unshare podman umount $container > /dev/null
-  podman kill $container > /dev/null
+  podman unshare podman umount $container >/dev/null
+  podman kill $container >/dev/null
 }
-
 
 for i in $(echo $1 | jq -r '."test_ids"[]'); do
   run_test $i
@@ -120,8 +170,7 @@ done
 
 echo -n "["
 
-for i in "${!output[@]}";
-do
+for i in "${!output[@]}"; do
   if [ $i != 0 ]; then
     echo -n ','
   fi
