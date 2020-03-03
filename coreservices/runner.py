@@ -2,8 +2,8 @@ import asyncio
 import json
 from typing import List
 
-import src.checker as checker
-from src.dataclass import ResultToChecker, SubmissionToRunner, TestResult
+from .checker import get_result
+from .dataclass import ResultToChecker, SubmissionToRunner, TestResult
 
 queue = asyncio.Queue()
 
@@ -32,13 +32,11 @@ def generate_test_result(test_id, script_test_result) -> TestResult:
                           wall_time=script_test_result['real_time'],
                           cpu_time=script_test_result['user_time'])
 
-    return TestResult(
-        test_id=test_id,
-        status=script_test_result['status'],
-        result=None,
-        wall_time=None,
-        cpu_time=None
-    )
+    return TestResult(test_id=test_id,
+                      status=script_test_result['status'],
+                      result=None,
+                      wall_time=None,
+                      cpu_time=None)
 
 
 def generate_result_to_checker(submission_id: int, test_ids: List[int],
@@ -70,7 +68,7 @@ async def process_submission(submission_to_runner: SubmissionToRunner):
 
 
 async def pipe_to_checker(result_to_checker):
-    checker.get_result(result_to_checker)
+    get_result(result_to_checker)
 
 
 async def loop():

@@ -1,10 +1,11 @@
-import src.database as db
-import pytest
-import asyncpg
-from datetime import datetime
 import os
+from datetime import datetime
 
-from src.dataclass import ResultToDB
+import asyncpg
+import pytest
+
+from coreservices import database as db
+from coreservices.dataclass import ResultToDB
 
 postgres_host = os.getenv('POSTGRES_HOST', 'postgres')
 postgres_db = os.getenv('POSTGRES_DB')
