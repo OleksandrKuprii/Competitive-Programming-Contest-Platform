@@ -19,8 +19,8 @@ async def setUpDatabase():
                                          password=postgres_password,
                                          database=postgres_db)
 
-    with open('src/schema/coreschema.sql') as schema_file:
-        with open('src/tests/dropall.sql') as dropall_file:
+    with open('schema/coreschema.sql') as schema_file:
+        with open('tests/dropall.sql') as dropall_file:
             await db.conn.execute(dropall_file.read() + schema_file.read())
 
 
