@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from .checker import get_result
-from .dataclass import ResultToChecker, SubmissionToRunner, TestResult
+from dataclass import ResultToChecker, SubmissionToRunner, TestResult
 
 queue = asyncio.Queue()
 

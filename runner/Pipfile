@@ -4,17 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-rope = "*"
-yapf = "*"
-coverage = "*"
 flake8 = "*"
-pyfakefs = "*"
-pytest = "*"
-pytest-asyncio = "*"
+yapf = "*"
 
 [packages]
-asyncpg = "*"
-aiohttp = {extras = ["speedups"],version = "*"}
+docker = "*"
+boto3 = "*"
 python-dotenv = "*"
 
 [requires]

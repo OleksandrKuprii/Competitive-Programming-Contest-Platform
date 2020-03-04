@@ -2,7 +2,7 @@ from typing import List
 
 from .database import (add_results_to_db, change_submission_status,
                        get_points_for_tests)
-from .dataclass import ResultToChecker, ResultToDB, TestResult
+from dataclass import ResultToChecker, ResultToDB, TestResult
 from .storage import get_correct_results
 
 

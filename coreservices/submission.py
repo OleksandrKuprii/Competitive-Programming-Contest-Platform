@@ -1,6 +1,6 @@
 from .database import add_submission as db_add_submission
 from .database import get_limits, get_test_ids
-from .dataclass import SubmissionToRunner, SubmissionToStorage, UserSubmission
+from dataclass import SubmissionToRunner, SubmissionToStorage, UserSubmission
 from .runner import add_submission as runner_add_submission
 from .storage import add_code
 

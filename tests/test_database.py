@@ -5,7 +5,7 @@ import asyncpg
 import pytest
 
 from coreservices import database as db
-from coreservices.dataclass import ResultToDB
+from dataclass import ResultToDB
 
 postgres_host = os.getenv('POSTGRES_HOST', 'postgres')
 postgres_db = os.getenv('POSTGRES_DB')

@@ -2,7 +2,7 @@ from os import getenv, makedirs
 from os.path import exists
 from typing import List
 
-from .dataclass import SubmissionToStorage
+from dataclass import SubmissionToStorage
 
 STORAGE_ROOT = getenv('STORAGE_ROOT')
 
