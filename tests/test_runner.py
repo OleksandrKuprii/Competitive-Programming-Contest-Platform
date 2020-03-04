@@ -1,5 +1,5 @@
 from coreservices.runner import generate_result_to_checker
-from coreservices.dataclass import ResultToChecker, TestResult as _TestResult
+from dataclass import ResultToChecker, TestResult as _TestResult
 
 
 def test_generate_result_to_checker():

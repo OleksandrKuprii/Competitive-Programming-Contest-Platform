@@ -20,14 +20,14 @@ lint:
   stage: test
   script:
     - pip install flake8
-    - python -m flake8
+    - flake8 --exclude frontend/\*
 
 test:
   stage: test
   script:
     - apk add build-base libffi-dev
     - pip install pipenv
-    - pipenv lock --requirements > requirements.txt
+    - (cd coreservices; pipenv lock --requirements >> ../requirements.txt)
     - echo pytest >> requirements.txt
     - echo pytest-asyncio >> requirements.txt
     - echo pyfakefs >> requirements.txt
