@@ -2,7 +2,6 @@ import docker
 import boto3
 from multiprocessing import Pool
 from time import sleep
-import json
 
 client = docker.from_env()
 

@@ -61,4 +61,3 @@ class UserSubmission:
     timestamp: int
     lang: str
     code: str
-
