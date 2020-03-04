@@ -1,0 +1,19 @@
+$body-bg: #111;
+$body-color: #aaa;
+
+$theme-colors: (
+    "primary": #a64,
+    "secondary": #742,
+    "dark": #010101
+);
+
+$jumbotron-bg: #222;
+$table-dark-bg: #222;
+
+$spacer: 50px;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+body {
+    font-family: 'Montserrat Alternates', sans-serif;
+}
