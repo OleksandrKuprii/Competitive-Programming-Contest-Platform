@@ -20,7 +20,7 @@ lint:
   stage: test
   script:
     - pip install flake8
-    - flake8 --exclude frontend/*
+    - flake8 --exclude frontend/\*
 
 test:
   stage: test
