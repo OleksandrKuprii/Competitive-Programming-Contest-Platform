@@ -20,7 +20,7 @@ lint:
   stage: test
   script:
     - pip install flake8
-    - python -m flake8 **/*.py
+    - python -m flake8
 
 test:
   stage: test
@@ -33,7 +33,7 @@ test:
     - echo pyfakefs >> requirements.txt
     - echo coverage >> requirements.txt
     - pip install -r requirements.txt
-    - python -m coverage run --source src -m --omit="src/tests/**/*.py" pytest src/tests/*.py
+    - python -m coverage run -m --omit="**/test*.py" pytest
     - python -m coverage html 
     - python -m coverage report --skip-covered -m 
   artifacts:

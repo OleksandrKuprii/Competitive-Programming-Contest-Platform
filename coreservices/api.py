@@ -2,8 +2,8 @@ from datetime import datetime
 
 from aiohttp import web
 
-from src.dataclass import UserSubmission
-from src.submission import add_submission
+from .dataclass import UserSubmission
+from .submission import add_submission
 
 routes = web.RouteTableDef()
 

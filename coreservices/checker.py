@@ -1,9 +1,9 @@
 from typing import List
 
-from src.dataclass import ResultToDB, TestResult, ResultToChecker
-from src.storage import get_correct_results
-from src.database import get_points_for_tests, add_results_to_db,\
-    change_submission_status
+from .database import (add_results_to_db, change_submission_status,
+                       get_points_for_tests)
+from .dataclass import ResultToChecker, ResultToDB, TestResult
+from .storage import get_correct_results
 
 
 async def get_result(result_to_checker: ResultToChecker) -> None:
@@ -39,8 +39,8 @@ async def get_result(result_to_checker: ResultToChecker) -> None:
     await change_submission_status(submission_id, 'Completed')
 
 
-def check_result(test_results: List[TestResult],
-                 correct_results: List[str], submission_id: int,
+def check_result(test_results: List[TestResult], correct_results: List[str],
+                 submission_id: int,
                  points_list: List[int]) -> List[ResultToDB]:
     """Checks results for all tests and forms ResultToDB dataclass
 
@@ -60,7 +60,6 @@ def check_result(test_results: List[TestResult],
     result_to_db : List[ResultToDB]
         The list of ResultToDB objects
     """
-
     def check_one(output: str, right: str) -> str:
         """Checks equality of too strings
 
@@ -112,8 +111,8 @@ def check_result(test_results: List[TestResult],
             points = point
 
         # Defining ResultToDB object for one checked result
-        result_to_db = ResultToDB(
-            submission_id, test_id, status, points, wall_time, cpu_time)
+        result_to_db = ResultToDB(submission_id, test_id, status, points,
+                                  wall_time, cpu_time)
 
         results_to_db.append(result_to_db)
 

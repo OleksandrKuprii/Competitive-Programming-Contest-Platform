@@ -1,9 +1,8 @@
-from src.database import add_submission as db_add_submission
-from src.database import get_limits, get_test_ids
-from src.dataclass import SubmissionToRunner,\
-    SubmissionToStorage, UserSubmission
-from src.runner import add_submission as runner_add_submission
-from src.storage import add_code
+from .database import add_submission as db_add_submission
+from .database import get_limits, get_test_ids
+from .dataclass import SubmissionToRunner, SubmissionToStorage, UserSubmission
+from .runner import add_submission as runner_add_submission
+from .storage import add_code
 
 
 async def add_submission(user_submission: UserSubmission) -> None:
@@ -39,8 +38,7 @@ async def add_submission(user_submission: UserSubmission) -> None:
     submission_to_runner = SubmissionToRunner(submission_id, test_ids,
                                               user_submission.lang,
                                               user_submission.code,
-                                              wall_time_limit,
-                                              cpu_time_limit,
+                                              wall_time_limit, cpu_time_limit,
                                               memory_limit)
 
     # Asking runner to compile and run this code

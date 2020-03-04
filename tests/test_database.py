@@ -1,10 +1,11 @@
-import src.database as db
-import pytest
-import asyncpg
-from datetime import datetime
 import os
+from datetime import datetime
 
-from src.dataclass import ResultToDB
+import asyncpg
+import pytest
+
+from coreservices import database as db
+from coreservices.dataclass import ResultToDB
 
 postgres_host = os.getenv('POSTGRES_HOST', 'postgres')
 postgres_db = os.getenv('POSTGRES_DB')
@@ -18,8 +19,8 @@ async def setUpDatabase():
                                          password=postgres_password,
                                          database=postgres_db)
 
-    with open('src/schema/coreschema.sql') as schema_file:
-        with open('src/tests/dropall.sql') as dropall_file:
+    with open('schema/coreschema.sql') as schema_file:
+        with open('tests/dropall.sql') as dropall_file:
             await db.conn.execute(dropall_file.read() + schema_file.read())
 
 
