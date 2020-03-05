@@ -2,7 +2,7 @@ from datetime import datetime
 
 from aiohttp import web
 
-from dataclass import UserSubmission
+from toucan.dataclass import UserSubmission
 from .submission import add_submission
 
 routes = web.RouteTableDef()

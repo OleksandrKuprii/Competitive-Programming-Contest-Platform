@@ -1,8 +1,8 @@
-from .database import add_submission as db_add_submission
-from .database import get_limits, get_test_ids
-from dataclass import SubmissionToRunner, SubmissionToStorage, UserSubmission
+from toucan.database import add_submission as db_add_submission
+from toucan.database import get_limits, get_test_ids
+from toucan.dataclass import SubmissionToRunner, SubmissionToStorage, UserSubmission
 from .runner import add_submission as runner_add_submission
-from .storage import add_code
+from toucan.storage import add_code
 
 
 async def add_submission(user_submission: UserSubmission) -> None:

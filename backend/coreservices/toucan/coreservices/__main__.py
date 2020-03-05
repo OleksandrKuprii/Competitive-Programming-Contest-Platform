@@ -1,14 +1,8 @@
 import asyncio
 from os import environ, getenv
 
-from dotenv import load_dotenv
-
 from .api import run
-from .database import establish_connection
-
-# Load development environment
-if 'PROD' not in environ.keys():
-    load_dotenv('dev.env')
+from toucan.database import establish_connection
 
 
 async def main():
