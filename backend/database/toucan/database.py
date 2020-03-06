@@ -3,7 +3,7 @@ from typing import List
 
 import asyncpg
 
-from dataclass import ResultToDB, SubmissionToDB
+from toucan.dataclass import ResultToDB, SubmissionToDB
 
 # Declaring global variable for connection
 conn = None

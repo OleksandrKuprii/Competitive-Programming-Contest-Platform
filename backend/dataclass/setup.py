@@ -4,6 +4,6 @@ microlib_name = 'toucan.dataclass'
 
 setup(
     name=microlib_name,
-    packages=[microlib_name],
-    namespace_packages=['toucan']
+    namespace_packages=['toucan'],
+    py_modules=['toucan.dataclass']
 )

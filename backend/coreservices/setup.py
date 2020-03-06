@@ -7,6 +7,9 @@ setup(
     py_modules=['toucan.coreservices.api', 'toucan.coreservices.checker', 'toucan.coreservices.runner', 'toucan.coreservices.submission'],
     namespace_packages=['toucan'],
     install_requires=[
-        'aiohttp[speedups]'
+        'aiohttp[speedups]',
+        'toucan.database',
+        'toucan.dataclass',
+        'toucan.storage'
     ]
 )
