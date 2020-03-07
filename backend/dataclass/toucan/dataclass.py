@@ -1,9 +1,12 @@
+"""Module for sharing common dataclasses between other microlibs."""
 from dataclasses import dataclass
 from typing import List
 
 
 @dataclass
 class ResultToDB:
+    """Result that can be placed in database."""
+
     submission_id: int
     test_id: int
     status: str
@@ -14,6 +17,8 @@ class ResultToDB:
 
 @dataclass
 class SubmissionToDB:
+    """Submission that can be placed in database."""
+
     user_id: int
     task_id: int
     timestamp: int
@@ -23,6 +28,8 @@ class SubmissionToDB:
 
 @dataclass
 class SubmissionToRunner:
+    """Submission that runner can accept."""
+
     submission_id: int
     test_ids: List[int]
     lang: str
@@ -34,6 +41,8 @@ class SubmissionToRunner:
 
 @dataclass
 class SubmissionToStorage:
+    """Submission that storage can accept."""
+
     submission_id: int
     lang: str
     code: str
@@ -41,6 +50,8 @@ class SubmissionToStorage:
 
 @dataclass
 class TestResult:
+    """Result of user's submission program for test."""
+
     test_id: int
     status: str
     result: str
@@ -50,12 +61,16 @@ class TestResult:
 
 @dataclass
 class ResultToChecker:
+    """Result of user's submission program that checker accepts."""
+
     submission_id: int
     test_results: List[TestResult]
 
 
 @dataclass
 class UserSubmission:
+    """User submission representation."""
+
     user_id: int
     task_id: int
     timestamp: int

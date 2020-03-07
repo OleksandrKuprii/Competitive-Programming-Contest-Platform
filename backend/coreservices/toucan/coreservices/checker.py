@@ -1,3 +1,4 @@
+"""Checks user submission program output."""
 from typing import List
 
 from toucan.database import (add_results_to_db, change_submission_status,
@@ -7,17 +8,17 @@ from toucan.storage import get_correct_results
 
 
 async def get_result(result_to_checker: ResultToChecker) -> None:
-    """Is called from runner and checks results, that user's program
-    returned - compares with correct results for task in storage,
+    """Check results, that user's program returned.
+
+    Compares with correct results for task in storage,
     updates status in table 'submissions' in database and
     inserts results to table 'results' in database
 
     Parameters
     ----------
     result_to_checker : ResultToChecker
-        ResultToChecker object, that runner returned
+        ResultToChecker object, that runner has returned
     """
-
     # Defining variables that get values from ResultToChecker object
     submission_id = result_to_checker.submission_id
     test_ids = [x.test_id for x in result_to_checker.test_results]
@@ -42,7 +43,7 @@ async def get_result(result_to_checker: ResultToChecker) -> None:
 def check_result(test_results: List[TestResult], correct_results: List[str],
                  submission_id: int,
                  points_list: List[int]) -> List[ResultToDB]:
-    """Checks results for all tests and forms ResultToDB dataclass
+    """Check results for all tests and form ResultToDB dataclass.
 
     Parameters
     ----------
@@ -61,22 +62,22 @@ def check_result(test_results: List[TestResult], correct_results: List[str],
         The list of ResultToDB objects
     """
     def check_one(output: str, right: str) -> str:
-        """Checks equality of too strings
+        """Check equality of too strings.
 
-       Parameters
-       ----------
-       output : str
-           The output from user's program for this test
-       right : str
-           The correct output for this test
+        Parameters
+        ----------
+        output : str
+            The output from user's program for this test
+        right : str
+            The correct output for this test
 
-       Returns
-       -------
-       _ : str
-           The status for this checking
-           OK - result is correct
-           WA - result is incorrect
-       """
+        Returns
+        -------
+        _ : str
+            The status for this checking
+            OK - result is correct
+            WA - result is incorrect
+        """
         output = output.strip()
         right = right.strip()
 

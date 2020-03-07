@@ -1,7 +1,9 @@
+"""Tests for database."""
 import os
 from datetime import datetime
 
 import asyncpg
+
 import pytest
 
 import toucan.database as db
@@ -13,7 +15,8 @@ postgres_user = os.getenv('POSTGRES_USER')
 postgres_password = os.getenv('POSTGRES_PASSWORD')
 
 
-async def setUpDatabase():
+async def setup_database():
+    """Drop schema and restore it: cleanup database for each test."""
     await db.establish_connection_params(host=postgres_host,
                                          user=postgres_user,
                                          password=postgres_password,
@@ -25,6 +28,7 @@ async def setUpDatabase():
 
 
 async def table_insert(name, columns, *rows):
+    """Handful utility to insert data into table."""
     for row in rows:
         values = map(lambda x: f'${x}', range(1, len(columns) + 1))
 
@@ -35,6 +39,7 @@ async def table_insert(name, columns, *rows):
 
 @pytest.mark.asyncio
 async def test_get_connection(monkeypatch):
+    """Test if module sets connection properly."""
     async def mock_connect(conn_string):
         return conn_string
 
@@ -47,7 +52,8 @@ async def test_get_connection(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_get_points_for_test():
-    await setUpDatabase()
+    """Test if it returns properly test points."""
+    await setup_database()
 
     tasks = (('first-task', 'My first task!', 0.2, 0.1, 256),
              ('second-task', 'My second task!', 0.3, 0.2, 256))
@@ -68,7 +74,8 @@ async def test_get_points_for_test():
 
 @pytest.mark.asyncio
 async def test_add_results_to_db():
-    await setUpDatabase()
+    """Test if it adds results to db."""
+    await setup_database()
 
     users = (('myusername', 'example@example.com', 'regular'), )
 

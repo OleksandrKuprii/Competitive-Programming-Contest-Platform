@@ -1,3 +1,4 @@
+"""setup.py for dataclass."""
 from setuptools import setup
 
 microlib_name = 'toucan.dataclass'

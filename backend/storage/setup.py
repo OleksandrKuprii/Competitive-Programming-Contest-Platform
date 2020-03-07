@@ -1,3 +1,4 @@
+"""setup.py for storage."""
 from setuptools import setup
 
 microlib_name = 'toucan.storage'

@@ -1,3 +1,5 @@
+"""setup.py for coreservices."""
+
 from setuptools import setup
 
 microlib_name = 'toucan.coreservices'

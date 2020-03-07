@@ -1,3 +1,4 @@
+"""setup.py for runner."""
 from setuptools import setup
 
 microlib_name = 'toucan.runner'

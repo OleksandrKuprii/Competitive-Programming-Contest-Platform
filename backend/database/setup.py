@@ -1,3 +1,4 @@
+"""setup.py for database."""
 from setuptools import setup
 
 microlib_name = 'toucan.database'

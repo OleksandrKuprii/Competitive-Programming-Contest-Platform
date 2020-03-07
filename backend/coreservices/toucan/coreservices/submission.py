@@ -1,20 +1,20 @@
+"""Handles submission logic."""
 from toucan.database import add_submission as db_add_submission
 from toucan.database import get_limits, get_test_ids
-from toucan.dataclass import SubmissionToRunner, SubmissionToStorage,\
-    UserSubmission
-from .runner import add_submission as runner_add_submission
+from toucan.dataclass import (SubmissionToRunner, SubmissionToStorage,
+                              UserSubmission)
 from toucan.storage import add_code
+
+from .runner import add_submission as runner_add_submission
 
 
 async def add_submission(user_submission: UserSubmission) -> None:
-    """Gets submission from API and communicates with database and
-    storage
+    """Get submission from API and communicates with database and storage.
 
     Parameters
     ----------
     user_submission : UserSubmission
     """
-
     # Adding submission to database
     submission_id = await db_add_submission(user_submission)
 

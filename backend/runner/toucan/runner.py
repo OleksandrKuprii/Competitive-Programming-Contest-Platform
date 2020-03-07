@@ -1,11 +1,14 @@
-from toucan.dataclass import SubmissionToRunner
+"""Actual Toucan Runner logic."""
 import json
 from multiprocessing import Pool
 from os import getenv
 from time import sleep
 
-import docker
 import boto3
+
+import docker
+
+from toucan.dataclass import SubmissionToRunner
 
 client = docker.from_env()
 
@@ -15,6 +18,7 @@ sqs = boto3.client('sqs', endpoint_url=getenv('SQS_ENDPOINT'))
 
 
 def worker(message):
+    """Execute submission."""
     body = json.loads(message['Body'])
 
     submission_to_runner = SubmissionToRunner(**body)
@@ -26,6 +30,7 @@ def worker(message):
 
 
 def main():
+    """Act like runner enter point."""
     p = Pool(5)
 
     while True:

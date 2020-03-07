@@ -1,3 +1,4 @@
+"""Handles storage logic."""
 from os import getenv, makedirs
 from os.path import exists
 from typing import List
@@ -8,8 +9,7 @@ STORAGE_ROOT = getenv('STORAGE_ROOT')
 
 
 def get_correct_results(test_ids: List[int]) -> List[str]:
-    """Gets correct results for tests from storage by test ids from
-    function parameters
+    """Get correct results for tests.
 
     Parameters
     ----------
@@ -22,7 +22,7 @@ def get_correct_results(test_ids: List[int]) -> List[str]:
         The list of correct results for each test
     """
     def get_correct_result(_id: int) -> str:
-        """Open file from storage by _id and reads its content
+        """Open file from storage by _id and reads its content.
 
         Parameters
         ----------
@@ -44,7 +44,7 @@ def get_correct_results(test_ids: List[int]) -> List[str]:
 
 
 def add_code(submission_to_storage: SubmissionToStorage) -> None:
-    """Adds code to storage
+    """Add code to storage.
 
     Parameters
     ----------
@@ -52,7 +52,6 @@ def add_code(submission_to_storage: SubmissionToStorage) -> None:
         SubmissionToStorage object, which contains details of saving
         file with program
     """
-
     # Defining variable, which means extension of the file to save and
     # default is equal to None
     ext = None

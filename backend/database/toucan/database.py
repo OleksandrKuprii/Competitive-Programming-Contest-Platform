@@ -1,3 +1,4 @@
+"""Handles database logic."""
 from datetime import datetime
 from typing import List
 
@@ -10,35 +11,30 @@ conn = None
 
 
 async def establish_connection(connection_string: str) -> None:
-    """Establishes connection to the database with connection
-    string and sets connection to global variable conn
+    """Establish connection to the database.
 
     Parameters
     ----------
     connection_string : str
     """
-
     global conn
     conn = await asyncpg.connect(connection_string)
 
 
 async def establish_connection_params(**kwargs: dict) -> None:
-    """Establishes connection to the database with connection
-    parameters and sets connection to global variable conn
+    """Establish connection to the database.
 
     Parameters
     ----------
     **kwargs : dict
-        The parameters that sets the connection
+        The parameters that set the connection
     """
-
     global conn
     conn = await asyncpg.connect(**kwargs)
 
 
 async def get_points_for_tests(test_ids: List[int]) -> List[int]:
-    """Gets value of points for each test by test ids
-    from database and returns it
+    """Get value of points for each test by test ids.
 
     Parameters
     ----------
@@ -50,7 +46,6 @@ async def get_points_for_tests(test_ids: List[int]) -> List[int]:
     _ : List[int]
         The list of points for each test sorted as ids
     """
-
     points = await conn.fetch(
         'SELECT points FROM coreschema.tests WHERE id = ANY($1::int[])',
         test_ids)
@@ -59,14 +54,13 @@ async def get_points_for_tests(test_ids: List[int]) -> List[int]:
 
 
 async def add_results_to_db(results: List[ResultToDB]) -> None:
-    """Adds results of checking to the database
+    """Add results of checking to the database.
 
     Parameters
     ----------
     results : List[ResultToDB]
         The list of ResultToDB objects
     """
-
     # Presenting list of ResultToDB object to list of tuples
     data_to_query = [(result.status, result.points, result.submission_id,
                       result.test_id, result.wall_time, result.cpu_time)
@@ -79,7 +73,7 @@ async def add_results_to_db(results: List[ResultToDB]) -> None:
 
 
 async def change_submission_status(submission_id: int, status: str) -> None:
-    """Changes status of the submission in the database by submission id
+    """Change status of a submission.
 
     Parameters
     ----------
@@ -88,14 +82,13 @@ async def change_submission_status(submission_id: int, status: str) -> None:
     status : str
         The string to update in the database
     """
-
     await conn.execute(
         'UPDATE coreschema.submissions SET status = $1'
         'WHERE id = $2', status, submission_id)
 
 
 async def get_test_ids(task_id: int) -> List[int]:
-    """Gets list of test id from the database by the task id
+    """Get list of test id from the database by the task id.
 
     Parameters
     ----------
@@ -107,7 +100,6 @@ async def get_test_ids(task_id: int) -> List[int]:
     _ : List[int]
         The list of test ids
     """
-
     test_ids = await conn.fetch(
         'SELECT id FROM coreschema.tests WHERE task_id = $1', task_id)
 
@@ -115,8 +107,7 @@ async def get_test_ids(task_id: int) -> List[int]:
 
 
 async def add_submission(submission_to_db: SubmissionToDB) -> int:
-    """Inserts submission to the submission table in the database
-    and returns its id
+    """Add submission and return its id.
 
     Parameters
     ----------
@@ -127,7 +118,6 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
     _ : int
         The id of the inserted submission
     """
-
     # Presenting SubmissionToDB object values to the variables
     user_id = submission_to_db.user_id
     task_id = submission_to_db.task_id
@@ -144,8 +134,7 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
 
 
 async def get_limits(task_id: int) -> dict:
-    """Gets limits for specific test and returns it
-    Limits: wall_time, real_time, memory
+    """Get limits for test.
 
     Parameters
     ----------
@@ -157,7 +146,6 @@ async def get_limits(task_id: int) -> dict:
     _ : dict
         Returns limits as a dict
     """
-
     res = await conn.fetch(
         '''SELECT wall_time_limit, cpu_time_limit, memory_limit
            FROM coreschema.tasks
