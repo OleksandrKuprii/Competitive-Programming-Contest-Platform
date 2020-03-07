@@ -9,36 +9,22 @@ services:
 
 
 variables:
-  POSTGRES_DB: nice_marmot
-  POSTGRES_USER: runner
-  POSTGRES_PASSWORD: "runner-password"
+  POSTGRES_HOST: postgres
+  POSTGRES_DB: toucandb
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: "postgres"
 
 stages:
   - test
-
-lint:
-  stage: test
-  script:
-    - pip install flake8
-    - flake8 --exclude frontend/\*
 
 test:
   stage: test
   script:
     - apk add build-base libffi-dev
-    - pip install pipenv
-    - (cd coreservices; pipenv lock --requirements >> ../requirements.txt)
-    - echo pytest >> requirements.txt
-    - echo pytest-asyncio >> requirements.txt
-    - echo pyfakefs >> requirements.txt
-    - echo coverage >> requirements.txt
-    - pip install -r requirements.txt
-    - python -m coverage run -m --omit="**/test*.py" pytest
-    - python -m coverage html 
-    - python -m coverage report --skip-covered -m 
-  artifacts:
-    when: always
-    paths:
-      - htmlcov
-    expire_in: 1 day
-  coverage: '/^TOTAL.*\s+(\d+\%)$/'
+    - pip install tox
+    - (cd backend; tox)
+    - (cd backend/dataclass; tox)
+    - (cd backend/database; tox)
+    - (cd backend/storage; tox)
+    - (cd backend/runner; tox)
+    - (cd backend/coreservices; tox)
