@@ -11,6 +11,6 @@ setup(name=microlib_name,
       ],
       namespace_packages=['toucan'],
       install_requires=[
-          'aiohttp', 'toucan.database', 'toucan.dataclass',
+          'aiohttp[speedups]', 'toucan.database', 'toucan.dataclass',
           'toucan.storage'
       ])
