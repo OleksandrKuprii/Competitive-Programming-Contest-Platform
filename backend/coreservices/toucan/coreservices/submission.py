@@ -1,6 +1,7 @@
 from toucan.database import add_submission as db_add_submission
 from toucan.database import get_limits, get_test_ids
-from toucan.dataclass import SubmissionToRunner, SubmissionToStorage, UserSubmission
+from toucan.dataclass import SubmissionToRunner, SubmissionToStorage,\
+    UserSubmission
 from .runner import add_submission as runner_add_submission
 from toucan.storage import add_code
 

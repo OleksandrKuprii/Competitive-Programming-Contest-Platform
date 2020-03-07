@@ -4,8 +4,8 @@ from datetime import datetime
 import asyncpg
 import pytest
 
-from coreservices import database as db
-from dataclass import ResultToDB
+import toucan.database as db
+from toucan.dataclass import ResultToDB
 
 postgres_host = os.getenv('POSTGRES_HOST', 'postgres')
 postgres_db = os.getenv('POSTGRES_DB')
@@ -19,8 +19,8 @@ async def setUpDatabase():
                                          password=postgres_password,
                                          database=postgres_db)
 
-    with open('schema/coreschema.sql') as schema_file:
-        with open('tests/dropall.sql') as dropall_file:
+    with open('../../schema/coreschema.sql') as schema_file:
+        with open('../../schema/dropall.sql') as dropall_file:
             await db.conn.execute(dropall_file.read() + schema_file.read())
 
 

@@ -1,7 +1,7 @@
 from typing import List
 
 from toucan.database import (add_results_to_db, change_submission_status,
-                       get_points_for_tests)
+                             get_points_for_tests)
 from toucan.dataclass import ResultToChecker, ResultToDB, TestResult
 from toucan.storage import get_correct_results
 

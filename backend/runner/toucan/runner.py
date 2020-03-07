@@ -1,7 +1,7 @@
 from toucan.dataclass import SubmissionToRunner
 import json
 from multiprocessing import Pool
-from os import environ, getenv
+from os import getenv
 from time import sleep
 
 import docker
@@ -13,6 +13,7 @@ queue_url = getenv('SUBMISSIONS_QUEUE_URL')
 
 sqs = boto3.client('sqs', endpoint_url=getenv('SQS_ENDPOINT'))
 
+
 def worker(message):
     body = json.loads(message['Body'])
 
@@ -23,13 +24,16 @@ def worker(message):
     sqs.delete_message(QueueUrl=queue_url,
                        ReceiptHandle=message['ReceiptHandle'])
 
+
 def main():
     p = Pool(5)
 
     while True:
-        response = sqs.receive_message(QueueUrl=queue_url, MaxNumberOfMessages=10)
+        response = sqs.receive_message(QueueUrl=queue_url,
+                                       MaxNumberOfMessages=10)
 
         if 'Messages' in response.keys():
-            p.map(worker, filter(lambda x: x is not None, response['Messages']))
+            p.map(worker, filter(lambda x: x is not None,
+                                 response['Messages']))
 
         sleep(20)
