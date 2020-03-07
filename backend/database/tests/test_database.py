@@ -7,7 +7,7 @@ import pytest
 import toucan.database as db
 from toucan.dataclass import ResultToDB
 
-postgres_host = os.getenv('POSTGRES_HOST', 'postgres')
+postgres_host = os.getenv('POSTGRES_HOST', 'localhost')
 postgres_db = os.getenv('POSTGRES_DB')
 postgres_user = os.getenv('POSTGRES_USER')
 postgres_password = os.getenv('POSTGRES_PASSWORD')
