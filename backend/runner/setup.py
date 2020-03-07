@@ -4,10 +4,12 @@ microlib_name = 'toucan.runner'
 
 setup(
     name=microlib_name,
-    py_modules=['toucan.runner.execution'],
+    py_modules=['toucan.runner'],
     namespace_packages=['toucan'],
     install_requires=[
         'docker',
-        'boto3'
+        'boto3',
+        'toucan.dataclass',
+        'toucan.storage'
     ]
 )

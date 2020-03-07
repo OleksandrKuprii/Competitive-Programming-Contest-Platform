@@ -1,4 +1,4 @@
-from coreservices.storage import get_correct_results
+from toucan.storage import get_correct_results
 from os import getenv
 
 STORAGE_ROOT = getenv('STORAGE_ROOT')
