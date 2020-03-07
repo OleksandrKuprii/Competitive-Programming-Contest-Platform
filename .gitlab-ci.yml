@@ -22,3 +22,8 @@ test:
   script:
     - pip install tox
     - (cd backend; tox)
+    - (cd backend/coreservices; tox)
+    - (cd backend/database; tox)
+    - (cd backend/dataclass; tox)
+    - (cd backend/runner; tox)
+    - (cd backend/storage; tox)
