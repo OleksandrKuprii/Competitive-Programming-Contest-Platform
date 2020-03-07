@@ -21,7 +21,6 @@ def get_correct_results(test_ids: List[int]) -> List[str]:
     _ : List[str]
         The list of correct results for each test
     """
-
     def get_correct_result(_id: int) -> str:
         """Open file from storage by _id and reads its content
 
