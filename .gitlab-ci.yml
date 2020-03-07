@@ -20,6 +20,7 @@ stages:
 test:
   stage: test
   script:
+    - apk add build-base libffi-dev
     - pip install tox
     - (cd backend; tox)
     - (cd backend/dataclass; tox)
