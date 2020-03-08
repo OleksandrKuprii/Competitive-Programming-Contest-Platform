@@ -18,8 +18,8 @@ test:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: "postgres"
     SERVICES: s3,sqs
-    S3_ENTRYPOINT: http://localstack:4572
-    SQS_ENTRYPOINT: http://localstack:4576
+    S3_ENDPOINT: http://localstack:4572
+    SQS_ENDPOINT: http://localstack:4576
     SUBMISSIONS_QUEUE_URL: http://localstack:4572/queue/submissions
     LOCAL_STORAGE_ROOT: storage
   script:
