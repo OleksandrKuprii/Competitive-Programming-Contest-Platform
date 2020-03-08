@@ -4,21 +4,24 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
 
-services:
-  - postgres:12.2-alpine
-
-
-variables:
-  POSTGRES_HOST: postgres
-  POSTGRES_DB: toucandb
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: "postgres"
-
 stages:
   - test
 
 test:
   stage: test
+  services:
+    - postgres:12.2-alpine
+    - localstack/localstack
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_DB: toucandb
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: "postgres"
+    SERVICES: s3,sqs
+    S3_ENTRYPOINT: http://localstack:4572
+    SQS_ENTRYPOINT: http://localstack:4576
+    SUBMISSIONS_QUEUE_URL: http://localstack:4572/queue/submissions
+    LOCAL_STORAGE_ROOT: storage
   script:
     - apk add build-base libffi-dev
     - pip install tox
@@ -26,5 +29,5 @@ test:
     - (cd backend/dataclass; tox)
     - (cd backend/database; tox)
     - (cd backend/storage; tox)
-    - (cd backend/runner; tox)
+    - (cd backend/runner; mkdir -p storage/submissions; mkdir -p storage/tests; tox)
     - (cd backend/coreservices; tox)
