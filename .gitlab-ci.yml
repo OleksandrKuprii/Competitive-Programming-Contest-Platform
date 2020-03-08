@@ -27,7 +27,9 @@ test:
     AWS_DEFAULT_REGION: aaa
   script:
     - apk add build-base libffi-dev
-    - pip install tox
+    - pip install tox awscli
+    - aws configure set aws_access_key_id aaa
+    - aws configure set aws_secret_access_key aaa
     - (cd backend; tox)
     - (cd backend/dataclass; tox)
     - (cd backend/database; tox)
