@@ -22,6 +22,9 @@ test:
     SQS_ENDPOINT: http://localstack:4576
     SUBMISSIONS_QUEUE_URL: http://localstack:4572/queue/submissions
     LOCAL_STORAGE_ROOT: storage
+    AWS_ACCESS_KEY_ID: aaa
+    AWS_SECRET_ACCESS_KEY: aaa
+    AWS_DEFAULT_REGION: aaa
   script:
     - apk add build-base libffi-dev
     - pip install tox
