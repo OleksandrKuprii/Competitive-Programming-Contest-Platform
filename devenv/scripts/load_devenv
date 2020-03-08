@@ -1,0 +1,1 @@
+export $(cat devenv/*.env | xargs)

@@ -4,41 +4,40 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
 
-services:
-  - postgres:12.2-alpine
-
-
-variables:
-  POSTGRES_DB: nice_marmot
-  POSTGRES_USER: runner
-  POSTGRES_PASSWORD: "runner-password"
-
 stages:
   - test
 
-lint:
-  stage: test
-  script:
-    - pip install flake8
-    - flake8 --exclude frontend/\*
-
 test:
   stage: test
+  services:
+    - postgres:12.2-alpine
+    - name: localstack/localstack
+      alias: localstack
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_DB: toucandb
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: "postgres"
+    SERVICES: s3,sqs
+    S3_ENDPOINT: http://localstack:4572
+    SQS_ENDPOINT: http://localstack:4576
+    SUBMISSIONS_QUEUE_URL: http://localstack:4572/queue/submissions
+    HOSTNAME_EXTERNAL: localstack 
+    DEFAULT_REGION: aaa
+    LOCAL_STORAGE_ROOT: storage
+    AWS_ACCESS_KEY_ID: aaa
+    AWS_SECRET_ACCESS_KEY: aaa
+    AWS_DEFAULT_REGION: aaa
   script:
     - apk add build-base libffi-dev
-    - pip install pipenv
-    - (cd coreservices; pipenv lock --requirements >> ../requirements.txt)
-    - echo pytest >> requirements.txt
-    - echo pytest-asyncio >> requirements.txt
-    - echo pyfakefs >> requirements.txt
-    - echo coverage >> requirements.txt
-    - pip install -r requirements.txt
-    - python -m coverage run -m --omit="**/test*.py" pytest
-    - python -m coverage html 
-    - python -m coverage report --skip-covered -m 
-  artifacts:
-    when: always
-    paths:
-      - htmlcov
-    expire_in: 1 day
-  coverage: '/^TOTAL.*\s+(\d+\%)$/'
+    - pip install tox awscli
+    - aws configure set aws_access_key_id aaa
+    - aws configure set aws_secret_access_key aaa
+    - aws configure set default.region aaa
+    - ./devenv/scripts/create_resources.sh
+    - (cd backend; tox)
+    - (cd backend/dataclass; tox)
+    - (cd backend/database; tox)
+    - (cd backend/storage; tox)
+    - (cd backend/runner; mkdir -p storage/submissions; mkdir -p storage/tests; tox)
+    - (cd backend/coreservices; tox)
