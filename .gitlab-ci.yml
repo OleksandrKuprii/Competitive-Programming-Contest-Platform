@@ -34,6 +34,7 @@ test:
     - aws configure set aws_access_key_id aaa
     - aws configure set aws_secret_access_key aaa
     - aws configure set default.region aaa
+    - ./devenv/scripts/create_resources.sh
     - (cd backend; tox)
     - (cd backend/dataclass; tox)
     - (cd backend/database; tox)

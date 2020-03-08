@@ -1,10 +1,10 @@
 #!/bin/sh
 aws sqs create-queue\
     --queue-name submissions\
-    --endpoint-url=http://localhost:4576
+    --endpoint-url=$SQS_ENDPOINT
 
 aws s3 mb s3://submissions\
-    --endpoint-url=http://localhost:4572
+    --endpoint-url=$S3_ENDPOINT
 
 aws s3 mb s3://tests\
-    --endpoint-url=http://localhost:4572
+    --endpoint-url=$S3_ENDPOINT
