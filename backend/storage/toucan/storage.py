@@ -1,78 +1,83 @@
 """Handles storage logic."""
-from os import getenv, makedirs
-from os.path import exists
-from typing import List
+import os
+from typing import Iterable
+
+import boto3
 
 from toucan.dataclass import SubmissionToStorage
 
-STORAGE_ROOT = getenv('STORAGE_ROOT')
+SUBMISSIONS_BUCKET = 'submissions'
+TESTS_BUCKET = 'tests'
+
+LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
+
+assert LOCAL_STORAGE_ROOT is not None
+
+S3_ENDPOINT = os.getenv('S3_ENDPOINT')
+
+assert S3_ENDPOINT is not None
+
+s3 = boto3.resource('s3', endpoint_url=S3_ENDPOINT)
 
 
-def get_correct_results(test_ids: List[int]) -> List[str]:
-    """Get correct results for tests.
+def get_correct_results(test_ids: Iterable[int]) -> Iterable[str]:
+    """Return correct results for given test ids.
 
-    Parameters
-    ----------
-    test_ids : List[int]
-        The list of test ids
-
-    Returns
-    -------
-    _ : List[str]
-        The list of correct results for each test
-    """
-    def get_correct_result(_id: int) -> str:
-        """Open file from storage by _id and reads its content.
-
-        Parameters
-        ----------
-        _id : int
-            The id of the test
-
-        Returns
-        -------
-        correct_result : str
-            Content of the file
-        """
-        path = f'{STORAGE_ROOT}/test/{_id}/output.txt'
-
-        with open(path, 'r') as f:
-            return f.read()
-
-    # Returning List[str] of correct results by each task id in task_ids
-    return [get_correct_result(test_id) for test_id in test_ids]
-
-
-def add_code(submission_to_storage: SubmissionToStorage) -> None:
-    """Add code to storage.
+    Generator function, reads objects from S3 bucket.
 
     Parameters
     ----------
-    submission_to_storage : SubmissionToStorage
-        SubmissionToStorage object, which contains details of saving
-        file with program
+    tests_ids: Iterable[int] - test ids
     """
-    # Defining variable, which means extension of the file to save and
-    # default is equal to None
+    for test_id in test_ids:
+        obj = s3.Object(TESTS_BUCKET, f'{test_id}.output')
+        yield obj.get()['Body'].read()
+
+
+def download_inputs(test_ids: Iterable[int]) -> Iterable[str]:
+    """Download inputs for given test ids and return their paths.
+
+    Generator function, reads objects from S3 bucket.
+
+    Parameters
+    ----------
+    tests_ids: Iterable[int] - test ids
+    """
+    for test_id in test_ids:
+        path = f'{LOCAL_STORAGE_ROOT}/tests/{test_id}.input'
+
+        s3.Bucket(TESTS_BUCKET).download_file(f'{test_id}.input', path)
+
+        yield path
+
+
+def add_code(submission_to_storage: SubmissionToStorage):
+    """Add submission code to storage.
+
+    Uploads object to S3 bucket.
+
+    Parameters
+    ----------
+    submission_to_storage: SubmissionToStorage - code and submission_id
+    """
+    obj = s3.Object(SUBMISSIONS_BUCKET,
+                    str(submission_to_storage.submission_id))
+    obj.put(Body=submission_to_storage.code)
+
+
+def download_submission_code(submission_id: int, lang: str) -> str:
+    """Download submission code and return path to local file."""
     ext = None
 
-    # Updating :ext in case of different languages
-    if submission_to_storage.lang in ('python3', 'python2'):
+    if lang in ('python3', 'python2'):
         ext = 'py'
 
-    # If language was unrecognised before asserts an exception
     assert ext is not None
 
-    # Defining variable, which means details of the place where to save
-    path = f'{STORAGE_ROOT}/submission/' \
-           f'{submission_to_storage.submission_id}/'
-    filename = f'main.{ext}'
+    path = f'{LOCAL_STORAGE_ROOT}/submissions/{submission_id}.{ext}'
 
-    # Checking if this path does not exist and if true - creating
-    # missing directories
-    if not exists(path):
-        makedirs(path)
+    print(path)
 
-    # Writing user's code with before defined details
-    with open(path + filename, 'w') as submission_file:
-        submission_file.write(submission_to_storage.code)
+    s3.Bucket(SUBMISSIONS_BUCKET).download_file(str(submission_id), path)
+
+    return path

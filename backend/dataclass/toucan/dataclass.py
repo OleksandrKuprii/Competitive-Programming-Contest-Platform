@@ -33,7 +33,6 @@ class SubmissionToRunner:
     submission_id: int
     test_ids: List[int]
     lang: str
-    code: str
     wall_time_limit: float
     cpu_time_limit: float
     memory_limit: float
@@ -44,7 +43,6 @@ class SubmissionToStorage:
     """Submission that storage can accept."""
 
     submission_id: int
-    lang: str
     code: str
 
 
@@ -55,8 +53,6 @@ class TestResult:
     test_id: int
     status: str
     result: str
-    wall_time: float
-    cpu_time: float
 
 
 @dataclass

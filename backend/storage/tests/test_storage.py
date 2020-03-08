@@ -1,17 +1,25 @@
 """Tests for storage."""
-from os import getenv
 
-from toucan.storage import get_correct_results
+import os
 
-STORAGE_ROOT = getenv('STORAGE_ROOT')
+import toucan.storage
+from toucan.dataclass import SubmissionToStorage
 
 
-def test_get_correct_results(fs):
-    """Test if it returns correct test results."""
-    data = ['1', '23', '123', '123\n45\n1 0 1 0 2']
+def test_add_download_code(fs):
+    """Tests adding and downloading code."""
+    fs.makedirs(f'{toucan.storage.LOCAL_STORAGE_ROOT}/submissions/')
 
-    for test_id, test_output in enumerate(data):
-        fs.create_file(f'{STORAGE_ROOT}/test/{test_id}/output.txt',
-                       contents=test_output)
+    toucan.storage.add_code(
+        SubmissionToStorage(submission_id=1234, code='print(1)'))
 
-    assert get_correct_results(list(range(len(data)))) == data
+    expected_path = f'{toucan.storage.LOCAL_STORAGE_ROOT}/submissions/1234.py'
+
+    actual_path = toucan.storage.download_submission_code(1234, 'python3')
+
+    assert expected_path == actual_path
+
+    assert os.path.exists(expected_path)
+
+    with open(expected_path) as f:
+        assert f.read() == 'print(1)'
