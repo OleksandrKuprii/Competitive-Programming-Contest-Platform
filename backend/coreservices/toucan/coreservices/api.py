@@ -30,4 +30,4 @@ app.add_routes(routes)
 
 async def run():
     """Start api using existing event loop."""
-    await web._run_app(app, port=8080)
+    await web._run_app(app, port=3000)

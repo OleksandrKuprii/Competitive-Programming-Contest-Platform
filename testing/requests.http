@@ -1,9 +1,9 @@
-POST http://localhost:8080/api/submission HTTP/1.1
+POST http://localhost:3000/api/submission HTTP/1.1
 content-type: application/json
 
 {
     "user_id": 1,
-    "task_id": 1,
+    "task_id": 2,
     "lang": "python3",
     "code": "print (0)"
 }
