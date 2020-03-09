@@ -1,11 +1,18 @@
 """Module for accessing Toucan Runner VM."""
-import asyncio
+import os
+
+import boto3
 
 from toucan.dataclass import SubmissionToRunner
 
-queue = asyncio.Queue()
+sqs = boto3.resource('sqs')
+
+queue_url = os.getenv('SUBMISSIONS_QUEUE_URL')
+
+assert queue_url is not None
+
+queue = sqs.Queue(queue_url)
 
 
 async def add_submission(submission_to_runner: SubmissionToRunner):
     """Put submission into queue."""
-    await queue.put(submission_to_runner)
