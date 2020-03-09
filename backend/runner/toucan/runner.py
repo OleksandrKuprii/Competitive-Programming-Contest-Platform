@@ -1,8 +1,8 @@
 """Actual Toucan Runner logic."""
 import json
+import multiprocessing as mp
 import os
 import tempfile
-import multiprocessing as mp
 import time
 
 import boto3
@@ -90,8 +90,7 @@ def worker():
 
 def main():
     """Act like runner entry point."""
-
-    for i in range(5):
+    for _ in range(5):
         mp.Process(target=worker).start()
 
     while True:
