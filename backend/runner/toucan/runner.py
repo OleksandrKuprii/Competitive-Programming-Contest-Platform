@@ -32,6 +32,8 @@ def worker():
             time.sleep(5)
             continue
 
+        print(submission_to_runner)
+
         image = lang_to_image[submission_to_runner.lang]
 
         path = toucan.storage.download_submission_code(
