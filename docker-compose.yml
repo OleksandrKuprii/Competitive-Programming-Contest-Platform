@@ -16,6 +16,7 @@ services:
     environment:
       - SERVICES=sqs,s3
     volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - localstack-tmp:/tmp/localstack
 volumes:
   database-data:
+  localstack-tmp:
