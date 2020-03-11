@@ -11,8 +11,8 @@ class ResultToDB:
     test_id: int
     status: str
     points: int
-    wall_time: float
-    cpu_time: float
+    wall_time: int
+    cpu_time: int
 
 
 @dataclass
@@ -33,9 +33,9 @@ class SubmissionToRunner:
     submission_id: int
     test_ids: List[int]
     lang: str
-    wall_time_limit: float
-    cpu_time_limit: float
-    memory_limit: float
+    wall_time_limit: int
+    cpu_time_limit: int
+    memory_limit: int
 
 
 @dataclass
@@ -53,6 +53,8 @@ class TestResult:
     test_id: int
     status: str
     result: str
+    wall_time: int
+    cpu_time: int
 
 
 @dataclass
