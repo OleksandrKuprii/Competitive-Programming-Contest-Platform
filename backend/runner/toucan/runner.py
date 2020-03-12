@@ -53,6 +53,7 @@ def worker():
             container = client.containers.run(
                 image, f'sh -c "cd /usr/app;'
                 f'ulimit -t {submission_to_runner.cpu_time_limit};'
+                f'timeout -t {submission_to_runner.wall_time_limit}'
                 f'python3 ./{filename}"',
                 network_disabled=True,
                 detach=True,
@@ -99,17 +100,20 @@ def worker():
             memory_usage = stats_all[-1]['memory_stats'][
                 'max_usage'] / 1024 / 1024
 
-            if result['StatusCode'] == 0:
-                with os.fdopen(tmpfile, 'r') as tmpfile_file:
-                    results.append(
-                        TestResult(submission_to_runner.test_ids[i], 'Success',
-                                   tmpfile_file.read(), 1000, 1000))
-            elif result['StatusCode'] == 137:
+            if result['StatusCode'] == 137:
                 results.append(
                     TestResult(
-                        submission_to_runner.test_ids[i], 'ME'
+                        submission_to_runner.test_ids[i], 'OutOfMemory'
                         if memory_usage >= submission_to_runner.memory_limit
-                        else 'TL', None, 1000, 1000))
+                        else 'TimeLimit', None, 1000, 1000))
+            else:
+                contents = None
+                with os.fdopen(tmpfile, 'r') as tmpfile_file:
+                    contents = tmpfile_file.read()
+
+                results.append(
+                    TestResult(submission_to_runner.test_ids[i], 'Success',
+                               contents, 1000, 1000))
 
             container.remove()
 
