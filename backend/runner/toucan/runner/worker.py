@@ -3,14 +3,17 @@ import multiprocessing as mp
 import time
 import os
 import tempfile
+import typing
 
 from queue import Empty as QueueEmptyException
 
-from toucan.dataclass import SubmissionToRunner
+from toucan.dataclass import SubmissionToRunner, TestResult
 
 import toucan.storage
 
 import docker
+
+import toucan.runner.parse_time
 
 client = docker.from_env()
 
@@ -30,8 +33,9 @@ def worker(queue: mp.Queue):
 
 def execute_test(image: str, submission_code_abspath: str,
                  submission_code_path_basename: str, input_abspath: str,
-                 memory_limit: int, wall_time_limit: int, cpu_time_limit: int):
-    tmpfile, tmpfilename = tempfile.mkstemp()
+                 memory_limit: int, wall_time_limit: int,
+                 cpu_time_limit: int) -> typing.Callable[[int], TestResult]:
+    tmpfilefd, tmpfilename = tempfile.mkstemp()
 
     container = client.containers.run(
         image, f'bash -c "cd /usr/app;'
@@ -56,11 +60,37 @@ def execute_test(image: str, submission_code_abspath: str,
         },
         mem_limit=f'{memory_limit}M')
 
-    result = container.wait()
+    try:
+        result = container.wait()
 
-    print(container.logs())
+        status_code = result['StatusCode']
 
-    container.remove()
+        if status_code == 0:
+            logs = str(container.logs(), 'ascii')
+
+            if not toucan.runner.parse_time.check(logs):
+                return lambda test_id: TestResult(test_id, 'UnknownError',
+                                                  None, None, None, None)
+
+            real, user, _sys = toucan.runner.parse_time.parse(logs)
+
+            if user > cpu_time_limit:
+                return lambda test_id: TestResult(test_id, 'TimeLimit', None,
+                                                  real, user)
+
+            with os.fdopen(tmpfilefd) as tmpfile:
+                result = tmpfile.read()
+
+            return lambda test_id: TestResult(test_id, 'Success', result, real,
+                                              user)
+        elif status_code == 137:
+            return lambda test_id: TestResult(test_id, 'OutOfMemory', None,
+                                              None, None)
+        else:
+            return lambda test_id: TestResult(test_id, 'RuntimeError', None,
+                                              None, None)
+    finally:
+        container.remove()
 
     print(result)
 
@@ -79,11 +109,13 @@ def execute_tests(submission_to_runner: SubmissionToRunner):
 
     submission_code_path = os.path.abspath(submission_code_path)
 
-    for i, input_path in enumerate(
+    for test_id, input_path in zip(
+            submission_to_runner.test_ids,
             toucan.storage.download_inputs(submission_to_runner.test_ids)):
-        execute_test(container_image,
-                     submission_code_path, submission_code_path_basename,
-                     os.path.abspath(input_path),
-                     submission_to_runner.memory_limit,
-                     submission_to_runner.wall_time_limit,
-                     submission_to_runner.cpu_time_limit)
+        print(
+            execute_test(container_image, submission_code_path,
+                         submission_code_path_basename,
+                         os.path.abspath(input_path),
+                         submission_to_runner.memory_limit,
+                         submission_to_runner.wall_time_limit,
+                         submission_to_runner.cpu_time_limit)(test_id))
