@@ -1,19 +1,16 @@
 """Worker logic."""
 import multiprocessing as mp
-import time
 import os
 import tempfile
+import time
 import typing
-
 from queue import Empty as QueueEmptyException
-
-from toucan.dataclass import SubmissionToRunner, TestResult
-
-import toucan.storage
 
 import docker
 
 import toucan.runner.parse_time
+import toucan.storage
+from toucan.dataclass import SubmissionToRunner, TestResult
 
 client = docker.from_env()
 
@@ -21,6 +18,7 @@ lang_to_image = {'python3': 'python:3.8-slim'}
 
 
 def worker(queue: mp.Queue):
+    """Run blocking worker."""
     while True:
         try:
             submission_to_runner = queue.get()
@@ -35,6 +33,7 @@ def execute_test(image: str, submission_code_abspath: str,
                  submission_code_path_basename: str, input_abspath: str,
                  memory_limit: int, wall_time_limit: int,
                  cpu_time_limit: int) -> typing.Callable[[int], TestResult]:
+    """Execute test for submission."""
     tmpfilefd, tmpfilename = tempfile.mkstemp()
 
     container = client.containers.run(
@@ -96,6 +95,7 @@ def execute_test(image: str, submission_code_abspath: str,
 
 
 def execute_tests(submission_to_runner: SubmissionToRunner):
+    """Execute all test for submission."""
     try:
         container_image = lang_to_image[submission_to_runner.lang]
     except IndexError:
