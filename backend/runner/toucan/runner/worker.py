@@ -10,7 +10,7 @@ import docker
 
 import toucan.runner.parse_time
 import toucan.storage
-from toucan.dataclass import SubmissionToRunner, TestResult
+from toucan.dataclass import SubmissionToRunner, TestResult, ResultToChecker
 
 client = docker.from_env()
 
@@ -23,7 +23,12 @@ def worker(queue: mp.Queue):
         try:
             submission_to_runner = queue.get()
 
-            execute_tests(submission_to_runner)
+            test_results = list(execute_tests(submission_to_runner))
+
+            result_to_checker = ResultToChecker(
+                submission_to_runner.submission_id, test_results)
+
+            print(result_to_checker)
         except QueueEmptyException:
             time.sleep(5)
             continue
@@ -64,6 +69,8 @@ def execute_test(image: str, submission_code_abspath: str,
 
         status_code = result['StatusCode']
 
+        print(container.logs(), result['Error'])
+
         if status_code == 0:
             logs = str(container.logs(), 'ascii')
 
@@ -94,7 +101,9 @@ def execute_test(image: str, submission_code_abspath: str,
     print(result)
 
 
-def execute_tests(submission_to_runner: SubmissionToRunner):
+def execute_tests(
+    submission_to_runner: SubmissionToRunner
+) -> typing.Generator[TestResult, None, None]:
     """Execute all test for submission."""
     try:
         container_image = lang_to_image[submission_to_runner.lang]
@@ -112,10 +121,9 @@ def execute_tests(submission_to_runner: SubmissionToRunner):
     for test_id, input_path in zip(
             submission_to_runner.test_ids,
             toucan.storage.download_inputs(submission_to_runner.test_ids)):
-        print(
-            execute_test(container_image, submission_code_path,
-                         submission_code_path_basename,
-                         os.path.abspath(input_path),
-                         submission_to_runner.memory_limit,
-                         submission_to_runner.wall_time_limit,
-                         submission_to_runner.cpu_time_limit)(test_id))
+        yield execute_test(container_image, submission_code_path,
+                           submission_code_path_basename,
+                           os.path.abspath(input_path),
+                           submission_to_runner.memory_limit,
+                           submission_to_runner.wall_time_limit,
+                           submission_to_runner.cpu_time_limit)(test_id)
