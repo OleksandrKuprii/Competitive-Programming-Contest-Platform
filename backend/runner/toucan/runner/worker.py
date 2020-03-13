@@ -10,7 +10,7 @@ import docker
 
 import toucan.runner.parse_time
 import toucan.storage
-from toucan.dataclass import SubmissionToRunner, TestResult, ResultToChecker
+from toucan.dataclass import ResultToChecker, SubmissionToRunner, TestResult
 
 client = docker.from_env()
 
