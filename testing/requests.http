@@ -3,7 +3,7 @@ content-type: application/json
 
 {
     "user_id": 1,
-    "task_id": 1,
+    "task_id": 2,
     "lang": "python3",
-    "code": "print (0)"
+    "code": "with open('input.txt') as input_file:\n a, b, n, m = map(int, input_file.read().split())\n\n yaroslav = a * n + b * m\n miroslava = a * m + b * n\n\n with open('output.txt', 'w') as output_file:\n  output_file.write('0\\n' if yaroslav == miroslava else '1\\n' if yaroslav > miroslava else '2\\n')"
 }

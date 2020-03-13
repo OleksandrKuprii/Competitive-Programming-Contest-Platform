@@ -2,10 +2,10 @@ INSERT INTO coreschema.users (username, email, role) VALUES ('SashaKuprii', 'a@c
 INSERT INTO coreschema.users (username, email, role) VALUES ('IgorZash', 'b@c.com', 'admin');
 INSERT INTO coreschema.users (username, email, role) VALUES ('ArthurSh', 'c@c.com', 'admin');
 
-INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('comics', 'Комікси', 1, 0.2, 256);
-INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('coins', 'Монети', 1, 0.2, 256);
-INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('stamps', 'Марки', 1, 0.2, 256);
-INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('wrappers', 'Фантики', 1, 0.2, 256);
+INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('comics', 'Комікси', 1000, 200, 256);
+INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('coins', 'Монети', 1000, 200, 256);
+INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('stamps', 'Марки', 1000, 200, 256);
+INSERT INTO coreschema.tasks (alias, name, wall_time_limit, cpu_time_limit, memory_limit) VALUES ('wrappers', 'Фантики', 1000, 200, 256);
 
 INSERT INTO coreschema.tests (points, task_id) VALUES (10, 1);
 INSERT INTO coreschema.tests (points, task_id) VALUES (10, 1);
