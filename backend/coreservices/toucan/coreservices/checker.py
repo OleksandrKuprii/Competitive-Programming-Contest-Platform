@@ -1,120 +1,56 @@
 """Checks user submission program output."""
-from typing import List
+import asyncio
+import typing
 
-from toucan.database import (add_results_to_db, change_submission_status,
-                             get_points_for_tests)
+import toucan.database
+import toucan.storage
 from toucan.dataclass import ResultToChecker, ResultToDB, TestResult
-from toucan.storage import get_correct_results
 
 
-async def get_result(result_to_checker: ResultToChecker) -> None:
-    """Check results, that user's program returned.
-
-    Compares with correct results for task in storage,
-    updates status in table 'submissions' in database and
-    inserts results to table 'results' in database
-
-    Parameters
-    ----------
-    result_to_checker : ResultToChecker
-        ResultToChecker object, that runner has returned
-    """
-    # Defining variables that get values from ResultToChecker object
-    submission_id = result_to_checker.submission_id
+async def process_result_to_checker(result_to_checker: ResultToChecker):
+    """Check result_to_checker and update corresponding rows in database."""
     test_ids = [x.test_id for x in result_to_checker.test_results]
 
-    # Getting correct results from storage module
-    correct_results = get_correct_results(test_ids)
+    correct_results = toucan.storage.get_correct_results(test_ids)
 
-    # Getting points for tests from database module
-    points = await get_points_for_tests(test_ids)
+    points = await toucan.database.get_points_for_tests(test_ids)
 
-    # Checking result by calling local function
-    result_to_db = check_result(result_to_checker.test_results,
-                                correct_results, submission_id, points)
+    results_to_db = (
+        result_to_db_without_submission_id(result_to_checker.submission_id)
+        for result_to_db_without_submission_id in check_test_results(
+            result_to_checker.test_results, correct_results,
+            result_to_checker.submission_id, points))
 
-    # Adding results to database by database module
-    await add_results_to_db(result_to_db)
+    # Updates data in db
+    await asyncio.gather(
+        toucan.database.add_results_to_db(results_to_db),
+        toucan.database.change_submission_status(
+            result_to_checker.submission_id, 'Completed'))
 
-    # Changing submission status by database module
-    await change_submission_status(submission_id, 'Completed')
 
+def check_test_results(
+    test_results: typing.List[TestResult], correct_results: typing.List[str],
+    points_list: typing.List[int]
+) -> typing.Generator[typing.Callable[int, ResultToDB], None, None]:
+    """Compare correct results with given, calculate points.
 
-def check_result(test_results: List[TestResult], correct_results: List[str],
-                 submission_id: int,
-                 points_list: List[int]) -> List[ResultToDB]:
-    """Check results for all tests and form ResultToDB dataclass.
-
-    Parameters
-    ----------
-    test_results : List[TestResult]
-        The list of TestResult objects
-    correct_results : List[str]
-        Correct results for all tests
-    submission_id : int
-        The id of this submission
-    points_list : List[int]
-        The value of correct answer for each test
-
-    Returns
-    -------
-    result_to_db : List[ResultToDB]
-        The list of ResultToDB objects
+    Returns anonymous ResultToDB instances -
+    submission_id should be given as an argument.
     """
-    def check_one(output: str, right: str) -> str:
-        """Check equality of too strings.
+    for test_result, correct, points in zip(test_results, correct_results,
+                                            points_list):
+        status = test_result.status  # Inherit status from runner
 
-        Parameters
-        ----------
-        output : str
-            The output from user's program for this test
-        right : str
-            The correct output for this test
+        test_points = 0  # points for current test
 
-        Returns
-        -------
-        _ : str
-            The status for this checking
-            OK - result is correct
-            WA - result is incorrect
-        """
-        output = output.strip()
-        right = right.strip()
+        # Checks only successfully executed tests
+        if status == 'Success':
+            if test_result.result.strip() == correct.strip():
+                status = 'Correct'
+                test_points = points  # gives points for correct output
+            else:
+                status = 'WrongAnswer'
 
-        if output == right:
-            return 'OK'
-        return 'WA'
-
-    results_to_db = list()
-
-    # Zipping all variables into one iterable for each test
-    for test_result, correct, point in\
-            zip(test_results, correct_results, points_list):
-
-        # Defining variables that get value from TestResult dataclass
-        # properties
-        test_id = test_result.test_id
-        status = test_result.status
-        result = test_result.result
-        wall_time = test_result.wall_time
-        cpu_time = test_result.cpu_time
-
-        # Default points is 0 - for wrong answer, later if answer
-        # correct - updating to :point value
-        points = 0
-
-        # Checking one test if runner returned 'SS' status
-        if status == 'SS':
-            status = check_one(result, correct)
-
-        # Updating :points value if result is correct
-        if status == 'OK':
-            points = point
-
-        # Defining ResultToDB object for one checked result
-        result_to_db = ResultToDB(submission_id, test_id, status, points,
-                                  wall_time, cpu_time)
-
-        results_to_db.append(result_to_db)
-
-    return results_to_db
+        yield lambda submission_id: ResultToDB(
+            submission_id, test_result.test_id, status, test_points,
+            test_result.wall_time, test_result.cpu_time)
