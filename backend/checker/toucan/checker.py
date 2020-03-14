@@ -31,7 +31,7 @@ async def process_result_to_checker(result_to_checker: ResultToChecker):
 def check_test_results(
     test_results: typing.List[TestResult], correct_results: typing.List[str],
     points_list: typing.List[int]
-) -> typing.Generator[typing.Callable[int, ResultToDB], None, None]:
+) -> typing.Generator[typing.Callable[[int], ResultToDB], None, None]:
     """Compare correct results with given, calculate points.
 
     Returns anonymous ResultToDB instances -
@@ -54,3 +54,7 @@ def check_test_results(
         yield lambda submission_id: ResultToDB(
             submission_id, test_result.test_id, status, test_points,
             test_result.wall_time, test_result.cpu_time)
+
+
+if __name__ == '__main__':
+    print('Not implemented')

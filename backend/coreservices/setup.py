@@ -6,8 +6,8 @@ microlib_name = 'toucan.coreservices'
 
 setup(name=microlib_name,
       py_modules=[
-          'toucan.coreservices.api', 'toucan.coreservices.checker',
-          'toucan.coreservices.runner', 'toucan.coreservices.submission'
+          'toucan.coreservices.api', 'toucan.coreservices.runner',
+          'toucan.coreservices.submission'
       ],
       namespace_packages=['toucan'],
       install_requires=[
