@@ -41,3 +41,4 @@ test:
     - (cd backend/storage; tox)
     - (cd backend/runner; mkdir -p storage/submissions; mkdir -p storage/tests; tox)
     - (cd backend/coreservices; tox)
+    - (cd backend/checker; tox)
