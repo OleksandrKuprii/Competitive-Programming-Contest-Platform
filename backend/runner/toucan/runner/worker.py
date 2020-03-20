@@ -40,8 +40,8 @@ def worker(queue: mp.Queue):
             result_to_checker = ResultToChecker(
                 submission_to_runner.submission_id, test_results)
 
-            results_queue.send_message(MessageBody=json.dumps(
-                dataclasses.asdict(result_to_checker)))
+            results_queue.send_message(
+                MessageBody=json.dumps(dataclasses.asdict(result_to_checker)))
         except QueueEmptyException:
             time.sleep(5)
             continue
