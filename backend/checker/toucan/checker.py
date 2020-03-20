@@ -1,8 +1,8 @@
 """Checks user submission program output."""
-import os
 import asyncio
-import typing
 import json
+import os
+import typing
 from pprint import pprint
 
 import boto3
@@ -67,6 +67,7 @@ def check_test_results(
 
 
 async def main():
+    """Run checker."""
     if 'PG_CONN' in os.environ:
         await toucan.database.establish_connection(
             os.getenv('POSTGRES_CONNECTION_STRING'))

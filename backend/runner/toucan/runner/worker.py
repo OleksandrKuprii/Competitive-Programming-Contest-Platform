@@ -1,16 +1,16 @@
 """Worker logic."""
-from queue import Empty as QueueEmptyException
+import dataclasses
 import json
 import multiprocessing as mp
 import os
 import tempfile
 import time
 import typing
-import dataclasses
-
-import docker
+from queue import Empty as QueueEmptyException
 
 import boto3
+
+import docker
 
 import toucan.runner.parse_time
 import toucan.storage
