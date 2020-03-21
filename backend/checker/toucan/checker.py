@@ -1,11 +1,6 @@
 """Checks user submission program output."""
-import asyncio
-import json
 import os
 import typing
-from pprint import pprint
-
-import boto3
 
 import toucan.database
 import toucan.storage
@@ -34,8 +29,6 @@ async def process_result_to_checker(result_to_checker: ResultToChecker):
     await toucan.database.change_submission_status(
         result_to_checker.submission_id, 'Completed')
 
-    print('I AM READY. I FINISHED :)')
-
 
 def check_test_results(
     test_results: typing.List[TestResult], correct_results: typing.List[str],
@@ -48,7 +41,6 @@ def check_test_results(
     """
     for test_result, correct, points in zip(test_results, correct_results,
                                             points_list):
-        print(test_result.result, correct)
         status = test_result.status  # Inherit status from runner
 
         test_points = 0  # points for current test
@@ -64,51 +56,3 @@ def check_test_results(
         yield lambda submission_id: ResultToDB(
             submission_id, test_result.test_id, status, test_points,
             test_result.wall_time, test_result.cpu_time)
-
-
-async def main():
-    """Run checker."""
-    if 'PG_CONN' in os.environ:
-        await toucan.database.establish_connection(
-            os.getenv('POSTGRES_CONNECTION_STRING'))
-    else:
-        await toucan.database.establish_connection_params(
-            host=os.getenv('POSTGRES_HOST', 'localhost'),
-            user=os.getenv('POSTGRES_USER'),
-            password=os.getenv('POSTGRES_PASSWORD'),
-            database=os.getenv('POSTGRES_DB'))
-
-    sqs = boto3.resource('sqs', endpoint_url=os.getenv('SQS_ENDPOINT'))
-
-    queue = sqs.Queue(url=RESULTS_QUEUE_URL)
-
-    while True:
-        messages = queue.receive_messages(MaxNumberOfMessages=10,
-                                          WaitTimeSeconds=20)
-
-        if not messages:
-            continue
-
-        tasks = []
-
-        for message in messages:
-            result_to_checker_json = json.loads(message.body)
-
-            pprint(result_to_checker_json)
-
-            result_to_checker = ResultToChecker(
-                submission_id=result_to_checker_json['submission_id'],
-                test_results=[
-                    TestResult(**t)
-                    for t in result_to_checker_json['test_results']
-                ])
-
-            tasks.append(process_result_to_checker(result_to_checker))
-
-            message.delete()
-
-        await asyncio.wait(tasks)
-
-
-if __name__ == '__main__':
-    asyncio.run(main())
