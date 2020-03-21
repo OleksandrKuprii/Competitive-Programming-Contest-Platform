@@ -1,10 +1,7 @@
 """Worker logic."""
-import asyncio
 import os
 import tempfile
-import time
 import typing
-from queue import Empty as QueueEmptyException, Queue
 
 import docker
 
@@ -20,6 +17,7 @@ lang_to_image = {'python3': 'python:3.8-slim'}
 
 def process_submission_to_runner(
         submission_to_runner: SubmissionToRunner) -> ResultToChecker:
+    """Run SubmissionToRunner and return ResultToChecker."""
     test_results = list(execute_tests(submission_to_runner))
 
     result_to_checker = ResultToChecker(submission_to_runner.submission_id,
