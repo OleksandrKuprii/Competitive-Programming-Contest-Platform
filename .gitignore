@@ -3,5 +3,5 @@
 .vscode
 .coverage
 /htmlcov
-_*
+_storage
 venv
