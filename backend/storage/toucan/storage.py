@@ -76,8 +76,6 @@ def download_submission_code(submission_id: int, lang: str) -> str:
 
     path = f'{LOCAL_STORAGE_ROOT}/submissions/{submission_id}.{ext}'
 
-    print(path)
-
     s3.Bucket(SUBMISSIONS_BUCKET).download_file(str(submission_id), path)
 
     return path

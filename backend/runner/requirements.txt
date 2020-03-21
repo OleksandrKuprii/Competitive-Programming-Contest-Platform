@@ -2,4 +2,5 @@
 ../dataclass/
 ../database/
 ../storage/
+../checker/
 -e .

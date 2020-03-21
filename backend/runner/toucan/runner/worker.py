@@ -1,17 +1,11 @@
 """Worker logic."""
-import dataclasses
-import json
-import multiprocessing as mp
 import os
 import tempfile
-import time
 import typing
-from queue import Empty as QueueEmptyException
-
-import boto3
 
 import docker
 
+import toucan.checker
 import toucan.runner.parse_time
 import toucan.storage
 from toucan.dataclass import ResultToChecker, SubmissionToRunner, TestResult
@@ -20,31 +14,16 @@ client = docker.from_env()
 
 lang_to_image = {'python3': 'python:3.8-slim'}
 
-RESULTS_QUEUE_URL = os.getenv('RESULTS_QUEUE_URL')
 
-assert RESULTS_QUEUE_URL is not None
+def process_submission_to_runner(
+        submission_to_runner: SubmissionToRunner) -> ResultToChecker:
+    """Run SubmissionToRunner and return ResultToChecker."""
+    test_results = list(execute_tests(submission_to_runner))
 
+    result_to_checker = ResultToChecker(submission_to_runner.submission_id,
+                                        test_results)
 
-def worker(queue: mp.Queue):
-    """Run blocking worker."""
-    sqs = boto3.resource('sqs', endpoint_url=os.getenv('SQS_ENDPOINT'))
-
-    results_queue = sqs.Queue(url=RESULTS_QUEUE_URL)
-
-    while True:
-        try:
-            submission_to_runner = queue.get()
-
-            test_results = list(execute_tests(submission_to_runner))
-
-            result_to_checker = ResultToChecker(
-                submission_to_runner.submission_id, test_results)
-
-            results_queue.send_message(
-                MessageBody=json.dumps(dataclasses.asdict(result_to_checker)))
-        except QueueEmptyException:
-            time.sleep(5)
-            continue
+    return result_to_checker
 
 
 def execute_test(image: str, submission_code_abspath: str,
@@ -108,8 +87,6 @@ def execute_test(image: str, submission_code_abspath: str,
                                               None, None)
     finally:
         container.remove()
-
-    print(result)
 
 
 def execute_tests(
