@@ -1,4 +1,5 @@
 """Handles database logic."""
+import os
 from datetime import datetime
 from typing import List
 
@@ -10,7 +11,19 @@ from toucan.dataclass import ResultToDB, SubmissionToDB
 conn = None
 
 
-async def establish_connection(connection_string: str) -> None:
+async def establish_connection_from_env():
+    """Establish connection using environment vars."""
+    if 'PG_CONN' in os.environ:
+        await establish_connection(os.getenv('POSTGRES_CONNECTION_STRING'))
+    else:
+        await establish_connection_params(
+            host=os.getenv('POSTGRES_HOST', 'localhost'),
+            user=os.getenv('POSTGRES_USER'),
+            password=os.getenv('POSTGRES_PASSWORD'),
+            database=os.getenv('POSTGRES_DB'))
+
+
+async def establish_connection(connection_string: str):
     """Establish connection to the database.
 
     Parameters
@@ -21,7 +34,7 @@ async def establish_connection(connection_string: str) -> None:
     conn = await asyncpg.connect(connection_string)
 
 
-async def establish_connection_params(**kwargs: dict) -> None:
+async def establish_connection_params(**kwargs: dict):
     """Establish connection to the database.
 
     Parameters

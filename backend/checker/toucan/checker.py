@@ -1,14 +1,9 @@
 """Checks user submission program output."""
-import os
 import typing
 
 import toucan.database
 import toucan.storage
 from toucan.dataclass import ResultToChecker, ResultToDB, TestResult
-
-RESULTS_QUEUE_URL = os.getenv('RESULTS_QUEUE_URL')
-
-assert RESULTS_QUEUE_URL is not None
 
 
 async def process_result_to_checker(result_to_checker: ResultToChecker):

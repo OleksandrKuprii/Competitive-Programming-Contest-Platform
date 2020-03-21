@@ -17,15 +17,7 @@ assert SUBMISSIONS_QUEUE_URL is not None
 
 async def main():
     """Run runner."""
-    if 'PG_CONN' in os.environ:
-        await toucan.database.establish_connection(
-            os.getenv('POSTGRES_CONNECTION_STRING'))
-    else:
-        await toucan.database.establish_connection_params(
-            host=os.getenv('POSTGRES_HOST', 'localhost'),
-            user=os.getenv('POSTGRES_USER'),
-            password=os.getenv('POSTGRES_PASSWORD'),
-            database=os.getenv('POSTGRES_DB'))
+    await toucan.database.establish_connection_from_env()
 
     sqs = boto3.resource('sqs', endpoint_url=os.getenv('SQS_ENDPOINT'))
 
