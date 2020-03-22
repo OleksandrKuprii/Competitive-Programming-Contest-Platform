@@ -32,3 +32,15 @@ content-type: application/json
 }
 
 ###
+
+POST http://localhost:3000/api/submission HTTP/1.1
+content-type: application/json
+
+{
+    "user_id": 1,
+    "task_id": 4,
+    "lang": "python3",
+    "code": "with open('input.txt') as f:\n    n = int(f.readline().split()[0])\n\n    matrix = []\n    for i in range(n):\n        matrix.append([])\n        for _ in range(n):\n            matrix[i].append(1)\n        matrix[i][i] = 0\n\n\n    for x in f.readlines():\n        i, j = map(lambda x: int(x) - 1, x.split())\n        matrix[i][j] = 0\n        matrix[j][i] = 0\n\ndef cycle(data):\n    for i in data.copy():\n        data.remove(i)\n        for j in data:\n            if matrix[i][j] == 0:\n                return False\n    return True\n\n\ndef find_neighbours(v):\n    res = []\n    for i in range(len(matrix[0])):\n        if matrix[v][i] == 1:\n            res.append(i)\n    return res\n\n\ndef find_all_chains(data, chain):\n    for x in set(find_neighbours(chain[-1])) & set(data):\n        if cycle(chain + [x]):\n            if cycle(set(range(n)) - set(chain + [x])):\n                return sorted(chain + [x]), set(range(n)) - set(chain + [x])\n            return find_all_chains(data, chain + [x])\n        else:\n            continue\n\n\nstart_vertex = 0\n\narray = [start_vertex]\nfor i in range(len(matrix[start_vertex])):\n    if matrix[start_vertex][i] == 1:\n        array.append(i)\n\nif cycle(array.copy()) and cycle(set(range(n)) - set(array)):\n    if 0 in array:\n        res = ' '.join(map(lambda x: str(x + 1), sorted(array))) + '\\n' + ' '.join(map(lambda x: str(x + 1), set(range(n)) - set(array))) + '\\n'\n    else:\n        res = ' '.join(map(lambda x: str(x + 1), set(range(n)) - set(array))) + '\\n' + ' '.join(map(lambda x: str(x + 1), sorted(array))) + '\\n'\nelse:\n    if len(array) == 1:\n        res = '0\\n0\\n'\n    else:\n        a, b = find_all_chains(array, [0])\n        if 0 in a:\n            res = ' '.join(map(lambda x: str(x + 1), a)) + '\\n' + ' '.join(map(lambda x: str(x + 1), b)) + '\\n'\n        else:\n            res = ' '.join(map(lambda x: str(x + 1), b)) + '\\n' + ' '.join(map(lambda x: str(x + 1), a)) + '\\n'\n\nwith open('output.txt', 'w') as f:\n    f.write(res)\n"
+}
+
+###
