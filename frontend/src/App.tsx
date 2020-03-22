@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import HomePage from './routes/HomePage';
 import TasksPage from './routes/TasksPage';
 import TournamentsPage from './routes/TournamentsPage';
+import TaskPage from './routes/TaskPage';
 
 const App = () => (
   <HashRouter>
@@ -14,6 +15,10 @@ const App = () => (
       <Switch>
         <Route path="/tournaments">
           <TournamentsPage></TournamentsPage>
+        </Route>
+
+        <Route path="/task/view/:taskAlias">
+          <TaskPage></TaskPage>
         </Route>
 
         <Route path="/tasks">

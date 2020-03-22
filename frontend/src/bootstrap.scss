@@ -20,12 +20,12 @@ body {
     font-family: 'Montserrat Alternates', sans-serif;
 }
 
-thead {
+thead.tasklist {
     border-bottom: 6px #666 solid;
     padding-bottom: 6px;
 }
 
-thead th {
+thead.tasklist th {
     background-color: $body-bg;
 }
 
@@ -51,4 +51,8 @@ thead th {
 
 .red_color {
     color: #c13525;
+}
+
+hr {
+    border: 2px #555 solid;
 }
