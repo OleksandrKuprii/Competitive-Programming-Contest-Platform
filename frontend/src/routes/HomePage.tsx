@@ -8,8 +8,8 @@ const Homepage = () => {
     return (
         <>
             <Jumbotron>
-                <p className="h1">{t('homepage:welcome')}</p>
-                <p className="lead">{t('homepage:description')}</p>
+                <p className="h1">{t('homepage.welcome')}</p>
+                <p className="lead">{t('homepage.description')}</p>
                 <p>
                     <Button variant="primary">{t('learnmore')}</Button>
                 </p>

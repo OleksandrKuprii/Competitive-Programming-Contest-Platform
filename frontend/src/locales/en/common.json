@@ -1,4 +1,40 @@
 {
     "brandname": "Toucan",
-    "learnmore": "Learn more"
+    "learnmore": "Learn more",
+    "homepage": {
+        "welcome": "Welcome to Toucan!",
+        "description": "a powerful programming contest platform"
+    },
+    "pagename": {
+        "tasks": "Public tasks",
+        "tournaments": "Tournaments",
+        "profile": "Profile"
+    },
+    "taskspage": {
+        "description": "Explore public tasks"
+    },
+    "tasklist": {
+        "header": {
+            "name": "Name",
+            "category": "Category",
+            "difficulty": "Difficulty",
+            "rating": "Rating",
+            "myresult": "My Result"
+        }
+    },
+    "taskpage": {
+        "description": {
+            "inputformat": "Input format",
+            "outputformat": "Output format"
+        },
+        "examples": "Examples",
+        "limits": {
+            "cpu": "CPU time limit",
+            "wall": "Wall time limit",
+            "memory": "Memory limit"
+        },
+        "inputfile": "Input file",
+        "outputfile": "Output file",
+        "submitsolution": "Submit solution"
+    }
 }

@@ -3,9 +3,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
 import en_common from './locales/en/common.json';
-import en_pagenames from './locales/en/pagenames.json';
-import en_homepage from './locales/en/homepage.json';
-import en_taskspage from './locales/en/taskspage.json';
+
+console.log(en_common)
 
 i18n
   .use(LanguageDetector)
@@ -15,19 +14,16 @@ i18n
     resources: {
       en: {
         common: en_common,
-        pagenames: en_pagenames,
-        homepage: en_homepage,
-        taskspage: en_taskspage
       }
     },
     fallbackLng: "en",
     debug: true,
 
     // have a common namespace used around the full app
-    ns: ["common", "pagenames", "homepage", "taskspage"],
+    ns: ["common"],
     defaultNS: "common",
 
-    keySeparator: false, // we use content as keys
+    keySeparator: '.',
 
     interpolation: {
       escapeValue: false

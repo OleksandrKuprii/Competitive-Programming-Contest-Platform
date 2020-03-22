@@ -1,3 +1,5 @@
+@use "sass:map";
+
 $body-bg: #111;
 $body-color: #aaa;
 
@@ -16,4 +18,41 @@ $spacer: 50px;
 
 body {
     font-family: 'Montserrat Alternates', sans-serif;
+}
+
+thead.tasklist {
+    border-bottom: 6px #666 solid;
+    padding-bottom: 6px;
+}
+
+thead.tasklist th {
+    background-color: $body-bg;
+}
+
+.green_background {
+    background: #6da06f;
+}
+
+.green_color {
+    color: #6da06f;
+}
+
+.yellow_background {
+    background: #ffbb43;
+}
+
+.yellow_color {
+    color: #ffbb43;
+}
+
+.red_background {
+    background: #c13525;
+}
+
+.red_color {
+    color: #c13525;
+}
+
+hr {
+    border: 2px #555 solid;
 }

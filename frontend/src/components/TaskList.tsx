@@ -1,31 +1,56 @@
 import * as React from 'react';
 import { Table } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import RatingHistogram, { Rating } from './RatingHistogram';
+import Difficulty from './Difficulty';
+import MyResult from './MyResult';
+import { Link } from 'react-router-dom';
+
 
 export interface Task {
+    alias: string
     taskName: string
     category: string
-    difficulity: string
-    status: string
+    difficulty: number
+    rating: Rating
+    myresult: number
+    description: { main: string, input_format: string, output_format: string },
+    examples: { input: string, output: string }[],
+    limits: { cpu_time: number, wall_time: number, memory: number }
 }
 
 function TaskList(props: { tasks: Task[] }) {
+    const { t } = useTranslation();
+
     return (
-        <Table striped bordered hover variant="dark">
-            <thead>
+        <Table striped hover variant="dark" size='sm' borderless>
+            <thead className="tasklist">
                 <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Difficulity</th>
-                    <th>Status</th>
+                    {[t('tasklist.header.name'),
+                    t('tasklist.header.category'),
+                    t('tasklist.header.difficulty'),
+                    t('tasklist.header.rating'),
+                    t('tasklist.header.myresult')].map((header) => (
+                        <th style={{ fontSize: 18 }}>{header}</th>
+                    ))}
                 </tr>
             </thead>
             <tbody>
                 {props.tasks.map((task, i) =>
-                    <tr>
-                        <td>{task.taskName}</td>
+                    <tr key={i}>
+                        <td>
+                            <Link to={`/task/view/${task.alias}`} style={{color: 'white'}}>{task.taskName}</Link>
+                        </td>
                         <td>{task.category}</td>
-                        <td>{task.difficulity}</td>
-                        <td>{task.status}</td>
+                        <td>
+                            <Difficulty difficulty={task.difficulty}></Difficulty>
+                        </td>
+                        <td>
+                            <RatingHistogram rating={task.rating}></RatingHistogram>
+                        </td>
+                        <td>
+                            <MyResult points={task.myresult}></MyResult>
+                        </td>
                     </tr>
                 )}
             </tbody>
