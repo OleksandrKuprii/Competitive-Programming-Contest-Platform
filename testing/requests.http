@@ -2,10 +2,33 @@ POST http://localhost:3000/api/submission HTTP/1.1
 content-type: application/json
 
 {
+    "user_id": 2,
+    "task_id": 2,
+    "lang": "python3",
+    "code": "with open('input.txt') as f:\n    a, b, n, m = map(int, f.read().split())\nyarik = a * m + b * m\nmyr = a * m + b * n\nif yarik > myr:\n    res = 1\nelif myr > yarik:\n    res = 2\nelif yarik == myr:\n    res = 0\nwith open('output.txt', 'w') as f:\n    f.write(str(res) + '\\n')"
+}
+
+###
+POST http://localhost:3000/api/submission HTTP/1.1
+content-type: application/json
+
+{
     "user_id": 1,
     "task_id": 2,
     "lang": "python3",
     "code": "with open('input.txt') as input_file:\n a, b, n, m = map(int, input_file.read().split())\n\n yaroslav = a * n + b * m\n miroslava = a * m + b * n\n\n with open('output.txt', 'w') as output_file:\n  output_file.write('0\\n' if yaroslav == miroslava else '1\\n' if yaroslav > miroslava else '2\\n')"
+}
+
+###
+
+POST http://localhost:3000/api/submission HTTP/1.1
+content-type: application/json
+
+{
+    "user_id": 1,
+    "task_id": 3,
+    "lang": "python3",
+    "code": "with open('input.txt') as f:\n    n = int(f.readline())\n    stamps = list(map(int, f.readline().split()))\n\nstamps.sort()\n\nfor stamp in stamps[1:]:\n    yarik = [stamps[0]]\n    myr = []\n    start = stamps[0]\n    if stamp + stamp - start in stamps:\n        delta = stamp - start\n        for x in stamps[1:]:\n            if yarik[-1] + delta == x:\n                yarik.append(x)\n            else:\n                myr.append(x)\n        if len(yarik) == n:\n            break\n\nwith open('output.txt', 'w') as f:\n    f.write(' '.join(map(str, yarik)) + '\\n')\n    f.write(' '.join(map(str, myr)) + '\\n')\n"
 }
 
 ###
