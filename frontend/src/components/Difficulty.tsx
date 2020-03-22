@@ -10,10 +10,10 @@ const Difficulty = (props: { difficulty: number }) => {
     return (
         <>
             {Array(stars).fill(0).map(() => (
-                <FaStar color="#f3b800"></FaStar>
+                <FaStar color="#ffbb43"></FaStar>
             ))}
 
-            {halfStar ? <FaStarHalf color="#f3b800"></FaStarHalf> : <></> }
+            {halfStar ? <FaStarHalf color="#ffbb43"></FaStarHalf> : <></> }
         </>
     )
 }
