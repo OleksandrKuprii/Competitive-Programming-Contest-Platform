@@ -1,4 +1,25 @@
 {
     "brandname": "Toucan",
-    "learnmore": "Learn more"
+    "learnmore": "Learn more",
+    "homepage": {
+        "welcome": "Welcome to Toucan!",
+        "description": "a powerful programming contest platform"
+    },
+    "pagename": {
+        "tasks": "Public tasks",
+        "tournaments": "Tournaments",
+        "profile": "Profile"
+    },
+    "taskspage": {
+        "description": "Explore public tasks"
+    },
+    "tasklist": {
+        "header": {
+            "name": "Name",
+            "category": "Category",
+            "difficulty": "Difficulty",
+            "rating": "Rating",
+            "myresult": "My Result"
+        }
+    }
 }

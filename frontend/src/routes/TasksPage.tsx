@@ -8,13 +8,13 @@ const TasksPage = () => {
 
     return (
         <>
-            <h1>{t('pagenames:tasks')}</h1>
+            <h1>{t('pagename.tasks')}</h1>
 
-            <p>{t('taskspage:description')}</p>
+            <p>{t('taskspage.description')}</p>
 
-            <TaskList tasks={[{ taskName: 'BFS', category: 'Graphs', difficulity: 'Easy', status: 'Didn\'t solved' },
-                              { taskName: 'Hren na strukturu', category: 'Sishniki', difficulity: 'Hard', status: 'Solved' },
-                              { taskName: 'DIO', category: 'Anime', difficulity: 'JoJo', status: 'Died' }]}></TaskList>
+            <TaskList tasks={[{ taskName: 'BFS', category: 'Graphs', difficulty: 3, myresult: 100, rating: { correct_percent: 60, incorrect_percent: 10, zero_points_percent: 30 } },
+            { taskName: 'Hren na strukturu', category: 'Sishniki', difficulty: 8, myresult: -1, rating: { correct_percent: 20, incorrect_percent: 70, zero_points_percent: 10 } },
+            { taskName: 'DIO', category: 'Anime', difficulty: 5, myresult: 40, rating: { correct_percent: 50, incorrect_percent: 30, zero_points_percent: 20 } }]}></TaskList>
         </>
     );
 };

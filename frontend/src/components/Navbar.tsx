@@ -15,10 +15,10 @@ const _Navbar = () => {
                             <Nav.Link href="#/" style={{ fontWeight: 'bold', paddingLeft: 50, paddingRight: 50 }}>{t('brandname')}</Nav.Link>
                         </Col>
                         <Col>
-                            <Nav.Link href="#tournaments/">{t('pagenames:tournaments')}</Nav.Link>
+                            <Nav.Link href="#tournaments/">{t('pagename.tournaments')}</Nav.Link>
                         </Col>
                         <Col>
-                            <Nav.Link href="#tasks/">{t('pagenames:tasks')}</Nav.Link>
+                            <Nav.Link href="#tasks/">{t('pagename.tasks')}</Nav.Link>
                         </Col>
                     </Row>
                 </Nav>
