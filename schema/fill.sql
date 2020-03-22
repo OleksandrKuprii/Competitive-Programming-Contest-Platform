@@ -47,10 +47,3 @@ INSERT INTO coreschema.tests (points, task_id) VALUES (10, 4);
 INSERT INTO coreschema.tests (points, task_id) VALUES (10, 4);
 INSERT INTO coreschema.tests (points, task_id) VALUES (10, 4);
 INSERT INTO coreschema.tests (points, task_id) VALUES (10, 4);
---
-INSERT INTO coreschema.submissions (published_at, user_id, lang, task_id, status) VALUES ('2020-02-23 11:32:54.060000', 1, 'python3', 2, null);
-INSERT INTO coreschema.submissions (published_at, user_id, lang, task_id, status) VALUES ('2020-02-23 11:33:03.635000', 1, 'python3', 3, null);
-INSERT INTO coreschema.submissions (published_at, user_id, lang, task_id, status) VALUES ('2020-02-23 11:33:13.074000', 1, 'python3', 4, null);
-INSERT INTO coreschema.submissions (published_at, user_id, lang, task_id, status) VALUES ('2020-02-23 11:32:26.042000', 1, 'python3', 1, 'Completed');
-
-INSERT INTO coreschema.results (status, points, submission_id, test_id, wall_time, cpu_time) VALUES ('', 10, 1, 1, 0.5, 0.124);
