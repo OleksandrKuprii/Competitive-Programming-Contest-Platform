@@ -4,6 +4,7 @@ from datetime import datetime
 from aiohttp import web
 
 from toucan.dataclass import UserSubmission
+from toucan.task import get_task_info
 
 from .submission import add_submission
 
@@ -20,6 +21,14 @@ async def handle(request):
                                     datetime.utcnow().strftime('%s')))
 
     await add_submission(submission)
+
+    return web.Response(status=200)
+
+
+@routes.get('/api/task')
+async def task(request):
+    """Return task json."""
+    await get_task_info(5)
 
     return web.Response(status=200)
 
