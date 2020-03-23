@@ -169,7 +169,7 @@ async def get_limits(task_id: int) -> dict:
 async def get_task(task_id: int):
     """Task."""
     task_fetch = await conn.fetch(
-        '''SELECT (wall_time_limit, cpu_time_limit, memory_limit, 
+        '''SELECT (wall_time_limit, cpu_time_limit, memory_limit,
                     task_desc.main, task_desc.input_format,
                     task_desc.output_format, task_desc.explanation)
            FROM coreschema.tasks as tasks
@@ -191,4 +191,3 @@ async def get_task(task_id: int):
         examples.append(tuple(ex.values())[0])
 
     return task + examples
-
