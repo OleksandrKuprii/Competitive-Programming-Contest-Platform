@@ -7,11 +7,13 @@ import { I18nextProvider } from 'react-i18next';
 import './bootstrap.scss';
 import { createStore, StoreProvider } from 'easy-peasy';
 import publictasks from './publictasks.json';
+import submissionFileModel from './models/submissionFileModel';
 
 import i18n from './i18n';
 
 const store = createStore({
-    publictasks
+    publictasks,
+    submissionFile: submissionFileModel
 });
 
 ReactDOM.render(

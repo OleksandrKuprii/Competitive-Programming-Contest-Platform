@@ -4,8 +4,6 @@ import { initReactI18next } from "react-i18next";
 
 import en_common from './locales/en/common.json';
 
-console.log(en_common)
-
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)

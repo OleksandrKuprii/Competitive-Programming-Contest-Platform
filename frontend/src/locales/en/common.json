@@ -35,6 +35,7 @@
         },
         "inputfile": "Input file",
         "outputfile": "Output file",
-        "submitsolution": "Submit solution"
+        "submitsolution": "Submit solution",
+        "dropfilehere": "Drop file here or press to select"
     }
 }

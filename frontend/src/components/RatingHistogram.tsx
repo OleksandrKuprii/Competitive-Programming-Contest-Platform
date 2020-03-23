@@ -8,15 +8,16 @@ export interface Rating {
     zero_points_percent: number
 }
 
-const RatingHistogram = (props: { rating: Rating }) => (
+const RatingHistogram = (props: { rating: Rating, unique_key: string }) => (
     <div style={{ height: 25, padding: 3 }}>
         {[{ value: props.rating.correct_percent, color: 'green', tooltip_info: '100 points' },
         { value: props.rating.incorrect_percent, color: 'yellow', tooltip_info: '0 < x < 100 points' },
         { value: props.rating.zero_points_percent, color: 'red', tooltip_info: '0 points' }].map((({ value, color, tooltip_info }, i) => (
             <OverlayTrigger
+                key={`${props.unique_key}-${i}`}
                 placement='bottom'
                 overlay={
-                    <Tooltip id={`tooltip-${i}-${color}`}>
+                    <Tooltip id={`tooltip-${props.unique_key}-${i}-${color}`}>
                         {tooltip_info} | {value}%
                         </Tooltip>
                 }
