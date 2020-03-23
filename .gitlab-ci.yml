@@ -51,4 +51,4 @@ test-frontend:
   image: node
   stage: test
   script:
-    - sh -c "cd frontend; npm install; npm install --global eslint; eslint;"
+    - sh -c "cd frontend; npm install; ./node_modules/react-scripts/node_modules/.bin/eslint src"
