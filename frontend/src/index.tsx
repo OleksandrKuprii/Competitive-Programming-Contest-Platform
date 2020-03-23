@@ -14,7 +14,7 @@ import i18n from './i18n';
 
 const store = createStore({
     publictasks,
-    submissions
+    submissions,
     submissionFile: submissionFileModel
 });
 
