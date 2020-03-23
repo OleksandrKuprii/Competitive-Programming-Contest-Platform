@@ -24,6 +24,16 @@ async def handle(request):
     return web.Response(status=200)
 
 
+@routes.get('/api/task')
+async def task(request):
+    # body = await request.json()
+    from toucan.task import get_task_info
+
+    await get_task_info(5)
+
+    return web.Response(status=200)
+
+
 app = web.Application()
 app.add_routes(routes)
 
