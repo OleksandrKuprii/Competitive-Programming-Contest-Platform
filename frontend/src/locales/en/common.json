@@ -14,15 +14,6 @@
     "taskspage": {
         "description": "Explore public tasks"
     },
-    "tasklist": {
-        "header": {
-            "name": "Name",
-            "category": "Category",
-            "difficulty": "Difficulty",
-            "rating": "Rating",
-            "myresult": "My Result"
-        }
-    },
     "taskpage": {
         "description": {
             "inputformat": "Input format",
@@ -40,17 +31,17 @@
         "dropfilehere": "Drop file here or press to select"
     },
     "submissionPage":{
-        "description":"Explore your submissions",
-        
-        "header":{
-            "id": "#",
-            "task": "Task",
-            "language": "Language",
-            "status": "Status",
-            "points": "Points",
-            "submitted": "Submitted"
-        },
-
-        "submitsolution": "Submit solution"
+        "description":"Explore your submissions"
+    },
+    "headers": {
+        "id": "#",
+        "task": "Task",
+        "language": "Language",
+        "myresult": "My result",
+        "submitted": "Submitted",
+        "difficulty": "Difficulty",
+        "name": "Name",
+        "category": "Category",
+        "rating": "Rating"
     }
 }

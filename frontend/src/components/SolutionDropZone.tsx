@@ -20,6 +20,7 @@ const SolutionDropZone = () => {
       onDropAccepted={(files) => { setDragEntered(false); updateFile(files[0]); }}
       onDragEnter={() => setDragEntered(true)}
       onDragLeave={() => setDragEntered(false)}
+      onDropRejected={() => setDragEntered(false)}
     >
       {({ getRootProps, getInputProps }) => (
         <>
@@ -28,7 +29,10 @@ const SolutionDropZone = () => {
             <input {...getInputProps()} />
             {/* eslint-enable react/jsx-props-no-spreading */}
 
-            <Jumbotron style={dragEntered ? { backgroundColor: '#79808c', color: 'white', fontWeight: 'bold' } : undefined}>
+            <Jumbotron style={dragEntered ? {
+              backgroundColor: '#79808c', color: 'white', fontWeight: 'bold', borderColor: '#57606a', borderWidth: 10, borderStyle: 'solid',
+            } : undefined}
+            >
               {file === null ? t('taskpage.dropfilehere')
                 : (
                   <>

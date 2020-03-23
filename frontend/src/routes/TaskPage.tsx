@@ -7,6 +7,7 @@ import uuid from 'react-uuid';
 import { Task } from '../components/TaskList';
 import SolutionDropZone
   from '../components/SolutionDropZone';
+import MyResult from '../components/MyResult';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -24,6 +25,12 @@ const TaskPage = () => {
       <Row>
         <Col md="9">
           <h1>{task.taskName}</h1>
+          <p className="lead">
+            Personal result:
+            {' '}
+            <MyResult points={task.myresult} status="a" />
+            {' '}
+          </p>
           <p>{task.description.main}</p>
           <h3>{t('taskpage.description.inputformat')}</h3>
           <p>{task.description.input_format}</p>

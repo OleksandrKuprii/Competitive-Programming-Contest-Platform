@@ -1,38 +1,34 @@
 [
     {
         "id" : 4,
-        "taskName": "DFS",
-        "language": "Rubbish",
+        "taskAlias": "bfs",
+        "language": "Python3",
         "status":"Running",
         "points": null, 
-        "submitted": 1473868023, 
-        "alias":"dfs"
-    },
-    {
-        "id" : 1,
-        "taskName": "BFS",
-        "language": "python",
-        "status":"Correct",
-        "points": 100, 
-        "submitted": 1584668023, 
-        "alias":"bfs"
-    },
-    {
-        "id" : 2,
-        "taskName": "Impossible Task",
-        "language": "C--",
-        "status":"WrongAnswer",
-        "points": 10, 
-        "submitted": 1584898888, 
-        "alias":"impossible"
+        "submitted": 1473868023
     },
     {
         "id" : 3,
-        "taskName": "DFS",
-        "language": "Rubbish",
+        "taskAlias": "bfs",
+        "language": "Python3",
+        "status": "Correct",
+        "points": 100, 
+        "submitted": 1584668023
+    },
+    {
+        "id" : 2,
+        "taskAlias": "impossible",
+        "language": "C++",
+        "status": "WrongAnswer",
+        "points": 10, 
+        "submitted": 1584898888
+    },
+    {
+        "id" : 1,
+        "taskAlias": "dfs",
+        "language": "Python2",
         "status": "TimeLimit",
         "points": 0, 
-        "submitted": 1584968000, 
-        "alias":"dfs"
+        "submitted": 1584968000
     }
 ]

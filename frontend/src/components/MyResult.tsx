@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-const MyResult = ({ points }: { points: number }) => {
+const MyResult = ({ points, status }: { points: number, status: string }) => {
   if (points == null) {
     return (
       <>
-        <span className="gray_color">-</span>
+        <span className="gray_color">{status}</span>
       </>
     );
   }
@@ -22,14 +22,17 @@ const MyResult = ({ points }: { points: number }) => {
     }
 
     return (
-      <p className={`${color}_color`} style={{ padding: 0, margin: 0, fontWeight: (correct ? 'bold' : 'normal') }}>
+      <span className={`${color}_color`} style={{ padding: 0, margin: 0, fontWeight: (correct ? 'bold' : 'normal') }}>
         {points.toString()}
-      </p>
+        {' '}
+        {status}
+      </span>
     );
   }
 
   return (
     <>
+      {status}
     </>
   );
 };

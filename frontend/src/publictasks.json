@@ -4,7 +4,6 @@
         "alias": "bfs",
         "category": "Graphs",
         "difficulty": 5,
-        "myresult": null,
         "rating": {
             "correct_percent": 60,
             "incorrect_percent": 20,
@@ -29,7 +28,6 @@
         "alias": "impossible",
         "category": "Gods",
         "difficulty": 10,
-        "myresult": 10,
         "rating": {
             "correct_percent": 5,
             "incorrect_percent": 50,
@@ -48,14 +46,12 @@
             "wall_time": 2000,
             "memory": 64
         }
-        
     },
     {
         "taskName": "DFS",
         "alias": "dfs",
         "category": "Graphs",
         "difficulty": 3,
-        "myresult": 0,
         "rating": {
             "correct_percent": 60,
             "incorrect_percent": 20,

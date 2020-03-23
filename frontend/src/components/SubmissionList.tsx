@@ -3,34 +3,44 @@ import { Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import uuid from 'react-uuid';
+import { useStoreState } from 'easy-peasy';
 import MyResult from './MyResult';
-import StatusColor from './StatusColor';
 import prettyDate from '../utils/prettyDate';
 
 export interface Submission {
   id: number
-  taskName: string
+  taskAlias: string
   language: string
   status: string
   points: number
   submitted: number
-  alias: string
 }
 
 function SubmissionPage({ submissions }: { submissions: Submission[] }) {
   const { t } = useTranslation();
 
+
+  const taskNames = new Map<number, string>();
+
+  useStoreState((state: any) => {
+    submissions.forEach((submission) => {
+      taskNames.set(submission.id, state.publictasks.find(
+        (task: any) => task.alias === submission.taskAlias,
+      ).taskName);
+    });
+  });
+
+
   return (
     <Table striped hover variant="dark" size="sm" borderless>
       <thead className="customhead">
         <tr>
-          {[t('submissionPage.header.id'),
-            t('submissionPage.header.task'),
-            t('submissionPage.header.language'),
-            t('submissionPage.header.status'),
-            t('submissionPage.header.points'),
-            t('submissionPage.header.submitted'),
-          ].map((header) => (<th style={{ fontSize: 18 }}>{header}</th>))}
+          {[t('headers.id'),
+            t('headers.task'),
+            t('headers.language'),
+            t('headers.myresult'),
+            t('headers.submitted'),
+          ].map((header) => (<th key={uuid()} style={{ fontSize: 18 }}>{header}</th>))}
         </tr>
       </thead>
       <tbody>
@@ -39,14 +49,11 @@ function SubmissionPage({ submissions }: { submissions: Submission[] }) {
             <td>{submission.id}</td>
 
             <td>
-              <Link to={`/task/view/${submission.alias}`} style={{ color: 'white' }}>{submission.taskName}</Link>
+              <Link to={`/task/view/${submission.taskAlias}`} style={{ color: 'white' }}>{taskNames.get(submission.id)}</Link>
             </td>
             <td>{submission.language}</td>
             <td>
-              <StatusColor points={submission.points} status={submission.status} />
-            </td>
-            <td>
-              <MyResult points={submission.points} />
+              <MyResult points={submission.points} status={submission.status} />
             </td>
             <td>{prettyDate(submission.submitted)}</td>
           </tr>
