@@ -8,7 +8,8 @@
     "pagename": {
         "tasks": "Public tasks",
         "tournaments": "Tournaments",
-        "profile": "Profile"
+        "profile": "Profile",
+        "submissions":"Submissions"
     },
     "taskspage": {
         "description": "Explore public tasks"
@@ -36,5 +37,18 @@
         "inputfile": "Input file",
         "outputfile": "Output file",
         "submitsolution": "Submit solution"
+    },
+    "submissionPage":{
+        "description":"Explore your submissions",
+        
+        "header":{
+            "id": "id",
+            "task": "Task",
+            "language": "Language",
+            "status": "Status",
+            "points": "Points",
+            "submitted": "Submitted"
+        }
+
     }
 }
