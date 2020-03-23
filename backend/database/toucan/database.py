@@ -96,8 +96,8 @@ async def change_submission_status(submission_id: int, status: str) -> None:
         The string to update in the database
     """
     await conn.execute(
-        'UPDATE coreschema.submissions SET status = $1'
-        'WHERE id = $2', status, submission_id)
+        'UPDATE coreschema.submissions SET status = $1 \
+        WHERE id = $2', status, submission_id)
 
 
 async def get_test_ids(task_id: int) -> List[int]:
@@ -164,3 +164,31 @@ async def get_limits(task_id: int) -> dict:
            FROM coreschema.tasks
            WHERE id = $1''', task_id)
     return res[0]
+
+
+async def get_task(task_id: int):
+    """Task."""
+    task_fetch = await conn.fetch(
+        '''SELECT (wall_time_limit, cpu_time_limit, memory_limit, 
+                    task_desc.main, task_desc.input_format,
+                    task_desc.output_format, task_desc.explanation)
+           FROM coreschema.tasks as tasks
+           FULL OUTER JOIN coreschema.task_descriptions as task_desc
+           ON tasks.id = task_desc.task_id
+           WHERE tasks.id = $1
+        ''', task_id)
+
+    task = list(task_fetch[0].values())
+
+    examples_fetch = await conn.fetch(
+        '''SELECT (input_data, output_data)
+           FROM coreschema.task_examples
+           WHERE task_id = $1
+        ''', task_id)
+
+    examples = []
+    for ex in examples_fetch:
+        examples.append(tuple(ex.values())[0])
+
+    return task + examples
+
