@@ -18,6 +18,7 @@ create table if not exists coreschema.tasks (
 
 create table if not exists coreschema.task_descriptions (
     task_id int references coreschema.tasks(id),
+    alias varchar(50),
     main text,
     input_format text,
     output_format text,
@@ -26,6 +27,7 @@ create table if not exists coreschema.task_descriptions (
 
 create table if not exists coreschema.task_examples (
     task_id int references coreschema.tasks(id),
+    alias varchar(50),
     input_data text,
     output_data text
 );

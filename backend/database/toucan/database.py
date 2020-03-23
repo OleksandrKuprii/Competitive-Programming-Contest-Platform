@@ -142,7 +142,7 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
         user_id, task_id, lang, 'Received')
-
+    print(res[0]['id'])
     return res[0]['id']
 
 
@@ -166,7 +166,7 @@ async def get_limits(task_id: int) -> dict:
     return res[0]
 
 
-async def get_task(task_id: int):
+async def get_task(alias: int):
     """Task."""
     task_fetch = await conn.fetch(
         '''SELECT (wall_time_limit, cpu_time_limit, memory_limit,
@@ -174,17 +174,23 @@ async def get_task(task_id: int):
                     task_desc.output_format, task_desc.explanation)
            FROM coreschema.tasks as tasks
            FULL OUTER JOIN coreschema.task_descriptions as task_desc
-           ON tasks.id = task_desc.task_id
-           WHERE tasks.id = $1
-        ''', task_id)
+           ON tasks.alias = task_desc.alias
+           WHERE tasks.alias = $1
+        ''', alias)
+
+    if not task_fetch:
+        return None
 
     task = list(task_fetch[0].values())
 
     examples_fetch = await conn.fetch(
         '''SELECT (input_data, output_data)
            FROM coreschema.task_examples
-           WHERE task_id = $1
-        ''', task_id)
+           WHERE alias = $1
+        ''', alias)
+
+    if not examples_fetch:
+        return None
 
     examples = []
     for ex in examples_fetch:

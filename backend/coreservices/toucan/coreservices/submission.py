@@ -42,3 +42,5 @@ async def add_submission(user_submission: UserSubmission) -> None:
 
     # Asks runner to process submission
     await runner_add_submission(submission_to_runner)
+
+    return submission_id
