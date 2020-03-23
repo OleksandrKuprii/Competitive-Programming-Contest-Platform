@@ -48,7 +48,7 @@
             "status": "Status",
             "points": "Points",
             "submitted": "Submitted"
-        }
+        },
 
         "submitsolution": "Submit solution",
         "dropfilehere": "Drop file here or press to select"
