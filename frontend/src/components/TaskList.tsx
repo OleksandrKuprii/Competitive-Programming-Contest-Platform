@@ -30,23 +30,23 @@ function TaskList(props: { tasks: Task[] }) {
                     t('tasklist.header.category'),
                     t('tasklist.header.difficulty'),
                     t('tasklist.header.rating'),
-                    t('tasklist.header.myresult')].map((header) => (
-                        <th style={{ fontSize: 18 }}>{header}</th>
+                    t('tasklist.header.myresult')].map((header, i) => (
+                        <th style={{ fontSize: 18 }} key={`tasklist-header-${i}`}>{header}</th>
                     ))}
                 </tr>
             </thead>
             <tbody>
                 {props.tasks.map((task, i) =>
-                    <tr key={i}>
+                    <tr key={`tasklist-item-${i}`}>
                         <td>
                             <Link to={`/task/view/${task.alias}`} style={{color: 'white'}}>{task.taskName}</Link>
                         </td>
                         <td>{task.category}</td>
                         <td>
-                            <Difficulty difficulty={task.difficulty}></Difficulty>
+                            <Difficulty difficulty={task.difficulty} unique_key={`tasklist-difficulty-${i}`}></Difficulty>
                         </td>
                         <td>
-                            <RatingHistogram rating={task.rating}></RatingHistogram>
+                            <RatingHistogram rating={task.rating} unique_key={`tasklist-item-rating-${i}`}></RatingHistogram>
                         </td>
                         <td>
                             <MyResult points={task.myresult}></MyResult>

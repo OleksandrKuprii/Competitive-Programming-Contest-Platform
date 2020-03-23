@@ -4,7 +4,6 @@ import { useStoreState } from 'easy-peasy';
 import { Task } from '../components/TaskList';
 import { Row, Col, Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import {useDropzone} from 'react-dropzone';
 import SolutionDropZone from '../components/SolutionDropZone';
 
 
@@ -34,8 +33,8 @@ const TaskPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {task.examples.map((example: { input: string, output: string }) => (
-                                <tr>
+                            {task.examples.map((example: { input: string, output: string }, i) => (
+                                <tr key={`task-example-${i}`}>
                                     <td>{example.input}</td>
                                     <td>{example.output}</td>
                                 </tr>
