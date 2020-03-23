@@ -47,5 +47,5 @@ test-frontend:
   image: node
   stage: test
   script:
-    - npm install tslint typescript
+    - npm install --global tslint typescript
     - tslint -c frontend/tslint.json 'frontend/**/*.ts*'
