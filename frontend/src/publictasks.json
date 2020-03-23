@@ -29,7 +29,7 @@
         "alias": "impossible",
         "category": "Gods",
         "difficulty": 10,
-        "myresult": 0,
+        "myresult": 10,
         "rating": {
             "correct_percent": 5,
             "incorrect_percent": 50,
@@ -47,6 +47,32 @@
             "cpu_time": 2000,
             "wall_time": 2000,
             "memory": 64
+        }
+        
+    },
+    {
+        "taskName": "DFS",
+        "alias": "dfs",
+        "category": "Graphs",
+        "difficulty": 3,
+        "myresult": 0,
+        "rating": {
+            "correct_percent": 60,
+            "incorrect_percent": 20,
+            "zero_points_percent": 20
+        },
+        "description": {
+            "main": "There is a graph. DO DFS. Start point is, of horse, 0.",
+            "input_format": "conjuction matrix",
+            "output_format": "all found elements"
+        },
+        "examples": [
+            { "input": "0 1 0\n1 0 1\n0 0 0", "output": "1 2 3" }
+        ],
+        "limits": {
+            "cpu_time": 1000,
+            "wall_time": 1000,
+            "memory": 256
         }
     }
 ]

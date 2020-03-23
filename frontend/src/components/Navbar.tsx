@@ -20,6 +20,9 @@ const _Navbar = () => {
                         <Col>
                             <Nav.Link href="#tasks/">{t('pagename.tasks')}</Nav.Link>
                         </Col>
+                        <Col>
+                            <Nav.Link href="#Submissions/">{t('pagename.submissions')}</Nav.Link>
+                        </Col>
                     </Row>
                 </Nav>
 

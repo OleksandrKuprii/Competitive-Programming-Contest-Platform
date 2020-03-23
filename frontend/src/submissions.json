@@ -1,0 +1,41 @@
+[
+    {
+        "id" : 4,
+        "taskName": "DFS",
+        "language": "Rubbish",
+        "status":"Running",
+        "points": "-", 
+        "submitted":"12.01.1943 40:50", 
+        "alias":"dfs"
+    },
+    
+    {
+        "id" : 1,
+        "taskName": "BFS",
+        "language": "python",
+        "status":"OK",
+        "points": "100", 
+        "submitted":"12.01.1941 18:60", 
+        "alias":"bfs"
+    },
+
+    {
+        "id" : 2,
+        "taskName": "Impossible Task",
+        "language": "C--",
+        "status":"OK",
+        "points": "10", 
+        "submitted":"12.01.1942 10:40", 
+        "alias":"impossible task"
+    },
+    {
+        "id" : 3,
+        "taskName": "DFS",
+        "language": "Rubbish",
+        "status":"not OK",
+        "points": "0", 
+        "submitted":"12.01.1943 40:50", 
+        "alias":"dfs"
+    }
+
+]
