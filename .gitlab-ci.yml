@@ -2,6 +2,10 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
 
+cache:
+  paths:
+    - node_modules/
+
 stages:
   - test
 
@@ -47,5 +51,4 @@ test-frontend:
   image: node
   stage: test
   script:
-    - npm install --global tslint typescript
-    - tslint -c frontend/tslint.json 'frontend/**/*.ts*'
+    - sh -c "cd frontend; npm install; npm install --global eslint; eslint;"
