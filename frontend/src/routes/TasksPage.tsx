@@ -1,23 +1,23 @@
 import * as React from 'react';
-import TaskList from '../components/TaskList';
 import { useTranslation } from 'react-i18next';
 import { useStoreState } from 'easy-peasy';
+import TaskList from '../components/TaskList';
 
 
 const TasksPage = () => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    const publictasks = useStoreState(state => state.publictasks)
+  const publictasks = useStoreState((state) => state.publictasks);
 
-    return (
-        <>
-            <h1>{t('pagename.tasks')}</h1>
+  return (
+    <>
+      <h1>{t('pagename.tasks')}</h1>
 
-            <p>{t('taskspage.description')}</p>
+      <p>{t('taskspage.description')}</p>
 
-            <TaskList tasks={publictasks}></TaskList>
-        </>
-    );
+      <TaskList tasks={publictasks} />
+    </>
+  );
 };
 
 export default TasksPage;

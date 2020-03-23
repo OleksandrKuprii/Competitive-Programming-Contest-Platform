@@ -10,30 +10,30 @@ import SubmissionPage from './routes/SubmissionPage';
 
 const App = () => (
   <HashRouter>
-    <Navbar></Navbar>
+    <Navbar />
 
-    <Container style={{paddingTop: 20}}>
+    <Container style={{ paddingTop: 20 }}>
       <Switch>
         <Route path="/tournaments">
-          <TournamentsPage></TournamentsPage>
+          <TournamentsPage />
         </Route>
 
         <Route path="/task/view/:taskAlias">
-          <TaskPage></TaskPage>
+          <TaskPage />
         </Route>
 
         <Route path="/tasks">
-          <TasksPage></TasksPage>
+          <TasksPage />
         </Route>
         <Route path="/submissions">
-          <SubmissionPage></SubmissionPage>
+          <SubmissionPage />
         </Route>
         <Route path="/">
-          <HomePage></HomePage>
+          <HomePage />
         </Route>
       </Switch>
     </Container>
   </HashRouter>
-)
+);
 
 export default App;

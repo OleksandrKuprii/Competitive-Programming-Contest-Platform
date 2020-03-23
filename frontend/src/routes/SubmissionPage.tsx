@@ -1,23 +1,23 @@
 import * as React from 'react';
-import SubmissionList from '../components/SubmissionList';
 import { useTranslation } from 'react-i18next';
 import { useStoreState } from 'easy-peasy';
+import SubmissionList from '../components/SubmissionList';
 
 
 const SubmissionPage = () => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    const submissions = useStoreState(state => state.submissions)
+  const submissions = useStoreState((state) => state.submissions);
 
-    return (
-        <>
-            <h1>{t('pagename.submissions')}</h1>
+  return (
+    <>
+      <h1>{t('pagename.submissions')}</h1>
 
-            <p>{t('submissionPage.description')}</p>
+      <p>{t('submissionPage.description')}</p>
 
-            <SubmissionList submissions={submissions}/>
-        </>
-    );
+      <SubmissionList submissions={submissions} />
+    </>
+  );
 };
 
 export default SubmissionPage;
