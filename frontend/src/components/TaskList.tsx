@@ -51,6 +51,7 @@ function TaskList(props: { tasks: Task[] }) {
                         <td>
                             <MyResult points={task.myresult}></MyResult>
                         </td>
+
                     </tr>
                 )}
             </tbody>
