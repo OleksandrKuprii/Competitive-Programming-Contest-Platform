@@ -7,8 +7,7 @@ const StatusColor = ({ points, status }: { points: number, status: string }) => 
       <p className="gray_color" style={{ padding: 0, margin: 0 }}>
         {status}
         {' '}
-        <Spinner animation="border" size="sm" className="gray_color">
-        </Spinner>
+        <Spinner animation="border" size="sm" className="gray_color" />
       </p>
     );
   }

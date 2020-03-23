@@ -25,11 +25,11 @@ function SubmissionPage({ submissions }: { submissions: Submission[] }) {
       <thead className="customhead">
         <tr>
           {[t('submissionPage.header.id'),
-          t('submissionPage.header.task'),
-          t('submissionPage.header.language'),
-          t('submissionPage.header.status'),
-          t('submissionPage.header.points'),
-          t('submissionPage.header.submitted'),
+            t('submissionPage.header.task'),
+            t('submissionPage.header.language'),
+            t('submissionPage.header.status'),
+            t('submissionPage.header.points'),
+            t('submissionPage.header.submitted'),
           ].map((header) => (<th style={{ fontSize: 18 }}>{header}</th>))}
         </tr>
       </thead>
@@ -43,7 +43,7 @@ function SubmissionPage({ submissions }: { submissions: Submission[] }) {
             </td>
             <td>{submission.language}</td>
             <td>
-              <StatusColor points={submission.points} status={submission.status}></StatusColor>
+              <StatusColor points={submission.points} status={submission.status} />
             </td>
             <td>
               <MyResult points={submission.points} />

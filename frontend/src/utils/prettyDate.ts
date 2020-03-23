@@ -1,44 +1,41 @@
 
+export default function (timestamp: number): string {
+  const delta = new Date().getTime() - timestamp * 1000;
 
-export default function(timestamp: number): string {
-    const delta = new Date().getTime() - timestamp * 1000;
+  const deltaMinutes = Math.round(delta / 1000 / 60);
 
-    const delta_minutes = Math.round(delta / 1000 / 60);
+  if (deltaMinutes < 60) {
+    return `${deltaMinutes} minutes ago`;
+  }
 
-    console.log(delta_minutes)
+  const deltaHours = Math.round(deltaMinutes / 60);
 
-    if (delta_minutes < 60) {
-        return `${delta_minutes} minutes ago`;
-    }
+  if (deltaHours < 24) {
+    return `${deltaHours} hours ago`;
+  }
 
-    const delta_hours = Math.round(delta_minutes / 60);
+  const deltaDays = Math.round(deltaHours / 24);
 
-    if (delta_hours < 24) {
-        return `${delta_hours} hours ago`;
-    }
+  if (deltaDays < 365) {
+    return `${deltaDays} days ago`;
+  }
 
-    const delta_days = Math.round(delta_hours / 24);
+  const currentDate = new Date(timestamp * 1000);
 
-    if (delta_days < 365) {
-        return `${delta_days} days ago`
-    }
+  const day = currentDate.getDay();
+  const month = currentDate.getMonth();
 
-    const current_date = new Date(timestamp * 1000);
-    
-    const day = current_date.getDay();
-    const month = current_date.getMonth();
+  let dayString = day.toString();
 
-    let dayString = day.toString()
+  if (dayString.length === 1) {
+    dayString = `0${dayString}`;
+  }
 
-    if (dayString.length == 1) {
-        dayString = '0' + dayString
-    }
+  let monthString = month.toString();
 
-    let monthString = month.toString()
+  if (monthString.length === 1) {
+    monthString = `0${monthString}`;
+  }
 
-    if (monthString.length == 1) {
-        monthString = '0' + monthString
-    }
-
-    return `${dayString}.${monthString}.${current_date.getFullYear()}`;
+  return `${dayString}.${monthString}.${currentDate.getFullYear()}`;
 }
