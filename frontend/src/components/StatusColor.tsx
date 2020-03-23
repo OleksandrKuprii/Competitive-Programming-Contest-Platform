@@ -1,15 +1,20 @@
 import * as React from 'react';
+import { Spinner } from 'react-bootstrap';
 
-const StatusColor = ({ points, status }: { points: string, status: string }) => {
-  if (points === '-') {
+const StatusColor = ({ points, status }: { points: number, status: string }) => {
+  if (points === null) {
     return (
-      <p className="gray_color" style={{ padding: 0, margin: 0 }}>{status}</p>
+      <p className="gray_color" style={{ padding: 0, margin: 0 }}>
+        {status}
+        {' '}
+        <Spinner animation="border" size="sm" className="gray_color">
+        </Spinner>
+      </p>
     );
   }
 
-  const pointsNum = parseInt(points, 4);
-  const started = pointsNum >= 0;
-  const correct = pointsNum === 100;
+  const started = points >= 0;
+  const correct = points === 100;
 
   if (started) {
     let color = null;
@@ -17,7 +22,7 @@ const StatusColor = ({ points, status }: { points: string, status: string }) => 
     if (correct) {
       color = 'green';
     } else {
-      color = (pointsNum === 0 ? 'red' : 'yellow');
+      color = (points === 0 ? 'red' : 'yellow');
     }
 
     return (

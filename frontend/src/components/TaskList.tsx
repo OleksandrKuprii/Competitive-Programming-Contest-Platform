@@ -25,7 +25,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
 
   return (
     <Table striped hover variant="dark" size="sm" borderless>
-      <thead className="tasklist">
+      <thead className="customhead">
         <tr>
           {[t('tasklist.header.name'),
             t('tasklist.header.category'),

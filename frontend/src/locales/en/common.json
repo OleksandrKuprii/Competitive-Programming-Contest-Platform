@@ -36,13 +36,14 @@
         },
         "inputfile": "Input file",
         "outputfile": "Output file",
-        "submitsolution": "Submit solution"
+        "submitsolution": "Submit solution",
+        "dropfilehere": "Drop file here or press to select"
     },
     "submissionPage":{
         "description":"Explore your submissions",
         
         "header":{
-            "id": "id",
+            "id": "#",
             "task": "Task",
             "language": "Language",
             "status": "Status",
@@ -50,7 +51,6 @@
             "submitted": "Submitted"
         },
 
-        "submitsolution": "Submit solution",
-        "dropfilehere": "Drop file here or press to select"
+        "submitsolution": "Submit solution"
     }
 }

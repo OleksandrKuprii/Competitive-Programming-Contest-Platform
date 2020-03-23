@@ -3,8 +3,8 @@
         "taskName": "BFS",
         "alias": "bfs",
         "category": "Graphs",
-        "difficulty": 3,
-        "myresult": 100,
+        "difficulty": 5,
+        "myresult": null,
         "rating": {
             "correct_percent": 60,
             "incorrect_percent": 20,

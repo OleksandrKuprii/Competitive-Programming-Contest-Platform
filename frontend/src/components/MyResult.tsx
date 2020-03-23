@@ -1,7 +1,17 @@
 import * as React from 'react';
+import { Spinner } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
-const MyResult = (props: { points: number }) => {
-  const { points } = props;
+const MyResult = ({ points }: { points: number }) => {
+  const { t } = useTranslation();
+
+  if (points == null) {
+    return (
+      <>
+        <span className="gray_color">-</span>
+      </>);
+  }
+
   const started = points >= 0;
   const correct = points === 100;
 
