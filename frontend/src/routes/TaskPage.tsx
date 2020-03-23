@@ -8,6 +8,7 @@ import { Task } from '../components/TaskList';
 import SolutionDropZone
   from '../components/SolutionDropZone';
 import MyResult from '../components/MyResult';
+import getSubmissionWithGreatestResult from '../utils/getSubmissionWithGreatestResult';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -20,6 +21,13 @@ const TaskPage = () => {
     ),
   );
 
+  const greatestSubmission = useStoreState((state: any) => {
+    return getSubmissionWithGreatestResult(state.submissions, task.alias);
+  });
+
+  const points: number = greatestSubmission?.points === undefined ? -1 : greatestSubmission.points;
+  const status: string = greatestSubmission?.status === undefined ? 'UNKNOWN' : greatestSubmission.status;
+
   return (
     <>
       <Row>
@@ -28,7 +36,7 @@ const TaskPage = () => {
           <p className="lead">
             Personal result:
             {' '}
-            <MyResult points={task.myresult} status="a" />
+            <MyResult points={points} status={status} />
             {' '}
           </p>
           <p>{task.description.main}</p>
