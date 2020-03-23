@@ -4,10 +4,13 @@ from markdown2 import markdown
 from toucan.database import get_task
 
 
-async def get_task_info(task_id):
+async def get_task_info(alias):
     """Task."""
     task_info = dict()
-    task_from_db = await get_task(task_id)
+    task_from_db = await get_task(alias)
+
+    if task_from_db is None:
+        return None
 
     task_info['real_time_limit'] = task_from_db[0][0]
     task_info['cpu_time_limit'] = task_from_db[0][1]
