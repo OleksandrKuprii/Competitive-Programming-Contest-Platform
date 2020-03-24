@@ -32,7 +32,11 @@
         "dropfilehere": "Drop file here or press to select"
     },
     "submissionPage":{
-        "description":"Explore your submissions"
+        "description":"Explore your submissions",
+        "task" : "Task",
+        "submitted":"Submitted", 
+        "checked":"Checked", 
+        "result":"Result"
     },
     "headers": {
         "id": "#",
@@ -43,6 +47,11 @@
         "difficulty": "Difficulty",
         "name": "Name",
         "category": "Category",
-        "rating": "Rating"
+        "rating": "Rating",
+        "points": "Points",
+        "status":"Status", 
+        "realTime": "Real Time",
+        "cpuTime":"CPU Time", 
+        "num":"№"
     }
 }
