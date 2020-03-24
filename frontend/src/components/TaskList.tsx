@@ -3,12 +3,9 @@ import { Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import uuid from 'react-uuid';
-import { useStoreState } from 'easy-peasy';
-import RatingHistogram, { Rating } from './RatingHistogram';
 import Difficulty from './Difficulty';
-import MyResult from './MyResult';
-import { Submission } from './SubmissionList';
-import getSubmissionWithGreatestResult from '../utils/getSubmissionWithGreatestResult';
+import RatingHistogram, { Rating } from './RatingHistogram';
+import { GreatestResult } from './Result';
 
 
 export interface Task {
@@ -24,17 +21,6 @@ export interface Task {
 
 function TaskList({ tasks }: { tasks: Task[] }) {
   const { t } = useTranslation();
-
-  const greatestSubmissions = new Map<string, Submission | undefined>();
-
-  useStoreState((state: any) => {
-    tasks.forEach((task) => {
-      const greatestSubmission = getSubmissionWithGreatestResult(state.submission.list, task.alias);
-
-      greatestSubmissions.set(task.alias,
-        greatestSubmission === undefined ? undefined : greatestSubmission);
-    });
-  });
 
   return (
     <Table striped hover variant="dark" size="sm" borderless>
@@ -52,30 +38,23 @@ function TaskList({ tasks }: { tasks: Task[] }) {
       <tbody>
         {tasks.map(({
           taskName, category, difficulty, rating, alias,
-        }) => {
-          const latestSubmission = greatestSubmissions.get(alias);
-
-          const points = latestSubmission?.points;
-          const status = latestSubmission?.status;
-
-          return (
-            <tr key={uuid()}>
-              <td>
-                <Link to={`/task/view/${alias}`} style={{ color: 'white' }}>{taskName}</Link>
-              </td>
-              <td>{category}</td>
-              <td>
-                <Difficulty difficulty={difficulty} />
-              </td>
-              <td>
-                <RatingHistogram rating={rating} />
-              </td>
-              <td>
-                <MyResult points={points === undefined ? -1 : points} status={status === undefined ? 'UNKNOWN' : status} />
-              </td>
-            </tr>
-          );
-        })}
+        }) => (
+          <tr key={uuid()}>
+            <td>
+              <Link to={`/task/view/${alias}`} style={{ color: 'white' }}>{taskName}</Link>
+            </td>
+            <td>{category}</td>
+            <td>
+              <Difficulty difficulty={difficulty} />
+            </td>
+            <td>
+              <RatingHistogram rating={rating} />
+            </td>
+            <td>
+              <GreatestResult taskAlias={alias} />
+            </td>
+          </tr>
+        ))}
       </tbody>
     </Table>
   );

@@ -1,20 +1,13 @@
+import { useStoreState } from 'easy-peasy';
 import * as React from 'react';
 import { Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import uuid from 'react-uuid';
-import { useStoreState } from 'easy-peasy';
-import MyResult from './MyResult';
-import prettyDate from '../utils/prettyDate';
+import { Submission } from '../models/submissionModel';
+import { Result } from './Result';
+import PrettyDate from './PrettyDate';
 
-export interface Submission {
-  id: number
-  taskAlias: string
-  language: string
-  status: string
-  points: number
-  submitted: number
-}
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();
@@ -52,9 +45,9 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
             </td>
             <td>{submission.language}</td>
             <td>
-              <MyResult points={submission.points} status={submission.status} />
+              <Result points={submission.points} status={submission.status} />
             </td>
-            <td>{prettyDate(submission.submitted)}</td>
+            <td><PrettyDate timestamp={submission.submitted} /></td>
           </tr>
         ))}
 

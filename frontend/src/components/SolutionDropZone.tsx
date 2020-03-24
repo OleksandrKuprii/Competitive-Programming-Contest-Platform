@@ -13,7 +13,7 @@ const SolutionDropZone = () => {
   const canceled = useStoreActions((actions: any) => actions.submission.file.canceled);
   const file = useStoreState((state: any) => state.submission.file.file);
 
-  const addedSubmission = useStoreActions((actions: any) => actions.submission.addedSubmission);
+  const submitSubmission = useStoreActions((actions: any) => actions.submission.submitSubmission);
 
   return (
     <Dropzone
@@ -43,13 +43,8 @@ const SolutionDropZone = () => {
                     <ButtonGroup aria-label="Basic example">
                       <Button
                         variant="primary"
-                        onClick={() => addedSubmission({
-                          id: 100,
-                          status: 'Running',
-                          points: null,
-                          taskAlias: 'impossible',
-                          language: 'Python3',
-                          submitted: new Date().getTime() / 1000,
+                        onClick={() => submitSubmission({
+
                         })}
                       >
                         OK
