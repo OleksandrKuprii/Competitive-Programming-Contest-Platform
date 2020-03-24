@@ -1,17 +1,20 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useStoreState } from 'easy-peasy';
+import { useTranslation } from 'react-i18next';
 import { Submission } from '../models/submissionModel';
 
 export const Result = (
   { points, status }:
-  { points: number | undefined, status: string | undefined },
+  { points: number | undefined, status: string[] },
 ) => {
+  const { t } = useTranslation();
+
   if (points === undefined || points === null) {
     return (
       <>
         <span className="gray_color">
-          {status}
+          {t('running')}
           {' '}
           <Spinner animation="border" size="sm" />
         </span>
@@ -35,14 +38,14 @@ export const Result = (
       <span className={`${color}_color`} style={{ padding: 0, margin: 0, fontWeight: (correct ? 'bold' : 'normal') }}>
         {points.toString()}
         {' '}
-        {status}
+        {status.join(', ')}
       </span>
     );
   }
 
   return (
     <>
-      {status}
+      {status.join(', ')}
     </>
   );
 };
@@ -72,5 +75,5 @@ export const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined })
     (submission) => submission.taskAlias === taskAlias,
   );
 
-  return <Result points={latestSubmission?.points} status={latestSubmission?.status} />;
+  return <Result points={latestSubmission?.points} status={latestSubmission?.status || []} />;
 };

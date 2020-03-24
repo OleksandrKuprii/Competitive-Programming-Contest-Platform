@@ -3,7 +3,7 @@
         "id" : 5,
         "taskAlias": "bfs",
         "language": "Python3",
-        "status":"Running",
+        "status": [],
         "points": null, 
         "submitted": 1584989123
     },
@@ -11,7 +11,7 @@
         "id" : 4,
         "taskAlias": "bfs",
         "language": "Python3",
-        "status": "Correct",
+        "status": ["Correct"],
         "points": 100, 
         "submitted": 1584079123
     },
@@ -19,7 +19,7 @@
         "id" : 3,
         "taskAlias": "bfs",
         "language": "Python3",
-        "status": "TimeLimit",
+        "status": ["TimeLimit", "WrongAnswer"],
         "points": 20, 
         "submitted": 1584668023
     },
@@ -27,7 +27,7 @@
         "id" : 2,
         "taskAlias": "impossible",
         "language": "C++",
-        "status": "WrongAnswer",
+        "status": ["WrongAnswer"],
         "points": 10, 
         "submitted": 1584898888
     },
@@ -35,7 +35,7 @@
         "id" : 1,
         "taskAlias": "dfs",
         "language": "Python2",
-        "status": "TimeLimit",
+        "status": ["TimeLimit"],
         "points": 0, 
         "submitted": 1584968000
     }
