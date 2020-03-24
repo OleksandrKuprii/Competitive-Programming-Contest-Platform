@@ -6,7 +6,7 @@ export interface Submission {
   id: number
   taskAlias: string
   language: string
-  status: string
+  status: string[]
   points: number | undefined
   submitted: number
 }
@@ -28,7 +28,7 @@ const submissionModel = {
       taskAlias,
       language: 'Python3',
       points: undefined,
-      status: 'Running',
+      status: [],
       submitted: new Date().getTime() / 1000,
     } as Submission);
   }),

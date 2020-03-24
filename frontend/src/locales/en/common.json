@@ -1,6 +1,7 @@
 {
     "brandname": "Toucan",
     "learnmore": "Learn more",
+    "running": "Running",
     "homepage": {
         "welcome": "Welcome to Toucan!",
         "description": "a powerful programming contest platform"
