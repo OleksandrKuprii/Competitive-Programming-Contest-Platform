@@ -1,7 +1,15 @@
 import { thunk, action } from 'easy-peasy';
 import submissionFileModel from './submissionFileModel';
 import submissions from '../submissions.json';
-import { Submission } from '../components/SubmissionList';
+
+export interface Submission {
+  id: number
+  taskAlias: string
+  language: string
+  status: string
+  points: number | undefined
+  submitted: number
+}
 
 const submissionModel = {
   list: submissions,
@@ -13,8 +21,16 @@ const submissionModel = {
     state.list.sort((a: any, b: any) => ((a.id > b.id) ? -1 : 1));
   }),
 
-  submitSubmission: thunk(async (actions: any, payload: Submission) => {
-    actions.addSubmission(payload);
+  submitSubmission: thunk(async (actions: any,
+    { id, taskAlias, language }: { id: number, taskAlias: string, language: string }) => {
+    actions.addedSubmission({
+      id,
+      taskAlias,
+      language,
+      points: undefined,
+      status: 'Running',
+      submitted: new Date().getTime() / 1000,
+    } as Submission);
   }),
 };
 
