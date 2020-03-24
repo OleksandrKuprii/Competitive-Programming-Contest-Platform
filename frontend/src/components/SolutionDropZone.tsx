@@ -4,7 +4,7 @@ import { Jumbotron, ButtonGroup, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 
-const SolutionDropZone = () => {
+const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
   const { t } = useTranslation();
 
   const [dragEntered, setDragEntered] = React.useState(false);
@@ -12,8 +12,6 @@ const SolutionDropZone = () => {
   const updatedFile = useStoreActions((actions: any) => actions.submission.file.updatedFile);
   const canceled = useStoreActions((actions: any) => actions.submission.file.canceled);
   const file = useStoreState((state: any) => state.submission.file.file);
-
-  const submitSubmission = useStoreActions((actions: any) => actions.submission.submitSubmission);
 
   return (
     <Dropzone
@@ -43,9 +41,7 @@ const SolutionDropZone = () => {
                     <ButtonGroup aria-label="Basic example">
                       <Button
                         variant="primary"
-                        onClick={() => submitSubmission({
-
-                        })}
+                        onClick={() => { onSubmit(); updatedFile(null); }}
                       >
                         OK
                       </Button>

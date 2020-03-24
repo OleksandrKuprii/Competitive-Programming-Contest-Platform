@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState, useStoreActions } from 'easy-peasy';
 import { Row, Col, Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import uuid from 'react-uuid';
@@ -19,6 +19,12 @@ const TaskPage = () => {
       (_task: Task) => _task.alias === taskAlias,
     ),
   );
+
+  const submitSubmission = useStoreActions((actions: any) => actions.submission.submitSubmission);
+
+  const onSubmit = React.useCallback(() => {
+    submitSubmission({ taskAlias });
+  }, [taskAlias, submitSubmission]);
 
   return (
     <>
@@ -94,7 +100,7 @@ const TaskPage = () => {
         <Col>
           <p><b>{t('taskpage.submitsolution')}</b></p>
 
-          <SolutionDropZone />
+          <SolutionDropZone onSubmit={onSubmit} />
         </Col>
       </Row>
     </>
