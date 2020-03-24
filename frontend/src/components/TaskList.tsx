@@ -30,7 +30,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
             t('headers.category'),
             t('headers.difficulty'),
             t('headers.rating'),
-            t('headers.myresult')].map((header) => (
+            t('headers.result')].map((header) => (
               <th style={{ fontSize: 18 }} key={uuid()}>{header}</th>
           ))}
         </tr>

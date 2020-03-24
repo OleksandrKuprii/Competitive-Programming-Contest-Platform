@@ -14,6 +14,7 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
 
   const taskNames = new Map<number, string>();
 
+
   useStoreState((state: any) => {
     submissions.forEach((submission) => {
       taskNames.set(submission.id, state.publictasks.find(
@@ -22,7 +23,6 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
     });
   });
 
-
   return (
     <Table striped hover variant="dark" size="sm" borderless>
       <thead className="customhead">
@@ -30,7 +30,7 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
           {[t('headers.id'),
             t('headers.task'),
             t('headers.language'),
-            t('headers.myresult'),
+            t('headers.result'),
             t('headers.submitted'),
           ].map((header) => (<th key={uuid()} style={{ fontSize: 18 }}>{header}</th>))}
         </tr>
@@ -38,7 +38,12 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
       <tbody>
         {submissions.map((submission) => (
           <tr key={uuid()}>
-            <td>{submission.id}</td>
+            <td>
+              <Link to={`/submission/view/${submission.id}`} style={{ color: 'white' }}>
+                {submission.id}
+                {' '}
+              </Link>
+            </td>
 
             <td>
               <Link to={`/task/view/${submission.taskAlias}`} style={{ color: 'white' }}>{taskNames.get(submission.id)}</Link>

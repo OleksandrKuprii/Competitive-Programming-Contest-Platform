@@ -8,7 +8,9 @@ export interface Submission {
   language: string
   status: string[]
   points: number | undefined
-  submitted: number
+  submitted: number,
+  tests: { status: string, points: number, cputime: number, realtime: number }[],
+  code: string
 }
 
 const submissionModel = {
@@ -16,7 +18,7 @@ const submissionModel = {
   file: submissionFileModel,
 
   addedSubmission: action((state: any, payload: Submission) => {
-    state.list.push(payload);
+    state.list.push({ ...payload, code: state.file.fileText, language: state.file.language });
 
     state.list.sort((a: any, b: any) => ((a.id > b.id) ? -1 : 1));
   }),
@@ -26,10 +28,12 @@ const submissionModel = {
     actions.addedSubmission({
       id: new Date().getTime(),
       taskAlias,
-      language: 'Python3',
+      language: '',
       points: undefined,
       status: [],
       submitted: new Date().getTime() / 1000,
+      tests: [],
+      code: '',
     } as Submission);
   }),
 };

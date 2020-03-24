@@ -1,23 +1,38 @@
 import * as React from 'react';
 import Dropzone from 'react-dropzone';
-import { Jumbotron, ButtonGroup, Button } from 'react-bootstrap';
+import {
+  Jumbotron, ButtonGroup, Button, Form, Col, Container,
+} from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useStoreActions, useStoreState } from 'easy-peasy';
+import uuid from 'react-uuid';
+import CodeViewer from './CodeViewer';
 
 const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
   const { t } = useTranslation();
 
   const [dragEntered, setDragEntered] = React.useState(false);
 
+  const uploadFile = useStoreActions((actions: any) => actions.submission.file.uploadFile);
   const updatedFile = useStoreActions((actions: any) => actions.submission.file.updatedFile);
+
   const canceled = useStoreActions((actions: any) => actions.submission.file.canceled);
   const file = useStoreState((state: any) => state.submission.file.file);
+  const fileText = useStoreState((state: any) => state.submission.file.fileText);
+
+  const language = useStoreState(
+    (state: any) => state.submission.file.language,
+  );
+  const selectedLanguage = useStoreActions(
+    (actions: any) => actions.submission.file.selectedLanguage,
+  );
+  const languages = ['python3', 'python2', 'c++', 'c'];
 
   return (
     <Dropzone
       multiple={false}
       disabled={file !== null}
-      onDropAccepted={(files) => { setDragEntered(false); updatedFile(files[0]); }}
+      onDropAccepted={async (files) => { setDragEntered(false); await uploadFile(files[0]); }}
       onDragEnter={() => setDragEntered(true)}
       onDragLeave={() => setDragEntered(false)}
       onDropRejected={() => setDragEntered(false)}
@@ -36,17 +51,52 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
               {file === null ? t('taskpage.dropfilehere')
                 : (
                   <>
-                    <p className="h3">{file.name}</p>
 
-                    <ButtonGroup aria-label="Basic example">
-                      <Button
-                        variant="primary"
-                        onClick={() => { onSubmit(); updatedFile(null); }}
-                      >
-                        OK
-                      </Button>
-                      <Button variant="secondary" onClick={canceled}>Cancel</Button>
-                    </ButtonGroup>
+                    <Form>
+                      <Form.Row>
+                        <Form.Group as={Col}>
+                          <Form.Row>
+                            <span className="h3">
+                              {file.name}
+                            </span>
+                          </Form.Row>
+                          <Form.Row>
+                            <span className="subtitle">
+                              {file.type}
+                            </span>
+                          </Form.Row>
+                        </Form.Group>
+                        <Form.Group as={Col}>
+                          <Form.Label>Language</Form.Label>
+                          <Form.Control as="select" value={language} onChange={(event: any) => selectedLanguage(event.target.value)}>
+                            {languages.map((lang) => (
+                              <option key={uuid()}>{lang}</option>
+                            ))}
+                          </Form.Control>
+                        </Form.Group>
+                      </Form.Row>
+                      <Form.Row>
+                        <ButtonGroup>
+                          <Button
+                            variant="primary"
+                            onClick={() => {
+                              onSubmit();
+                              updatedFile({ file: null, fileText: null });
+                            }}
+                            type="submit"
+                          >
+                            OK
+                          </Button>
+                          <Button variant="secondary" onClick={canceled}>Cancel</Button>
+                        </ButtonGroup>
+                      </Form.Row>
+                      <div style={{ paddingTop: 20 }} />
+                      <Form.Row>
+                        <Container fluid style={{ padding: 0 }}>
+                          <CodeViewer code={fileText} language={language} />
+                        </Container>
+                      </Form.Row>
+                    </Form>
                   </>
                 )}
             </Jumbotron>

@@ -7,6 +7,10 @@ const PrettyDate = ({ timestamp }: { timestamp: number }) => (
 
       const deltaMinutes = Math.round(delta / 1000 / 60);
 
+      if (deltaMinutes < 1) {
+        return 'Recently';
+      }
+
       if (deltaMinutes < 60) {
         return `${deltaMinutes} minutes ago`;
       }
