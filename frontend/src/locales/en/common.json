@@ -2,6 +2,7 @@
     "brandname": "Toucan",
     "learnmore": "Learn more",
     "running": "Running",
+    "submission": "Submission",
     "homepage": {
         "welcome": "Welcome to Toucan!",
         "description": "a powerful programming contest platform"
@@ -21,37 +22,31 @@
             "outputformat": "Output format"
         },
         "examples": "Examples",
-        "limits": {
-            "cpu": "CPU time limit",
-            "wall": "Wall time limit",
-            "memory": "Memory limit"
-        },
         "inputfile": "Input file",
         "outputfile": "Output file",
         "submitsolution": "Submit solution",
-        "dropfilehere": "Drop file here or press to select"
+        "dropfilehere": "Drop file here or press to select",
+        "limits": {
+            "cpu": "CPU time limit",
+            "wall": "Real time limit",
+            "memory": "Memory limit"
+        }
+        
     },
     "submissionPage":{
-        "description":"Explore your submissions",
-        "task" : "Task",
-        "submitted":"Submitted", 
-        "checked":"Checked", 
-        "result":"Result"
+        "description":"Explore your submissions"
     },
     "headers": {
         "id": "#",
         "task": "Task",
         "language": "Language",
-        "myresult": "My result",
+        "result": "Result",
         "submitted": "Submitted",
         "difficulty": "Difficulty",
         "name": "Name",
         "category": "Category",
         "rating": "Rating",
-        "points": "Points",
-        "status":"Status", 
-        "realTime": "Real Time",
-        "cpuTime":"CPU Time", 
-        "num":"№"
+        "realtime": "Real Time",
+        "cputime":"CPU Time"
     }
 }

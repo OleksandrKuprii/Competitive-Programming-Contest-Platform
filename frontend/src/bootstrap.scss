@@ -3,6 +3,9 @@
 $body-bg: #111;
 $body-color: #aaa;
 
+$input-bg: #333;
+$input-color: #aaa;
+
 $theme-colors: (
     "primary": #a64,
     "secondary": #742,
@@ -55,6 +58,7 @@ thead.customhead th {
 .gray_color {
     color: gray;
 }
+
 hr {
     border: 2px #555 solid;
 }

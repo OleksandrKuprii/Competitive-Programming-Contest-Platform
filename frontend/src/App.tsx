@@ -6,8 +6,8 @@ import HomePage from './routes/HomePage';
 import TasksPage from './routes/TasksPage';
 import TournamentsPage from './routes/TournamentsPage';
 import TaskPage from './routes/TaskPage';
+import SubmissionsPage from './routes/SubmissionsPage';
 import SubmissionPage from './routes/SubmissionPage';
-import OneSubmissionPage from './routes/OneSubmissionPage';
 
 const App = () => (
   <HashRouter>
@@ -27,10 +27,10 @@ const App = () => (
           <TasksPage />
         </Route>
         <Route path="/submissions">
-          <SubmissionPage />
+          <SubmissionsPage />
         </Route>
-        <Route path="/submission/:submissionid">
-          <OneSubmissionPage />
+        <Route path="/submission/view/:id">
+          <SubmissionPage />
         </Route>
         <Route path="/">
           <HomePage />

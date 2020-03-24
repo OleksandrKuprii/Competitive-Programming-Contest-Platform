@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import uuid from 'react-uuid';
 import { Task } from '../components/TaskList';
 import SolutionDropZone
-from '../components/SolutionDropZone';
+  from '../components/SolutionDropZone';
 import { GreatestResult } from '../components/Result';
 
 const TaskPage = () => {
