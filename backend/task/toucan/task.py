@@ -1,7 +1,7 @@
 """Task module."""
 from markdown2 import markdown
 
-from toucan.database import get_task
+from toucan.database import get_task, get_tasks as db_get_tasks
 
 
 async def get_task_info(alias):
@@ -30,3 +30,16 @@ async def get_task_info(alias):
     task_info['examples'] = examples
 
     return task_info
+
+
+async def get_tasks(user_id, number, offset):
+    """Get tasks."""
+    tasks = await db_get_tasks(user_id, number, offset)
+
+    tasks_dict = list()
+
+    for x in tasks:
+        d = {k: v for k, v in x}
+        tasks_dict.append(d)
+
+    return tasks_dict

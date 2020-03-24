@@ -1,10 +1,15 @@
 import * as React from 'react';
+import { Spinner } from 'react-bootstrap';
 
 const MyResult = ({ points, status }: { points: number, status: string }) => {
   if (points == null) {
     return (
       <>
-        <span className="gray_color">{status}</span>
+        <span className="gray_color">
+          {status}
+          {' '}
+          <Spinner animation="border" size="sm" />
+        </span>
       </>
     );
   }

@@ -22,6 +22,7 @@ const RatingHistogram = ({ rating }: { rating: Rating }) => (
               {tooltipInfo}
               {' '}
               |
+              {' '}
               {value}
               %
             </Tooltip>

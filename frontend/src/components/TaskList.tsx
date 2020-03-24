@@ -8,6 +8,7 @@ import RatingHistogram, { Rating } from './RatingHistogram';
 import Difficulty from './Difficulty';
 import MyResult from './MyResult';
 import { Submission } from './SubmissionList';
+import getSubmissionWithGreatestResult from '../utils/getSubmissionWithGreatestResult';
 
 
 export interface Task {
@@ -16,8 +17,6 @@ export interface Task {
   category: string
   difficulty: number
   rating: Rating
-  myresult: number
-  status: string
   description: { main: string, input_format: string, output_format: string },
   examples: { input: string, output: string }[],
   limits: { cpu_time: number, wall_time: number, memory: number }
@@ -26,20 +25,14 @@ export interface Task {
 function TaskList({ tasks }: { tasks: Task[] }) {
   const { t } = useTranslation();
 
-  const latestSubmissions = new Map<string, Submission | undefined>();
+  const greatestSubmissions = new Map<string, Submission | undefined>();
 
   useStoreState((state: any) => {
-    const submissionsClone: Array<Submission> = [...state.submissions];
-
-    submissionsClone.sort((a, b) => ((a.submitted > b.submitted) ? -1 : 1));
-
     tasks.forEach((task) => {
-      const latestSubmission = submissionsClone.find(
-        (submission) => submission.taskAlias === task.alias,
-      );
+      const greatestSubmission = getSubmissionWithGreatestResult(state.submission.list, task.alias);
 
-      latestSubmissions.set(task.alias,
-        latestSubmission === undefined ? undefined : latestSubmission);
+      greatestSubmissions.set(task.alias,
+        greatestSubmission === undefined ? undefined : greatestSubmission);
     });
   });
 
@@ -60,7 +53,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
         {tasks.map(({
           taskName, category, difficulty, rating, alias,
         }) => {
-          const latestSubmission = latestSubmissions.get(alias);
+          const latestSubmission = greatestSubmissions.get(alias);
 
           const points = latestSubmission?.points;
           const status = latestSubmission?.status;

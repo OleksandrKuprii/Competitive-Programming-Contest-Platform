@@ -16,9 +16,8 @@ export interface Submission {
   submitted: number
 }
 
-function SubmissionPage({ submissions }: { submissions: Submission[] }) {
+const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();
-
 
   const taskNames = new Map<number, string>();
 
@@ -64,6 +63,6 @@ function SubmissionPage({ submissions }: { submissions: Submission[] }) {
 
     </Table>
   );
-}
+};
 
-export default SubmissionPage;
+export default SubmissionList;

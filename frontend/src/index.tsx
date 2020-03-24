@@ -6,16 +6,14 @@ import App from './App';
 import './bootstrap.scss';
 import i18n from './i18n';
 import './index.css';
-import submissionFileModel from './models/submissionFileModel';
 import publictasks from './publictasks.json';
 import * as serviceWorker from './serviceWorker';
-import submissions from './submissions.json';
+import submissionModel from './models/submissionModel';
 
 
 const store = createStore({
   publictasks,
-  submissions,
-  submissionFile: submissionFileModel,
+  submission: submissionModel,
 });
 
 ReactDOM.render(
