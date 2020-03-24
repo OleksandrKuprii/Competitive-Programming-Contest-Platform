@@ -22,11 +22,11 @@ const submissionModel = {
   }),
 
   submitSubmission: thunk(async (actions: any,
-    { id, taskAlias, language }: { id: number, taskAlias: string, language: string }) => {
+    { taskAlias }: { taskAlias: string }) => {
     actions.addedSubmission({
-      id,
+      id: new Date().getTime(),
       taskAlias,
-      language,
+      language: 'Python3',
       points: undefined,
       status: 'Running',
       submitted: new Date().getTime() / 1000,
