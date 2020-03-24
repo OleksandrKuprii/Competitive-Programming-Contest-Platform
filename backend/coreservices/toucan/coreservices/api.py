@@ -34,7 +34,10 @@ async def get_tasks(request):
     """GET tasks."""
     params = request.rel_url.query
 
-    if list(params.values()).count('') or len(list(params.values())) < 3:
+    if list(params.values()).count('') or \
+            ('user_id' not in list(params.keys()) or
+             'number' not in list(params.keys()) or
+             'offset' not in list(params.keys())):
         return Response(status=400)
 
     user_id = int(params.get('user_id'))

@@ -64,4 +64,62 @@ create table if not exists coreschema.task_bests (
     user_id int references coreschema.users(id),
     task_id int references coreschema.tasks(id),
     submission_id int references coreschema.submissions(id)
-)
+);
+
+
+CREATE OR REPLACE FUNCTION coreschema.modify_task_best(integer)
+RETURNS integer
+AS
+$$
+DECLARE
+    a integer;
+    points_count integer;
+    max_points_count integer;
+    _user_id integer;
+    _task_id integer;
+
+BEGIN
+    _user_id = (SELECT user_id
+               FROM coreschema.submissions
+               WHERE submissions.id = $1);
+    _task_id = (SELECT submissions.task_id
+               FROM coreschema.submissions
+               WHERE submissions.id = $1);
+
+    SELECT COUNT(*) INTO a
+    FROM coreschema.task_bests
+    WHERE task_bests.user_id = _user_id AND task_bests.task_id = _task_id;
+
+    IF a = 0 THEN
+        INSERT INTO coreschema.task_bests (user_id, task_id, submission_id)
+        (SELECT submissions.user_id, submissions.task_id, $1
+         FROM coreschema.submissions
+         WHERE submissions.id = $1);
+
+    ELSE
+        SELECT MAX(points) INTO max_points_count
+        FROM (SELECT SUM(points) as points
+              FROM coreschema.results
+              WHERE submission_id IN (SELECT id
+                                      FROM coreschema.submissions
+                                      WHERE user_id = _user_id
+                                        AND task_id = _task_id
+                                        AND id != $1)
+              GROUP BY submission_id) as some_table;
+
+        SELECT SUM(points) INTO points_count
+        FROM coreschema.results
+        WHERE submission_id = $1;
+
+        IF points_count > max_points_count THEN
+            UPDATE coreschema.task_bests
+            SET submission_id = $1
+            WHERE task_id = _task_id AND user_id = _user_id;
+
+        END IF;
+    END IF;
+
+    RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;

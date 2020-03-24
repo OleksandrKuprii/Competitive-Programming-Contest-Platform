@@ -142,7 +142,7 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
         user_id, task_id, lang, 'Received')
-    print(res[0]['id'])
+
     return res[0]['id']
 
 
@@ -166,7 +166,7 @@ async def get_limits(task_id: int) -> dict:
     return res[0]
 
 
-async def get_task(alias: int):
+async def get_task(alias: int) -> []:
     """Task."""
     task_fetch = await conn.fetch(
         '''SELECT (wall_time_limit, cpu_time_limit, memory_limit,
@@ -199,7 +199,7 @@ async def get_task(alias: int):
     return task + examples
 
 
-async def get_tasks(user_id, number, offset):
+async def get_tasks(user_id, number, offset) -> []:
     """Return task for task list page."""
     tasks_bests = await conn.fetch(
             '''SELECT alias, name, category, difficulty, SUM(points) as points,
@@ -217,3 +217,7 @@ async def get_tasks(user_id, number, offset):
             ''', number, offset, user_id)
 
     return [list(x.items()) for x in tasks_bests]
+
+
+async def update_task_bests(submission_id):
+    await conn.execute('SELECT coreschema.modify_task_best($1)', submission_id)
