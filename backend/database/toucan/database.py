@@ -200,6 +200,7 @@ async def get_task(alias: int):
 
 
 async def get_tasks(user_id, number, offset):
+    """Return task for task list page."""
     tasks_bests = await conn.fetch(
             '''SELECT alias, name, category, difficulty, SUM(points) as points,
                       array_agg(DISTINCT status) as status
@@ -212,7 +213,7 @@ async def get_tasks(user_id, number, offset):
                      task_bests.task_id IN (SELECT id
                                             FROM coreschema.tasks
                                             LIMIT $1 OFFSET $2)
-               GROUP BY alias, name, category, difficulty 
+               GROUP BY alias, name, category, difficulty
             ''', number, offset, user_id)
 
     return [list(x.items()) for x in tasks_bests]

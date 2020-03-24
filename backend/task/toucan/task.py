@@ -33,6 +33,7 @@ async def get_task_info(alias):
 
 
 async def get_tasks(user_id, number, offset):
+    """Get tasks."""
     tasks = await db_get_tasks(user_id, number, offset)
 
     tasks_dict = list()

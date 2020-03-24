@@ -5,8 +5,8 @@ from datetime import datetime
 from aiohttp import web
 from aiohttp.web import Application, Response, _run_app, json_response
 
-from toucan.dataclass import UserSubmission
 from toucan import task
+from toucan.dataclass import UserSubmission
 
 from .submission import add_submission
 
