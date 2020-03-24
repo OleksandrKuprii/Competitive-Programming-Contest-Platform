@@ -11,6 +11,8 @@ create table if not exists coreschema.tasks (
     id serial primary key,
     alias varchar(128) unique,
     name varchar(128) unique,
+    category varchar(50),
+    difficulty int,
     wall_time_limit int,
     cpu_time_limit int,
     memory_limit int
@@ -56,3 +58,10 @@ create table if not exists coreschema.results (
     wall_time int,
     cpu_time int
 );
+
+create table if not exists coreschema.task_bests (
+    id serial primary key,
+    user_id int references coreschema.users(id),
+    task_id int references coreschema.tasks(id),
+    submission_id int references coreschema.submissions(id)
+)

@@ -197,3 +197,22 @@ async def get_task(alias: int):
         examples.append(tuple(ex.values())[0])
 
     return task + examples
+
+
+async def get_tasks(user_id, number, offset):
+    tasks_bests = await conn.fetch(
+            '''SELECT alias, name, category, difficulty, SUM(points) as points,
+                      array_agg(DISTINCT status) as status
+               FROM coreschema.results
+               LEFT JOIN coreschema.task_bests
+               ON results.submission_id = task_bests.submission_id
+               LEFT JOIN coreschema.tasks
+               ON tasks.id = task_id
+               WHERE task_bests.user_id = $3 AND
+                     task_bests.task_id IN (SELECT id
+                                            FROM coreschema.tasks
+                                            LIMIT $1 OFFSET $2)
+               GROUP BY alias, name, category, difficulty 
+            ''', number, offset, user_id)
+
+    return [list(x.items()) for x in tasks_bests]
