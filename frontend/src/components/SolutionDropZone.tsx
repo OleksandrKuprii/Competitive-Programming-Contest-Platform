@@ -9,15 +9,17 @@ const SolutionDropZone = () => {
 
   const [dragEntered, setDragEntered] = React.useState(false);
 
-  const updateFile = useStoreActions((actions: any) => actions.submissionFile.updateFile);
-  const cancel = useStoreActions((actions: any) => actions.submissionFile.cancel);
-  const file = useStoreState((state: any) => state.submissionFile.file);
+  const updatedFile = useStoreActions((actions: any) => actions.submission.file.updatedFile);
+  const canceled = useStoreActions((actions: any) => actions.submission.file.canceled);
+  const file = useStoreState((state: any) => state.submission.file.file);
+
+  const addedSubmission = useStoreActions((actions: any) => actions.submission.addedSubmission);
 
   return (
     <Dropzone
       multiple={false}
       disabled={file !== null}
-      onDropAccepted={(files) => { setDragEntered(false); updateFile(files[0]); }}
+      onDropAccepted={(files) => { setDragEntered(false); updatedFile(files[0]); }}
       onDragEnter={() => setDragEntered(true)}
       onDragLeave={() => setDragEntered(false)}
       onDropRejected={() => setDragEntered(false)}
@@ -39,8 +41,20 @@ const SolutionDropZone = () => {
                     <p className="h3">{file.name}</p>
 
                     <ButtonGroup aria-label="Basic example">
-                      <Button variant="primary">OK</Button>
-                      <Button variant="secondary" onClick={cancel}>Cancel</Button>
+                      <Button
+                        variant="primary"
+                        onClick={() => addedSubmission({
+                          id: 100,
+                          status: 'Running',
+                          points: null,
+                          taskAlias: 'impossible',
+                          language: 'Python3',
+                          submitted: new Date().getTime() / 1000,
+                        })}
+                      >
+                        OK
+                      </Button>
+                      <Button variant="secondary" onClick={canceled}>Cancel</Button>
                     </ButtonGroup>
                   </>
                 )}

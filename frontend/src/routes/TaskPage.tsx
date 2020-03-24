@@ -21,12 +21,15 @@ const TaskPage = () => {
     ),
   );
 
-  const greatestSubmission = useStoreState((state: any) => {
-    return getSubmissionWithGreatestResult(state.submissions, task.alias);
-  });
+  const greatestSubmission = useStoreState(
+    (state: any) => getSubmissionWithGreatestResult(
+      state.submission.list, task.alias,
+    ),
+  );
 
   const points: number = greatestSubmission?.points === undefined ? -1 : greatestSubmission.points;
   const status: string = greatestSubmission?.status === undefined ? 'UNKNOWN' : greatestSubmission.status;
+
 
   return (
     <>

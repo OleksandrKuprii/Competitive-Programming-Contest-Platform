@@ -7,7 +7,7 @@ import SubmissionList from '../components/SubmissionList';
 const SubmissionPage = () => {
   const { t } = useTranslation();
 
-  const submissions = useStoreState((state) => state.submissions);
+  const submissions = useStoreState((state) => state.submission.list);
 
   return (
     <>

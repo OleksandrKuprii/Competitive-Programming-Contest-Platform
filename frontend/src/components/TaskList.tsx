@@ -29,7 +29,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
 
   useStoreState((state: any) => {
     tasks.forEach((task) => {
-      const greatestSubmission = getSubmissionWithGreatestResult(state.submissions, task.alias);
+      const greatestSubmission = getSubmissionWithGreatestResult(state.submission.list, task.alias);
 
       greatestSubmissions.set(task.alias,
         greatestSubmission === undefined ? undefined : greatestSubmission);
