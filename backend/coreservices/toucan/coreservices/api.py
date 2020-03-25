@@ -8,7 +8,8 @@ from aiohttp.web import Application, Response, _run_app, json_response
 from toucan import task
 from toucan.dataclass import UserSubmission
 
-from .submission import add_submission
+from .submission import add_submission, get_result as submission_get_result
+
 
 routes = web.RouteTableDef()
 
@@ -62,6 +63,15 @@ async def get_task_by_alias(request):
     task_info = json.dumps(task_info)
 
     return json_response(task_info)
+
+
+@routes.get('/result/{submission_id}')
+async def get_result(request):
+    submission_id = int(request.match_info['submission_id'])
+
+    result = await submission_get_result(submission_id)
+
+    return json_response(json.dumps(result))
 
 
 app = Application()
