@@ -45,6 +45,16 @@ async def add_submission(user_submission: UserSubmission) -> None:
     return submission_id
 
 
+async def get_all(user_id, number, offset):
+    """Get all submissions."""
+    submissions = await database.get_submissions(user_id, number, offset)
+
+    for i in range(len(submissions)):
+        submissions[i]['result'] = await get_result(submissions[i]['id'])
+
+    return submissions
+
+
 async def get_result(submission_id: int):
     """Get result from database service."""
     result = await database.get_result(submission_id)

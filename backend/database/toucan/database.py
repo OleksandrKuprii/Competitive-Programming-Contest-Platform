@@ -242,3 +242,26 @@ async def get_result(submission_id):
 async def update_task_bests(submission_id):
     """Update task_bests table."""
     await conn.execute('SELECT coreschema.modify_task_best($1)', submission_id)
+
+
+async def get_submissions(user_id, number, offset):
+    """Get submissions."""
+    submissions = await conn.fetch(
+        '''SELECT submissions.id, name, alias, lang, published_at
+           FROM coreschema.submissions
+           LEFT JOIN coreschema.tasks
+           ON tasks.id = task_id
+           WHERE user_id = $1
+           LIMIT $2 OFFSET $3;''',
+        user_id, number, offset)
+
+    data = []
+    for x in submissions:
+        d = dict()
+        for k, v in x.items():
+            d[k] = v
+            if k == 'published_at':
+                d[k] = int(datetime.timestamp(v))
+        data.append(d)
+
+    return data
