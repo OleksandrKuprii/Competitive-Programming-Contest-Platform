@@ -36,7 +36,7 @@ const CustomTable = ({ headers, rows }: CustomTableArgs) => {
         ))}
       </tbody>
     </Table>
-  )
+  );
 };
 
 export default CustomTable;
