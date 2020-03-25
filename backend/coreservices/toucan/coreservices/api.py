@@ -29,6 +29,28 @@ async def post_submission(request):
     return Response(status=200, text=str(submission_id))
 
 
+
+@routes.get('/submissions')
+def get_submissions(request):
+    """GET submissions."""
+    params = request.rel_url.query
+
+    if list(params.values()).count('') or \
+            ('user_id' not in list(params.keys()) or
+             'number' not in list(params.keys()) or
+             'offset' not in list(params.keys())):
+        return Response(status=400)
+
+    user_id = int(params.get('user_id'))
+    number = int(params.get('number'))
+    offset = int(params.get('offset'))
+
+    tasks = await task.get_submissions(user_id, number, offset)
+    tasks = json.dumps(tasks)
+
+    return json_response(tasks)
+
+
 @routes.get('/tasks')
 async def get_tasks(request):
     """GET tasks."""
@@ -59,6 +81,15 @@ async def get_task_by_alias(request):
     task_info = json.dumps(task_info)
 
     return json_response(task_info)
+
+
+@routes.get('/my_result/{submission_id}')
+async def get_my_result(request):
+
+    submission_id = request.match_info['submission_id']
+
+
+
 
 
 app = Application()
