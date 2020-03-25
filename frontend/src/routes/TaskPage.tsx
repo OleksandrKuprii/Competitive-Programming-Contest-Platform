@@ -37,7 +37,7 @@ const TaskPage = () => {
             {' '}
           </p>
           <blockquote>{task.description.main}</blockquote>
-          <p className="h5" style={{ margin: 0, paddingTop: 20, paddingBottom: 10 }}>
+          <p className="h5">
             <b>
               {t('taskpage.description.inputformat')}
             </b>
