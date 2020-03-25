@@ -19,13 +19,14 @@ async def post_submission(request):
 
     try:
         timestamp = int(datetime.utcnow().strftime('%s'))
-        submission = UserSubmission(**body, timestamp=timestamp)
+        submission_data = UserSubmission(**body, timestamp=timestamp)
     except TypeError:
         return Response(status=400)
 
-    submission_id = await submission.add_submission(submission)
+    submission_id = await submission.add_submission(submission_data)
 
-    return Response(status=200, text=str(submission_id))
+    return json_response({'submission_id': submission_id,
+                          'timestamp': timestamp})
 
 
 @routes.get('/tasks')

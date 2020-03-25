@@ -15,7 +15,7 @@ async def add_submission(user_submission: UserSubmission) -> None:
     user_submission : UserSubmission
     """
     # Adds submission to database
-    submission_id = await database.db_add_submission(user_submission)
+    submission_id = await database.add_submission(user_submission)
 
     # Gets ids of all test for this task from database
     test_ids = await database.get_test_ids(user_submission.task_id)

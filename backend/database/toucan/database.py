@@ -142,7 +142,7 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
         user_id, task_id, lang, 'Received')
-    print(res[0]['id'])
+
     return res[0]['id']
 
 
