@@ -6,9 +6,8 @@ from aiohttp import web
 from aiohttp.web import Application, Response, _run_app, json_response
 
 from toucan import task
+from toucan.coreservices import submission
 from toucan.dataclass import UserSubmission
-
-from .submission import add_submission
 
 routes = web.RouteTableDef()
 
@@ -20,35 +19,14 @@ async def post_submission(request):
 
     try:
         timestamp = int(datetime.utcnow().strftime('%s'))
-        submission = UserSubmission(**body, timestamp=timestamp)
+        submission_data = UserSubmission(**body, timestamp=timestamp)
     except TypeError:
         return Response(status=400)
 
-    submission_id = await add_submission(submission)
+    submission_id = await submission.add_submission(submission_data)
 
-    return Response(status=200, text=str(submission_id))
-
-
-
-@routes.get('/submissions')
-def get_submissions(request):
-    """GET submissions."""
-    params = request.rel_url.query
-
-    if list(params.values()).count('') or \
-            ('user_id' not in list(params.keys()) or
-             'number' not in list(params.keys()) or
-             'offset' not in list(params.keys())):
-        return Response(status=400)
-
-    user_id = int(params.get('user_id'))
-    number = int(params.get('number'))
-    offset = int(params.get('offset'))
-
-    tasks = await task.get_submissions(user_id, number, offset)
-    tasks = json.dumps(tasks)
-
-    return json_response(tasks)
+    return json_response({'submission_id': submission_id,
+                          'timestamp': timestamp})
 
 
 @routes.get('/tasks')
@@ -56,7 +34,10 @@ async def get_tasks(request):
     """GET tasks."""
     params = request.rel_url.query
 
-    if list(params.values()).count('') or len(list(params.values())) < 3:
+    if list(params.values()).count('') or \
+            ('user_id' not in list(params.keys()) or
+             'number' not in list(params.keys()) or
+             'offset' not in list(params.keys())):
         return Response(status=400)
 
     user_id = int(params.get('user_id'))
@@ -83,13 +64,34 @@ async def get_task_by_alias(request):
     return json_response(task_info)
 
 
-@routes.get('/my_result/{submission_id}')
-async def get_my_result(request):
+@routes.get('/submissions')
+async def get_submissions(request):
+    """Get list of submissions."""
+    params = request.rel_url.query
 
-    submission_id = request.match_info['submission_id']
+    if list(params.values()).count('') or \
+            ('user_id' not in list(params.keys()) or
+             'number' not in list(params.keys()) or
+             'offset' not in list(params.keys())):
+        return Response(status=400)
+
+    user_id = int(params.get('user_id'))
+    number = int(params.get('number'))
+    offset = int(params.get('offset'))
+
+    submissions = await submission.get_all(user_id, number, offset)
+
+    return json_response(json.dumps(submissions))
 
 
+@routes.get('/result/{submission_id}')
+async def get_result(request):
+    """Get result."""
+    submission_id = int(request.match_info['submission_id'])
 
+    result = await submission.get_result(submission_id)
+
+    return json_response(json.dumps(result))
 
 
 app = Application()

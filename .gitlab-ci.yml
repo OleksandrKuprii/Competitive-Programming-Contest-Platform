@@ -12,40 +12,9 @@ stages:
 test-backend:
   image: python:3.7-alpine
   stage: test
-  services:
-    - postgres:12.2-alpine
-    - name: localstack/localstack
-      alias: localstack
-  variables:
-    POSTGRES_HOST: postgres
-    POSTGRES_DB: toucandb
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: "postgres"
-    SERVICES: s3,sqs
-    S3_ENDPOINT: http://localstack:4572
-    SQS_ENDPOINT: http://localstack:4576
-    SUBMISSIONS_QUEUE_URL: http://localstack:4572/queue/submissions
-    HOSTNAME_EXTERNAL: localstack 
-    DEFAULT_REGION: aaa
-    LOCAL_STORAGE_ROOT: storage
-    AWS_ACCESS_KEY_ID: aaa
-    AWS_SECRET_ACCESS_KEY: aaa
-    AWS_DEFAULT_REGION: aaa
   script:
-    - apk add build-base libffi-dev
-    - pip install tox awscli
-    - aws configure set aws_access_key_id aaa
-    - aws configure set aws_secret_access_key aaa
-    - aws configure set default.region aaa
-    - ./devenv/scripts/create_resources.sh
+    - pip install tox
     - (cd backend; tox)
-    - (cd backend/dataclass; tox)
-    - (cd backend/database; tox)
-    - (cd backend/storage; tox)
-    - (cd backend/runner; mkdir -p storage/submissions; mkdir -p storage/tests; tox)
-    - (cd backend/coreservices; tox)
-    - (cd backend/checker; tox)
-    - (cd backend/task; tox)
 
 test-frontend:
   image: node

@@ -142,7 +142,7 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
         user_id, task_id, lang, 'Received')
-    print(res[0]['id'])
+
     return res[0]['id']
 
 
@@ -202,7 +202,7 @@ async def get_task(alias: int):
 async def get_tasks(user_id, number, offset):
     """Return task for task list page."""
     tasks_bests = await conn.fetch(
-            '''SELECT alias, name, category, difficulty, SUM(points) as points,
+        '''SELECT alias, name, category, difficulty, SUM(points) as points,
                       array_agg(DISTINCT status) as status
                FROM coreschema.results
                LEFT JOIN coreschema.task_bests
@@ -217,3 +217,51 @@ async def get_tasks(user_id, number, offset):
             ''', number, offset, user_id)
 
     return [list(x.items()) for x in tasks_bests]
+
+
+async def get_result(submission_id):
+    """Get result from database."""
+    status = await conn.fetch(
+        '''SELECT get_submission_status_for_result as status
+        FROM coreschema.get_submission_status_for_result($1)''',
+        submission_id)
+
+    status = status[0]['status']
+
+    if status is not None:
+        return None, status
+
+    result = await conn.fetch(
+        '''SELECT sum(points)as points, array_agg(DISTINCT status) as status
+           FROM coreschema.results
+           WHERE submission_id = $1''', submission_id)
+
+    return result[0]['points'], result[0]['status']
+
+
+async def update_task_bests(submission_id):
+    """Update task_bests table."""
+    await conn.execute('SELECT coreschema.modify_task_best($1)', submission_id)
+
+
+async def get_submissions(user_id, number, offset):
+    """Get submissions."""
+    submissions = await conn.fetch(
+        '''SELECT submissions.id, name, alias, lang, published_at
+           FROM coreschema.submissions
+           LEFT JOIN coreschema.tasks
+           ON tasks.id = task_id
+           WHERE user_id = $1
+           LIMIT $2 OFFSET $3;''',
+        user_id, number, offset)
+
+    data = []
+    for x in submissions:
+        d = dict()
+        for k, v in x.items():
+            d[k] = v
+            if k == 'published_at':
+                d[k] = int(datetime.timestamp(v))
+        data.append(d)
+
+    return data

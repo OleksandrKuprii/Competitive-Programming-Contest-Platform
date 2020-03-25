@@ -1,28 +1,31 @@
 """Checks user submission program output."""
 import typing
 
-import toucan.database
-import toucan.storage
+from toucan import database
+from toucan import storage
 from toucan.dataclass import ResultToChecker, ResultToDB, TestResult
 
 
 async def process_result_to_checker(result_to_checker: ResultToChecker):
     """Check result_to_checker and update corresponding rows in database."""
+    submission_id = result_to_checker.submission_id
+
     test_ids = [x.test_id for x in result_to_checker.test_results]
 
-    correct_results = toucan.storage.get_correct_results(test_ids)
+    correct_results = storage.get_correct_results(test_ids)
 
-    points = await toucan.database.get_points_for_tests(test_ids)
+    points = await database.get_points_for_tests(test_ids)
 
     results_to_db = (
-        result_to_db_without_submission_id(result_to_checker.submission_id)
+        result_to_db_without_submission_id(submission_id)
         for result_to_db_without_submission_id in check_test_results(
             result_to_checker.test_results, correct_results, points))
 
-    await toucan.database.add_results_to_db(results_to_db)
+    await database.add_results_to_db(results_to_db)
 
-    await toucan.database.change_submission_status(
-        result_to_checker.submission_id, 'Completed')
+    await database.update_task_bests(submission_id)
+
+    await database.change_submission_status(submission_id, 'Completed')
 
 
 def check_test_results(
