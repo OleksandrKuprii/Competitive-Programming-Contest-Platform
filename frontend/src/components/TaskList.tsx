@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Table } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import uuid from 'react-uuid';
+import CustomTable, { CustomTableRow } from './CustomTable';
 import Difficulty from './Difficulty';
 import RatingHistogram, { Rating } from './RatingHistogram';
 import { GreatestResult } from './Result';
+import { TaskNameLinkByTask } from './TaskNameLink';
 
 
 export interface Task {
@@ -19,45 +17,22 @@ export interface Task {
   limits: { cpu_time: number, wall_time: number, memory: number }
 }
 
-function TaskList({ tasks }: { tasks: Task[] }) {
-  const { t } = useTranslation();
+const TaskList = ({ tasks }: { tasks: Task[] }) => {
+  const rows: CustomTableRow[] = tasks.map(
+    ({
+      alias, taskName, difficulty, rating, category,
+    }) => ([
+      (<TaskNameLinkByTask taskName={taskName} alias={alias} />),
+      (category),
+      (<Difficulty difficulty={difficulty} />),
+      (<RatingHistogram rating={rating} />),
+      (<GreatestResult taskAlias={alias} />),
+    ]),
+  );
 
   return (
-    <Table striped hover variant="dark" size="sm" borderless>
-      <thead className="customhead">
-        <tr>
-          {[t('headers.name'),
-            t('headers.category'),
-            t('headers.difficulty'),
-            t('headers.rating'),
-            t('headers.result')].map((header) => (
-              <th style={{ fontSize: 18 }} key={uuid()}>{header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {tasks.map(({
-          taskName, category, difficulty, rating, alias,
-        }) => (
-          <tr key={uuid()}>
-            <td>
-              <Link to={`/task/view/${alias}`} style={{ color: 'white' }}>{taskName}</Link>
-            </td>
-            <td>{category}</td>
-            <td>
-              <Difficulty difficulty={difficulty} />
-            </td>
-            <td>
-              <RatingHistogram rating={rating} />
-            </td>
-            <td>
-              <GreatestResult taskAlias={alias} />
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <CustomTable headers={['name', 'category', 'difficulty', 'rating', 'result']} rows={rows} />
   );
-}
+};
 
 export default TaskList;
