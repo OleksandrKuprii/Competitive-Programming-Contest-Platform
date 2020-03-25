@@ -123,3 +123,31 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION coreschema.get_submission_status_for_result(integer)
+RETURNS varchar
+AS
+$$
+DECLARE
+    statuses varchar[];
+    res varchar;
+
+BEGIN
+
+    SELECT array_agg(DISTINCT status) INTO statuses
+    FROM coreschema.results
+    WHERE submission_id = $1;
+
+    IF statuses is NULL THEN
+        SELECT status INTO res
+        FROM coreschema.submissions
+        WHERE id = $1;
+
+        RETURN res;
+    END IF;
+
+    RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;
