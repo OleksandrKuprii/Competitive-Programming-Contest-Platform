@@ -1,20 +1,18 @@
 import { useStoreState } from 'easy-peasy';
 import * as React from 'react';
-import { Col, Row, Table } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
+import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import uuid from 'react-uuid';
-import { Submission } from '../models/submissionModel';
-import { Task } from '../components/TaskList';
+import CodeViewer from '../components/CodeViewer';
+import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
 import { Result } from '../components/Result';
-import CodeViewer from '../components/CodeViewer';
+import { Task } from '../components/TaskList';
+import { TaskNameLinkByTask } from '../components/TaskNameLink';
+import { Submission } from '../models/submissionModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 
 
 const SubmissionPage = () => {
-  const { t } = useTranslation();
-
   const { id } = useParams();
 
   const [submission, task]: [Submission, Task] = useStoreState(
@@ -40,74 +38,56 @@ const SubmissionPage = () => {
   }
 
 
+  const infoTableRow: CustomTableRow = [
+    (<TaskNameLinkByTask taskName={task.taskName} alias={task.alias} />),
+    (<PrettyDate timestamp={submission.submitted} />),
+    (<Result points={submission.points} status={submission.status} />),
+  ];
+
+  const infoTable = (
+    <CustomTable headers={['task', 'submitted', 'result']} rows={[infoTableRow]} />
+  );
+
+  const testsTableRows: CustomTableRow[] = submission.tests.map(
+    ({
+      points, status, cputime, realtime,
+    }, i) => ([
+      (i.toString()),
+      (<Result points={points} status={[status]} />),
+      (`${cputime}ms`),
+      (`${realtime}ms`),
+    ]),
+  );
+
+  const testsTable = (
+    <CustomTable headers={['id', 'result', 'cputime', 'realtime']} rows={testsTableRows} />
+  );
+
   return (
     <Row>
       <Col md={5}>
-        <Row>
-          <p className="h3">
-            {t('submission')}
-            {' #'}
-            {submission.id}
-          </p>
-        </Row>
+        <p className="h3">
+          Submission #
+          {submission.id}
+        </p>
 
-        <Row>
-          <p>
-            {t('headers.task')}
-            {': '}
-            {task.taskName}
-          </p>
-        </Row>
-        <Row>
-          <p>
-            {t('headers.submitted')}
-            {': '}
-            <PrettyDate timestamp={submission.submitted} />
-          </p>
-        </Row>
-        <Row>
-          <p>
-            {t('headers.result')}
-            {': '}
-            <Result points={submission.points} status={submission.status} />
-          </p>
-        </Row>
+        <p className="h5">
+          Overall results
+        </p>
 
-        <div style={{ paddingTop: 50 }} />
+        {infoTable}
 
-        {submission.tests.length > 0 ? (
-          <Row key={uuid()}>
-            <Table striped hover variant="dark" size="sm" borderless>
-              <thead className="customhead">
-                <tr>
-                  <th>#</th>
-                  <th>{t('headers.result')}</th>
-                  <th>{t('headers.cputime')}</th>
-                  <th>{t('headers.realtime')}</th>
-                </tr>
-              </thead>
+        {submission.tests.length > 0
+          ? (
+            <>
+              <p className="h5">
+                Results per test
+              </p>
 
-              <tbody>
-                {submission.tests.map((test, i) => (
-                  <tr>
-                    <td>{i + 1}</td>
-                    <td>
-                      <Result points={test.points} status={[test.status]} />
-                    </td>
-                    <td>
-                      {test.cputime}
-                      ms
-                    </td>
-                    <td>
-                      {test.realtime}
-                      ms
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Row>
-        ) : null}
+              {testsTable}
+            </>
+          )
+          : null}
       </Col>
       <Col>
         <p><b>{submission.language}</b></p>

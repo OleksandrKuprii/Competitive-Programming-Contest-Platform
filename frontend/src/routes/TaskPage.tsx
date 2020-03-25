@@ -1,13 +1,12 @@
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
-import { useStoreState, useStoreActions } from 'easy-peasy';
-import { Row, Col, Table } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import uuid from 'react-uuid';
-import { Task } from '../components/TaskList';
-import SolutionDropZone
-  from '../components/SolutionDropZone';
+import { useParams } from 'react-router-dom';
+import CustomTable from '../components/CustomTable';
 import { GreatestResult } from '../components/Result';
+import SolutionDropZone from '../components/SolutionDropZone';
+import { Task } from '../components/TaskList';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -29,70 +28,53 @@ const TaskPage = () => {
   return (
     <>
       <Row>
-        <Col md="9">
-          <h1>{task.taskName}</h1>
-          <p className="lead">
-            Personal result:
-            {' '}
+        <Col>
+          <h1 style={{ marginBottom: 5 }}>{task.taskName}</h1>
+          <p className="h6">
+            {t('taskpage.personalResult')}
+            {': '}
             <GreatestResult taskAlias={taskAlias} />
             {' '}
           </p>
-          <p>{task.description.main}</p>
-          <h3>{t('taskpage.description.inputformat')}</h3>
-          <p>{task.description.input_format}</p>
-          <h3>{t('taskpage.description.outputformat')}</h3>
-          <p>{task.description.output_format}</p>
-          <h3>{t('taskpage.examples')}</h3>
-          <Table size="sm" striped hover variant="dark" borderless>
-            <thead>
-              <tr>
-                <th>Input</th>
-                <th>Output</th>
-              </tr>
-            </thead>
-            <tbody>
-              {task.examples.map((example: { input: string, output: string }) => (
-                <tr key={uuid()}>
-                  <td>{example.input}</td>
-                  <td>{example.output}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          <blockquote>{task.description.main}</blockquote>
+          <p className="h5" style={{ margin: 0, paddingTop: 20, paddingBottom: 10 }}>
+            <b>
+              {t('taskpage.description.inputformat')}
+            </b>
+          </p>
+          <blockquote>{task.description.input_format}</blockquote>
+          <p className="h5">
+            <b>
+              {t('taskpage.description.outputformat')}
+            </b>
+          </p>
+          <blockquote>{task.description.output_format}</blockquote>
+          <p className="h5">
+            <b>
+              {t('taskpage.examples')}
+            </b>
+          </p>
+
+          <CustomTable
+            headers={['input', 'output']}
+            rows={task.examples.map(({ input, output }) => ([
+              (input),
+              (output),
+            ]))}
+          />
         </Col>
-        <Col md="3">
-          <p>
-            <b>{t('taskpage.limits.cpu')}</b>
-            :
-            {' '}
-            {task.limits.cpu_time}
-            ms
+        <Col md="4">
+          <p className="h5 center">
+            Limits
           </p>
-          <p>
-            <b>{t('taskpage.limits.wall')}</b>
-            :
-            {' '}
-            {task.limits.wall_time}
-            ms
-          </p>
-          <p>
-            <b>{t('taskpage.limits.memory')}</b>
-            :
-            {' '}
-            {task.limits.memory}
-            mb
-          </p>
+          <CustomTable
+            headers={['cputime', 'realtime', 'memory']}
+            rows={[[task.limits.cpu_time.toString(),
+              task.limits.wall_time.toString(),
+              task.limits.memory.toString()]]}
+          />
 
-          <hr />
-
-          <p>
-            <b>{t('taskpage.inputfile')}</b>
-            : input.txt
-          </p>
-          <p>
-            <b>{t('taskpage.outputfile')}</b>
-            : output.txt
-          </p>
+          <CustomTable headers={['input', 'output']} rows={[['input.txt', 'output.txt']]} />
         </Col>
       </Row>
 
