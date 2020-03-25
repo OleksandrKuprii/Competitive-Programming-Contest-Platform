@@ -28,6 +28,10 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
   );
   const languages = ['python3', 'python2', 'c++', 'c'];
 
+  if (language === null) {
+    selectedLanguage(languages[0]);
+  }
+
   return (
     <Dropzone
       multiple={false}

@@ -23,7 +23,7 @@ export const Result = (
   }
 
   const started = points >= 0;
-  const correct = points === 100;
+  const correct = status[0] === 'Correct';
 
   if (started) {
     let color = null;
