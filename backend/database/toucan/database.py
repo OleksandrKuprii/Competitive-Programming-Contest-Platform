@@ -222,7 +222,7 @@ async def get_tasks(user_id, number, offset):
 async def get_result(submission_id):
     """Get result from database."""
     status = await conn.fetch(
-        '''SELECT get_submission_status_for_result as status 
+        '''SELECT get_submission_status_for_result as status
         FROM coreschema.get_submission_status_for_result($1)''',
         submission_id)
 
