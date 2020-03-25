@@ -8,6 +8,7 @@
         "description": "a powerful programming contest platform"
     },
     "pagename": {
+        "home": "Home",
         "tasks": "Public tasks",
         "tournaments": "Tournaments",
         "profile": "Profile",
@@ -30,8 +31,8 @@
             "cpu": "CPU time limit",
             "wall": "Real time limit",
             "memory": "Memory limit"
-        }
-        
+        },
+        "personalResult": "Personal result"
     },
     "submissionPage":{
         "description":"Explore your submissions"
@@ -47,6 +48,9 @@
         "category": "Category",
         "rating": "Rating",
         "realtime": "Real Time",
-        "cputime":"CPU Time"
+        "cputime": "CPU Time",
+        "memory": "Memory",
+        "input": "Input",
+        "output": "Output"
     }
 }
