@@ -202,7 +202,7 @@ async def get_task(alias: int):
 async def get_tasks(user_id, number, offset):
     """Return task for task list page."""
     tasks_bests = await conn.fetch(
-            '''SELECT alias, name, category, difficulty, SUM(points) as points,
+        '''SELECT alias, name, category, difficulty, SUM(points) as points,
                       array_agg(DISTINCT status) as status
                FROM coreschema.results
                LEFT JOIN coreschema.task_bests
@@ -217,3 +217,28 @@ async def get_tasks(user_id, number, offset):
             ''', number, offset, user_id)
 
     return [list(x.items()) for x in tasks_bests]
+
+
+async def get_result(submission_id):
+    """Get result from database."""
+    status = await conn.fetch(
+        '''SELECT get_submission_status_for_result as status
+        FROM coreschema.get_submission_status_for_result($1)''',
+        submission_id)
+
+    status = status[0]['status']
+
+    if status is not None:
+        return None, status
+
+    result = await conn.fetch(
+        '''SELECT sum(points)as points, array_agg(DISTINCT status) as status
+           FROM coreschema.results
+           WHERE submission_id = $1''', submission_id)
+
+    return result[0]['points'], result[0]['status']
+
+
+async def update_task_bests(submission_id):
+    """Update task_bests table."""
+    await conn.execute('SELECT coreschema.modify_task_best($1)', submission_id)
