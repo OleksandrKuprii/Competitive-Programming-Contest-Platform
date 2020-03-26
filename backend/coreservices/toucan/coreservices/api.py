@@ -5,6 +5,8 @@ from datetime import datetime
 from aiohttp import web
 from aiohttp.web import Application, Response, _run_app, json_response
 
+import aiohttp_cors
+
 from toucan import task
 from toucan.coreservices import submission
 from toucan.dataclass import UserSubmission
@@ -25,8 +27,10 @@ async def post_submission(request):
 
     submission_id = await submission.add_submission(submission_data)
 
-    return json_response({'submission_id': submission_id,
-                          'timestamp': timestamp})
+    return json_response({
+        'submission_id': submission_id,
+        'timestamp': timestamp
+    })
 
 
 @routes.get('/tasks')
@@ -112,9 +116,23 @@ async def get_test_results(request):
 
 
 app = Application()
+
+cors = aiohttp_cors.setup(app,
+                          defaults={
+                              "*":
+                              aiohttp_cors.ResourceOptions(
+                                  allow_credentials=True,
+                                  expose_headers="*",
+                                  allow_headers="*",
+                              )
+                          })
+
 app.add_routes(routes)
+
+for route in app.router.routes():
+    cors.add(route)
 
 
 async def run():
     """Start api using existing event loop."""
-    await _run_app(app, port=3000)
+    await _run_app(app, port=4000)

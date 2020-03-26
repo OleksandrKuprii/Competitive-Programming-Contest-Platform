@@ -2,5 +2,9 @@
 ../dataclass/
 ../database/
 ../storage/
+../task/
 boto3
+markdown2
+aiohttp[speedups]
+aiohttp_cors
 -e .
