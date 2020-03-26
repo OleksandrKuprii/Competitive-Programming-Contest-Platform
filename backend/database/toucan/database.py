@@ -170,7 +170,7 @@ async def get_task(alias: str):
     """Task."""
     task_fetch = await conn.fetchrow(
         '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
-                    main, input_format, output_format, explanation
+                    main, input_format, output_format, explanation, name
            FROM coreschema.tasks as tasks
            FULL OUTER JOIN coreschema.task_descriptions as task_desc
            ON tasks.alias = task_desc.alias
