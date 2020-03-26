@@ -166,57 +166,63 @@ async def get_limits(task_id: int) -> dict:
     return res[0]
 
 
-async def get_task(alias: int):
+async def get_task(alias: str):
     """Task."""
-    task_fetch = await conn.fetch(
-        '''SELECT (wall_time_limit, cpu_time_limit, memory_limit,
-                    task_desc.main, task_desc.input_format,
-                    task_desc.output_format, task_desc.explanation)
+    task_fetch = await conn.fetchrow(
+        '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
+                    main, input_format, output_format, explanation
            FROM coreschema.tasks as tasks
            FULL OUTER JOIN coreschema.task_descriptions as task_desc
            ON tasks.alias = task_desc.alias
            WHERE tasks.alias = $1
         ''', alias)
 
-    if not task_fetch:
-        return None
-
-    task = list(task_fetch[0].values())
+    task = {k: v for k, v in task_fetch.items()}
 
     examples_fetch = await conn.fetch(
-        '''SELECT (input_data, output_data)
+        '''SELECT input_data, output_data
            FROM coreschema.task_examples
            WHERE alias = $1
         ''', alias)
 
-    if not examples_fetch:
-        return None
-
     examples = []
     for ex in examples_fetch:
-        examples.append(tuple(ex.values())[0])
+        examples.append({k: v for k, v in ex.items()})
 
-    return task + examples
+    task['examples'] = examples
+    print(task)
+    return task
 
 
-async def get_tasks(user_id, number, offset):
+async def get_tasks(number: int, offset: int):
     """Return task for task list page."""
-    tasks_bests = await conn.fetch(
-        '''SELECT alias, name, category, difficulty, SUM(points) as points,
-                      array_agg(DISTINCT status) as status
-               FROM coreschema.results
-               LEFT JOIN coreschema.task_bests
-               ON results.submission_id = task_bests.submission_id
-               LEFT JOIN coreschema.tasks
-               ON tasks.id = task_id
-               WHERE task_bests.user_id = $3 AND
-                     task_bests.task_id IN (SELECT id
-                                            FROM coreschema.tasks
-                                            LIMIT $1 OFFSET $2)
-               GROUP BY alias, name, category, difficulty
-            ''', number, offset, user_id)
+    fetch = await conn.fetch('''
+        SELECT id, alias, name, category, difficulty
+        FROM coreschema.tasks
+        LIMIT $1 OFFSET $2
+    ''', number, offset)
 
-    return [list(x.items()) for x in tasks_bests]
+    data = list()
+    for x in fetch:
+        temp_dict = dict()
+        for k, v in x.items():
+            temp_dict[k] = v
+        data.append(temp_dict)
+
+    return data
+
+
+async def get_submission_id_from_bests(user_id: int, task_id: int):
+    """Get submission id from task_bests table by user id and task id."""
+    fetch = await conn.fetchrow('''
+        SELECT submission_id
+        FROM coreschema.task_bests
+        WHERE user_id = $1 AND task_id = $2
+    ''', user_id, task_id)
+
+    if fetch is not None:
+        return fetch['submission_id']
+    return None
 
 
 async def get_result(submission_id):
@@ -265,3 +271,37 @@ async def get_submissions(user_id, number, offset):
         data.append(d)
 
     return data
+
+
+async def get_submission(submission_id: int):
+    """Get submission by id."""
+    fetch = await conn.fetchrow('''
+        SELECT name, alias, lang, published_at as timestamp
+        FROM coreschema.submissions
+        LEFT JOIN coreschema.tasks
+        ON tasks.id = task_id
+        WHERE submissions.id = $1''', submission_id)
+
+    submission_dict = {k: v for k, v in fetch.items()}
+    submission_dict['timestamp'] = \
+        int(submission_dict['timestamp'].timestamp())
+
+    return submission_dict
+
+
+async def get_test_results(submission_id: int):
+    """Get tests by submission id."""
+    fetch = await conn.fetch('''
+        SELECT points, status, wall_time, cpu_time
+        FROM coreschema.results
+        WHERE submission_id = $1
+        ''', submission_id)
+
+    tests = list()
+    for f in fetch:
+        temp_dict = {}
+        for k, v in f.items():
+            temp_dict[k] = v
+        tests.append(temp_dict)
+
+    return tests
