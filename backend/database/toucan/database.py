@@ -119,7 +119,7 @@ async def get_test_ids(task_id: int) -> List[int]:
     return [x['id'] for x in test_ids]
 
 
-async def add_submission(submission_to_db: SubmissionToDB) -> int:
+async def add_submission(submission_to_db: SubmissionToDB) -> tuple():
     """Add submission and return its id.
 
     Parameters
@@ -133,17 +133,25 @@ async def add_submission(submission_to_db: SubmissionToDB) -> int:
     """
     # Presenting SubmissionToDB object values to the variables
     user_id = submission_to_db.user_id
-    task_id = submission_to_db.task_id
+    alias = submission_to_db.alias
     timestamp = submission_to_db.timestamp
     date = datetime.fromtimestamp(timestamp)
     lang = submission_to_db.lang
+
+    fetch = await conn.fetchrow('''
+        SELECT id 
+        FROM coreschema.tasks 
+        WHERE alias = $1
+    ''', alias)
+
+    task_id = int(fetch['id'])
 
     res = await conn.fetch(
         'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
         'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
         user_id, task_id, lang, 'Received')
 
-    return res[0]['id']
+    return res[0]['id'], task_id
 
 
 async def get_limits(task_id: int) -> dict:
@@ -190,7 +198,7 @@ async def get_task(alias: str):
         examples.append({k: v for k, v in ex.items()})
 
     task['examples'] = examples
-    print(task)
+
     return task
 
 
