@@ -313,3 +313,14 @@ async def get_test_results(submission_id: int):
         tests.append(temp_dict)
 
     return tests
+
+
+async def get_task_id_from_alias(alias: str) -> int:
+    """Get user id from alias."""
+    fetch = await conn.fetchrow('''
+        SELECT id
+        FROM coreschema.tasks
+        WHERE alias = $1
+    ''', alias)
+
+    return fetch['id']

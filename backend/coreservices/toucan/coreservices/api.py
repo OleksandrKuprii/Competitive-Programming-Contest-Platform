@@ -61,6 +61,14 @@ async def get_task_by_alias(request):
     if task_info is None:
         return Response(status=400)
 
+    user_id = await get_user_id_from_auth()
+    task_id = await task.get_task_id_from_alias(alias)
+    submission_id = await submission.get_submission_id_from_bests(
+        user_id, task_id)
+
+    result = await submission.get_result(submission_id)
+    task_info['result'] = result
+
     return json_response(task_info)
 
 
@@ -112,6 +120,11 @@ async def get_test_results(request):
     tests = await submission.get_test_results(submission_id)
 
     return json_response(tests)
+
+
+async def get_user_id_from_auth() -> int:
+    """Get user id from auth token."""
+    return 1
 
 
 app = Application()

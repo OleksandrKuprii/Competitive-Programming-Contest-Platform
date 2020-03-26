@@ -33,3 +33,8 @@ async def get_tasks(user_id: int, number: int, offset: int):
         tasks[i]['result'] = result
 
     return tasks
+
+
+async def get_task_id_from_alias(alias: str) -> int:
+    """Get user id from alias."""
+    return await database.get_task_id_from_alias(alias)
