@@ -45,9 +45,8 @@ async def get_tasks(request):
     offset = int(params.get('offset'))
 
     tasks = await task.get_tasks(user_id, number, offset)
-    tasks = json.dumps(tasks)
 
-    return json_response(tasks)
+    return json_response(json.dumps(tasks))
 
 
 @routes.get('/task/{alias}')
@@ -84,7 +83,17 @@ async def get_submissions(request):
     return json_response(json.dumps(submissions))
 
 
-@routes.get('/result/{submission_id}')
+@routes.get(r'/submission/{submission_id:\d+}')
+async def get_submission(request):
+    """Get submission by id."""
+    submission_id = int(request.match_info['submission_id'])
+
+    submission_data = await submission.get_submission(submission_id)
+
+    return json_response(json.dumps(submission_data))
+
+
+@routes.get(r'/result/{submission_id:\d+}')
 async def get_result(request):
     """Get result."""
     submission_id = int(request.match_info['submission_id'])
@@ -92,6 +101,16 @@ async def get_result(request):
     result = await submission.get_result(submission_id)
 
     return json_response(json.dumps(result))
+
+
+@routes.get(r'/test_results/{submission_id:\d+}')
+async def get_test_results(request):
+    """Get all test results."""
+    submission_id = int(request.match_info['submission_id'])
+
+    tests = submission.get_test_results(submission_id)
+
+    return json_response(json.dumps(tests))
 
 
 app = Application()

@@ -65,8 +65,8 @@ def add_code(submission_to_storage: SubmissionToStorage):
     obj.put(Body=submission_to_storage.code)
 
 
-def download_submission_code(submission_id: int, lang: str) -> str:
-    """Download submission code and return path to local file."""
+def get_extension_by_lang(lang: str) -> str:
+    """Get file extension by language."""
     ext = None
 
     if lang in ('python3', 'python2'):
@@ -74,8 +74,21 @@ def download_submission_code(submission_id: int, lang: str) -> str:
 
     assert ext is not None
 
+    return ext
+
+
+def download_submission_code(submission_id: int, lang: str) -> str:
+    """Download submission code and return path to local file."""
+    ext = get_extension_by_lang(lang)
+
     path = f'{LOCAL_STORAGE_ROOT}/submissions/{submission_id}.{ext}'
 
     s3.Bucket(SUBMISSIONS_BUCKET).download_file(str(submission_id), path)
 
     return path
+
+
+def get_code(submission_id: int) -> str:
+    """Get file from storage and returns its content."""
+    obj = s3.Object(SUBMISSIONS_BUCKET, f'{submission_id}')
+    return obj.get()['Body'].read().decode()

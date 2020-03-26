@@ -1,8 +1,8 @@
 """Handles submission logic."""
 from toucan import database
+from toucan import storage
 from toucan.dataclass import (SubmissionToRunner, SubmissionToStorage,
                               UserSubmission)
-from toucan.storage import add_code
 
 from .runner import add_submission as runner_add_submission
 
@@ -25,7 +25,7 @@ async def add_submission(user_submission: UserSubmission) -> None:
                                                 user_submission.code)
 
     # Adds code to the storage
-    add_code(submission_to_storage)
+    storage.add_code(submission_to_storage)
 
     # Gets limits for this task from database
     limits = await database.get_limits(user_submission.task_id)
@@ -59,3 +59,28 @@ async def get_result(submission_id: int):
     """Get result from database service."""
     result = await database.get_result(submission_id)
     return {'points': result[0], 'status': result[1]}
+
+
+async def get_test_results(submission_id: int) -> None:
+    """Get all test results."""
+    tests = await database.get_test_results(submission_id)
+    return tests
+
+
+async def get_submission(submission_id: int):
+    """Get submission from database service by id."""
+    submission_dict = await database.get_submission(submission_id)
+
+    result = await get_result(submission_id)
+
+    if result['points'] is None:
+        tests = list()
+    else:
+        tests = await get_test_results(submission_id)
+
+    submission_dict['tests'] = tests
+
+    code = storage.get_code(submission_id)
+    submission_dict['code'] = code
+
+    return submission_dict
