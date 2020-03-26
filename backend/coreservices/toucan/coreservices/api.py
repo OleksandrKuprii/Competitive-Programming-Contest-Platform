@@ -1,5 +1,4 @@
 """Toucan API."""
-import json
 from datetime import datetime
 
 from aiohttp import web
@@ -50,7 +49,7 @@ async def get_tasks(request):
 
     tasks = await task.get_tasks(user_id, number, offset)
 
-    return json_response(json.dumps(tasks))
+    return json_response(tasks)
 
 
 @routes.get('/task/{alias}')
@@ -61,8 +60,6 @@ async def get_task_by_alias(request):
 
     if task_info is None:
         return Response(status=400)
-
-    task_info = json.dumps(task_info)
 
     return json_response(task_info)
 
@@ -84,7 +81,7 @@ async def get_submissions(request):
 
     submissions = await submission.get_all(user_id, number, offset)
 
-    return json_response(json.dumps(submissions))
+    return json_response(submissions)
 
 
 @routes.get(r'/submission/{submission_id:\d+}')
@@ -94,7 +91,7 @@ async def get_submission(request):
 
     submission_data = await submission.get_submission(submission_id)
 
-    return json_response(json.dumps(submission_data))
+    return json_response(submission_data)
 
 
 @routes.get(r'/result/{submission_id:\d+}')
@@ -104,7 +101,7 @@ async def get_result(request):
 
     result = await submission.get_result(submission_id)
 
-    return json_response(json.dumps(result))
+    return json_response(result)
 
 
 @routes.get(r'/test_results/{submission_id:\d+}')
@@ -112,9 +109,9 @@ async def get_test_results(request):
     """Get all test results."""
     submission_id = int(request.match_info['submission_id'])
 
-    tests = submission.get_test_results(submission_id)
+    tests = await submission.get_test_results(submission_id)
 
-    return json_response(json.dumps(tests))
+    return json_response(tests)
 
 
 app = Application()

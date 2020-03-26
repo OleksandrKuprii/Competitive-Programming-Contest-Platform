@@ -70,7 +70,7 @@ class UserSubmission:
     """User submission representation."""
 
     user_id: int
-    task_id: int
+    alias: str
     timestamp: int
     lang: str
     code: str
