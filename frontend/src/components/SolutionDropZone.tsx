@@ -1,11 +1,12 @@
 import * as React from 'react';
 import Dropzone from 'react-dropzone';
 import {
-  Jumbotron, ButtonGroup, Button, Form, Col, Container,
+  ButtonGroup, Button, Form, Col, Container,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import uuid from 'react-uuid';
+import { useHistory } from 'react-router-dom';
 import CodeViewer from './CodeViewer';
 
 const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
@@ -28,6 +29,8 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
   );
   const languages = ['python3', 'python2', 'c++', 'c'];
 
+  const history = useHistory();
+
   if (language === null) {
     selectedLanguage(languages[0]);
   }
@@ -48,14 +51,10 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
             <input {...getInputProps()} />
             {/* eslint-enable react/jsx-props-no-spreading */}
 
-            <Jumbotron style={dragEntered ? {
-              backgroundColor: '#79808c', color: 'white', fontWeight: 'bold', borderColor: '#57606a', borderWidth: 10, borderStyle: 'solid',
-            } : undefined}
-            >
+            <div className={dragEntered ? 'dropzone dropzone-dragon' : 'dropzone'}>
               {file === null ? t('taskpage.dropfilehere')
                 : (
                   <>
-
                     <Form>
                       <Form.Row>
                         <Form.Group as={Col}>
@@ -86,6 +85,7 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
                             onClick={() => {
                               onSubmit();
                               updatedFile({ file: null, fileText: null });
+                              history.push('/submissions');
                             }}
                             type="submit"
                           >
@@ -103,7 +103,7 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
                     </Form>
                   </>
                 )}
-            </Jumbotron>
+            </div>
           </div>
         </>
       )}
