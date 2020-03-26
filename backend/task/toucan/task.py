@@ -22,8 +22,8 @@ async def get_tasks(user_id: int, number: int, offset: int):
 
     for i in range(len(tasks)):
         task_id = tasks[i].pop('id')
-        submission_id = await database.get_submission_id_from_bests(user_id,
-                                                                    task_id)
+        submission_id = await database.get_submission_id_from_bests(
+            user_id, task_id)
 
         if submission_id is not None:
             result = await submission.get_result(submission_id)
