@@ -123,7 +123,9 @@ async def get_test_results(request):
 
 
 async def get_user_id_from_auth() -> int:
+    """Get user id from auth token."""
     return 1
+
 
 app = Application()
 

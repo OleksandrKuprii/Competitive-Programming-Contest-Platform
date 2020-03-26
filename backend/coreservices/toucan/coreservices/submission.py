@@ -87,5 +87,5 @@ async def get_submission(submission_id: int):
 
 
 async def get_submission_id_from_bests(user_id: int, task_id: int):
+    """Get submission id from bests."""
     return await database.get_submission_id_from_bests(user_id, task_id)
-
