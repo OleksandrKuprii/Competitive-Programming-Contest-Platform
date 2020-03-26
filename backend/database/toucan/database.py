@@ -139,8 +139,8 @@ async def add_submission(submission_to_db: SubmissionToDB) -> tuple():
     lang = submission_to_db.lang
 
     fetch = await conn.fetchrow('''
-        SELECT id 
-        FROM coreschema.tasks 
+        SELECT id
+        FROM coreschema.tasks
         WHERE alias = $1
     ''', alias)
 

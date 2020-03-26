@@ -1,5 +1,4 @@
 """Toucan API."""
-import json
 from datetime import datetime
 
 from aiohttp import web
