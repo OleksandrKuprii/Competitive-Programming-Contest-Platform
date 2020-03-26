@@ -84,3 +84,8 @@ async def get_submission(submission_id: int):
     submission_dict['code'] = code
 
     return submission_dict
+
+
+async def get_submission_id_from_bests(user_id: int, task_id: int):
+    return await database.get_submission_id_from_bests(user_id, task_id)
+
