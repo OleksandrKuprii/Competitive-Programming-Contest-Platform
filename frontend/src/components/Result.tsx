@@ -55,7 +55,7 @@ export const Result = (
 };
 
 export const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined }) => {
-  const submissions = useStoreState((state) => state.submission.list);
+  const submissions = useStoreState((state) => state.taskSubmission.submission.list);
 
   if (taskAlias === undefined) {
     return <></>;

@@ -30,7 +30,10 @@ async def get_tasks(user_id: int, number: int, offset: int):
         else:
             result = None
 
-        tasks[i]['result'] = result
+        tasks[i]['best_submission'] = {
+            'result': result,
+            'id': submission_id
+        }
 
     return tasks
 

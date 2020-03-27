@@ -16,7 +16,7 @@ export const TaskNameLinkByTask = ({ alias, taskName }: TaskNameLinkByTaskArgs) 
 );
 
 export const TaskNameLinkByAlias = ({ alias }: TaskNameLinkByAliasArgs) => {
-  const task = useStoreState((state) => state.task.list.find(
+  const task = useStoreState((state) => state.taskSubmission.task.list.find(
     (t: any) => t.alias === alias,
   ));
 

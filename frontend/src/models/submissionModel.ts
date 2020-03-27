@@ -7,12 +7,12 @@ import baseURL from './apiBaseURL';
 export interface Submission {
   id: number
   taskAlias: string
-  language: string
+  language?: string
   status: string[]
   points?: number
-  submitted: number,
-  tests: { status: string, points: number, cputime: number, realtime: number }[],
-  code: string
+  submitted?: number,
+  tests?: { status: string, points: number, cputime: number, realtime: number }[],
+  code?: string
 }
 
 const submitSubmissionUrlBuilder = () => (
