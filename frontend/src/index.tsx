@@ -6,13 +6,13 @@ import App from './App';
 import './bootstrap.scss';
 import i18n from './i18n';
 import './index.css';
-import publictasks from './publictasks.json';
 import * as serviceWorker from './serviceWorker';
 import submissionModel from './models/submissionModel';
+import taskModel from './models/taskModel';
 
 
 const store = createStore({
-  publictasks,
+  task: taskModel,
   submission: submissionModel,
 });
 

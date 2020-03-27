@@ -10,7 +10,11 @@ export const Result = (
 ) => {
   const { t } = useTranslation();
 
-  if (points === undefined || points === null) {
+  if (status.length === 0) {
+    return (<></>);
+  }
+
+  if (status[0] === 'Running') {
     return (
       <>
         <span className="gray_color">
@@ -22,7 +26,7 @@ export const Result = (
     );
   }
 
-  const started = points >= 0;
+  const started = points === undefined ? false : points >= 0;
   const correct = status[0] === 'Correct';
 
   if (started) {
@@ -36,7 +40,7 @@ export const Result = (
 
     return (
       <span className={`${color}_color`} style={{ padding: 0, margin: 0, fontWeight: (correct ? 'bold' : 'normal') }}>
-        {points.toString()}
+        {points === undefined ? '' : points.toString()}
         {' '}
         {status.join(', ')}
       </span>

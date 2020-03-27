@@ -11,17 +11,18 @@ export type CustomTableRow = CustomTableCell[];
 export interface CustomTableArgs {
   headers: string[]
   rows: CustomTableRow[]
+  padding?: number
 }
 
 
-const CustomTable = ({ headers, rows }: CustomTableArgs) => {
+const CustomTable = ({ headers, rows, padding }: CustomTableArgs) => {
   const { t } = useTranslation();
   return (
     <Table striped hover variant="dark" size="sm" borderless>
       <thead className="customhead">
         <tr>
           {headers.map((header) => (
-            <th key={uuid()}>
+            <th key={uuid()} style={{ paddingLeft: padding }}>
               {t(`headers.${header}`)}
             </th>
           ))}
@@ -31,7 +32,7 @@ const CustomTable = ({ headers, rows }: CustomTableArgs) => {
       <tbody>
         {rows.map((row) => (
           <tr key={uuid()}>
-            {row.map((cell) => <td key={uuid()}>{cell}</td>)}
+            {row.map((cell) => <td key={uuid()} style={{ padding }}>{cell}</td>)}
           </tr>
         ))}
       </tbody>

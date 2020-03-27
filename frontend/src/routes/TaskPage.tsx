@@ -3,10 +3,11 @@ import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { Parser as HtmlToReactParser } from 'html-to-react';
 import CustomTable from '../components/CustomTable';
 import { GreatestResult } from '../components/Result';
 import SolutionDropZone from '../components/SolutionDropZone';
-import { Task } from '../components/TaskList';
+import { Task } from '../models/taskModel';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -14,41 +15,69 @@ const TaskPage = () => {
   const { taskAlias } = useParams();
 
   const task: Task = useStoreState(
-    (state) => state.publictasks.find(
+    (state) => state.task.list.find(
       (_task: Task) => _task.alias === taskAlias,
     ),
   );
 
-  const submitSubmission = useStoreActions((actions: any) => actions.submission.submitSubmission);
+  // const submitSubmission = useStoreActions((actions: any) =>
+  //  actions.submission.submitSubmission);
+  const fetchTask = useStoreActions((actions: any) => actions.task.fetchTask);
 
-  const onSubmit = React.useCallback(() => {
-    submitSubmission({ taskAlias });
-  }, [taskAlias, submitSubmission]);
+  React.useEffect(() => {
+    fetchTask(taskAlias);
+  }, [taskAlias, fetchTask]);
+
+  if (task === undefined) {
+    return <></>;
+  }
+
+  const htmlToReactParser = new HtmlToReactParser();
+
+  const {
+    main: mainOriginal,
+    inputFormat: inputFormatOriginal,
+    outputFormat: outputFormatOriginal,
+  } = task.description;
+
+  const cloneString = (str: string | undefined) => (` ${str === undefined ? '' : str}`).slice(1);
+
+  const renderHtmlWithNewlines = (str: string) => htmlToReactParser.parse(str.replace('\\n', '<br/>'));
+
+  const [main,
+    inputFormat,
+    outputFormat] = [mainOriginal,
+    inputFormatOriginal,
+    outputFormatOriginal]
+    .map(cloneString)
+    .map((str) => str.replace('<p>', ''))
+    .map((str) => str.replace('</p>', ''))
+    .map(renderHtmlWithNewlines);
 
   return (
     <>
       <Row>
         <Col>
-          <h1 style={{ marginBottom: 5 }}>{task.taskName}</h1>
+          <h1 style={{ marginBottom: 5 }}>{task.name}</h1>
           <p className="h6">
             {t('taskpage.personalResult')}
             {': '}
             <GreatestResult taskAlias={taskAlias} />
             {' '}
           </p>
-          <blockquote>{task.description.main}</blockquote>
+          <blockquote>{main}</blockquote>
           <p className="h5">
             <b>
               {t('taskpage.description.inputformat')}
             </b>
           </p>
-          <blockquote>{task.description.input_format}</blockquote>
+          <blockquote>{inputFormat}</blockquote>
           <p className="h5">
             <b>
               {t('taskpage.description.outputformat')}
             </b>
           </p>
-          <blockquote>{task.description.output_format}</blockquote>
+          <blockquote>{outputFormat}</blockquote>
           <p className="h5">
             <b>
               {t('taskpage.examples')}
@@ -57,10 +86,14 @@ const TaskPage = () => {
 
           <CustomTable
             headers={['input', 'output']}
-            rows={task.examples.map(({ input, output }) => ([
-              (input),
-              (output),
-            ]))}
+            padding={10}
+            rows={task.examples.map(
+              ({
+                input,
+                output,
+              }: { input: string, output: string }) => ([input,
+                output].map(renderHtmlWithNewlines)),
+            )}
           />
         </Col>
         <Col md="4">
@@ -69,9 +102,9 @@ const TaskPage = () => {
           </p>
           <CustomTable
             headers={['cputime', 'realtime', 'memory']}
-            rows={[[task.limits.cpu_time.toString(),
-              task.limits.wall_time.toString(),
-              task.limits.memory.toString()]]}
+            rows={[[task.limits.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),
+              task.limits.wallTime === undefined ? '' : task.limits.wallTime.toString(),
+              task.limits.memory === undefined ? '' : task.limits.memory.toString()]]}
           />
 
           <CustomTable headers={['input', 'output']} rows={[['input.txt', 'output.txt']]} />
@@ -82,7 +115,7 @@ const TaskPage = () => {
         <Col>
           <p><b>{t('taskpage.submitsolution')}</b></p>
 
-          <SolutionDropZone onSubmit={onSubmit} />
+          {taskAlias === undefined ? null : <SolutionDropZone />}
         </Col>
       </Row>
     </>
