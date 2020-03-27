@@ -1,5 +1,5 @@
 import { action, thunk } from 'easy-peasy';
-import { baseURL } from './common';
+import baseURL from './common';
 
 export interface TaskRating {
   correct_percent: number,
@@ -42,40 +42,41 @@ const fetchTasksUrlBuilder = ({ userId, number, offset }: FetchTasksUrlParams) =
 
 const fetchTaskUrlBuilder = ({ alias }: FetchTaskUrlParams) => (
   `${baseURL}/task/${alias}`
-)
+);
 
-const resultToPointsAndStatus = (result: any) => {
-  let points, status = [];
+// const resultToPointsAndStatus = (result: any) => {
+//   let points; let
+//     status = [];
 
-  if (result == null) {
-    points = null;
-  } else {
-    points = result.points;
+//   if (result == null) {
+//     points = null;
+//   } else {
+//     points = result.points;
 
-    if (Array.isArray(result.status)) {
-      status = result.status;
-    } else {
-      status.push(result.status);
-    }
-  }
+//     if (Array.isArray(result.status)) {
+//       status = result.status;
+//     } else {
+//       status.push(result.status);
+//     }
+//   }
 
-  return { points, status };
-};
+//   return { points, status };
+// };
 
 const taskModel = {
   list: [],
 
   addedTask: action((state: any, task) => {
-    let taskWithAlias = state.list.find(({ alias }: Task) => alias === task.alias);
+    const taskWithAlias = state.list.find(({ alias }: Task) => alias === task.alias);
 
     if (taskWithAlias === undefined) {
       state.list.push(task);
     } else {
-      for (const key in task) {
+      Object.keys(task).forEach((key) => {
         if (task[key] !== undefined) {
           taskWithAlias[key] = task[key];
         }
-      }
+      });
     }
   }),
 
@@ -85,7 +86,7 @@ const taskModel = {
     const data = await responce.json();
 
     data.forEach((element: any) => {
-      const { points, status } = resultToPointsAndStatus(element.result);
+      // const { points, status } = resultToPointsAndStatus(element.result);
 
       const task: Task = {
         alias: element.alias,
@@ -100,10 +101,10 @@ const taskModel = {
           outputFormat: '',
         },
         limits: {
-          'cpuTime': 0,
-          'memory': 0,
-          'wallTime': 0
-        }
+          cpuTime: 0,
+          memory: 0,
+          wallTime: 0,
+        },
       };
 
       actions.addedTask(task);
@@ -115,9 +116,7 @@ const taskModel = {
 
     const data = await response.json();
 
-    const { points, status } = resultToPointsAndStatus(data.result);
-
-    console.log(data);
+    // const { points, status } = resultToPointsAndStatus(data.result);
 
     const task: Task = {
       alias,
@@ -125,18 +124,21 @@ const taskModel = {
       difficulty: undefined,
       category: undefined,
       rating: undefined,
-      examples: data.examples.map(({ input_data, output_data }: { input_data: string, output_data: string }) =>
-        ({ input: input_data, output: output_data })),
+      examples: data.examples.map((
+        /* eslint-disable */
+        { input_data, output_data }: { input_data: string, output_data: string },
+        /* eslint-enable */
+      ) => ({ input: input_data, output: output_data })),
       description: {
         main: data.main,
         inputFormat: data.input_format,
         outputFormat: data.output_format,
       },
       limits: {
-        'cpuTime': data.cpu_time_limit,
-        'memory': data.memory_limit,
-        'wallTime': data.wall_time_limit
-      }
+        cpuTime: data.cpu_time_limit,
+        memory: data.memory_limit,
+        wallTime: data.wall_time_limit,
+      },
     };
 
     actions.addedTask(task);

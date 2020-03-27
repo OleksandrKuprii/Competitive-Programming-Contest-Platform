@@ -6,14 +6,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import uuid from 'react-uuid';
-import { useHistory } from 'react-router-dom';
 import CodeViewer from './CodeViewer';
 
 export interface SolutionDropZoneArgs {
   taskAlias: string
 }
 
-const SolutionDropZone = ({taskAlias}: SolutionDropZoneArgs) => {
+const SolutionDropZone = () => {
   const { t } = useTranslation();
 
   const [dragEntered, setDragEntered] = React.useState(false);
@@ -32,8 +31,6 @@ const SolutionDropZone = ({taskAlias}: SolutionDropZoneArgs) => {
     (actions: any) => actions.submission.file.selectedLanguage,
   );
   const languages = ['python3', 'python2', 'c++', 'c'];
-
-  const history = useHistory();
 
   if (language === null) {
     selectedLanguage(languages[0]);

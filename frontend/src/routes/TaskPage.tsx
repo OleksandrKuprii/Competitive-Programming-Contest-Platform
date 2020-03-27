@@ -3,11 +3,11 @@ import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { Parser as HtmlToReactParser } from 'html-to-react';
 import CustomTable from '../components/CustomTable';
 import { GreatestResult } from '../components/Result';
 import SolutionDropZone from '../components/SolutionDropZone';
 import { Task } from '../models/taskModel';
-import { Parser as HtmlToReactParser } from 'html-to-react';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -20,12 +20,13 @@ const TaskPage = () => {
     ),
   );
 
-  const submitSubmission = useStoreActions((actions: any) => actions.submission.submitSubmission);
+  // const submitSubmission = useStoreActions((actions: any) =>
+  //  actions.submission.submitSubmission);
   const fetchTask = useStoreActions((actions: any) => actions.task.fetchTask);
 
   React.useEffect(() => {
     fetchTask(taskAlias);
-  }, []);
+  }, [taskAlias, fetchTask]);
 
   if (task === undefined) {
     return <></>;
@@ -33,17 +34,25 @@ const TaskPage = () => {
 
   const htmlToReactParser = new HtmlToReactParser();
 
-  const { main: mainOriginal, inputFormat: inputFormatOriginal, outputFormat: outputFormatOriginal } = task.description;
+  const {
+    main: mainOriginal,
+    inputFormat: inputFormatOriginal,
+    outputFormat: outputFormatOriginal,
+  } = task.description;
 
-  const cloneString = (str: string | undefined) => (' ' + (str === undefined ? '' : str)).slice(1);
+  const cloneString = (str: string | undefined) => (` ${str === undefined ? '' : str}`).slice(1);
 
   const renderHtmlWithNewlines = (str: string) => htmlToReactParser.parse(str.replace('\\n', '<br/>'));
 
-  const [main, inputFormat, outputFormat] = [mainOriginal, inputFormatOriginal, outputFormatOriginal]
+  const [main,
+    inputFormat,
+    outputFormat] = [mainOriginal,
+    inputFormatOriginal,
+    outputFormatOriginal]
     .map(cloneString)
     .map((str) => str.replace('<p>', ''))
     .map((str) => str.replace('</p>', ''))
-    .map(renderHtmlWithNewlines)
+    .map(renderHtmlWithNewlines);
 
   return (
     <>
@@ -78,8 +87,13 @@ const TaskPage = () => {
           <CustomTable
             headers={['input', 'output']}
             padding={10}
-            rows={task.examples.map(({ input, output }: { input: string, output: string }) =>
-              ([input, output].map(renderHtmlWithNewlines)))}
+            rows={task.examples.map(
+              ({
+                input,
+                output,
+              }: { input: string, output: string }) => ([input,
+                output].map(renderHtmlWithNewlines)),
+            )}
           />
         </Col>
         <Col md="4">
@@ -89,8 +103,8 @@ const TaskPage = () => {
           <CustomTable
             headers={['cputime', 'realtime', 'memory']}
             rows={[[task.limits.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),
-            task.limits.wallTime === undefined ? '' : task.limits.wallTime.toString(),
-            task.limits.memory === undefined ? '' : task.limits.memory.toString()]]}
+              task.limits.wallTime === undefined ? '' : task.limits.wallTime.toString(),
+              task.limits.memory === undefined ? '' : task.limits.memory.toString()]]}
           />
 
           <CustomTable headers={['input', 'output']} rows={[['input.txt', 'output.txt']]} />

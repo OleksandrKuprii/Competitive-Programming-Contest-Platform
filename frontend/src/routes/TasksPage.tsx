@@ -13,7 +13,7 @@ const TasksPage = () => {
 
   React.useEffect(() => {
     fetchTasks();
-  }, [])
+  }, [fetchTasks]);
 
   return (
     <>

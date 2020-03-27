@@ -15,14 +15,14 @@ export interface CustomTableArgs {
 }
 
 
-const CustomTable = ({headers, rows, padding}: CustomTableArgs) => {
+const CustomTable = ({ headers, rows, padding }: CustomTableArgs) => {
   const { t } = useTranslation();
   return (
     <Table striped hover variant="dark" size="sm" borderless>
       <thead className="customhead">
         <tr>
           {headers.map((header) => (
-            <th key={uuid()} style={{paddingLeft: padding }}>
+            <th key={uuid()} style={{ paddingLeft: padding }}>
               {t(`headers.${header}`)}
             </th>
           ))}
@@ -32,7 +32,7 @@ const CustomTable = ({headers, rows, padding}: CustomTableArgs) => {
       <tbody>
         {rows.map((row) => (
           <tr key={uuid()}>
-            {row.map((cell) => <td key={uuid()} style={{padding}}>{cell}</td>)}
+            {row.map((cell) => <td key={uuid()} style={{ padding }}>{cell}</td>)}
           </tr>
         ))}
       </tbody>

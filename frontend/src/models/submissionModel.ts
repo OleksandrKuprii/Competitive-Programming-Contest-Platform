@@ -1,6 +1,6 @@
 import { thunk, action } from 'easy-peasy';
 import submissionFileModel from './submissionFileModel';
-import { baseURL } from './common';
+import baseURL from './common';
 
 export interface Submission {
   id: number
@@ -36,7 +36,7 @@ const submissionModel = {
         task_id: 1,
         lang: language,
         code,
-      })
+      }),
     });
 
     const data = JSON.parse(await responce.json());
