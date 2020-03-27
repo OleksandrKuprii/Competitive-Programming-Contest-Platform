@@ -1,6 +1,6 @@
 import { thunk, action } from 'easy-peasy';
 import submissionFileModel from './submissionFileModel';
-import submissions from '../submissions.json';
+import { baseURL } from './common';
 
 export interface Submission {
   id: number
@@ -13,27 +13,43 @@ export interface Submission {
   code: string
 }
 
+const submitSubmissionUrlBuilder = () => (
+  `${baseURL}/submission`
+);
+
 const submissionModel = {
-  list: submissions,
+  list: [],
   file: submissionFileModel,
 
   addedSubmission: action((state: any, payload: Submission) => {
-    state.list.push({ ...payload, code: state.file.fileText, language: state.file.language });
+    state.list.push(payload);
 
     state.list.sort((a: any, b: any) => ((a.id > b.id) ? -1 : 1));
   }),
 
   submitSubmission: thunk(async (actions: any,
-    { taskAlias }: { taskAlias: string }) => {
+    { taskAlias, code, language }: { taskAlias: string, code: string, language: string }) => {
+    const responce = await fetch(submitSubmissionUrlBuilder(), {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: 1,
+        task_id: 1,
+        lang: language,
+        code,
+      })
+    });
+
+    const data = JSON.parse(await responce.json());
+
     actions.addedSubmission({
-      id: new Date().getTime(),
+      id: data.submission_id,
       taskAlias,
-      language: '',
+      language,
       points: undefined,
-      status: [],
-      submitted: new Date().getTime() / 1000,
+      status: ['Running'],
+      submitted: data.timestamp,
       tests: [],
-      code: '',
+      code,
     } as Submission);
   }),
 };

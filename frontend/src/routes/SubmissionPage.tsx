@@ -6,10 +6,10 @@ import CodeViewer from '../components/CodeViewer';
 import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
 import { Result } from '../components/Result';
-import { Task } from '../components/TaskList';
 import { TaskNameLinkByTask } from '../components/TaskNameLink';
 import { Submission } from '../models/submissionModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
+import { Task } from '../models/taskModel';
 
 
 const SubmissionPage = () => {
@@ -39,7 +39,7 @@ const SubmissionPage = () => {
 
 
   const infoTableRow: CustomTableRow = [
-    (<TaskNameLinkByTask taskName={task.taskName} alias={task.alias} />),
+    (<TaskNameLinkByTask taskName={task.name} alias={task.alias} />),
     (<PrettyDate timestamp={submission.submitted} />),
     (<Result points={submission.points} status={submission.status} />),
   ];

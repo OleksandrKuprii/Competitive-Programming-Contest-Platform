@@ -9,7 +9,11 @@ import uuid from 'react-uuid';
 import { useHistory } from 'react-router-dom';
 import CodeViewer from './CodeViewer';
 
-const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
+export interface SolutionDropZoneArgs {
+  taskAlias: string
+}
+
+const SolutionDropZone = ({taskAlias}: SolutionDropZoneArgs) => {
   const { t } = useTranslation();
 
   const [dragEntered, setDragEntered] = React.useState(false);
@@ -83,9 +87,7 @@ const SolutionDropZone = ({ onSubmit }: { onSubmit: any }) => {
                           <Button
                             variant="primary"
                             onClick={() => {
-                              onSubmit();
                               updatedFile({ file: null, fileText: null });
-                              history.push('/submissions');
                             }}
                             type="submit"
                           >

@@ -1,4 +1,5 @@
 @use "sass:map";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Raleway&display=swap');
 
 $body-bg: #111;
 $body-color: #aaa;
@@ -20,7 +21,7 @@ $spacer: 50px;
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 body {
-    font-family: 'Montserrat Alternates', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 blockquote {
