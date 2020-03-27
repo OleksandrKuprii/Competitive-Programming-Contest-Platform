@@ -115,7 +115,7 @@ const TaskPage = () => {
         <Col>
           <p><b>{t('taskpage.submitsolution')}</b></p>
 
-          {taskAlias === undefined ? null : <SolutionDropZone taskAlias={taskAlias} />}
+          {taskAlias === undefined ? null : <SolutionDropZone />}
         </Col>
       </Row>
     </>
