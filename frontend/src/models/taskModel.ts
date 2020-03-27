@@ -1,5 +1,7 @@
-import { action, thunk } from 'easy-peasy';
-import baseURL from './common';
+import {
+  action, thunk, Action, Thunk,
+} from 'easy-peasy';
+import baseURL from './apiBaseURL';
 
 export interface TaskRating {
   correct_percent: number,
@@ -10,19 +12,19 @@ export interface TaskRating {
 export interface Task {
   alias: string
   name: string
-  category: string | undefined
-  difficulty: number | undefined
-  rating: TaskRating | undefined
-  description: {
-    main: string | undefined,
-    inputFormat: string | undefined,
-    outputFormat: string | undefined
+  category?: string
+  difficulty?: number
+  rating?: TaskRating
+  description?: {
+    main?: string,
+    inputFormat?: string,
+    outputFormat?: string
   },
-  examples: { input: string, output: string }[],
+  examples?: { input: string, output: string }[],
   limits: {
-    cpuTime: number | undefined,
-    wallTime: number | undefined,
-    memory: number | undefined
+    cpuTime?: number,
+    wallTime?: number,
+    memory?: number
   }
 }
 
@@ -63,24 +65,41 @@ const fetchTaskUrlBuilder = ({ alias }: FetchTaskUrlParams) => (
 //   return { points, status };
 // };
 
-const taskModel = {
+interface StringIndexSignature {
+  [key: string]: any
+}
+
+function updateObjectWithProperty(arr: StringIndexSignature[],
+  key: string, value: any, newObj: any) {
+  const objWithProperty = arr.find((obj) => value === obj[key]);
+
+  if (objWithProperty === undefined) {
+    arr.push(newObj);
+    return;
+  }
+
+  Object.keys(newObj).forEach((k) => {
+    if (newObj[k] !== undefined) {
+      objWithProperty[k] = newObj[k];
+    }
+  });
+}
+
+export interface TaskModel {
+  list: Task[],
+  addedTask: Action<TaskModel, Task>,
+  fetchTasks: Thunk<TaskModel>,
+  fetchTask: Thunk<TaskModel, string>
+}
+
+const taskModel: TaskModel = {
   list: [],
 
-  addedTask: action((state: any, task) => {
-    const taskWithAlias = state.list.find(({ alias }: Task) => alias === task.alias);
-
-    if (taskWithAlias === undefined) {
-      state.list.push(task);
-    } else {
-      Object.keys(task).forEach((key) => {
-        if (task[key] !== undefined) {
-          taskWithAlias[key] = task[key];
-        }
-      });
-    }
+  addedTask: action((state, task) => {
+    updateObjectWithProperty(state.list, 'alias', task.alias, task);
   }),
 
-  fetchTasks: thunk(async (actions: any) => {
+  fetchTasks: thunk(async (actions) => {
     const responce = await fetch(fetchTasksUrlBuilder({ userId: 0, number: 5, offset: 0 }));
 
     const data = await responce.json();
@@ -95,11 +114,6 @@ const taskModel = {
         category: element.category,
         rating: { correct_percent: 0, incorrect_percent: 0, zero_points_percent: 0 },
         examples: [],
-        description: {
-          main: '',
-          inputFormat: '',
-          outputFormat: '',
-        },
         limits: {
           cpuTime: 0,
           memory: 0,
@@ -111,7 +125,7 @@ const taskModel = {
     });
   }),
 
-  fetchTask: thunk(async (actions: any, alias: string) => {
+  fetchTask: thunk(async (actions, alias) => {
     const response = await fetch(fetchTaskUrlBuilder({ alias }));
 
     const data = await response.json();
@@ -121,9 +135,6 @@ const taskModel = {
     const task: Task = {
       alias,
       name: data.name,
-      difficulty: undefined,
-      category: undefined,
-      rating: undefined,
       examples: data.examples.map((
         /* eslint-disable */
         { input_data, output_data }: { input_data: string, output_data: string },

@@ -7,14 +7,10 @@ import './bootstrap.scss';
 import i18n from './i18n';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import submissionModel from './models/submissionModel';
-import taskModel from './models/taskModel';
+import storeModel from './models/store';
 
 
-const store = createStore({
-  task: taskModel,
-  submission: submissionModel,
-});
+const store = createStore(storeModel);
 
 ReactDOM.render(
   <I18nextProvider i18n={i18n}>

@@ -4,8 +4,8 @@ import {
   ButtonGroup, Button, Form, Col, Container,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { useStoreActions, useStoreState } from 'easy-peasy';
 import uuid from 'react-uuid';
+import { useStoreActions, useStoreState } from '../hooks/store';
 import CodeViewer from './CodeViewer';
 
 export interface SolutionDropZoneArgs {
@@ -17,18 +17,18 @@ const SolutionDropZone = () => {
 
   const [dragEntered, setDragEntered] = React.useState(false);
 
-  const uploadFile = useStoreActions((actions: any) => actions.submission.file.uploadFile);
-  const updatedFile = useStoreActions((actions: any) => actions.submission.file.updatedFile);
+  const uploadFile = useStoreActions((actions) => actions.submission.file.uploadFile);
+  const updatedFile = useStoreActions((actions) => actions.submission.file.updatedFile);
 
-  const canceled = useStoreActions((actions: any) => actions.submission.file.canceled);
-  const file = useStoreState((state: any) => state.submission.file.file);
-  const fileText = useStoreState((state: any) => state.submission.file.fileText);
+  const canceled = useStoreActions((actions) => actions.submission.file.canceled);
+  const file = useStoreState((state) => state.submission.file.file);
+  const fileText = useStoreState((state) => state.submission.file.fileText);
 
   const language = useStoreState(
-    (state: any) => state.submission.file.language,
+    (state) => state.submission.file.language,
   );
   const selectedLanguage = useStoreActions(
-    (actions: any) => actions.submission.file.selectedLanguage,
+    (actions) => actions.submission.file.selectedLanguage,
   );
   const languages = ['python3', 'python2', 'c++', 'c'];
 
@@ -72,7 +72,7 @@ const SolutionDropZone = () => {
                         </Form.Group>
                         <Form.Group as={Col}>
                           <Form.Label>Language</Form.Label>
-                          <Form.Control as="select" value={language} onChange={(event: any) => selectedLanguage(event.target.value)}>
+                          <Form.Control as="select" value={language === null ? languages[0] : language} onChange={(event: any) => selectedLanguage(event.target.value)}>
                             {languages.map((lang) => (
                               <option key={uuid()}>{lang}</option>
                             ))}
@@ -90,13 +90,13 @@ const SolutionDropZone = () => {
                           >
                             OK
                           </Button>
-                          <Button variant="secondary" onClick={canceled}>Cancel</Button>
+                          <Button variant="secondary" onClick={() => canceled}>Cancel</Button>
                         </ButtonGroup>
                       </Form.Row>
                       <div style={{ paddingTop: 20 }} />
                       <Form.Row>
                         <Container fluid style={{ padding: 0 }}>
-                          <CodeViewer code={fileText} language={language} />
+                          <CodeViewer code={fileText === null ? '' : fileText} language={language === null ? '' : language} />
                         </Container>
                       </Form.Row>
                     </Form>

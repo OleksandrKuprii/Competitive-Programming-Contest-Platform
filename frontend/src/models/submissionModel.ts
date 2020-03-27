@@ -1,13 +1,15 @@
-import { thunk, action } from 'easy-peasy';
-import submissionFileModel from './submissionFileModel';
-import baseURL from './common';
+import {
+  thunk, action, Thunk, Action,
+} from 'easy-peasy';
+import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
+import baseURL from './apiBaseURL';
 
 export interface Submission {
   id: number
   taskAlias: string
   language: string
   status: string[]
-  points: number | undefined
+  points?: number
   submitted: number,
   tests: { status: string, points: number, cputime: number, realtime: number }[],
   code: string
@@ -17,18 +19,23 @@ const submitSubmissionUrlBuilder = () => (
   `${baseURL}/submission`
 );
 
-const submissionModel = {
+export interface SubmissionModel {
+  list: Submission[],
+  file: SubmissionFileModel,
+  addedSubmission: Action<SubmissionModel, Submission>,
+  submitSubmission: Thunk<SubmissionModel, { taskAlias: string, code: string, language: string }>,
+}
+
+const submissionModel: SubmissionModel = {
   list: [],
   file: submissionFileModel,
 
-  addedSubmission: action((state: any, payload: Submission) => {
-    state.list.push(payload);
-
-    state.list.sort((a: any, b: any) => ((a.id > b.id) ? -1 : 1));
+  addedSubmission: action((state, submission) => {
+    state.list.push(submission);
   }),
 
-  submitSubmission: thunk(async (actions: any,
-    { taskAlias, code, language }: { taskAlias: string, code: string, language: string }) => {
+  submitSubmission: thunk(async (actions,
+    { taskAlias, code, language }) => {
     const responce = await fetch(submitSubmissionUrlBuilder(), {
       method: 'POST',
       body: JSON.stringify({
