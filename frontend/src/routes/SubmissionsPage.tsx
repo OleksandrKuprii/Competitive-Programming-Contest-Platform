@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '../hooks/store';
 import SubmissionList from '../components/SubmissionList';
 
 

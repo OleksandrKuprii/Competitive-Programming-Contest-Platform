@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useStoreState, useStoreActions } from 'easy-peasy';
+import { useStoreState, useStoreActions } from '../hooks/store';
 import TaskList from '../components/TaskList';
 
 
@@ -9,7 +9,7 @@ const TasksPage = () => {
 
   const tasks = useStoreState((state) => state.task.list);
 
-  const fetchTasks = useStoreActions((actions: any) => actions.task.fetchTasks);
+  const fetchTasks = useStoreActions((actions) => actions.task.fetchTasks);
 
   React.useEffect(() => {
     fetchTasks();

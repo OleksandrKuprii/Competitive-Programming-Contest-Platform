@@ -1,9 +1,9 @@
-import { useStoreActions, useStoreState } from 'easy-peasy';
 import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Parser as HtmlToReactParser } from 'html-to-react';
+import { useStoreActions, useStoreState } from '../hooks/store';
 import CustomTable from '../components/CustomTable';
 import { GreatestResult } from '../components/Result';
 import SolutionDropZone from '../components/SolutionDropZone';
@@ -14,18 +14,20 @@ const TaskPage = () => {
 
   const { taskAlias } = useParams();
 
-  const task: Task = useStoreState(
+  const task: Task | undefined = useStoreState(
     (state) => state.task.list.find(
       (_task: Task) => _task.alias === taskAlias,
     ),
   );
 
-  // const submitSubmission = useStoreActions((actions: any) =>
+  // const submitSubmission = useStoreActions((actions) =>
   //  actions.submission.submitSubmission);
-  const fetchTask = useStoreActions((actions: any) => actions.task.fetchTask);
+  const fetchTask = useStoreActions((actions) => actions.task.fetchTask);
 
   React.useEffect(() => {
-    fetchTask(taskAlias);
+    if (taskAlias !== undefined) {
+      fetchTask(taskAlias);
+    }
   }, [taskAlias, fetchTask]);
 
   if (task === undefined) {
@@ -38,7 +40,11 @@ const TaskPage = () => {
     main: mainOriginal,
     inputFormat: inputFormatOriginal,
     outputFormat: outputFormatOriginal,
-  } = task.description;
+  } = (task.description === undefined ? {
+    main: undefined,
+    inputFormat: undefined,
+    outputFormat: undefined,
+  } : task.description);
 
   const cloneString = (str: string | undefined) => (` ${str === undefined ? '' : str}`).slice(1);
 
@@ -84,17 +90,20 @@ const TaskPage = () => {
             </b>
           </p>
 
-          <CustomTable
-            headers={['input', 'output']}
-            padding={10}
-            rows={task.examples.map(
-              ({
-                input,
-                output,
-              }: { input: string, output: string }) => ([input,
-                output].map(renderHtmlWithNewlines)),
+          {task.examples === undefined ? null
+            : (
+              <CustomTable
+                headers={['input', 'output']}
+                padding={10}
+                rows={task.examples.map(
+                  ({
+                    input,
+                    output,
+                  }: { input: string, output: string }) => ([input,
+                    output].map(renderHtmlWithNewlines)),
+                )}
+              />
             )}
-          />
         </Col>
         <Col md="4">
           <p className="h5 center">

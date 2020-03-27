@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
-import { useStoreState } from 'easy-peasy';
 import { useTranslation } from 'react-i18next';
+import { useStoreState } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
 
 export const Result = (
@@ -55,7 +55,7 @@ export const Result = (
 };
 
 export const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined }) => {
-  const submissions = useStoreState((state: any) => state.submission.list);
+  const submissions = useStoreState((state) => state.submission.list);
 
   if (taskAlias === undefined) {
     return <></>;

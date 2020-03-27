@@ -1,6 +1,6 @@
-import { useStoreState } from 'easy-peasy';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useStoreState } from '../hooks/store';
 
 export interface TaskNameLinkByTaskArgs {
   taskName: string,
@@ -16,11 +16,15 @@ export const TaskNameLinkByTask = ({ alias, taskName }: TaskNameLinkByTaskArgs) 
 );
 
 export const TaskNameLinkByAlias = ({ alias }: TaskNameLinkByAliasArgs) => {
-  const { taskName } = useStoreState((state: any) => state.publictasks.find(
-    (task: any) => task.alias === alias,
+  const task = useStoreState((state) => state.task.list.find(
+    (t: any) => t.alias === alias,
   ));
 
+  if (task === undefined) {
+    return <></>;
+  }
+
   return (
-    <TaskNameLinkByTask taskName={taskName} alias={alias} />
+    <TaskNameLinkByTask taskName={task.name} alias={task.alias} />
   );
 };

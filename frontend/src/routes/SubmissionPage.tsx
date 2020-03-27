@@ -1,7 +1,7 @@
-import { useStoreState } from 'easy-peasy';
 import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { useStoreState } from '../hooks/store';
 import CodeViewer from '../components/CodeViewer';
 import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
@@ -15,8 +15,8 @@ import { Task } from '../models/taskModel';
 const SubmissionPage = () => {
   const { id } = useParams();
 
-  const [submission, task]: [Submission, Task] = useStoreState(
-    (state: any) => {
+  const [submission, task]: [Submission | undefined, Task | undefined] = useStoreState(
+    (state) => {
       if (id === undefined) {
         return [undefined, undefined];
       }
@@ -25,7 +25,11 @@ const SubmissionPage = () => {
         (s: Submission) => s.id === parseInt(id, 10),
       );
 
-      const localTask = state.publictasks.find(
+      if (localSubmission === undefined) {
+        return [undefined, undefined];
+      }
+
+      const localTask = state.task.list.find(
         (ta: Task) => ta.alias === localSubmission.taskAlias,
       );
 
@@ -33,7 +37,7 @@ const SubmissionPage = () => {
     },
   );
 
-  if (submission === undefined) {
+  if (submission === undefined || task === undefined) {
     return <></>;
   }
 
