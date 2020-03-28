@@ -13,9 +13,9 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   }) => ([
     (<SubmissionIDLink id={id} />),
     (<TaskNameLinkByAlias alias={taskAlias} />),
-    (language),
+    (language === undefined ? '' : language),
     (<Result points={points} status={status} />),
-    (<PrettyDate timestamp={submitted} />),
+    (submitted === undefined ? '' : <PrettyDate timestamp={submitted} />),
   ]));
 
   return (

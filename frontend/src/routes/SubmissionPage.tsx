@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { useStoreState } from '../hooks/store';
 import CodeViewer from '../components/CodeViewer';
 import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
 import { Result } from '../components/Result';
 import { TaskNameLinkByTask } from '../components/TaskNameLink';
+import { useStoreState } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
-import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 import { Task } from '../models/taskModel';
+import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 
 
 const SubmissionPage = () => {
@@ -21,7 +21,7 @@ const SubmissionPage = () => {
         return [undefined, undefined];
       }
 
-      const localSubmission = state.submission.list.find(
+      const localSubmission = state.taskSubmission.submission.list.find(
         (s: Submission) => s.id === parseInt(id, 10),
       );
 
@@ -29,7 +29,7 @@ const SubmissionPage = () => {
         return [undefined, undefined];
       }
 
-      const localTask = state.task.list.find(
+      const localTask = state.taskSubmission.task.list.find(
         (ta: Task) => ta.alias === localSubmission.taskAlias,
       );
 
@@ -44,7 +44,7 @@ const SubmissionPage = () => {
 
   const infoTableRow: CustomTableRow = [
     (<TaskNameLinkByTask taskName={task.name} alias={task.alias} />),
-    (<PrettyDate timestamp={submission.submitted} />),
+    (submission.submitted === undefined ? '' : <PrettyDate timestamp={submission.submitted} />),
     (<Result points={submission.points} status={submission.status} />),
   ];
 
@@ -52,16 +52,17 @@ const SubmissionPage = () => {
     <CustomTable headers={['task', 'submitted', 'result']} rows={[infoTableRow]} />
   );
 
-  const testsTableRows: CustomTableRow[] = submission.tests.map(
-    ({
-      points, status, cputime, realtime,
-    }, i) => ([
-      (i.toString()),
-      (<Result points={points} status={[status]} />),
-      (`${cputime}ms`),
-      (`${realtime}ms`),
-    ]),
-  );
+  const testsTableRows: CustomTableRow[] = submission.tests === undefined
+    ? [] : submission.tests.map(
+      ({
+        points, status, cputime, realtime,
+      }, i) => ([
+        (i.toString()),
+        (<Result points={points} status={[status]} />),
+        (`${cputime}ms`),
+        (`${realtime}ms`),
+      ]),
+    );
 
   const testsTable = (
     <CustomTable headers={['id', 'result', 'cputime', 'realtime']} rows={testsTableRows} />
@@ -81,7 +82,7 @@ const SubmissionPage = () => {
 
         {infoTable}
 
-        {submission.tests.length > 0
+        {submission.tests !== undefined
           ? (
             <>
               <p className="h5">
@@ -95,7 +96,14 @@ const SubmissionPage = () => {
       </Col>
       <Col>
         <p><b>{submission.language}</b></p>
-        <CodeViewer code={submission.code} language={getGeneralLanguageName(submission.language)} />
+        {submission.code === undefined
+          ? null
+          : (
+            <CodeViewer
+              code={submission.code}
+              language={getGeneralLanguageName(submission.language)}
+            />
+          )}
       </Col>
     </Row>
   );

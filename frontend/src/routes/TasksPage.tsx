@@ -7,9 +7,9 @@ import TaskList from '../components/TaskList';
 const TasksPage = () => {
   const { t } = useTranslation();
 
-  const tasks = useStoreState((state) => state.task.list);
+  const tasks = useStoreState((state) => state.taskSubmission.task.list);
 
-  const fetchTasks = useStoreActions((actions) => actions.task.fetchTasks);
+  const fetchTasks = useStoreActions((actions) => actions.taskSubmission.fetchTasks);
 
   React.useEffect(() => {
     fetchTasks();

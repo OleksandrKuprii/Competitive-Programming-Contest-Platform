@@ -17,18 +17,26 @@ const SolutionDropZone = () => {
 
   const [dragEntered, setDragEntered] = React.useState(false);
 
-  const uploadFile = useStoreActions((actions) => actions.submission.file.uploadFile);
-  const updatedFile = useStoreActions((actions) => actions.submission.file.updatedFile);
+  const uploadFile = useStoreActions(
+    (actions) => actions.taskSubmission.submission.file.uploadFile,
+  );
+  const updatedFile = useStoreActions(
+    (actions) => actions.taskSubmission.submission.file.updatedFile,
+  );
 
-  const canceled = useStoreActions((actions) => actions.submission.file.canceled);
-  const file = useStoreState((state) => state.submission.file.file);
-  const fileText = useStoreState((state) => state.submission.file.fileText);
+  const canceled = useStoreActions((actions) => actions.taskSubmission.submission.file.canceled);
+  const file = useStoreState((state) => state.taskSubmission.submission.file.file);
+  const fileText = useStoreState((state) => state.taskSubmission.submission.file.fileText);
+
+  const submitSubmission = useStoreActions(
+    (actions) => actions.taskSubmission.submission.submitSubmission,
+  );
 
   const language = useStoreState(
-    (state) => state.submission.file.language,
+    (state) => state.taskSubmission.submission.file.language,
   );
   const selectedLanguage = useStoreActions(
-    (actions) => actions.submission.file.selectedLanguage,
+    (actions) => actions.taskSubmission.submission.file.selectedLanguage,
   );
   const languages = ['python3', 'python2', 'c++', 'c'];
 
@@ -83,7 +91,8 @@ const SolutionDropZone = () => {
                         <ButtonGroup>
                           <Button
                             variant="primary"
-                            onClick={() => {
+                            onClick={async () => {
+                              await submitSubmission({ taskAlias: 'equal_sets', language: 'python3', code: 'print (0)' });
                               updatedFile({ file: null, fileText: null });
                             }}
                             type="submit"

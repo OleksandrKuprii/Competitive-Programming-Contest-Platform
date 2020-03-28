@@ -15,14 +15,14 @@ const TaskPage = () => {
   const { taskAlias } = useParams();
 
   const task: Task | undefined = useStoreState(
-    (state) => state.task.list.find(
+    (state) => state.taskSubmission.task.list.find(
       (_task: Task) => _task.alias === taskAlias,
     ),
   );
 
   // const submitSubmission = useStoreActions((actions) =>
   //  actions.submission.submitSubmission);
-  const fetchTask = useStoreActions((actions) => actions.task.fetchTask);
+  const fetchTask = useStoreActions((actions) => actions.taskSubmission.fetchTask);
 
   React.useEffect(() => {
     if (taskAlias !== undefined) {

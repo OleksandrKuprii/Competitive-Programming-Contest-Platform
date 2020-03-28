@@ -1,14 +1,11 @@
-import taskModel, { TaskModel } from './taskModel';
-import submissionModel, { SubmissionModel } from './submissionModel';
+import taskSubmissionConnector, { TaskSubmissionConnector } from './taskSubmissionConnector';
 
 export interface StoreModel {
-  task: TaskModel,
-  submission: SubmissionModel
+  taskSubmission: TaskSubmissionConnector
 }
 
 const storeModel: StoreModel = {
-  task: taskModel,
-  submission: submissionModel,
+  taskSubmission: taskSubmissionConnector,
 };
 
 export default storeModel;
