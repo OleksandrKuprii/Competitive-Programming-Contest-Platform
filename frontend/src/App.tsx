@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -8,36 +8,48 @@ import TournamentsPage from './routes/TournamentsPage';
 import TaskPage from './routes/TaskPage';
 import SubmissionsPage from './routes/SubmissionsPage';
 import SubmissionPage from './routes/SubmissionPage';
+import { useStoreActions } from './hooks/store';
 
-const App = () => (
-  <HashRouter>
-    <Navbar />
+const App = () => {
+  const init = useStoreActions((actions) => actions.auth0.init);
 
-    <Container style={{ paddingTop: 20 }}>
-      <Switch>
-        <Route path="/tournaments">
-          <TournamentsPage />
-        </Route>
+  useEffect(() => {
+    init({
+      domain: 'dev-gly-dk66.eu.auth0.com',
+      client_id: 'w5IiSiIhAoOW8dQvAATlvbaS2eP47H0Q',
+    });
+  }, [init]);
 
-        <Route path="/task/view/:taskAlias">
-          <TaskPage />
-        </Route>
+  return (
+    <HashRouter>
+      <Navbar />
 
-        <Route path="/tasks">
-          <TasksPage />
-        </Route>
-        <Route path="/submissions">
-          <SubmissionsPage />
-        </Route>
-        <Route path="/submission/view/:id">
-          <SubmissionPage />
-        </Route>
-        <Route path="/">
-          <HomePage />
-        </Route>
-      </Switch>
-    </Container>
-  </HashRouter>
-);
+      <Container style={{ paddingTop: 20 }}>
+        <Switch>
+          <Route path="/tournaments">
+            <TournamentsPage />
+          </Route>
+
+          <Route path="/task/view/:taskAlias">
+            <TaskPage />
+          </Route>
+
+          <Route path="/tasks">
+            <TasksPage />
+          </Route>
+          <Route path="/submissions">
+            <SubmissionsPage />
+          </Route>
+          <Route path="/submission/view/:id">
+            <SubmissionPage />
+          </Route>
+          <Route path="/">
+            <HomePage />
+          </Route>
+        </Switch>
+      </Container>
+    </HashRouter>
+  );
+};
 
 export default App;
