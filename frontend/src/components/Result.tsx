@@ -26,11 +26,11 @@ export const Result = (
     );
   }
 
-  const started = points === undefined ? false : points >= 0;
+  const started = points === undefined || points == null ? false : points >= 0;
   const correct = status[0] === 'Correct';
 
   if (started) {
-    let color = null;
+    let color;
 
     if (correct) {
       color = 'green';

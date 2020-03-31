@@ -3,6 +3,7 @@ import {
 } from 'easy-peasy';
 import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
 import baseURL from './apiBaseURL';
+import updateObjectWithProperty from '../utils/updateObjectWithProperty';
 
 export interface Submission {
   id: number
@@ -24,24 +25,14 @@ export interface SubmissionModel {
   file: SubmissionFileModel,
   addedSubmission: Action<SubmissionModel, Submission>,
   submitSubmission: Thunk<SubmissionModel, { taskAlias: string, code: string, language: string }>,
-  fetchSubmissions: Thunk<SubmissionModel>,
 }
-
-export interface FetchSubmissionsUrlParams {
-  number: number,
-  offset: number,
-}
-
-const fetchSubmissionsUrlBuilder = ({ number, offset }: FetchSubmissionsUrlParams) => (
-  `${baseURL}/submissions?number=${number}&offset=${offset}&user_id=1`
-);
 
 const submissionModel: SubmissionModel = {
   list: [],
   file: submissionFileModel,
 
   addedSubmission: action((state, submission) => {
-    state.list.push(submission);
+    updateObjectWithProperty(state.list, 'id', submission.id, submission);
   }),
 
   submitSubmission: thunk(async (actions,
@@ -68,10 +59,6 @@ const submissionModel: SubmissionModel = {
       tests: [],
       code,
     } as Submission);
-  }),
-
-  fetchSubmissions: thunk(async () => {
-    await fetch(fetchSubmissionsUrlBuilder({ number: 5, offset: 0 }));
   }),
 };
 

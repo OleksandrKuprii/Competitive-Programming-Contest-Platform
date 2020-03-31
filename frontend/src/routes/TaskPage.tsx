@@ -111,9 +111,9 @@ const TaskPage = () => {
           </p>
           <CustomTable
             headers={['cputime', 'realtime', 'memory']}
-            rows={[[task.limits.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),
-              task.limits.wallTime === undefined ? '' : task.limits.wallTime.toString(),
-              task.limits.memory === undefined ? '' : task.limits.memory.toString()]]}
+            rows={[[task.limits?.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),
+              task.limits?.wallTime === undefined ? '' : task.limits.wallTime.toString(),
+              task.limits?.memory === undefined ? '' : task.limits.memory.toString()]]}
           />
 
           <CustomTable headers={['input', 'output']} rows={[['input.txt', 'output.txt']]} />
