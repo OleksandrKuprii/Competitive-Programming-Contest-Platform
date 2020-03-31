@@ -1,3 +1,7 @@
+GET http://localhost:4000/submissions?user_id=1&number=5&offset=5
+Accept: application/json
+
+###
 POST http://localhost:3000/api/submission HTTP/1.1
 content-type: application/json
 
