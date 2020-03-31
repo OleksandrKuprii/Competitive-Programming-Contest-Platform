@@ -84,7 +84,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
         taskAlias: element.alias,
         points,
         status,
-        id: data.best_submission.id,
+        id: element.best_submission.id,
       };
 
       actions.submission.addedSubmission(submission);
