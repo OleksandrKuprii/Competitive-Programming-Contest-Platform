@@ -9,12 +9,14 @@ import {
 export interface Auth0Model {
   isAuthenticated: boolean
   client?: Auth0Client
-  userPicture?: string
   loading: boolean
+
+  userPicture?: string
+  username?: string
 
   changedLoadingStatus: Action<Auth0Model, boolean>
   changedAuthenticatedStatus: Action<Auth0Model, boolean>
-  changedUserPicture: Action<Auth0Model, string>
+  changedUser: Action<Auth0Model, { picture?: string, name?: string }>
   createdClient: Action<Auth0Model, Auth0Client>
   doAuth: Action<Auth0Model>,
   logout: Action<Auth0Model>,
@@ -41,10 +43,19 @@ const auth0Model: Auth0Model = {
     isAuthenticated,
   })),
 
-  changedUserPicture: action((state, userPicture) => ({
-    ...state,
-    userPicture,
-  })),
+  changedUser: action((state, { picture, name }) => {
+    const newState = { ...state };
+
+    if (picture !== undefined) {
+      newState.userPicture = picture;
+    }
+
+    if (name !== undefined) {
+      newState.username = name;
+    }
+
+    return newState;
+  }),
 
   init: thunk(async (actions, initOptions) => {
     actions.changedLoadingStatus(true);
@@ -65,7 +76,7 @@ const auth0Model: Auth0Model = {
 
     if (isAuthenticated) {
       const user = await auth0FromHook.getUser();
-      actions.changedUserPicture(user.picture);
+      actions.changedUser({ picture: user.picture, name: user.given_name });
     }
 
     actions.changedLoadingStatus(false);

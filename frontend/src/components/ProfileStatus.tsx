@@ -8,6 +8,7 @@ const ProfileStatus = () => {
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
   const userPicture = useStoreState((state) => state.auth0.userPicture);
+  const username = useStoreState((state) => state.auth0.username);
 
   const doAuth = useStoreActions((actions) => actions.auth0.doAuth);
   const logout = useStoreActions((actions) => actions.auth0.logout);
@@ -34,7 +35,10 @@ const ProfileStatus = () => {
 
   return (
     <>
-      <Button variant="secondary" onClick={logoutCallback}>Log out</Button>
+      Logged in as
+      {username}
+      .
+      <Button variant="link" onClick={logoutCallback}>Log out</Button>
       <div style={{ paddingLeft: 20 }} />
       <Image width={40} height={40} src={userPicture} roundedCircle />
     </>

@@ -55,11 +55,11 @@ const SubmissionPage = () => {
   const testsTableRows: CustomTableRow[] = submission.tests === undefined
     ? [] : submission.tests.map(
       ({
-        points, status, cputime, realtime,
+        points, status, cpuTime, realtime,
       }, i) => ([
         (i.toString()),
         (<Result points={points} status={[status]} />),
-        (`${cputime}ms`),
+        (`${cpuTime}ms`),
         (`${realtime}ms`),
       ]),
     );

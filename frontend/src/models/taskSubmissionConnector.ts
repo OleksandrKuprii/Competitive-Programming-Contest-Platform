@@ -4,17 +4,16 @@ import taskModel, { TaskModel, Task } from './taskModel';
 import baseURL from './apiBaseURL';
 
 interface FetchTasksUrlParams {
-  userId: number,
   number: number,
-  offset: number
+  offset: number,
 }
 
 interface FetchTaskUrlParams {
   alias: string
 }
 
-const fetchTasksUrlBuilder = ({ userId, number, offset }: FetchTasksUrlParams) => (
-  `${baseURL}/tasks?user_id=${userId}&number=${number}&offset=${offset}`
+const fetchTasksUrlBuilder = ({ number, offset }: FetchTasksUrlParams) => (
+  `${baseURL}/tasks?&number=${number}&offset=${offset}&user_id=1`
 );
 
 const fetchTaskUrlBuilder = ({ alias }: FetchTaskUrlParams) => (
@@ -54,7 +53,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
 
   fetchTasks: thunk(async (actions) => {
-    const responce = await fetch(fetchTasksUrlBuilder({ userId: 0, number: 5, offset: 0 }));
+    const responce = await fetch(fetchTasksUrlBuilder({ number: 5, offset: 0 }));
 
     const data = await responce.json();
 

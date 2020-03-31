@@ -11,7 +11,7 @@ export interface Submission {
   status: string[]
   points?: number
   submitted?: number,
-  tests?: { status: string, points: number, cputime: number, realtime: number }[],
+  tests?: { status: string, points: number, cpuTime: number, realtime: number }[],
   code?: string
 }
 
@@ -24,7 +24,17 @@ export interface SubmissionModel {
   file: SubmissionFileModel,
   addedSubmission: Action<SubmissionModel, Submission>,
   submitSubmission: Thunk<SubmissionModel, { taskAlias: string, code: string, language: string }>,
+  fetchSubmissions: Thunk<SubmissionModel>,
 }
+
+export interface FetchSubmissionsUrlParams {
+  number: number,
+  offset: number,
+}
+
+const fetchSubmissionsUrlBuilder = ({ number, offset }: FetchSubmissionsUrlParams) => (
+  `${baseURL}/submissions?number=${number}&offset=${offset}&user_id=1`
+);
 
 const submissionModel: SubmissionModel = {
   list: [],
@@ -58,6 +68,10 @@ const submissionModel: SubmissionModel = {
       tests: [],
       code,
     } as Submission);
+  }),
+
+  fetchSubmissions: thunk(async (actions) => {
+    const response = await fetch(fetchSubmissionsUrlBuilder({ number: 5, offset: 0 }));
   }),
 };
 
