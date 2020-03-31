@@ -14,9 +14,11 @@ export interface Auth0Model {
   userPicture?: string
   username?: string
 
+  idToken?: string
+
   changedLoadingStatus: Action<Auth0Model, boolean>
   changedAuthenticatedStatus: Action<Auth0Model, boolean>
-  changedUser: Action<Auth0Model, { picture?: string, name?: string }>
+  changedUser: Action<Auth0Model, { picture?: string, name: string, idToken: string }>
   createdClient: Action<Auth0Model, Auth0Client>
   doAuth: Action<Auth0Model>,
   logout: Action<Auth0Model>,
@@ -43,15 +45,11 @@ const auth0Model: Auth0Model = {
     isAuthenticated,
   })),
 
-  changedUser: action((state, { picture, name }) => {
-    const newState = { ...state };
+  changedUser: action((state, { picture, name, idToken }) => {
+    const newState = { ...state, userName: name, idToken };
 
     if (picture !== undefined) {
       newState.userPicture = picture;
-    }
-
-    if (name !== undefined) {
-      newState.username = name;
     }
 
     return newState;
@@ -76,7 +74,10 @@ const auth0Model: Auth0Model = {
 
     if (isAuthenticated) {
       const user = await auth0FromHook.getUser();
-      actions.changedUser({ picture: user.picture, name: user.given_name });
+
+      const idToken = await auth0FromHook.getTokenSilently();
+
+      actions.changedUser({ picture: user.picture, name: user.given_name, idToken });
     }
 
     actions.changedLoadingStatus(false);

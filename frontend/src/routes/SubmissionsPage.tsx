@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useStoreState, useStoreActions } from '../hooks/store';
+import { useStoreState } from '../hooks/store';
 import SubmissionList from '../components/SubmissionList';
 
 
 const SubmissionsPage = () => {
   const { t } = useTranslation();
 
-  const submissions = useStoreState(state => state.taskSubmission.submission.list);
-
-  const fetchSubmisions = useStoreActions(actions => actions.taskSubmission.submission);
+  const submissions = useStoreState((state) => state.taskSubmission.submission.list);
 
   return (
     <>
