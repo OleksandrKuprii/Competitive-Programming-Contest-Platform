@@ -14,7 +14,7 @@ const ProfileStatus = () => {
   const logout = useStoreActions((actions) => actions.auth0.logout);
 
   const loginCallback = React.useCallback(() => {
-    doAuth();
+    doAuth({});
   }, [doAuth]);
 
   const logoutCallback = React.useCallback(() => {

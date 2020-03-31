@@ -1,9 +1,21 @@
-POST http://localhost:3000/api/submission HTTP/1.1
+GET http://localhost:4000/submission/1
+Accept: application/json
+
+###
+GET http://localhost:4000/task/equal_sets
+Accept: application/json
+
+###
+GET http://localhost:4000/submissions?user_id=1&number=5&offset=0
+Accept: application/json
+
+###
+POST http://localhost:4000/submission HTTP/1.1
 content-type: application/json
 
 {
-    "user_id": 2,
-    "task_id": 2,
+    "user_id": 1,
+    "alias": "comics",
     "lang": "python3",
     "code": "with open('input.txt') as f:\n    a, b, n, m = map(int, f.read().split())\nyarik = a * m + b * m\nmyr = a * m + b * n\nif yarik > myr:\n    res = 1\nelif myr > yarik:\n    res = 2\nelif yarik == myr:\n    res = 0\nwith open('output.txt', 'w') as f:\n    f.write(str(res) + '\\n')"
 }

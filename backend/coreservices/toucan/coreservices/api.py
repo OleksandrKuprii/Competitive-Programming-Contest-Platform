@@ -67,7 +67,11 @@ async def get_task_by_alias(request):
         user_id, task_id)
 
     result = await submission.get_result(submission_id)
-    task_info['result'] = result
+
+    task_info['best_submission'] = {
+        'result': result,
+        'id': submission_id
+    }
 
     return json_response(task_info)
 

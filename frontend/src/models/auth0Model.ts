@@ -14,13 +14,11 @@ export interface Auth0Model {
   userPicture?: string
   username?: string
 
-  idToken?: string
-
   changedLoadingStatus: Action<Auth0Model, boolean>
   changedAuthenticatedStatus: Action<Auth0Model, boolean>
-  changedUser: Action<Auth0Model, { picture?: string, name: string, idToken: string }>
+  changedUser: Action<Auth0Model, { picture?: string, name: string }>
   createdClient: Action<Auth0Model, Auth0Client>
-  doAuth: Action<Auth0Model>,
+  doAuth: Action<Auth0Model, {redirectUri?: string}>,
   logout: Action<Auth0Model>,
 
   init: Thunk<Auth0Model, Auth0ClientOptions>,
@@ -45,11 +43,13 @@ const auth0Model: Auth0Model = {
     isAuthenticated,
   })),
 
-  changedUser: action((state, { picture, name, idToken }) => {
-    const newState = { ...state, userName: name, idToken };
+  changedUser: action((state, { picture, name }) => {
+    const newState = { ...state, userName: name };
 
     if (picture !== undefined) {
       newState.userPicture = picture;
+    } else {
+      newState.userPicture = undefined;
     }
 
     return newState;
@@ -65,7 +65,8 @@ const auth0Model: Auth0Model = {
     if (window.location.search.includes('code=')
     && window.location.search.includes('state=')) {
       await auth0FromHook.handleRedirectCallback();
-      window.history.replaceState({}, document.title, window.location.pathname);
+      window.history.replaceState({},
+        document.title, window.location.pathname + window.location.hash);
     }
 
     const isAuthenticated = await auth0FromHook.isAuthenticated();
@@ -75,16 +76,14 @@ const auth0Model: Auth0Model = {
     if (isAuthenticated) {
       const user = await auth0FromHook.getUser();
 
-      const idToken = await auth0FromHook.getTokenSilently();
-
-      actions.changedUser({ picture: user.picture, name: user.given_name, idToken });
+      actions.changedUser({ picture: user.picture, name: user.given_name });
     }
 
     actions.changedLoadingStatus(false);
   }),
 
-  doAuth: action((state) => {
-    state.client?.loginWithRedirect();
+  doAuth: action((state, { redirectUri = window.location.href }) => {
+    state.client?.loginWithRedirect({ redirect_uri: redirectUri }).then();
   }),
 
   logout: action((state) => {

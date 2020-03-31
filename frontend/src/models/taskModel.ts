@@ -1,4 +1,5 @@
 import { action, Action } from 'easy-peasy';
+import updateObjectWithProperty from '../utils/updateObjectWithProperty';
 
 export interface TaskRating {
   correct_percent: number,
@@ -18,31 +19,11 @@ export interface Task {
     outputFormat?: string
   },
   examples?: { input: string, output: string }[],
-  limits: {
+  limits?: {
     cpuTime?: number,
     wallTime?: number,
     memory?: number
   }
-}
-
-interface StringIndexSignature {
-  [key: string]: any
-}
-
-function updateObjectWithProperty(arr: StringIndexSignature[],
-  key: string, value: any, newObj: any) {
-  const objWithProperty = arr.find((obj) => value === obj[key]);
-
-  if (objWithProperty === undefined) {
-    arr.push(newObj);
-    return;
-  }
-
-  Object.keys(newObj).forEach((k) => {
-    if (newObj[k] !== undefined) {
-      objWithProperty[k] = newObj[k];
-    }
-  });
 }
 
 export interface TaskModel {
