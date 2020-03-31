@@ -46,7 +46,7 @@ const submissionModel: SubmissionModel = {
 
   submitSubmission: thunk(async (actions,
     { taskAlias, code, language }) => {
-    const responce = await fetch(submitSubmissionUrlBuilder(), {
+    const response = await fetch(submitSubmissionUrlBuilder(), {
       method: 'POST',
       body: JSON.stringify({
         user_id: 1,
@@ -56,7 +56,7 @@ const submissionModel: SubmissionModel = {
       }),
     });
 
-    const data = JSON.parse(await responce.json());
+    const data = JSON.parse(await response.json());
 
     actions.addedSubmission({
       id: data.submission_id,
@@ -70,8 +70,8 @@ const submissionModel: SubmissionModel = {
     } as Submission);
   }),
 
-  fetchSubmissions: thunk(async (actions) => {
-    const response = await fetch(fetchSubmissionsUrlBuilder({ number: 5, offset: 0 }));
+  fetchSubmissions: thunk(async () => {
+    await fetch(fetchSubmissionsUrlBuilder({ number: 5, offset: 0 }));
   }),
 };
 
