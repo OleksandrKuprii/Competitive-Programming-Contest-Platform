@@ -1,28 +1,41 @@
 import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import CodeViewer from '../components/CodeViewer';
 import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
 import { Result } from '../components/Result';
 import { TaskNameLinkByTask } from '../components/TaskNameLink';
-import { useStoreState } from '../hooks/store';
+import { useStoreState, useStoreActions } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
 import { Task } from '../models/taskModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 
 
 const SubmissionPage = () => {
-  const { id } = useParams();
+  const { id: idStr } = useParams();
+
+  const id = parseInt(idStr as string, 10);
+
+  const fetchSubmission = useStoreActions((actions) => actions.taskSubmission.fetchSubmission);
+
+  useEffect(() => {
+    if (!Number.isInteger(id)) {
+      return;
+    }
+
+    fetchSubmission(id);
+  }, [fetchSubmission, id]);
 
   const [submission, task]: [Submission | undefined, Task | undefined] = useStoreState(
     (state) => {
-      if (id === undefined) {
+      if (Number.isNaN(id)) {
         return [undefined, undefined];
       }
 
       const localSubmission = state.taskSubmission.submission.list.find(
-        (s: Submission) => s.id === parseInt(id, 10),
+        (s: Submission) => s.id === id,
       );
 
       if (localSubmission === undefined) {
@@ -37,10 +50,9 @@ const SubmissionPage = () => {
     },
   );
 
-  if (submission === undefined || task === undefined) {
-    return <></>;
+  if (task === undefined || submission === undefined) {
+    return <>Task or submission cannot be found</>;
   }
-
 
   const infoTableRow: CustomTableRow = [
     (<TaskNameLinkByTask taskName={task.name} alias={task.alias} />),
