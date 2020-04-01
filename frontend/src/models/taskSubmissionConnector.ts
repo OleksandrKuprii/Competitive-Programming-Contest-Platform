@@ -18,6 +18,10 @@ interface FetchSubmissionsUrlParams {
   offset: number,
 }
 
+interface FetchSubmissionUrlParams {
+  id: number
+}
+
 const fetchTasksUrlBuilder = ({ number, offset }: FetchTasksUrlParams) => (
   `${baseURL}/tasks?&number=${number}&offset=${offset}&user_id=1`
 );
@@ -30,6 +34,10 @@ const fetchSubmissionsUrlBuilder = ({ number, offset }: FetchSubmissionsUrlParam
   `${baseURL}/submissions?number=${number}&offset=${offset}&user_id=1`
 );
 
+const fetchSubmissionUrlBuilder = ({ id }: FetchSubmissionUrlParams) => (
+  `${baseURL}/submission/${id}`
+);
+
 
 export interface TaskSubmissionConnector {
   task: TaskModel,
@@ -37,6 +45,7 @@ export interface TaskSubmissionConnector {
   fetchTasks: Thunk<TaskSubmissionConnector>,
   fetchTask: Thunk<TaskSubmissionConnector, string>,
   fetchSubmissions: Thunk<TaskSubmissionConnector>,
+  fetchSubmission: Thunk<TaskSubmissionConnector, number>,
 }
 
 const taskSubmissionConnector: TaskSubmissionConnector = {
@@ -136,7 +145,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
     submissions.forEach(({
       // eslint-disable-next-line
-      id, alias, name, published_at, result, lang
+                           id, alias, name, published_at, result, lang
     }) => {
       actions.submission.addedSubmission({
         id,
@@ -153,7 +162,26 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
     });
   }),
 
-  /* TODO: add fetchSubmission */
+  fetchSubmission: thunk(async (actions, id) => {
+    const response = await fetch(fetchSubmissionUrlBuilder({ id }));
+
+    const data: any = await response.json();
+
+    actions.submission.addedSubmission({
+      id,
+      taskAlias: data.alias,
+      language: data.lang,
+      submitted: data.timestamp,
+      tests: data.tests,
+      code: data.code,
+      status: [],
+    });
+
+    actions.task.addedTask({
+      alias: data.alias,
+      name: data.name,
+    });
+  }),
 };
 
 export default taskSubmissionConnector;
