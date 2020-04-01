@@ -121,6 +121,10 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
     const { points, status } = resultToPointsAndStatus(data.best_submission.result);
 
+    if (!points || !status) {
+      return;
+    }
+
     const submission: Submission = {
       id: data.best_submission.id,
       taskAlias: alias,
