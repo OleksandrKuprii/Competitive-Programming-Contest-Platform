@@ -29,7 +29,8 @@ async def process_result_to_checker(result_to_checker: ResultToChecker):
 
 
 def check_test_results(
-        test_results: typing.List[TestResult], correct_results: typing.List[str],
+        test_results: typing.List[TestResult],
+        correct_results: typing.List[str],
         points_list: typing.List[int]
 ) -> typing.Generator[typing.Callable[[int], ResultToDB], None, None]:
     """Compare correct results with given, calculate points.
