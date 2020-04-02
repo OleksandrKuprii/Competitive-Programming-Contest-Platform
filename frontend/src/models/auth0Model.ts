@@ -44,7 +44,7 @@ const auth0Model: Auth0Model = {
   })),
 
   changedUser: action((state, { picture, name }) => {
-    const newState = { ...state, userName: name };
+    const newState = { ...state, username: name };
 
     if (picture !== undefined) {
       newState.userPicture = picture;

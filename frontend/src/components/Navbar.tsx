@@ -17,17 +17,17 @@ const ToucanNavbar = () => {
           <Row>
             <Col>
               <Link to="/" style={{ fontWeight: 'bold', paddingLeft: 20, paddingRight: 50 }}>
-                {t('brandname')}
+                {t('brandName')}
               </Link>
             </Col>
             <Col>
-              <Link to="/tournaments">{t('pagename.tournaments')}</Link>
+              <Link to="/tournaments">{t('pageName.tournaments')}</Link>
             </Col>
             <Col>
-              <Link to="/tasks">{t('pagename.tasks')}</Link>
+              <Link to="/tasks">{t('pageName.tasks')}</Link>
             </Col>
             <Col>
-              <Link to="/submissions">{t('pagename.submissions')}</Link>
+              <Link to="/submissions">{t('pageName.submissions')}</Link>
             </Col>
           </Row>
         </Nav>

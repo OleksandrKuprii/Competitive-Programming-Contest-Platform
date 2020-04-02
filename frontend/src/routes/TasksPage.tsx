@@ -17,9 +17,9 @@ const TasksPage = () => {
 
   return (
     <>
-      <h1>{t('pagename.tasks')}</h1>
+      <h1>{t('pageName.tasks')}</h1>
 
-      <p>{t('taskspage.description')}</p>
+      <p>{t('tasksPage.description')}</p>
 
       <TaskList tasks={tasks} />
     </>

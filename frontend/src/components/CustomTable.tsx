@@ -19,7 +19,7 @@ const CustomTable = ({ headers, rows, padding }: CustomTableArgs) => {
   const { t } = useTranslation();
   return (
     <Table striped hover variant="dark" size="sm" borderless>
-      <thead className="customhead">
+      <thead className="custom-head">
         <tr>
           {headers.map((header) => (
             <th key={uuid()} style={{ paddingLeft: padding }}>

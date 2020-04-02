@@ -8,9 +8,9 @@ $input-bg: #333;
 $input-color: #aaa;
 
 $theme-colors: (
-    "primary": #a64,
-    "secondary": #742,
-    "dark": #010101
+  "primary": #a64,
+  "secondary": #742,
+  "dark": #010101
 );
 
 $jumbotron-bg: #222;
@@ -21,70 +21,75 @@ $spacer: 50px;
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 body {
-    font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 blockquote {
-    border-left: 8px #777 solid;
-    padding: 15px;
-    background-color: #222;
-    font-size: 18px;
-    font-family: 'Raleway', sans-serif;
+  border-left: 8px #777 solid;
+  padding: 15px;
+  background-color: #222;
+  font-size: 18px;
+  font-family: 'Raleway', sans-serif;
 }
 
-thead.customhead {
-    border-bottom: 6px #666 solid;
-    padding-bottom: 6px;
+thead.custom-head {
+  border-bottom: 6px #666 solid;
+  padding-bottom: 6px;
 }
 
-thead.customhead th {
-    background-color: $body-bg;
+thead.custom-head th {
+  background-color: $body-bg;
 }
 
 .green_background {
-    background: #6da06f;
+  background: #6da06f;
 }
 
 .green_color {
-    color: #6da06f;
+  color: #6da06f;
 }
 
 .yellow_background {
-    background: #ffbb43;
+  background: #ffbb43;
 }
 
 .yellow_color {
-    color: #ffbb43;
+  color: #ffbb43;
 }
 
 .red_background {
-    background: #c13525;
+  background: #c13525;
 }
 
 .red_color {
-    color: #c13525;
+  color: #c13525;
 }
 .gray_color {
-    color: gray;
+  color: gray;
 }
 
 hr {
-    border: 2px #555 solid;
+  border: 2px #555 solid;
 }
 
 a {
-    color: $body-color;
+  color: $body-color;
 }
 
 a:hover {
-    color: $body-color;
+  color: $body-color;
 }
 
 nav {
-    font-size: 18px;
+  font-size: 18px;
 }
 
-.dropzone {
-    padding: 100px;
-    background-color: #222;
+.drop-zone {
+  padding: 50px;
+  background-color: #222;
+  margin-bottom: 50px;
+}
+
+.drop-zone-drag-on {
+  background-color: map-get($theme-colors, "secondary");
 }

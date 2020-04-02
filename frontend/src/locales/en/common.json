@@ -1,32 +1,32 @@
 {
-    "brandname": "Toucan",
-    "learnmore": "Learn more",
+    "brandName": "Toucan",
+    "learnMore": "Learn more",
     "running": "Running",
     "submission": "Submission",
     "homepage": {
         "welcome": "Welcome to Toucan!",
         "description": "a powerful programming contest platform"
     },
-    "pagename": {
+    "pageName": {
         "home": "Home",
         "tasks": "Public tasks",
         "tournaments": "Tournaments",
         "profile": "Profile",
         "submissions":"Submissions"
     },
-    "taskspage": {
+    "tasksPage": {
         "description": "Explore public tasks"
     },
-    "taskpage": {
+    "taskPage": {
         "description": {
-            "inputformat": "Input format",
-            "outputformat": "Output format"
+            "inputFormat": "Input format",
+            "outputFormat": "Output format"
         },
         "examples": "Examples",
-        "inputfile": "Input file",
-        "outputfile": "Output file",
-        "submitsolution": "Submit solution",
-        "dropfilehere": "Drop file here or press to select",
+        "inputFile": "Input file",
+        "outputFile": "Output file",
+        "submitSolution": "Submit solution",
+        "dropFileHere": "Drop file here or press to select",
         "limits": {
             "cpu": "CPU time limit",
             "wall": "Real time limit",
@@ -48,7 +48,7 @@
         "category": "Category",
         "rating": "Rating",
         "realtime": "Real Time",
-        "cputime": "CPU Time",
+        "cpuTime": "CPU Time",
         "memory": "Memory",
         "input": "Input",
         "output": "Output"

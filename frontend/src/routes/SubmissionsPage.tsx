@@ -18,7 +18,7 @@ const SubmissionsPage = () => {
 
   return (
     <>
-      <h1>{t('pagename.submissions')}</h1>
+      <h1>{t('pageName.submissions')}</h1>
 
       <p>{t('submissionPage.description')}</p>
 

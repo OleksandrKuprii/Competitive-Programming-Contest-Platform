@@ -1,42 +1,13 @@
 import { Thunk, thunk } from 'easy-peasy';
 import submissionModel, { Submission, SubmissionModel } from './submissionModel';
 import taskModel, { Task, TaskModel } from './taskModel';
-import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-
-interface FetchTasksUrlParams {
-  number: number,
-  offset: number,
-}
-
-interface FetchTaskUrlParams {
-  alias: string
-}
-
-interface FetchSubmissionsUrlParams {
-  number: number,
-  offset: number,
-}
-
-interface FetchSubmissionUrlParams {
-  id: number
-}
-
-const fetchTasksUrlBuilder = ({ number, offset }: FetchTasksUrlParams) => (
-  `${baseURL}/tasks?&number=${number}&offset=${offset}&user_id=1`
-);
-
-const fetchTaskUrlBuilder = ({ alias }: FetchTaskUrlParams) => (
-  `${baseURL}/task/${alias}`
-);
-
-const fetchSubmissionsUrlBuilder = ({ number, offset }: FetchSubmissionsUrlParams) => (
-  `${baseURL}/submissions?number=${number}&offset=${offset}&user_id=1`
-);
-
-const fetchSubmissionUrlBuilder = ({ id }: FetchSubmissionUrlParams) => (
-  `${baseURL}/submission/${id}`
-);
+import {
+  fetchSubmissionsUrlBuilder,
+  fetchSubmissionUrlBuilder,
+  fetchTasksUrlBuilder,
+  fetchTaskUrlBuilder,
+} from './requests';
 
 
 export interface TaskSubmissionConnector {
@@ -167,19 +138,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
   }),
 
   fetchSubmission: thunk(async (actions, id) => {
-    const response = await fetch(fetchSubmissionUrlBuilder({ id }));
 
-    const data: any = await response.json();
-
-    actions.submission.addedSubmission({
-      id,
-      taskAlias: data.alias,
-      language: data.lang,
-      submitted: data.timestamp,
-      tests: data.tests,
-      code: data.code,
-      status: [],
-    });
 
     actions.task.addedTask({
       alias: data.alias,

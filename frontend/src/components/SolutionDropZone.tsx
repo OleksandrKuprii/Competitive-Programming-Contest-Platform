@@ -12,7 +12,7 @@ export interface SolutionDropZoneArgs {
   taskAlias: string
 }
 
-const SolutionDropZone = () => {
+const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
   const { t } = useTranslation();
 
   const [dragEntered, setDragEntered] = React.useState(false);
@@ -60,8 +60,8 @@ const SolutionDropZone = () => {
             <input {...getInputProps()} />
             {/* eslint-enable react/jsx-props-no-spreading */}
 
-            <div className={dragEntered ? 'dropzone dropzone-dragon' : 'dropzone'}>
-              {file === null ? t('taskpage.dropfilehere')
+            <div className={dragEntered ? 'drop-zone drop-zone-drag-on' : 'drop-zone'}>
+              {file === null ? t('taskPage.dropFileHere')
                 : (
                   <>
                     <Form>
@@ -92,20 +92,23 @@ const SolutionDropZone = () => {
                           <Button
                             variant="primary"
                             onClick={async () => {
-                              await submitSubmission({ taskAlias: 'equal_sets', language: 'python3', code: 'print (0)' });
+                              await submitSubmission({ taskAlias, language: 'python3', code: fileText || '' });
                               updatedFile({ file: null, fileText: null });
                             }}
                             type="submit"
                           >
                             OK
                           </Button>
-                          <Button variant="secondary" onClick={() => canceled}>Cancel</Button>
+                          <Button variant="secondary" onClick={() => canceled()}>Cancel</Button>
                         </ButtonGroup>
                       </Form.Row>
                       <div style={{ paddingTop: 20 }} />
                       <Form.Row>
                         <Container fluid style={{ padding: 0 }}>
-                          <CodeViewer code={fileText === null ? '' : fileText} language={language === null ? '' : language} />
+                          <CodeViewer
+                            code={fileText === null ? '' : fileText}
+                            language={language === null ? '' : language}
+                          />
                         </Container>
                       </Form.Row>
                     </Form>

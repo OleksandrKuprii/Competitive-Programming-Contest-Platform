@@ -4,6 +4,8 @@ import {
 import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
 import baseURL from './apiBaseURL';
 import updateObjectWithProperty from '../utils/updateObjectWithProperty';
+import sleep from '../utils/sleep';
+import { fetchSubmissionUrlBuilder } from './requests';
 
 export interface Submission {
   id: number
@@ -25,6 +27,8 @@ export interface SubmissionModel {
   file: SubmissionFileModel,
   addedSubmission: Action<SubmissionModel, Submission>,
   submitSubmission: Thunk<SubmissionModel, { taskAlias: string, code: string, language: string }>,
+  fetchSubmission: Thunk<SubmissionModel, number>,
+  huntSubmission: Thunk<SubmissionModel, number>,
 }
 
 const submissionModel: SubmissionModel = {
@@ -41,13 +45,13 @@ const submissionModel: SubmissionModel = {
       method: 'POST',
       body: JSON.stringify({
         user_id: 1,
-        task_id: 1,
+        alias: taskAlias,
         lang: language,
         code,
       }),
     });
 
-    const data = JSON.parse(await response.json());
+    const data = await response.json();
 
     actions.addedSubmission({
       id: data.submission_id,
@@ -59,6 +63,26 @@ const submissionModel: SubmissionModel = {
       tests: [],
       code,
     } as Submission);
+  }),
+
+  fetchSubmission: thunk(async (actions, id) => {
+    const response = await fetch(fetchSubmissionUrlBuilder({ id }));
+
+    const data: any = await response.json();
+
+    actions.addedSubmission({
+      id,
+      taskAlias: data.alias,
+      language: data.lang,
+      submitted: data.timestamp,
+      tests: data.tests,
+      code: data.code,
+      status: [],
+    });
+  }),
+
+  huntSubmission: thunk(async (actions, id) => {
+    await sleep(5000);
   }),
 };
 

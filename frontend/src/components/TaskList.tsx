@@ -7,7 +7,10 @@ import { TaskNameLinkByTask } from './TaskNameLink';
 import { Task } from '../models/taskModel';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
-  const rows: CustomTableRow[] = tasks.map(
+  const sortedTasks = tasks.slice();
+  sortedTasks.sort((a, b) => (a.name > b.name ? 1 : -1));
+
+  const rows: CustomTableRow[] = sortedTasks.map(
     ({
       alias, name, difficulty, rating, category,
     }) => ([

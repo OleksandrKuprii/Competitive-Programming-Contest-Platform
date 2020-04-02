@@ -3,7 +3,9 @@ import * as React from 'react';
 const PrettyDate = ({ timestamp }: { timestamp: number }) => (
   <span>
     {(() => {
-      const delta = new Date().getTime() - timestamp * 1000;
+      const now = new Date();
+
+      const delta = +now - +new Date(timestamp * 1000);
 
       const deltaMinutes = Math.round(delta / 1000 / 60);
 
