@@ -2,8 +2,8 @@ import {
   thunk, action, Thunk, Action,
 } from 'easy-peasy';
 import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
-import baseURL from './apiBaseURL';
 import updateObjectWithProperty from '../utils/updateObjectWithProperty';
+import { fetchSubmission, submitSubmission } from './requests';
 
 export interface Submission {
   id: number
@@ -11,20 +11,26 @@ export interface Submission {
   language?: string
   status: string[]
   points?: number
-  submitted?: number,
+  submitted?: string,
   tests?: { status: string, points: number, cpuTime: number, realtime: number }[],
   code?: string
 }
-
-const submitSubmissionUrlBuilder = () => (
-  `${baseURL}/submission`
-);
 
 export interface SubmissionModel {
   list: Submission[],
   file: SubmissionFileModel,
   addedSubmission: Action<SubmissionModel, Submission>,
-  submitSubmission: Thunk<SubmissionModel, { taskAlias: string, code: string, language: string }>,
+  submitSubmission: Thunk<SubmissionModel,
+  {
+    taskAlias: string,
+    code: string,
+    language: string,
+    token: string
+  }>,
+  fetchSubmission: Thunk<SubmissionModel, {
+    id: number,
+    token?: string,
+  }>,
 }
 
 const submissionModel: SubmissionModel = {
@@ -36,18 +42,12 @@ const submissionModel: SubmissionModel = {
   }),
 
   submitSubmission: thunk(async (actions,
-    { taskAlias, code, language }) => {
-    const response = await fetch(submitSubmissionUrlBuilder(), {
-      method: 'POST',
-      body: JSON.stringify({
-        user_id: 1,
-        task_id: 1,
-        lang: language,
-        code,
-      }),
-    });
+    {
+      taskAlias, code, language, token,
+    }) => {
+    const response = await submitSubmission(taskAlias, language, code, token);
 
-    const data = JSON.parse(await response.json());
+    const data = await response.json();
 
     actions.addedSubmission({
       id: data.submission_id,
@@ -59,6 +59,22 @@ const submissionModel: SubmissionModel = {
       tests: [],
       code,
     } as Submission);
+  }),
+
+  fetchSubmission: thunk(async (actions, { id, token }) => {
+    const response = await fetchSubmission(id, token);
+
+    const data: any = await response.json();
+
+    actions.addedSubmission({
+      id,
+      taskAlias: data.alias,
+      language: data.lang,
+      submitted: data.timestamp,
+      tests: data.tests,
+      code: data.code,
+      status: [],
+    });
   }),
 };
 

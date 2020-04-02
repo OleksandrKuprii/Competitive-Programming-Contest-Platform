@@ -11,7 +11,7 @@ const Homepage = () => {
         <p className="h1">{t('homepage.welcome')}</p>
         <p className="lead">{t('homepage.description')}</p>
         <p>
-          <Button variant="primary">{t('learnmore')}</Button>
+          <Button variant="primary">{t('learnMore')}</Button>
         </p>
       </Jumbotron>
     </>

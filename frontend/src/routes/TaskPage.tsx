@@ -20,17 +20,15 @@ const TaskPage = () => {
     ),
   );
 
-  // const submitSubmission = useStoreActions((actions) =>
-  //  actions.submission.submitSubmission);
   const fetchTask = useStoreActions((actions) => actions.taskSubmission.fetchTask);
 
   React.useEffect(() => {
     if (taskAlias !== undefined) {
-      fetchTask(taskAlias);
+      fetchTask({ alias: taskAlias });
     }
   }, [taskAlias, fetchTask]);
 
-  if (task === undefined) {
+  if (task === undefined || taskAlias === undefined) {
     return <></>;
   }
 
@@ -66,7 +64,7 @@ const TaskPage = () => {
         <Col>
           <h1 style={{ marginBottom: 5 }}>{task.name}</h1>
           <p className="h6">
-            {t('taskpage.personalResult')}
+            {t('taskPage.personalResult')}
             {': '}
             <GreatestResult taskAlias={taskAlias} />
             {' '}
@@ -74,19 +72,19 @@ const TaskPage = () => {
           <blockquote>{main}</blockquote>
           <p className="h5">
             <b>
-              {t('taskpage.description.inputformat')}
+              {t('taskPage.description.inputFormat')}
             </b>
           </p>
           <blockquote>{inputFormat}</blockquote>
           <p className="h5">
             <b>
-              {t('taskpage.description.outputformat')}
+              {t('taskPage.description.outputFormat')}
             </b>
           </p>
           <blockquote>{outputFormat}</blockquote>
           <p className="h5">
             <b>
-              {t('taskpage.examples')}
+              {t('taskPage.examples')}
             </b>
           </p>
 
@@ -110,7 +108,7 @@ const TaskPage = () => {
             Limits
           </p>
           <CustomTable
-            headers={['cputime', 'realtime', 'memory']}
+            headers={['cpuTime', 'realtime', 'memory']}
             rows={[[task.limits?.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),
               task.limits?.wallTime === undefined ? '' : task.limits.wallTime.toString(),
               task.limits?.memory === undefined ? '' : task.limits.memory.toString()]]}
@@ -122,9 +120,9 @@ const TaskPage = () => {
 
       <Row>
         <Col>
-          <p><b>{t('taskpage.submitsolution')}</b></p>
+          <p><b>{t('taskPage.submitSolution')}</b></p>
 
-          {taskAlias === undefined ? null : <SolutionDropZone />}
+          <SolutionDropZone taskAlias={taskAlias} />
         </Col>
       </Row>
     </>

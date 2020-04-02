@@ -1,9 +1,11 @@
 import * as React from 'react';
 
-const PrettyDate = ({ timestamp }: { timestamp: number }) => (
+const PrettyDate = ({ timestamp }: { timestamp: string }) => (
   <span>
     {(() => {
-      const delta = new Date().getTime() - timestamp * 1000;
+      const now = new Date();
+
+      const delta = +now - +new Date(timestamp);
 
       const deltaMinutes = Math.round(delta / 1000 / 60);
 
@@ -27,7 +29,7 @@ const PrettyDate = ({ timestamp }: { timestamp: number }) => (
         return `${deltaDays} days ago`;
       }
 
-      const currentDate = new Date(timestamp * 1000);
+      const currentDate = new Date(timestamp);
 
       const day = currentDate.getDay();
       const month = currentDate.getMonth();

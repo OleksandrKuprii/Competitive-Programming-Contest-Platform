@@ -25,7 +25,7 @@ const SubmissionPage = () => {
       return;
     }
 
-    fetchSubmission(id);
+    fetchSubmission({ id });
   }, [fetchSubmission, id]);
 
   const [submission, task]: [Submission | undefined, Task | undefined] = useStoreState(
@@ -77,7 +77,7 @@ const SubmissionPage = () => {
     );
 
   const testsTable = (
-    <CustomTable headers={['id', 'result', 'cputime', 'realtime']} rows={testsTableRows} />
+    <CustomTable headers={['id', 'result', 'cpuTime', 'realtime']} rows={testsTableRows} />
   );
 
   return (

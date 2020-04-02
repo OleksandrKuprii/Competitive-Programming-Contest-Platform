@@ -36,6 +36,7 @@ const ProfileStatus = () => {
   return (
     <>
       Logged in as
+      {' '}
       {username}
       .
       <Button variant="link" onClick={logoutCallback}>Log out</Button>

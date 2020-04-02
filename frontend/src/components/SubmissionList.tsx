@@ -8,7 +8,10 @@ import { Result } from './Result';
 
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
-  const rows: CustomTableRow[] = submissions.map(({
+  const sortedSubmissions = submissions.slice();
+  sortedSubmissions.sort((a, b) => (a.id > b.id ? -1 : 1));
+
+  const rows: CustomTableRow[] = sortedSubmissions.map(({
     id, taskAlias, language, points, status, submitted,
   }) => ([
     (<SubmissionIDLink id={id} />),
