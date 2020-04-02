@@ -1,12 +1,5 @@
 create schema if not exists coreschema;
 
-create table if not exists coreschema.users (
-    id serial primary key,
-    username varchar(50) unique,
-    email varchar(255) unique,
-    role varchar(50)
-);
-
 create table if not exists coreschema.tasks (
     id serial primary key,
     alias varchar(128) unique,
@@ -36,8 +29,8 @@ create table if not exists coreschema.task_examples (
 
 create table if not exists coreschema.submissions (
     id serial primary key,
-    published_at timestamp,
-    user_id int references coreschema.users(id),
+    published_at timestamp with time zone,
+    user_id varchar(50),
     lang varchar(50),
     task_id int references coreschema.tasks(id),
     status varchar(50)
@@ -61,7 +54,7 @@ create table if not exists coreschema.results (
 
 create table if not exists coreschema.task_bests (
     id serial primary key,
-    user_id int references coreschema.users(id),
+    user_id varchar(50),
     task_id int references coreschema.tasks(id),
     submission_id int references coreschema.submissions(id)
 );
@@ -75,7 +68,7 @@ DECLARE
     a integer;
     points_count integer;
     max_points_count integer;
-    _user_id integer;
+    _user_id varchar;
     _task_id integer;
 
 BEGIN
@@ -125,7 +118,7 @@ $$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION coreschema.get_submission_status_for_result(integer)
+CREATE OR REPLACE FUNCTION coreschema.get_submission_status_for_result(integer, varchar)
 RETURNS varchar
 AS
 $$
@@ -135,14 +128,16 @@ DECLARE
 
 BEGIN
 
-    SELECT array_agg(DISTINCT status) INTO statuses
+    SELECT array_agg(DISTINCT results.status) INTO statuses
     FROM coreschema.results
-    WHERE submission_id = $1;
+    JOIN coreschema.submissions
+    ON results.submission_id = submissions.id
+    WHERE submission_id = $1 AND user_id = $2;
 
     IF statuses is NULL THEN
         SELECT status INTO res
         FROM coreschema.submissions
-        WHERE id = $1;
+        WHERE id = $1 AND user_id = $2;
 
         RETURN res;
     END IF;

@@ -7,4 +7,5 @@ boto3
 markdown2
 aiohttp[speedups]
 aiohttp_cors
+python-jose
 -e .
