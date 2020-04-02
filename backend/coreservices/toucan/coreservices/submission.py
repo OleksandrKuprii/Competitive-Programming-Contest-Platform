@@ -7,7 +7,7 @@ from toucan.dataclass import (SubmissionToRunner, SubmissionToStorage,
 from .runner import add_submission as runner_add_submission
 
 
-async def add_submission(user_submission: UserSubmission) -> None:
+async def add_submission(user_submission: UserSubmission):
     """Get submission from API and communicates with database and storage.
 
     Parameters
@@ -50,33 +50,34 @@ async def get_all(user_id, number, offset):
     submissions = await database.get_submissions(user_id, number, offset)
 
     for i in range(len(submissions)):
-        submissions[i]['result'] = await get_result(submissions[i]['id'])
+        submissions[i]['result'] = \
+            await get_result(submissions[i]['id'], user_id)
 
     return submissions
 
 
-async def get_result(submission_id: int):
+async def get_result(submission_id: int, user_id: str):
     """Get result from database service."""
-    result = await database.get_result(submission_id)
+    result = await database.get_result(submission_id, user_id)
     return {'points': result[0], 'status': result[1]}
 
 
-async def get_test_results(submission_id: int) -> None:
+async def get_test_results(submission_id: int, user_id: str):
     """Get all test results."""
-    tests = await database.get_test_results(submission_id)
+    tests = await database.get_test_results(submission_id, user_id)
     return tests
 
 
-async def get_submission(submission_id: int):
+async def get_submission(submission_id: int, user_id: str):
     """Get submission from database service by id."""
-    submission_dict = await database.get_submission(submission_id)
+    submission_dict = await database.get_submission(submission_id, user_id)
 
-    result = await get_result(submission_id)
+    result = await get_result(submission_id, user_id)
 
     if result['points'] is None:
         tests = list()
     else:
-        tests = await get_test_results(submission_id)
+        tests = await get_test_results(submission_id, user_id)
 
     submission_dict['tests'] = tests
 

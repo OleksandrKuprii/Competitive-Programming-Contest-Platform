@@ -1,11 +1,10 @@
 """Handles database logic."""
 import os
-from datetime import datetime
 from typing import List
 
 import asyncpg
 
-from toucan.dataclass import ResultToDB, SubmissionToDB
+from toucan.dataclass import ResultToDB, UserSubmission
 
 # Declaring global variable for connection
 conn = None
@@ -119,7 +118,7 @@ async def get_test_ids(task_id: int) -> List[int]:
     return [x['id'] for x in test_ids]
 
 
-async def add_submission(submission_to_db: SubmissionToDB) -> tuple():
+async def add_submission(submission_to_db: UserSubmission) -> tuple:
     """Add submission and return its id.
 
     Parameters
@@ -134,8 +133,7 @@ async def add_submission(submission_to_db: SubmissionToDB) -> tuple():
     # Presenting SubmissionToDB object values to the variables
     user_id = submission_to_db.user_id
     alias = submission_to_db.alias
-    timestamp = submission_to_db.timestamp
-    date = datetime.fromtimestamp(timestamp)
+    date = submission_to_db.timestamp
     lang = submission_to_db.lang
 
     fetch = await conn.fetchrow('''
@@ -220,7 +218,7 @@ async def get_tasks(number: int, offset: int):
     return data
 
 
-async def get_submission_id_from_bests(user_id: int, task_id: int):
+async def get_submission_id_from_bests(user_id: str, task_id: int):
     """Get submission id from task_bests table by user id and task id."""
     fetch = await conn.fetchrow('''
         SELECT submission_id
@@ -233,12 +231,12 @@ async def get_submission_id_from_bests(user_id: int, task_id: int):
     return None
 
 
-async def get_result(submission_id):
+async def get_result(submission_id: int, user_id: str):
     """Get result from database."""
     status = await conn.fetch(
         '''SELECT get_submission_status_for_result as status
-        FROM coreschema.get_submission_status_for_result($1)''',
-        submission_id)
+        FROM coreschema.get_submission_status_for_result($1, $2)''',
+        submission_id, user_id)
 
     status = status[0]['status']
 
@@ -246,9 +244,13 @@ async def get_result(submission_id):
         return None, status
 
     result = await conn.fetch(
-        '''SELECT sum(points)as points, array_agg(DISTINCT status) as status
+        '''SELECT sum(points) as points,
+                  array_agg(DISTINCT results.status) as status
            FROM coreschema.results
-           WHERE submission_id = $1''', submission_id)
+           JOIN coreschema.submissions
+           ON results.submission_id = submissions.id
+           WHERE submission_id = $1 AND user_id = $2''',
+        submission_id, user_id)
 
     return result[0]['points'], result[0]['status']
 
@@ -275,35 +277,37 @@ async def get_submissions(user_id, number, offset):
         for k, v in x.items():
             d[k] = v
             if k == 'published_at':
-                d[k] = int(datetime.timestamp(v))
+                d[k] = v.isoformat()
         data.append(d)
 
     return data
 
 
-async def get_submission(submission_id: int):
+async def get_submission(submission_id: int, user_id: str):
     """Get submission by id."""
     fetch = await conn.fetchrow('''
         SELECT name, alias, lang, published_at as timestamp
         FROM coreschema.submissions
         LEFT JOIN coreschema.tasks
         ON tasks.id = task_id
-        WHERE submissions.id = $1''', submission_id)
+        WHERE submissions.id = $1 AND submissions.user_id = $2''',
+                                submission_id, user_id)
 
     submission_dict = {k: v for k, v in fetch.items()}
-    submission_dict['timestamp'] = \
-        int(submission_dict['timestamp'].timestamp())
+    submission_dict['timestamp'] = submission_dict['timestamp'].isoformat()
 
     return submission_dict
 
 
-async def get_test_results(submission_id: int):
+async def get_test_results(submission_id: int, user_id: str):
     """Get tests by submission id."""
-    fetch = await conn.fetch('''
-        SELECT points, status, wall_time, cpu_time
-        FROM coreschema.results
-        WHERE submission_id = $1
-        ''', submission_id)
+    fetch = await conn.fetch(
+        '''SELECT points, results.status, wall_time, cpu_time
+           FROM coreschema.results
+           JOIN coreschema.submissions
+           ON results.submission_id = submissions.id
+           WHERE submission_id = $1 AND user_id = $2''',
+        submission_id, user_id)
 
     tests = list()
     for f in fetch:
