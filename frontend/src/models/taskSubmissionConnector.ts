@@ -3,20 +3,27 @@ import submissionModel, { Submission, SubmissionModel } from './submissionModel'
 import taskModel, { Task, TaskModel } from './taskModel';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
 import {
-  fetchSubmissionsUrlBuilder,
-  fetchSubmissionUrlBuilder,
-  fetchTasksUrlBuilder,
-  fetchTaskUrlBuilder,
+  fetchSubmission, fetchSubmissions, fetchTask, fetchTasks,
 } from './requests';
 
 
 export interface TaskSubmissionConnector {
   task: TaskModel,
   submission: SubmissionModel,
-  fetchTasks: Thunk<TaskSubmissionConnector>,
-  fetchTask: Thunk<TaskSubmissionConnector, string>,
-  fetchSubmissions: Thunk<TaskSubmissionConnector>,
-  fetchSubmission: Thunk<TaskSubmissionConnector, number>,
+  fetchTasks: Thunk<TaskSubmissionConnector, {
+    token?: string,
+  }>,
+  fetchTask: Thunk<TaskSubmissionConnector, {
+    alias: string,
+    token?: string,
+  }>,
+  fetchSubmissions: Thunk<TaskSubmissionConnector, {
+    token: string,
+  }>,
+  fetchSubmission: Thunk<TaskSubmissionConnector, {
+    id: number,
+    token?: string,
+  }>,
 }
 
 const taskSubmissionConnector: TaskSubmissionConnector = {
@@ -24,8 +31,8 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
   submission: submissionModel,
 
 
-  fetchTasks: thunk(async (actions) => {
-    const response = await fetch(fetchTasksUrlBuilder({ number: 5, offset: 0 }));
+  fetchTasks: thunk(async (actions, { token }) => {
+    const response = await fetchTasks(token);
 
     const data = await response.json();
 
@@ -63,8 +70,8 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
     });
   }),
 
-  fetchTask: thunk(async (actions, alias) => {
-    const response = await fetch(fetchTaskUrlBuilder({ alias }));
+  fetchTask: thunk(async (actions, { alias, token }) => {
+    const response = await fetchTask(alias, token);
 
     const data = await response.json();
 
@@ -106,39 +113,53 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
     actions.submission.addedSubmission(submission);
   }),
 
-  fetchSubmissions: thunk(async (actions) => {
-    const response = await fetch(fetchSubmissionsUrlBuilder({ number: 5, offset: 0 }));
+  fetchSubmissions: thunk(async (actions, { token }) => {
+    const response = await fetchSubmissions(token);
 
     const submissions: {
       id: number,
       lang: string,
       alias: string,
       name: string,
-      published_at: number,
+      published_at: string,
       result: any
     }[] = await response.json();
 
-    submissions.forEach(({
+    if (submissions !== undefined) {
+      submissions.forEach(({
       // eslint-disable-next-line
                            id, alias, name, published_at, result, lang
-    }) => {
-      actions.submission.addedSubmission({
-        id,
-        taskAlias: alias,
-        submitted: published_at,
-        ...resultToPointsAndStatus(result),
-        language: lang,
-      });
+      }) => {
+        actions.submission.addedSubmission({
+          id,
+          taskAlias: alias,
+          submitted: published_at,
+          ...resultToPointsAndStatus(result),
+          language: lang,
+        });
 
-      actions.task.addedTask({
-        alias,
-        name,
+        actions.task.addedTask({
+          alias,
+          name,
+        });
       });
-    });
+    }
   }),
 
-  fetchSubmission: thunk(async (actions, id) => {
+  fetchSubmission: thunk(async (actions, { id, token }) => {
+    const response = await fetchSubmission(id, token);
 
+    const data: any = await response.json();
+
+    actions.submission.addedSubmission({
+      id,
+      taskAlias: data.alias,
+      language: data.lang,
+      submitted: data.timestamp,
+      tests: data.tests,
+      code: data.code,
+      status: [],
+    });
 
     actions.task.addedTask({
       alias: data.alias,

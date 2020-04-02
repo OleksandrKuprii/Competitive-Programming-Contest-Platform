@@ -13,10 +13,11 @@ export interface Auth0Model {
 
   userPicture?: string
   username?: string
+  idTokenClaims?: IdToken,
 
   changedLoadingStatus: Action<Auth0Model, boolean>
   changedAuthenticatedStatus: Action<Auth0Model, boolean>
-  changedUser: Action<Auth0Model, { picture?: string, name: string }>
+  changedUser: Action<Auth0Model, { picture?: string, name: string, idTokenClaims: IdToken }>
   createdClient: Action<Auth0Model, Auth0Client>
   doAuth: Action<Auth0Model, {redirectUri?: string}>,
   logout: Action<Auth0Model>,
@@ -28,31 +29,35 @@ const auth0Model: Auth0Model = {
   isAuthenticated: false,
   loading: false,
 
-  changedLoadingStatus: action((state, loading) => ({
-    ...state,
-    loading,
-  })),
+  changedLoadingStatus: action((state, loading) => {
+    // eslint-disable-next-line
+    state.loading = loading;
+  }),
 
-  createdClient: action((state, client) => ({
-    ...state,
-    client,
-  })),
+  createdClient: action((state, client) => {
+    // eslint-disable-next-line
+    state.client = client;
+  }),
 
-  changedAuthenticatedStatus: action((state, isAuthenticated) => ({
-    ...state,
-    isAuthenticated,
-  })),
+  changedAuthenticatedStatus: action((state, isAuthenticated) => {
+    // eslint-disable-next-line
+    state.isAuthenticated = isAuthenticated;
+  }),
 
-  changedUser: action((state, { picture, name }) => {
-    const newState = { ...state, username: name };
-
+  changedUser: action((state, { picture, name, idTokenClaims }) => {
     if (picture !== undefined) {
-      newState.userPicture = picture;
+      // eslint-disable-next-line
+      state.userPicture = picture;
     } else {
-      newState.userPicture = undefined;
+      // eslint-disable-next-line
+      state.userPicture = undefined;
     }
 
-    return newState;
+    // eslint-disable-next-line
+    state.username = name;
+
+    // eslint-disable-next-line
+    state.idTokenClaims = idTokenClaims;
   }),
 
   init: thunk(async (actions, initOptions) => {
@@ -76,7 +81,13 @@ const auth0Model: Auth0Model = {
     if (isAuthenticated) {
       const user = await auth0FromHook.getUser();
 
-      actions.changedUser({ picture: user.picture, name: user.given_name });
+      const idTokenClaims = await auth0FromHook.getIdTokenClaims();
+
+      actions.changedUser({
+        picture: user.picture,
+        name: user.given_name,
+        idTokenClaims,
+      });
     }
 
     actions.changedLoadingStatus(false);

@@ -8,13 +8,26 @@ import SubmissionList from '../components/SubmissionList';
 const SubmissionsPage = () => {
   const { t } = useTranslation();
 
-  const submissions = useStoreState((state) => state.taskSubmission.submission.list);
+  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
+  const idTokenClaims = useStoreState((state) => state.auth0.idTokenClaims);
+  const submissions = useStoreState((state) => (state.taskSubmission.submission.list));
 
   const fetchSubmissions = useStoreActions((actions) => actions.taskSubmission.fetchSubmissions);
 
   useEffect(() => {
-    fetchSubmissions();
-  }, [fetchSubmissions]);
+    if (!isAuthenticated || !idTokenClaims) {
+      return;
+    }
+
+    // eslint-disable-next-line
+    fetchSubmissions({ token: idTokenClaims.__raw });
+  }, [fetchSubmissions, isAuthenticated, idTokenClaims]);
+
+  if (!isAuthenticated) {
+    return (
+      <h3>Please login to view submissions!</h3>
+    );
+  }
 
   return (
     <>

@@ -7,13 +7,21 @@ import TaskList from '../components/TaskList';
 const TasksPage = () => {
   const { t } = useTranslation();
 
+  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
+  const idTokenClaims = useStoreState((state) => state.auth0.idTokenClaims);
   const tasks = useStoreState((state) => state.taskSubmission.task.list);
 
   const fetchTasks = useStoreActions((actions) => actions.taskSubmission.fetchTasks);
 
   React.useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    if (!isAuthenticated || !idTokenClaims) {
+      fetchTasks({});
+      return;
+    }
+
+    // eslint-disable-next-line
+    fetchTasks({ token: idTokenClaims.__raw });
+  }, [fetchTasks, isAuthenticated, idTokenClaims]);
 
   return (
     <>

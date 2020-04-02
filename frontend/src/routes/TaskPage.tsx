@@ -24,7 +24,7 @@ const TaskPage = () => {
 
   React.useEffect(() => {
     if (taskAlias !== undefined) {
-      fetchTask(taskAlias);
+      fetchTask({ alias: taskAlias });
     }
   }, [taskAlias, fetchTask]);
 

@@ -1,9 +1,12 @@
 import * as React from 'react';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Col from 'react-bootstrap/Col';
 import Dropzone from 'react-dropzone';
-import {
-  ButtonGroup, Button, Form, Col, Container,
-} from 'react-bootstrap';
+import FormControl from 'react-bootstrap/FormControl';
+import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
 import uuid from 'react-uuid';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import CodeViewer from './CodeViewer';
@@ -17,27 +20,44 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
 
   const [dragEntered, setDragEntered] = React.useState(false);
 
-  const uploadFile = useStoreActions(
-    (actions) => actions.taskSubmission.submission.file.uploadFile,
-  );
-  const updatedFile = useStoreActions(
-    (actions) => actions.taskSubmission.submission.file.updatedFile,
-  );
-
-  const canceled = useStoreActions((actions) => actions.taskSubmission.submission.file.canceled);
   const file = useStoreState((state) => state.taskSubmission.submission.file.file);
   const fileText = useStoreState((state) => state.taskSubmission.submission.file.fileText);
+  const language = useStoreState((state) => state.taskSubmission.submission.file.language);
+  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
+  const idTokenClaims = useStoreState((state) => state.auth0.idTokenClaims);
 
-  const submitSubmission = useStoreActions(
-    (actions) => actions.taskSubmission.submission.submitSubmission,
-  );
-
-  const language = useStoreState(
-    (state) => state.taskSubmission.submission.file.language,
+  const canceled = useStoreActions(
+    (actions) => actions.taskSubmission.submission.file.canceled,
   );
   const selectedLanguage = useStoreActions(
     (actions) => actions.taskSubmission.submission.file.selectedLanguage,
   );
+  const updatedFile = useStoreActions(
+    (actions) => actions.taskSubmission.submission.file.updatedFile,
+  );
+  const uploadFile = useStoreActions(
+    (actions) => actions.taskSubmission.submission.file.uploadFile,
+  );
+  const submitSubmission = useStoreActions(
+    (actions) => actions.taskSubmission.submission.submitSubmission,
+  );
+
+  const submitSolutionCallback = useCallback(() => {
+    if (!language || !taskAlias || !idTokenClaims || !fileText) {
+      return;
+    }
+
+    submitSubmission({
+      language,
+      taskAlias,
+      // eslint-disable-next-line
+      token: idTokenClaims.__raw,
+      code: fileText,
+    });
+
+    updatedFile({ file: null, fileText: null });
+  }, [submitSubmission, language, idTokenClaims, fileText, taskAlias, updatedFile]);
+
   const languages = ['python3', 'python2', 'c++', 'c'];
 
   if (language === null) {
@@ -48,7 +68,10 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
     <Dropzone
       multiple={false}
       disabled={file !== null}
-      onDropAccepted={async (files) => { setDragEntered(false); await uploadFile(files[0]); }}
+      onDropAccepted={async (files) => {
+        setDragEntered(false);
+        await uploadFile(files[0]);
+      }}
       onDragEnter={() => setDragEntered(true)}
       onDragLeave={() => setDragEntered(false)}
       onDropRejected={() => setDragEntered(false)}
@@ -63,56 +86,41 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
             <div className={dragEntered ? 'drop-zone drop-zone-drag-on' : 'drop-zone'}>
               {file === null ? t('taskPage.dropFileHere')
                 : (
-                  <>
-                    <Form>
-                      <Form.Row>
-                        <Form.Group as={Col}>
-                          <Form.Row>
-                            <span className="h3">
-                              {file.name}
-                            </span>
-                          </Form.Row>
-                          <Form.Row>
-                            <span className="subtitle">
-                              {file.type}
-                            </span>
-                          </Form.Row>
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                          <Form.Label>Language</Form.Label>
-                          <Form.Control as="select" value={language === null ? languages[0] : language} onChange={(event: any) => selectedLanguage(event.target.value)}>
-                            {languages.map((lang) => (
-                              <option key={uuid()}>{lang}</option>
-                            ))}
-                          </Form.Control>
-                        </Form.Group>
-                      </Form.Row>
-                      <Form.Row>
-                        <ButtonGroup>
-                          <Button
-                            variant="primary"
-                            onClick={async () => {
-                              await submitSubmission({ taskAlias, language: 'python3', code: fileText || '' });
-                              updatedFile({ file: null, fileText: null });
-                            }}
-                            type="submit"
-                          >
-                            OK
-                          </Button>
-                          <Button variant="secondary" onClick={() => canceled()}>Cancel</Button>
-                        </ButtonGroup>
-                      </Form.Row>
-                      <div style={{ paddingTop: 20 }} />
-                      <Form.Row>
-                        <Container fluid style={{ padding: 0 }}>
-                          <CodeViewer
-                            code={fileText === null ? '' : fileText}
-                            language={language === null ? '' : language}
-                          />
-                        </Container>
-                      </Form.Row>
-                    </Form>
-                  </>
+                  <Row>
+                    <Col>
+                      <p className="h4">{file.name}</p>
+
+                      <FormControl
+                        as="select"
+                        onChange={
+                          (e) => selectedLanguage((e.target as HTMLSelectElement).value)
+                        }
+                        value={language || ''}
+                      >
+                        {languages.map((element) => (
+                          <option key={uuid()}>{element}</option>
+                        ))}
+                      </FormControl>
+
+                      <hr />
+
+                      {isAuthenticated
+                        ? (
+                          <ButtonGroup>
+                            <Button variant="success" onClick={() => submitSolutionCallback()}>Submit</Button>
+                            <Button variant="danger" onClick={() => canceled()}>Cancel</Button>
+                          </ButtonGroup>
+                        )
+                        : (
+                          <>
+                            <p className="h5">Please login to submit solution</p>
+                          </>
+                        )}
+                    </Col>
+                    <Col>
+                      <CodeViewer code={fileText || ''} language="python" />
+                    </Col>
+                  </Row>
                 )}
             </div>
           </div>

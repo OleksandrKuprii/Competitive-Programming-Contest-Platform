@@ -25,7 +25,7 @@ const SubmissionPage = () => {
       return;
     }
 
-    fetchSubmission(id);
+    fetchSubmission({ id });
   }, [fetchSubmission, id]);
 
   const [submission, task]: [Submission | undefined, Task | undefined] = useStoreState(
