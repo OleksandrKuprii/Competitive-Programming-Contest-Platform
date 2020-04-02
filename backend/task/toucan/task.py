@@ -16,7 +16,7 @@ async def get_task_info(alias):
     return task_info
 
 
-async def get_tasks(user_id: int, number: int, offset: int):
+async def get_tasks(user_id: str, number: int, offset: int):
     """Get tasks."""
     tasks = await database.get_tasks(number, offset)
 
@@ -26,7 +26,7 @@ async def get_tasks(user_id: int, number: int, offset: int):
             user_id, task_id)
 
         if submission_id is not None:
-            result = await submission.get_result(submission_id)
+            result = await submission.get_result(submission_id, user_id)
         else:
             result = None
 

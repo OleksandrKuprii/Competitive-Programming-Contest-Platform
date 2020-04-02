@@ -1,5 +1,6 @@
 """Module for sharing common dataclasses between other microlibs."""
 from dataclasses import dataclass
+from datetime import datetime
 from typing import List
 
 
@@ -19,9 +20,9 @@ class ResultToDB:
 class SubmissionToDB:
     """Submission that can be placed in database."""
 
-    user_id: int
+    user_id: str
     task_id: int
-    timestamp: int
+    timestamp: datetime
     lang: str
     status: str
 
@@ -69,8 +70,8 @@ class ResultToChecker:
 class UserSubmission:
     """User submission representation."""
 
-    user_id: int
+    user_id: str
     alias: str
-    timestamp: int
+    timestamp: datetime
     lang: str
     code: str
