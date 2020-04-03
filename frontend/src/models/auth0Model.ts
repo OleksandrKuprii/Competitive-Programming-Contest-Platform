@@ -83,8 +83,6 @@ const auth0Model: Auth0Model = {
 
       const token = await auth0FromHook.getTokenSilently();
 
-      console.log(token);
-
       actions.changedUser({
         picture: user.picture,
         name: user.given_name,
@@ -98,7 +96,7 @@ const auth0Model: Auth0Model = {
   doAuth: action((state, { redirectUri = window.location.href }) => {
     state.client?.loginWithRedirect({
       redirect_uri: redirectUri,
-    }).then(console.log);
+    }).then();
   }),
 
   logout: action((state) => {

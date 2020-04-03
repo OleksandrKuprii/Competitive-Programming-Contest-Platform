@@ -17,8 +17,6 @@ from toucan import task
 from toucan.coreservices import submission
 from toucan.dataclass import UserSubmission
 
-from pprint import pprint
-
 
 routes = web.RouteTableDef()
 
@@ -174,15 +172,6 @@ async def get_tasks(request):
     tasks = await task.get_tasks('', number, offset)
 
     return json_response(tasks)
-
-
-@routes.get('/hello')
-@requires_auth
-async def hello(request, **kwargs):
-    pprint(request.headers)
-    pprint(kwargs)
-
-    return json_response({})
 
 
 @routes.get('/tasks/auth')
