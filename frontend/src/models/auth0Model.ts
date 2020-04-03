@@ -13,11 +13,11 @@ export interface Auth0Model {
 
   userPicture?: string
   username?: string
-  idTokenClaims?: IdToken,
+  token?: string,
 
   changedLoadingStatus: Action<Auth0Model, boolean>
   changedAuthenticatedStatus: Action<Auth0Model, boolean>
-  changedUser: Action<Auth0Model, { picture?: string, name: string, idTokenClaims: IdToken }>
+  changedUser: Action<Auth0Model, { picture?: string, name: string, token: string }>
   createdClient: Action<Auth0Model, Auth0Client>
   doAuth: Action<Auth0Model, {redirectUri?: string}>,
   logout: Action<Auth0Model>,
@@ -44,7 +44,7 @@ const auth0Model: Auth0Model = {
     state.isAuthenticated = isAuthenticated;
   }),
 
-  changedUser: action((state, { picture, name, idTokenClaims }) => {
+  changedUser: action((state, { picture, name, token }) => {
     if (picture !== undefined) {
       // eslint-disable-next-line
       state.userPicture = picture;
@@ -57,7 +57,7 @@ const auth0Model: Auth0Model = {
     state.username = name;
 
     // eslint-disable-next-line
-    state.idTokenClaims = idTokenClaims;
+    state.token = token;
   }),
 
   init: thunk(async (actions, initOptions) => {
@@ -81,12 +81,14 @@ const auth0Model: Auth0Model = {
     if (isAuthenticated) {
       const user = await auth0FromHook.getUser();
 
-      const idTokenClaims = await auth0FromHook.getIdTokenClaims();
+      const token = await auth0FromHook.getTokenSilently();
+
+      console.log(token);
 
       actions.changedUser({
         picture: user.picture,
         name: user.given_name,
-        idTokenClaims,
+        token,
       });
     }
 
@@ -94,7 +96,9 @@ const auth0Model: Auth0Model = {
   }),
 
   doAuth: action((state, { redirectUri = window.location.href }) => {
-    state.client?.loginWithRedirect({ redirect_uri: redirectUri }).then();
+    state.client?.loginWithRedirect({
+      redirect_uri: redirectUri,
+    }).then(console.log);
   }),
 
   logout: action((state) => {
