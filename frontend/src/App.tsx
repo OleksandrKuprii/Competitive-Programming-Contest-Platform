@@ -9,6 +9,7 @@ import TaskPage from './routes/TaskPage';
 import SubmissionsPage from './routes/SubmissionsPage';
 import SubmissionPage from './routes/SubmissionPage';
 import { useStoreActions } from './hooks/store';
+import ErrorPage from './routes/ErrorPage';
 
 const App = () => {
   const init = useStoreActions((actions) => actions.auth0.init);
@@ -25,7 +26,7 @@ const App = () => {
     <HashRouter>
       <Navbar />
 
-      <Container style={{ paddingTop: 20 }}>
+      <Container style={{ padding: 0, marginTop: 20 }}>
         <Switch>
           <Route path="/tournaments">
             <TournamentsPage />
@@ -44,8 +45,12 @@ const App = () => {
           <Route path="/submission/view/:id">
             <SubmissionPage />
           </Route>
-          <Route path="/">
+          <Route path="/" exact>
             <HomePage />
+          </Route>
+
+          <Route path="/">
+            <ErrorPage code={'notFound'} />
           </Route>
         </Switch>
       </Container>

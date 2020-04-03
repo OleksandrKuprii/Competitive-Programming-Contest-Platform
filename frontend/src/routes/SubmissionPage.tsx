@@ -11,6 +11,7 @@ import { useStoreState, useStoreActions } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
 import { Task } from '../models/taskModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
+import ErrorPage from "./ErrorPage";
 
 
 const SubmissionPage = () => {
@@ -18,15 +19,17 @@ const SubmissionPage = () => {
 
   const id = parseInt(idStr as string, 10);
 
+  const token = useStoreState((state) => state.auth0.token);
+
   const fetchSubmission = useStoreActions((actions) => actions.taskSubmission.fetchSubmission);
 
   useEffect(() => {
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || !token) {
       return;
     }
 
-    fetchSubmission({ id });
-  }, [fetchSubmission, id]);
+    fetchSubmission({ id, token });
+  }, [fetchSubmission, id, token]);
 
   const [submission, task]: [Submission | undefined, Task | undefined] = useStoreState(
     (state) => {
@@ -51,7 +54,9 @@ const SubmissionPage = () => {
   );
 
   if (task === undefined || submission === undefined) {
-    return <>Task or submission cannot be found</>;
+    return (
+      <ErrorPage code={'notFound'} />
+    );
   }
 
   const infoTableRow: CustomTableRow = [
@@ -71,8 +76,8 @@ const SubmissionPage = () => {
       }, i) => ([
         (i.toString()),
         (<Result points={points} status={[status]} />),
-        (`${cpuTime}ms`),
-        (`${realtime}ms`),
+        (cpuTime !== undefined ? `${cpuTime}ms` : ''),
+        (realtime !== undefined ? `${realtime}ms` : ''),
       ]),
     );
 
@@ -83,12 +88,12 @@ const SubmissionPage = () => {
   return (
     <Row>
       <Col md={5}>
-        <p className="h3">
+        <p className="h3 m-0">
           Submission #
           {submission.id}
         </p>
 
-        <p className="h5">
+        <p className="description">
           Overall results
         </p>
 

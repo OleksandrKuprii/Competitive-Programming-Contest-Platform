@@ -17,7 +17,7 @@ export const Result = (
   if (status[0] === 'Running') {
     return (
       <>
-        <span className="gray_color">
+        <span className="disabled">
           {t('running')}
           {' '}
           <Spinner animation="border" size="sm" />
@@ -33,13 +33,13 @@ export const Result = (
     let color;
 
     if (correct) {
-      color = 'green';
+      color = 'success';
     } else {
-      color = points === 0 ? 'red' : 'yellow';
+      color = points === 0 ? 'danger' : 'warning';
     }
 
     return (
-      <span className={`${color}_color`} style={{ padding: 0, margin: 0, fontWeight: (correct ? 'bold' : 'normal') }}>
+      <span className={`text-${color}`}>
         {points === undefined ? '' : points.toString()}
         {' '}
         {status.join(', ')}

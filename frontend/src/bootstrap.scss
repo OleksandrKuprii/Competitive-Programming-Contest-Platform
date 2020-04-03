@@ -1,22 +1,29 @@
 @use "sass:map";
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Raleway&display=swap');
 
-$body-bg: #111;
-$body-color: #aaa;
+$body-color: #eee;
 
-$input-bg: #333;
-$input-color: #aaa;
+$table-head-bg: #444;
 
 $theme-colors: (
-  "primary": #a64,
-  "secondary": #742,
-  "dark": #010101
+  primary: darken(#1b262c, 2),
+  secondary: darken(#1b262c, 6),
+  dark: #111,
 );
 
-$jumbotron-bg: #222;
-$table-dark-bg: #222;
+$body-bg: darken(map_get($theme-colors, "primary"), 6);
 
-$spacer: 50px;
+$jumbotron-bg: map_get($theme-colors, "secondary");
+
+$table-dark-bg: map_get($theme-colors, "secondary");
+$table-accent-bg: map_get($theme-colors, "primary");
+
+$input-bg: map_get($theme-colors, "primary");
+$input-border-color: map_get($theme-colors, "secondary");
+$input-color: #eee;
+
+$hr-border-width: 2px;
+$hr-border-color: #777;
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
@@ -25,51 +32,11 @@ body {
 }
 
 blockquote {
-  border-left: 8px #777 solid;
+  border-left: 8px map_get($theme-colors, "primary") solid;
   padding: 15px;
-  background-color: #222;
   font-size: 18px;
   font-family: 'Raleway', sans-serif;
-}
-
-thead.custom-head {
-  border-bottom: 6px #666 solid;
-  padding-bottom: 6px;
-}
-
-thead.custom-head th {
-  background-color: $body-bg;
-}
-
-.green_background {
-  background: #6da06f;
-}
-
-.green_color {
-  color: #6da06f;
-}
-
-.yellow_background {
-  background: #ffbb43;
-}
-
-.yellow_color {
-  color: #ffbb43;
-}
-
-.red_background {
-  background: #c13525;
-}
-
-.red_color {
-  color: #c13525;
-}
-.gray_color {
-  color: gray;
-}
-
-hr {
-  border: 2px #555 solid;
+  background-color: map_get($theme-colors, "secondary");
 }
 
 a {
@@ -80,16 +47,17 @@ a:hover {
   color: $body-color;
 }
 
-nav {
-  font-size: 18px;
-}
-
 .drop-zone {
-  padding: 50px;
-  background-color: #222;
+  border: 5px map_get($theme-colors, "primary") solid;
+  padding: 20px;
+  background-color: map_get($theme-colors, "secondary");
   margin-bottom: 50px;
 }
 
 .drop-zone-drag-on {
-  background-color: map-get($theme-colors, "secondary");
+  background-color: map_get($theme-colors, "primary");
+}
+
+nav {
+  font-size: 16px;
 }

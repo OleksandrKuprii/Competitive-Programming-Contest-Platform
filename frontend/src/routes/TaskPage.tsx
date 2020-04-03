@@ -70,22 +70,16 @@ const TaskPage = () => {
             {' '}
           </p>
           <blockquote>{main}</blockquote>
-          <p className="h5">
-            <b>
-              {t('taskPage.description.inputFormat')}
-            </b>
+          <p className="h5 font-weight-bold">
+            {t('taskPage.description.inputFormat')}
           </p>
           <blockquote>{inputFormat}</blockquote>
-          <p className="h5">
-            <b>
-              {t('taskPage.description.outputFormat')}
-            </b>
+          <p className="h5 font-weight-bold">
+            {t('taskPage.description.outputFormat')}
           </p>
           <blockquote>{outputFormat}</blockquote>
-          <p className="h5">
-            <b>
-              {t('taskPage.examples')}
-            </b>
+          <p className="h5 font-weight-bold">
+            {t('taskPage.examples')}
           </p>
 
           {task.examples === undefined ? null
@@ -104,9 +98,6 @@ const TaskPage = () => {
             )}
         </Col>
         <Col md="4">
-          <p className="h5 center">
-            Limits
-          </p>
           <CustomTable
             headers={['cpuTime', 'realtime', 'memory']}
             rows={[[task.limits?.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),

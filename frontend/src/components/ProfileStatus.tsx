@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Button, Image } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useStoreState, useStoreActions } from '../hooks/store';
 
 const ProfileStatus = () => {
   const isLoading = useStoreState((state) => state.auth0.loading);
-
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-
   const userPicture = useStoreState((state) => state.auth0.userPicture);
   const username = useStoreState((state) => state.auth0.username);
 
@@ -25,23 +23,19 @@ const ProfileStatus = () => {
     return (<></>);
   }
 
-  if (!isAuthenticated) {
-    return (
-      <Button onClick={loginCallback}>
-        Sign in
-      </Button>
-    );
-  }
-
   return (
     <>
-      Logged in as
-      {' '}
-      {username}
-      .
-      <Button variant="link" onClick={logoutCallback}>Log out</Button>
-      <div style={{ paddingLeft: 20 }} />
-      <Image width={40} height={40} src={userPicture} roundedCircle />
+      { isAuthenticated
+        ? (
+          <Button variant="outline-danger" onClick={logoutCallback}>
+            Sign out
+          </Button>
+        )
+        : (
+          <Button variant="outline-info" onClick={loginCallback}>
+            Sign in
+          </Button>
+        )}
     </>
   );
 };

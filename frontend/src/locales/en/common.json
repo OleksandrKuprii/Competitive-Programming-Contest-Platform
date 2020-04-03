@@ -3,6 +3,7 @@
     "learnMore": "Learn more",
     "running": "Running",
     "submission": "Submission",
+    "goHome": "Go home",
     "homepage": {
         "welcome": "Welcome to Toucan!",
         "description": "a powerful programming contest platform"
@@ -52,5 +53,8 @@
         "memory": "Memory",
         "input": "Input",
         "output": "Output"
+    },
+    "errorMessages": {
+      "notFound": "The requested resource cannot be found"
     }
 }

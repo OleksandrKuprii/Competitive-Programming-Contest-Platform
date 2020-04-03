@@ -50,7 +50,6 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
     submitSubmission({
       language,
       taskAlias,
-      // eslint-disable-next-line
       token,
       code: fileText,
     });
@@ -88,7 +87,7 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
                 : (
                   <Row>
                     <Col>
-                      <p className="h4">{file.name}</p>
+                      <p className="h4 text-center">{file.name}</p>
 
                       <FormControl
                         as="select"
@@ -105,20 +104,19 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
                       <hr />
 
                       {isAuthenticated
-                        ? (
-                          <ButtonGroup>
-                            <Button variant="success" onClick={() => submitSolutionCallback()}>Submit</Button>
-                            <Button variant="danger" onClick={() => canceled()}>Cancel</Button>
-                          </ButtonGroup>
-                        )
+                        ? null
                         : (
                           <>
-                            <p className="h5">Please login to submit solution</p>
+                            <p className="description">Please login to submit solution</p>
                           </>
                         )}
+                      <ButtonGroup>
+                        <Button variant="primary" disabled={!isAuthenticated} onClick={() => submitSolutionCallback()}>Submit</Button>
+                        <Button variant="secondary" onClick={() => canceled()}>Cancel</Button>
+                      </ButtonGroup>
                     </Col>
-                    <Col>
-                      <CodeViewer code={fileText || ''} language="python" />
+                    <Col md={8}>
+                      <CodeViewer code={fileText || ''} language={language || ''} />
                     </Col>
                   </Row>
                 )}
