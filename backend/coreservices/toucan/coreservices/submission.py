@@ -74,6 +74,8 @@ async def get_submission(submission_id: int, user_id: str):
 
     result = await get_result(submission_id, user_id)
 
+    submission_dict['result'] = result
+
     if result['points'] is None:
         tests = list()
     else:
