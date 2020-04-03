@@ -9,6 +9,7 @@ $theme-colors: (
   primary: darken(#1b262c, 2),
   secondary: darken(#1b262c, 6),
   dark: #111,
+  info: lighten(#1b262c, 40)
 );
 
 $body-bg: darken(map_get($theme-colors, "primary"), 6);
