@@ -151,8 +151,6 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
     const data: any = await response.json();
 
-    console.log(data);
-
     actions.submission.addedSubmission({
       id,
       taskAlias: data.alias,
