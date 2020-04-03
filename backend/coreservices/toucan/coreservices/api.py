@@ -21,7 +21,7 @@ from toucan.dataclass import UserSubmission
 routes = web.RouteTableDef()
 
 AUTH0_DOMAIN = 'dev-gly-dk66.eu.auth0.com'
-API_IDENTIFIER = 'w5IiSiIhAoOW8dQvAATlvbaS2eP47H0Q'
+API_IDENTIFIER = 'toucan-api'
 ALGORITHMS = ["RS256"]
 
 

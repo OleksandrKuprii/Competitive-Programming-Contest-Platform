@@ -24,7 +24,7 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
   const fileText = useStoreState((state) => state.taskSubmission.submission.file.fileText);
   const language = useStoreState((state) => state.taskSubmission.submission.file.language);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-  const idTokenClaims = useStoreState((state) => state.auth0.idTokenClaims);
+  const token = useStoreState((state) => state.auth0.token);
 
   const canceled = useStoreActions(
     (actions) => actions.taskSubmission.submission.file.canceled,
@@ -43,7 +43,7 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
   );
 
   const submitSolutionCallback = useCallback(() => {
-    if (!language || !taskAlias || !idTokenClaims || !fileText) {
+    if (!language || !taskAlias || !token || !fileText) {
       return;
     }
 
@@ -51,12 +51,12 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
       language,
       taskAlias,
       // eslint-disable-next-line
-      token: idTokenClaims.__raw,
+      token,
       code: fileText,
     });
 
     updatedFile({ file: null, fileText: null });
-  }, [submitSubmission, language, idTokenClaims, fileText, taskAlias, updatedFile]);
+  }, [submitSubmission, language, token, fileText, taskAlias, updatedFile]);
 
   const languages = ['python3', 'python2', 'c++', 'c'];
 

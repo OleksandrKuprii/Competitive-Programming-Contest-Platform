@@ -8,20 +8,20 @@ const TasksPage = () => {
   const { t } = useTranslation();
 
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-  const idTokenClaims = useStoreState((state) => state.auth0.idTokenClaims);
+  const token = useStoreState((state) => state.auth0.token);
   const tasks = useStoreState((state) => state.taskSubmission.task.list);
 
   const fetchTasks = useStoreActions((actions) => actions.taskSubmission.fetchTasks);
 
   React.useEffect(() => {
-    if (!isAuthenticated || !idTokenClaims) {
+    if (!isAuthenticated || !token) {
       fetchTasks({});
       return;
     }
 
     // eslint-disable-next-line
-    fetchTasks({ token: idTokenClaims.__raw });
-  }, [fetchTasks, isAuthenticated, idTokenClaims]);
+    fetchTasks({ token });
+  }, [fetchTasks, isAuthenticated, token]);
 
   return (
     <>

@@ -17,6 +17,7 @@ const App = () => {
     init({
       domain: 'dev-gly-dk66.eu.auth0.com',
       client_id: 'w5IiSiIhAoOW8dQvAATlvbaS2eP47H0Q',
+      audience: 'toucan-api',
     });
   }, [init]);
 

@@ -9,19 +9,19 @@ const SubmissionsPage = () => {
   const { t } = useTranslation();
 
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-  const idTokenClaims = useStoreState((state) => state.auth0.idTokenClaims);
+  const token = useStoreState((state) => state.auth0.token);
   const submissions = useStoreState((state) => (state.taskSubmission.submission.list));
 
   const fetchSubmissions = useStoreActions((actions) => actions.taskSubmission.fetchSubmissions);
 
   useEffect(() => {
-    if (!isAuthenticated || !idTokenClaims) {
+    if (!isAuthenticated || !token) {
       return;
     }
 
     // eslint-disable-next-line
-    fetchSubmissions({ token: idTokenClaims.__raw });
-  }, [fetchSubmissions, isAuthenticated, idTokenClaims]);
+    fetchSubmissions({ token: token });
+  }, [fetchSubmissions, isAuthenticated, token]);
 
   if (!isAuthenticated) {
     return (
