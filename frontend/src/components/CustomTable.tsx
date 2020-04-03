@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Table } from 'react-bootstrap';
 import uuid from 'react-uuid';
 import { useTranslation } from 'react-i18next';
+import Table from 'react-bootstrap/Table';
 
 
 export type CustomTableCell = string | JSX.Element;
@@ -18,8 +18,8 @@ export interface CustomTableArgs {
 const CustomTable = ({ headers, rows, padding }: CustomTableArgs) => {
   const { t } = useTranslation();
   return (
-    <Table striped hover variant="dark" size="sm" borderless>
-      <thead className="custom-head">
+    <Table hover variant="dark" borderless size="sm" striped>
+      <thead className="thead-dark">
         <tr>
           {headers.map((header) => (
             <th key={uuid()} style={{ paddingLeft: padding }}>

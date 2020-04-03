@@ -42,7 +42,7 @@ export const fetchSubmissions = (token?: string) => (
   buildFetch(fetchSubmissionsUrlBuilder(10, 0), token)
 );
 
-export const fetchSubmission = (id: number, token?: string) => (
+export const fetchSubmission = (id: number, token: string) => (
   buildFetch(fetchSubmissionUrlBuilder(id), token)
 );
 

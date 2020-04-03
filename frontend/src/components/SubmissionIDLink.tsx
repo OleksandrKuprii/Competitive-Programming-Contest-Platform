@@ -6,7 +6,7 @@ export interface SubmissionIDLinkArgs {
 }
 
 const SubmissionIDLink = ({ id }: SubmissionIDLinkArgs) => (
-  <Link to={`/submission/view/${id}`} style={{ color: 'white' }}>
+  <Link to={`/submission/view/${id}`}>
     {id}
   </Link>
 );

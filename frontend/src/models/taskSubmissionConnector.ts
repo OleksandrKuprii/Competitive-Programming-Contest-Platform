@@ -22,7 +22,7 @@ export interface TaskSubmissionConnector {
   }>,
   fetchSubmission: Thunk<TaskSubmissionConnector, {
     id: number,
-    token?: string,
+    token: string,
   }>,
 }
 
@@ -158,7 +158,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
       submitted: data.timestamp,
       tests: data.tests,
       code: data.code,
-      status: [],
+      ...resultToPointsAndStatus(data.result),
     });
 
     actions.task.addedTask({

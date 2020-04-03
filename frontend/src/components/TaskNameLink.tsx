@@ -12,7 +12,7 @@ export interface TaskNameLinkByAliasArgs {
 }
 
 export const TaskNameLinkByTask = ({ alias, taskName }: TaskNameLinkByTaskArgs) => (
-  <Link to={`/task/view/${alias}`} style={{ color: 'white' }}>{taskName}</Link>
+  <Link to={`/task/view/${alias}`}>{taskName}</Link>
 );
 
 export const TaskNameLinkByAlias = ({ alias }: TaskNameLinkByAliasArgs) => {

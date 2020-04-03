@@ -4,6 +4,7 @@ import {
 import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
 import updateObjectWithProperty from '../utils/updateObjectWithProperty';
 import { fetchSubmission, submitSubmission } from './requests';
+import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
 
 export interface Submission {
   id: number
@@ -29,7 +30,7 @@ export interface SubmissionModel {
   }>,
   fetchSubmission: Thunk<SubmissionModel, {
     id: number,
-    token?: string,
+    token: string,
   }>,
 }
 
@@ -73,7 +74,7 @@ const submissionModel: SubmissionModel = {
       submitted: data.timestamp,
       tests: data.tests,
       code: data.code,
-      status: [],
+      ...resultToPointsAndStatus(data.result),
     });
   }),
 };

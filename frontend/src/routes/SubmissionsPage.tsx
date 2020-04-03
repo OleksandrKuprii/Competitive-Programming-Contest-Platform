@@ -13,6 +13,7 @@ const SubmissionsPage = () => {
   const submissions = useStoreState((state) => (state.taskSubmission.submission.list));
 
   const fetchSubmissions = useStoreActions((actions) => actions.taskSubmission.fetchSubmissions);
+  const doAuth = useStoreActions((actions) => actions.auth0.doAuth);
 
   useEffect(() => {
     if (!isAuthenticated || !token) {
@@ -24,16 +25,14 @@ const SubmissionsPage = () => {
   }, [fetchSubmissions, isAuthenticated, token]);
 
   if (!isAuthenticated) {
-    return (
-      <h3>Please login to view submissions!</h3>
-    );
+    doAuth({});
   }
 
   return (
     <>
-      <h1>{t('pageName.submissions')}</h1>
+      <p className="h3 m-0">{t('pageName.submissions')}</p>
 
-      <p>{t('submissionPage.description')}</p>
+      <p className="description">{t('submissionPage.description')}</p>
 
       <SubmissionList submissions={submissions} />
     </>
