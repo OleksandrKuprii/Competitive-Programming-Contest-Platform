@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "file", source: ".python-version", destination: "/home/vagrant/.python-version"
     config.vm.provision "file", source: "docker-compose.yml", destination: "/home/vagrant/docker-compose.yml"
     config.vm.provision "file", source: ".zshrc", destination: "/home/vagrant/.zshrc"
-    config.vm.provision "file", source: ".Makefile", destination: "/home/vagrant/Makefile"
+    config.vm.provision "file", source: "Makefile", destination: "/home/vagrant/Makefile"
 
     config.vm.network "forwarded_port", guest: 4000, host: 4000
     config.vm.network "forwarded_port", guest: 5432, host: 5432
