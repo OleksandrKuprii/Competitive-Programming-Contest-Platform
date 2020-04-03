@@ -50,7 +50,7 @@ const App = () => {
           </Route>
 
           <Route path="/">
-            <ErrorPage code={'notFound'} />
+            <ErrorPage code="notFound" />
           </Route>
         </Switch>
       </Container>

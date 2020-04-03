@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  Col, Container, Nav, Navbar, Row,
+  Container, Nav, Navbar,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

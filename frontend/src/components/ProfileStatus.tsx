@@ -5,8 +5,6 @@ import { useStoreState, useStoreActions } from '../hooks/store';
 const ProfileStatus = () => {
   const isLoading = useStoreState((state) => state.auth0.loading);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-  const userPicture = useStoreState((state) => state.auth0.userPicture);
-  const username = useStoreState((state) => state.auth0.username);
 
   const doAuth = useStoreActions((actions) => actions.auth0.doAuth);
   const logout = useStoreActions((actions) => actions.auth0.logout);

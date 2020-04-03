@@ -4,7 +4,7 @@ import {
 import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
 import updateObjectWithProperty from '../utils/updateObjectWithProperty';
 import { fetchSubmission, submitSubmission } from './requests';
-import resultToPointsAndStatus from "../utils/resultToPointsAndStatus";
+import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
 
 export interface Submission {
   id: number

@@ -11,7 +11,7 @@ import { useStoreState, useStoreActions } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
 import { Task } from '../models/taskModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
-import ErrorPage from "./ErrorPage";
+import ErrorPage from './ErrorPage';
 
 
 const SubmissionPage = () => {
@@ -55,7 +55,7 @@ const SubmissionPage = () => {
 
   if (task === undefined || submission === undefined) {
     return (
-      <ErrorPage code={'notFound'} />
+      <ErrorPage code="notFound" />
     );
   }
 

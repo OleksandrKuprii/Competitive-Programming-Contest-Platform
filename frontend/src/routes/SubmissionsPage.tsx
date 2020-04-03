@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { useStoreState, useStoreActions } from '../hooks/store';
 import SubmissionList from '../components/SubmissionList';
-import ErrorPage from "./ErrorPage";
+import ErrorPage from './ErrorPage';
 
 
 const SubmissionsPage = () => {
