@@ -12,21 +12,23 @@ const SubmissionsPage = () => {
   const token = useStoreState((state) => state.auth0.token);
   const submissions = useStoreState((state) => (state.taskSubmission.submission.list));
 
+  const authLoading = useStoreState((state) => state.auth0.loading);
+
   const fetchSubmissions = useStoreActions((actions) => actions.taskSubmission.fetchSubmissions);
   const doAuth = useStoreActions((actions) => actions.auth0.doAuth);
 
   useEffect(() => {
-    if (!isAuthenticated || !token) {
+    if (authLoading) {
       return;
     }
 
-    // eslint-disable-next-line
-    fetchSubmissions({ token: token });
-  }, [fetchSubmissions, isAuthenticated, token]);
+    if (!isAuthenticated || !token) {
+      doAuth({});
+      return;
+    }
 
-  if (!isAuthenticated) {
-    doAuth({});
-  }
+    fetchSubmissions({ token });
+  }, [fetchSubmissions, isAuthenticated, token, authLoading, doAuth]);
 
   return (
     <>

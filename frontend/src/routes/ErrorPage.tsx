@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaBan } from 'react-icons/all';
+import { MdReportProblem } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 const ErrorPage = ({ code }: { code: 'notFound' | 'pleaseSignIn' }) => {
@@ -9,7 +9,7 @@ const ErrorPage = ({ code }: { code: 'notFound' | 'pleaseSignIn' }) => {
   return (
     <>
       <p className="display-1 text-center text-danger">
-        <FaBan />
+        <MdReportProblem />
       </p>
       <p className="h4 text-center font-weight-bold">
         {' '}

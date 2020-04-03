@@ -31,7 +31,7 @@ const buildFetch = (requestURL: string, token?: string, body?: object) => (
 );
 
 export const fetchTasks = (token?: string) => (
-  buildFetch(fetchTasksUrlBuilder(10, 0, token !== undefined), token)
+  buildFetch(fetchTasksUrlBuilder(20, 0, token !== undefined), token)
 );
 
 export const fetchTask = (alias: string, token?: string) => (
@@ -39,7 +39,7 @@ export const fetchTask = (alias: string, token?: string) => (
 );
 
 export const fetchSubmissions = (token?: string) => (
-  buildFetch(fetchSubmissionsUrlBuilder(10, 0), token)
+  buildFetch(fetchSubmissionsUrlBuilder(20, 0), token)
 );
 
 export const fetchSubmission = (id: number, token: string) => (
