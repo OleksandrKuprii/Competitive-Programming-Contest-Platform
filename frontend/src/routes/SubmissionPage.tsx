@@ -12,6 +12,7 @@ import { Submission } from '../models/submissionModel';
 import { Task } from '../models/taskModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 import ErrorPage from './ErrorPage';
+import Loading from '../components/Loading';
 
 
 const SubmissionPage = () => {
@@ -20,6 +21,7 @@ const SubmissionPage = () => {
   const id = parseInt(idStr as string, 10);
 
   const token = useStoreState((state) => state.auth0.token);
+  const authLoading = useStoreState((state) => state.auth0.loading.loading);
 
   const fetchSubmission = useStoreActions((actions) => actions.taskSubmission.fetchSubmission);
 
@@ -53,6 +55,12 @@ const SubmissionPage = () => {
     },
   );
 
+  if (authLoading) {
+    return (
+      <Loading />
+    );
+  }
+
   if (task === undefined || submission === undefined) {
     return (
       <ErrorPage code="notFound" />
@@ -60,9 +68,9 @@ const SubmissionPage = () => {
   }
 
   const infoTableRow: CustomTableRow = [
-    (<TaskNameLinkByTask taskName={task.name} alias={task.alias} />),
+    (<TaskNameLinkByTask taskName={task.name || ''} alias={task.alias} />),
     (submission.submitted === undefined ? '' : <PrettyDate timestamp={submission.submitted} />),
-    (<Result points={submission.points} status={submission.status} />),
+    (submission.status === undefined ? '' : <Result points={submission.points} status={submission.status} />),
   ];
 
   const infoTable = (
@@ -88,7 +96,7 @@ const SubmissionPage = () => {
   return (
     <Row>
       <Col md={5}>
-        <p className="h3 m-0">
+        <p className="h3">
           Submission #
           {submission.id}
         </p>
@@ -102,7 +110,7 @@ const SubmissionPage = () => {
         {submission.tests !== undefined
           ? (
             <>
-              <p className="h5">
+              <p className="description">
                 Results per test
               </p>
 

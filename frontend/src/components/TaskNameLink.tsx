@@ -25,6 +25,6 @@ export const TaskNameLinkByAlias = ({ alias }: TaskNameLinkByAliasArgs) => {
   }
 
   return (
-    <TaskNameLinkByTask taskName={task.name} alias={task.alias} />
+    <TaskNameLinkByTask taskName={task.name || ''} alias={task.alias} />
   );
 };

@@ -10,6 +10,7 @@ import { useCallback } from 'react';
 import uuid from 'react-uuid';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import CodeViewer from './CodeViewer';
+import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 
 export interface SolutionDropZoneArgs {
   taskAlias: string
@@ -116,7 +117,7 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
                       </ButtonGroup>
                     </Col>
                     <Col md={8}>
-                      <CodeViewer code={fileText || ''} language={language || ''} />
+                      <CodeViewer code={fileText || ''} language={getGeneralLanguageName(language || undefined)} />
                     </Col>
                   </Row>
                 )}

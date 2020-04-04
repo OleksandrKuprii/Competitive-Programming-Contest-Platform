@@ -30,8 +30,13 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
   task: taskModel,
   submission: submissionModel,
 
+  fetchTasks: thunk(async (actions, { token }, { getStoreState }) => {
+    if ((getStoreState() as any).taskSubmission.task.loading.loading) {
+      return;
+    }
 
-  fetchTasks: thunk(async (actions, { token }) => {
+    actions.task.loading.changedLoadingStatus(true);
+
     const response = await fetchTasks(token);
 
     const data = await response.json();
@@ -39,6 +44,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
     data.forEach((element: any) => {
       const task: Task = {
         alias: element.alias,
+        loading: false,
         name: element.name,
         difficulty: element.difficulty,
         category: element.category,
@@ -61,6 +67,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
       const submission: Submission = {
         taskAlias: element.alias,
+        loading: false,
         points,
         status,
         id: element.best_submission.id,
@@ -68,9 +75,16 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
       actions.submission.addedSubmission(submission);
     });
+
+    actions.task.loading.changedLoadingStatus(false);
   }),
 
   fetchTask: thunk(async (actions, { alias, token }) => {
+    actions.task.addedTask({
+      alias,
+      loading: true,
+    });
+
     const response = await fetchTask(alias, token);
 
     const data = await response.json();
@@ -78,6 +92,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
     const task: Task = {
       alias,
       name: data.name,
+      loading: false,
       examples: data.examples.map((
         /* eslint-disable */
         {input_data, output_data}: { input_data: string, output_data: string },
@@ -105,6 +120,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
     const submission: Submission = {
       id: data.best_submission.id,
+      loading: false,
       taskAlias: alias,
       points,
       status,
@@ -113,7 +129,13 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
     actions.submission.addedSubmission(submission);
   }),
 
-  fetchSubmissions: thunk(async (actions, { token }) => {
+  fetchSubmissions: thunk(async (actions, { token }, { getStoreState }) => {
+    if ((getStoreState() as any).taskSubmission.submission.loading.loading) {
+      return;
+    }
+
+    actions.submission.loading.changedLoadingStatus(true);
+
     const response = await fetchSubmissions(token);
 
     const submissions: {
@@ -127,11 +149,17 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
     if (submissions !== undefined) {
       submissions.forEach(({
-      // eslint-disable-next-line
-                           id, alias, name, published_at, result, lang
+        id,
+        alias,
+        name,
+        // eslint-disable-next-line
+        published_at,
+        result,
+        lang,
       }) => {
         actions.submission.addedSubmission({
           id,
+          loading: false,
           taskAlias: alias,
           submitted: published_at,
           ...resultToPointsAndStatus(result),
@@ -140,29 +168,44 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
 
         actions.task.addedTask({
           alias,
+          loading: false,
           name,
         });
       });
     }
+
+    actions.submission.loading.changedLoadingStatus(false);
   }),
 
   fetchSubmission: thunk(async (actions, { id, token }) => {
+    actions.submission.addedSubmission({
+      id,
+      loading: true,
+    });
+
     const response = await fetchSubmission(id, token);
 
     const data: any = await response.json();
 
     actions.submission.addedSubmission({
       id,
+      loading: false,
       taskAlias: data.alias,
       language: data.lang,
       submitted: data.timestamp,
-      tests: data.tests,
+      tests: data.tests.map((test: any) => ({
+        status: test.status,
+        points: test.points,
+        cpuTime: test.cpu_time,
+        realtime: test.wall_time,
+      })),
       code: data.code,
       ...resultToPointsAndStatus(data.result),
     });
 
     actions.task.addedTask({
       alias: data.alias,
+      loading: false,
       name: data.name,
     });
   }),

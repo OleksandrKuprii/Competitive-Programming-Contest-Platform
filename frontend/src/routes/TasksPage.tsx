@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStoreState, useStoreActions } from '../hooks/store';
 import TaskList from '../components/TaskList';
+import Loading from '../components/Loading';
 
 
 const TasksPage = () => {
@@ -10,6 +11,7 @@ const TasksPage = () => {
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
   const token = useStoreState((state) => state.auth0.token);
   const tasks = useStoreState((state) => state.taskSubmission.task.list);
+  const tasksLoading = useStoreState((state) => state.taskSubmission.task.loading.loading);
 
   const fetchTasks = useStoreActions((actions) => actions.taskSubmission.fetchTasks);
 
@@ -19,9 +21,14 @@ const TasksPage = () => {
       return;
     }
 
-    // eslint-disable-next-line
     fetchTasks({ token });
   }, [fetchTasks, isAuthenticated, token]);
+
+  if (tasksLoading) {
+    return (
+      <Loading />
+    );
+  }
 
   return (
     <>

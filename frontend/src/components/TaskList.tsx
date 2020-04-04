@@ -8,13 +8,13 @@ import { Task } from '../models/taskModel';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
   const sortedTasks = tasks.slice();
-  sortedTasks.sort((a, b) => (a.name > b.name ? 1 : -1));
+  sortedTasks.sort((a, b) => ((a.name || '') > (b.name || '') ? 1 : -1));
 
   const rows: CustomTableRow[] = sortedTasks.map(
     ({
       alias, name, difficulty, rating, category,
     }) => ([
-      (<TaskNameLinkByTask taskName={name} alias={alias} />),
+      (<TaskNameLinkByTask taskName={name || ''} alias={alias} />),
       (category === undefined ? '' : category),
       (difficulty === undefined ? '' : <Difficulty difficulty={difficulty} />),
       (rating === undefined ? '' : <RatingHistogram rating={rating} />),

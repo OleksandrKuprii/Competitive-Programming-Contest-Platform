@@ -20,15 +20,24 @@ const submitSubmissionUrlBuilder = () => (
   `${baseURL}/submission`
 );
 
-const buildFetch = (requestURL: string, token?: string, body?: object) => (
-  fetch(requestURL, {
+const buildFetch = async (requestURL: string, token?: string, body?: object) => {
+  const getFetch = () => fetch(requestURL, {
     method: body === undefined ? 'GET' : 'POST',
     headers: token === undefined ? {} : {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(body),
-  })
-);
+  });
+
+  let response;
+
+  do {
+    // eslint-disable-next-line
+    response = await (getFetch());
+  } while (!response.ok);
+
+  return response;
+};
 
 export const fetchTasks = (token?: string) => (
   buildFetch(fetchTasksUrlBuilder(20, 0, token !== undefined), token)

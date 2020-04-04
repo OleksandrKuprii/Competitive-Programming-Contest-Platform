@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { useStoreState, useStoreActions } from '../hooks/store';
 
 const ProfileStatus = () => {
-  const isLoading = useStoreState((state) => state.auth0.loading);
+  const isLoading = useStoreState((state) => state.auth0.loading.loading);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
   const doAuth = useStoreActions((actions) => actions.auth0.doAuth);
