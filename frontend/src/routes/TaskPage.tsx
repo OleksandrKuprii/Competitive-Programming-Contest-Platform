@@ -8,6 +8,7 @@ import CustomTable from '../components/CustomTable';
 import { GreatestResult } from '../components/Result';
 import SolutionDropZone from '../components/SolutionDropZone';
 import { Task } from '../models/taskModel';
+import Loading from '../components/Loading';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -57,6 +58,12 @@ const TaskPage = () => {
     .map((str) => str.replace('<p>', ''))
     .map((str) => str.replace('</p>', ''))
     .map(renderHtmlWithNewlines);
+
+  if (task.loading) {
+    return (
+      <Loading />
+    );
+  }
 
   return (
     <>

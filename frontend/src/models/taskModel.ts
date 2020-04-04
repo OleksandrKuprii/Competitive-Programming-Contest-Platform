@@ -1,5 +1,6 @@
 import { action, Action } from 'easy-peasy';
 import updateObjectWithProperty from '../utils/updateObjectWithProperty';
+import loadingModel, { LoadingModel } from './loadingModel';
 
 export interface TaskRating {
   correct_percent: number,
@@ -9,7 +10,8 @@ export interface TaskRating {
 
 export interface Task {
   alias: string
-  name: string
+  loading: boolean
+  name?: string
   category?: string
   difficulty?: number
   rating?: TaskRating
@@ -28,16 +30,17 @@ export interface Task {
 
 export interface TaskModel {
   list: Task[],
+  loading: LoadingModel,
   addedTask: Action<TaskModel, Task>,
 }
 
 const taskModel: TaskModel = {
   list: [],
+  loading: loadingModel(),
 
   addedTask: action((state, task) => {
     updateObjectWithProperty(state.list, 'alias', task.alias, task);
   }),
-
 };
 
 export default taskModel;

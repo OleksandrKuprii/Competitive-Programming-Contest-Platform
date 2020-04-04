@@ -3,42 +3,62 @@ import {
   Container, Nav, Navbar,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import {
+  GiPaperPlane, FaHome, GiArcheryTarget, GiBrutalHelm,
+} from 'react-icons/all';
+import uuid from 'react-uuid';
 import ProfileStatus from './ProfileStatus';
-
-const CustomLink = ({ children, to }: { children: React.Component, to: string }) => (
-  <Link to={to} component={Nav.Link}>{children}</Link>
-);
-
 
 const ToucanNavbar = () => {
   const { t } = useTranslation();
 
+  const history = useHistory();
+
+  const navigation = [
+    {
+      link: '/',
+      pageName: 'home',
+      icon: FaHome,
+    },
+    {
+      link: '/tournaments',
+      pageName: 'tournaments',
+      icon: GiBrutalHelm,
+    },
+    {
+      link: '/tasks',
+      pageName: 'tasks',
+      icon: GiArcheryTarget,
+    },
+    {
+      link: '/submissions',
+      pageName: 'submissions',
+      icon: GiPaperPlane,
+    },
+  ]
+    .map((item) => ({
+      ...item,
+      active: item.link === history.location.pathname,
+    }))
+    .map((item) => (
+      <Nav.Link key={uuid()} active={item.active} disabled={item.active} href={`#${item.link}`}>
+        <item.icon />
+        {' '}
+        {t(`pageName.${item.pageName}`)}
+      </Nav.Link>
+    ))
+    .map((link) => (
+      <Nav.Item key={uuid()}>
+        {link}
+      </Nav.Item>
+    ));
+
   return (
     <Navbar expand="lg" bg="primary" variant="dark">
       <Container style={{ padding: 0 }}>
-        <Nav className="mr-auto">
-          <Nav.Item>
-            <CustomLink to="/">
-              {t('pageName.home')}
-            </CustomLink>
-          </Nav.Item>
-          <Nav.Item>
-            <CustomLink to="/tournaments">
-              {t('pageName.tournaments')}
-            </CustomLink>
-          </Nav.Item>
-          <Nav.Item>
-            <CustomLink to="/tasks">
-              {t('pageName.tasks')}
-            </CustomLink>
-          </Nav.Item>
-          <Nav.Item>
-            <CustomLink to="/submissions">
-              {t('pageName.submissions')}
-            </CustomLink>
-          </Nav.Item>
-        </Nav>
+        {navigation}
+        <Nav className="mr-auto" />
         <Nav.Item>
           <ProfileStatus />
         </Nav.Item>

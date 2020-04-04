@@ -4,6 +4,7 @@
     "running": "Running",
     "submission": "Submission",
     "goHome": "Go home",
+    "loading": "Loading",
     "homepage": {
         "welcome": "Welcome to Toucan!",
         "description": "a powerful programming contest platform"

@@ -4,18 +4,18 @@ import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import {
   Action, Thunk, thunk, action,
 } from 'easy-peasy';
+import loadingModel, { LoadingModel } from './loadingModel';
 
 
 export interface Auth0Model {
   isAuthenticated: boolean
   client?: Auth0Client
-  loading: boolean
+  loading: LoadingModel,
 
   userPicture?: string
   username?: string
   token?: string,
 
-  changedLoadingStatus: Action<Auth0Model, boolean>
   changedAuthenticatedStatus: Action<Auth0Model, boolean>
   changedUser: Action<Auth0Model, { picture?: string, name: string, token: string }>
   createdClient: Action<Auth0Model, Auth0Client>
@@ -27,12 +27,7 @@ export interface Auth0Model {
 
 const auth0Model: Auth0Model = {
   isAuthenticated: false,
-  loading: false,
-
-  changedLoadingStatus: action((state, loading) => {
-    // eslint-disable-next-line
-    state.loading = loading;
-  }),
+  loading: loadingModel(),
 
   createdClient: action((state, client) => {
     // eslint-disable-next-line
@@ -61,7 +56,7 @@ const auth0Model: Auth0Model = {
   }),
 
   init: thunk(async (actions, initOptions) => {
-    actions.changedLoadingStatus(true);
+    actions.loading.changedLoadingStatus(true);
 
     const auth0FromHook = await createAuth0Client(initOptions);
 
@@ -90,7 +85,7 @@ const auth0Model: Auth0Model = {
       });
     }
 
-    actions.changedLoadingStatus(false);
+    actions.loading.changedLoadingStatus(false);
   }),
 
   doAuth: action((state, { redirectUri = window.location.href }) => {

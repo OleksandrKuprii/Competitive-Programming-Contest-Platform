@@ -8,7 +8,7 @@ import { useStoreState } from '../hooks/store';
 const guestAvatar = require('../assets/guestAvatar.png');
 
 const ProfileInfo = () => {
-  const authLoading = useStoreState((state) => state.auth0.loading);
+  const authLoading = useStoreState((state) => state.auth0.loading.loading);
   const username = useStoreState((state) => state.auth0.username);
   const userPicture = useStoreState((state) => state.auth0.userPicture);
 

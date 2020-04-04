@@ -1,6 +1,6 @@
 
-export default function (name: string | undefined): string {
-  if (name === undefined) {
+export default function (name?: string): string {
+  if (!name) {
     return 'unknown';
   }
 
