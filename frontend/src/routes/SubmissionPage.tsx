@@ -67,6 +67,12 @@ const SubmissionPage = () => {
     );
   }
 
+  if (submission.loading) {
+    return (
+      <Loading />
+    );
+  }
+
   const infoTableRow: CustomTableRow = [
     (<TaskNameLinkByTask taskName={task.name || ''} alias={task.alias} />),
     (submission.submitted === undefined ? '' : <PrettyDate timestamp={submission.submitted} />),
