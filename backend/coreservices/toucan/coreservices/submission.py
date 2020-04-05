@@ -59,6 +59,11 @@ async def get_all(user_id, number, offset):
 async def get_result(submission_id: int, user_id: str):
     """Get result from database service."""
     result = await database.get_result(submission_id, user_id)
+
+    if result[0] != 100 and isinstance(result[1], list):
+        if 'Correct' in result[1]:
+            result[1].remove('Correct')
+
     return {'points': result[0], 'status': result[1]}
 
 
