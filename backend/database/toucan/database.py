@@ -7,7 +7,7 @@ import asyncpg
 from toucan.dataclass import ResultToDB, UserSubmission
 
 # Declaring global variable for connection
-conn = None
+pool = None
 
 
 async def establish_connection_from_env():
@@ -29,8 +29,8 @@ async def establish_connection(connection_string: str):
     ----------
     connection_string : str
     """
-    global conn
-    conn = await asyncpg.connect(connection_string)
+    global pool
+    pool = await asyncpg.create_pool(connection_string)
 
 
 async def establish_connection_params(**kwargs: dict):
@@ -41,8 +41,8 @@ async def establish_connection_params(**kwargs: dict):
     **kwargs : dict
         The parameters that set the connection
     """
-    global conn
-    conn = await asyncpg.connect(**kwargs)
+    global pool
+    pool = await asyncpg.create_pool(**kwargs)
 
 
 async def get_points_for_tests(test_ids: List[int]) -> List[int]:
@@ -58,9 +58,12 @@ async def get_points_for_tests(test_ids: List[int]) -> List[int]:
     _ : List[int]
         The list of points for each test sorted as ids
     """
-    points = await conn.fetch(
-        'SELECT points FROM coreschema.tests WHERE id = ANY($1::int[])',
-        test_ids)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            points = await conn.fetch(
+                'SELECT points FROM coreschema.tests '
+                'WHERE id = ANY($1::int[])',
+                test_ids)
 
     return [x['points'] for x in points]
 
@@ -77,11 +80,12 @@ async def add_results_to_db(results: List[ResultToDB]) -> None:
     data_to_query = [(result.status, result.points, result.submission_id,
                       result.test_id, result.wall_time, result.cpu_time)
                      for result in results]
-
-    await conn.executemany(
-        'INSERT INTO coreschema.results (status, points,'
-        ' submission_id, test_id, wall_time, cpu_time) '
-        'VALUES ($1, $2, $3, $4, $5, $6)', data_to_query)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            await conn.executemany(
+                'INSERT INTO coreschema.results (status, points,'
+                ' submission_id, test_id, wall_time, cpu_time) '
+                'VALUES ($1, $2, $3, $4, $5, $6)', data_to_query)
 
 
 async def change_submission_status(submission_id: int, status: str) -> None:
@@ -94,9 +98,11 @@ async def change_submission_status(submission_id: int, status: str) -> None:
     status : str
         The string to update in the database
     """
-    await conn.execute(
-        'UPDATE coreschema.submissions SET status = $1 \
-        WHERE id = $2', status, submission_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            await conn.execute(
+                'UPDATE coreschema.submissions SET status = $1 \
+                WHERE id = $2', status, submission_id)
 
 
 async def get_test_ids(task_id: int) -> List[int]:
@@ -112,8 +118,10 @@ async def get_test_ids(task_id: int) -> List[int]:
     _ : List[int]
         The list of test ids
     """
-    test_ids = await conn.fetch(
-        'SELECT id FROM coreschema.tests WHERE task_id = $1', task_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            test_ids = await conn.fetch(
+                'SELECT id FROM coreschema.tests WHERE task_id = $1', task_id)
 
     return [x['id'] for x in test_ids]
 
@@ -136,18 +144,21 @@ async def add_submission(submission_to_db: UserSubmission) -> tuple:
     date = submission_to_db.timestamp
     lang = submission_to_db.lang
 
-    fetch = await conn.fetchrow('''
-        SELECT id
-        FROM coreschema.tasks
-        WHERE alias = $1
-    ''', alias)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            fetch = await conn.fetchrow('''
+            SELECT id
+            FROM coreschema.tasks
+            WHERE alias = $1
+            ''', alias)
 
-    task_id = int(fetch['id'])
+            task_id = int(fetch['id'])
 
-    res = await conn.fetch(
-        'INSERT INTO coreschema.submissions (published_at, user_id, task_id,'
-        'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
-        user_id, task_id, lang, 'Received')
+            res = await conn.fetch(
+                'INSERT INTO coreschema.submissions'
+                '(published_at, user_id, task_id,'
+                'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
+                user_id, task_id, lang, 'Received')
 
     return res[0]['id'], task_id
 
@@ -165,31 +176,35 @@ async def get_limits(task_id: int) -> dict:
     _ : dict
         Returns limits as a dict
     """
-    res = await conn.fetch(
-        '''SELECT wall_time_limit, cpu_time_limit, memory_limit
-           FROM coreschema.tasks
-           WHERE id = $1''', task_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            res = await conn.fetch(
+                '''SELECT wall_time_limit, cpu_time_limit, memory_limit
+                   FROM coreschema.tasks
+                   WHERE id = $1''', task_id)
     return res[0]
 
 
 async def get_task(alias: str):
     """Task."""
-    task_fetch = await conn.fetchrow(
-        '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
-                    main, input_format, output_format, explanation, name
-           FROM coreschema.tasks as tasks
-           FULL OUTER JOIN coreschema.task_descriptions as task_desc
-           ON tasks.alias = task_desc.alias
-           WHERE tasks.alias = $1
-        ''', alias)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            task_fetch = await conn.fetchrow(
+                '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
+                   main, input_format, output_format, explanation, name
+                   FROM coreschema.tasks as tasks
+                   FULL OUTER JOIN coreschema.task_descriptions as task_desc
+                   ON tasks.alias = task_desc.alias
+                   WHERE tasks.alias = $1
+                ''', alias)
 
-    task = {k: v for k, v in task_fetch.items()}
+            task = {k: v for k, v in task_fetch.items()}
 
-    examples_fetch = await conn.fetch(
-        '''SELECT input_data, output_data
-           FROM coreschema.task_examples
-           WHERE alias = $1
-        ''', alias)
+            examples_fetch = await conn.fetch(
+                '''SELECT input_data, output_data
+                   FROM coreschema.task_examples
+                   WHERE alias = $1
+                ''', alias)
 
     examples = []
     for ex in examples_fetch:
@@ -202,11 +217,13 @@ async def get_task(alias: str):
 
 async def get_tasks(number: int, offset: int):
     """Return task for task list page."""
-    fetch = await conn.fetch('''
-        SELECT id, alias, name, category, difficulty
-        FROM coreschema.tasks
-        LIMIT $1 OFFSET $2
-    ''', number, offset)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            fetch = await conn.fetch('''
+            SELECT id, alias, name, category, difficulty
+            FROM coreschema.tasks
+            LIMIT $1 OFFSET $2
+                    ''', number, offset)
 
     data = list()
     for x in fetch:
@@ -220,11 +237,13 @@ async def get_tasks(number: int, offset: int):
 
 async def get_submission_id_from_bests(user_id: str, task_id: int):
     """Get submission id from task_bests table by user id and task id."""
-    fetch = await conn.fetchrow('''
-        SELECT submission_id
-        FROM coreschema.task_bests
-        WHERE user_id = $1 AND task_id = $2
-    ''', user_id, task_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            fetch = await conn.fetchrow('''
+            SELECT submission_id
+            FROM coreschema.task_bests
+            WHERE user_id = $1 AND task_id = $2
+        ''', user_id, task_id)
 
     if fetch is not None:
         return fetch['submission_id']
@@ -233,43 +252,50 @@ async def get_submission_id_from_bests(user_id: str, task_id: int):
 
 async def get_result(submission_id: int, user_id: str):
     """Get result from database."""
-    status = await conn.fetch(
-        '''SELECT get_submission_status_for_result as status
-        FROM coreschema.get_submission_status_for_result($1, $2)''',
-        submission_id, user_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            status = await conn.fetch(
+                '''SELECT get_submission_status_for_result as status
+                FROM coreschema.get_submission_status_for_result($1, $2)''',
+                submission_id, user_id)
 
-    status = status[0]['status']
+            status = status[0]['status']
 
-    if status is not None:
-        return None, status
+            if status is not None:
+                return None, status
 
-    result = await conn.fetch(
-        '''SELECT sum(points) as points,
-                  array_agg(DISTINCT results.status) as status
-           FROM coreschema.results
-           JOIN coreschema.submissions
-           ON results.submission_id = submissions.id
-           WHERE submission_id = $1 AND user_id = $2''',
-        submission_id, user_id)
+            result = await conn.fetch(
+                '''SELECT sum(points) as points,
+                          array_agg(DISTINCT results.status) as status
+                   FROM coreschema.results
+                   JOIN coreschema.submissions
+                   ON results.submission_id = submissions.id
+                   WHERE submission_id = $1 AND user_id = $2''',
+                submission_id, user_id)
 
     return result[0]['points'], result[0]['status']
 
 
 async def update_task_bests(submission_id):
     """Update task_bests table."""
-    await conn.execute('SELECT coreschema.modify_task_best($1)', submission_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            await conn.execute('SELECT coreschema.modify_task_best($1)',
+                               submission_id)
 
 
 async def get_submissions(user_id, number, offset):
     """Get submissions."""
-    submissions = await conn.fetch(
-        '''SELECT submissions.id, name, alias, lang, published_at
-           FROM coreschema.submissions
-           LEFT JOIN coreschema.tasks
-           ON tasks.id = task_id
-           WHERE user_id = $1
-           LIMIT $2 OFFSET $3;''',
-        user_id, number, offset)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            submissions = await conn.fetch(
+                '''SELECT submissions.id, name, alias, lang, published_at
+                   FROM coreschema.submissions
+                   LEFT JOIN coreschema.tasks
+                   ON tasks.id = task_id
+                   WHERE user_id = $1
+                   LIMIT $2 OFFSET $3;''',
+                user_id, number, offset)
 
     data = []
     for x in submissions:
@@ -285,13 +311,15 @@ async def get_submissions(user_id, number, offset):
 
 async def get_submission(submission_id: int, user_id: str):
     """Get submission by id."""
-    fetch = await conn.fetchrow('''
-        SELECT name, alias, lang, published_at as timestamp
-        FROM coreschema.submissions
-        LEFT JOIN coreschema.tasks
-        ON tasks.id = task_id
-        WHERE submissions.id = $1 AND submissions.user_id = $2''',
-                                submission_id, user_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            fetch = await conn.fetchrow('''
+                SELECT name, alias, lang, published_at as timestamp
+                FROM coreschema.submissions
+                LEFT JOIN coreschema.tasks
+                ON tasks.id = task_id
+                WHERE submissions.id = $1 AND submissions.user_id = $2''',
+                                        submission_id, user_id)
 
     submission_dict = {k: v for k, v in fetch.items()}
     submission_dict['timestamp'] = submission_dict['timestamp'].isoformat()
@@ -301,13 +329,15 @@ async def get_submission(submission_id: int, user_id: str):
 
 async def get_test_results(submission_id: int, user_id: str):
     """Get tests by submission id."""
-    fetch = await conn.fetch(
-        '''SELECT points, results.status, wall_time, cpu_time
-           FROM coreschema.results
-           JOIN coreschema.submissions
-           ON results.submission_id = submissions.id
-           WHERE submission_id = $1 AND user_id = $2''',
-        submission_id, user_id)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            fetch = await conn.fetch(
+                '''SELECT points, results.status, wall_time, cpu_time
+                   FROM coreschema.results
+                   JOIN coreschema.submissions
+                   ON results.submission_id = submissions.id
+                   WHERE submission_id = $1 AND user_id = $2''',
+                submission_id, user_id)
 
     tests = list()
     for f in fetch:
@@ -321,10 +351,12 @@ async def get_test_results(submission_id: int, user_id: str):
 
 async def get_task_id_from_alias(alias: str) -> int:
     """Get user id from alias."""
-    fetch = await conn.fetchrow('''
-        SELECT id
-        FROM coreschema.tasks
-        WHERE alias = $1
-    ''', alias)
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            fetch = await conn.fetchrow('''
+                SELECT id
+                FROM coreschema.tasks
+                WHERE alias = $1
+            ''', alias)
 
     return fetch['id']
