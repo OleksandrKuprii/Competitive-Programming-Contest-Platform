@@ -5,6 +5,7 @@ import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
 import {
   fetchSubmission, fetchSubmissions, fetchTask, fetchTasks,
 } from './requests';
+import mapTestsFromApi from './mapTestsFromApi';
 
 
 export interface TaskSubmissionConnector {
@@ -193,12 +194,7 @@ const taskSubmissionConnector: TaskSubmissionConnector = {
       taskAlias: data.alias,
       language: data.lang,
       submitted: data.timestamp,
-      tests: data.tests.map((test: any) => ({
-        status: test.status,
-        points: test.points,
-        cpuTime: test.cpu_time,
-        realtime: test.wall_time,
-      })),
+      tests: mapTestsFromApi(data.tests),
       code: data.code,
       ...resultToPointsAndStatus(data.result),
     });
