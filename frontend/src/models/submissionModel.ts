@@ -7,6 +7,7 @@ import { fetchSubmission, submitSubmission } from './requests';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
 import loadingModel, { LoadingModel } from './loadingModel';
 import sleep from '../utils/sleep';
+import mapTestsFromApi from './mapTestsFromApi';
 
 export interface Submission {
   id: number
@@ -93,7 +94,7 @@ const submissionModel: SubmissionModel = {
       loading: false,
       language: data.lang,
       submitted: data.timestamp,
-      tests: data.tests,
+      tests: mapTestsFromApi(data.tests),
       code: data.code,
       ...resultToPointsAndStatus(data.result),
     });
