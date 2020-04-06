@@ -73,30 +73,40 @@ const SubmissionPage = () => {
     );
   }
 
-  const infoTableRow: CustomTableRow = [
-    (<TaskNameLinkByTask taskName={task.name || ''} alias={task.alias} />),
-    (submission.submitted === undefined ? '' : <PrettyDate timestamp={submission.submitted} />),
-    (submission.status === undefined ? '' : <Result points={submission.points} status={submission.status} />),
-  ];
+  const infoTableRow: CustomTableRow = {
+    id: `${submission.submitted}-${submission.status}`,
+    row: [
+      (<TaskNameLinkByTask taskName={task.name || ''} alias={task.alias} />),
+      (submission.submitted === undefined ? '' : <PrettyDate timestamp={submission.submitted} />),
+      (submission.status === undefined ? '' : <Result points={submission.points} status={submission.status} />),
+    ],
+  };
 
   const infoTable = (
-    <CustomTable headers={['task', 'submitted', 'result']} rows={[infoTableRow]} />
+    <CustomTable tableName="info" headers={['task', 'submitted', 'result']} rows={[infoTableRow]} />
   );
 
   const testsTableRows: CustomTableRow[] = submission.tests === undefined
     ? [] : submission.tests.map(
       ({
         points, status, cpuTime, realtime,
-      }, i) => ([
-        (i.toString()),
-        (<Result points={points} status={[status]} />),
-        (cpuTime !== undefined ? `${cpuTime}ms` : ''),
-        (realtime !== undefined ? `${realtime}ms` : ''),
-      ]),
+      }, i) => ({
+        id: `${points}-${status}-${cpuTime}-${realtime}`,
+        row: [
+          (i.toString()),
+          (<Result points={points} status={[status]} />),
+          (cpuTime !== undefined ? `${cpuTime}ms` : ''),
+          (realtime !== undefined ? `${realtime}ms` : ''),
+        ],
+      }),
     );
 
   const testsTable = (
-    <CustomTable headers={['id', 'result', 'cpuTime', 'realtime']} rows={testsTableRows} />
+    <CustomTable
+      tableName="submissionTests"
+      headers={['id', 'result', 'cpuTime', 'realtime']}
+      rows={testsTableRows}
+    />
   );
 
   return (

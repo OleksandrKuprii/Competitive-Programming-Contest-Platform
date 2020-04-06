@@ -3,6 +3,7 @@ import { Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useStoreState } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
+import SubmissionLink from './SubmissionLink';
 
 export const Result = (
   { points, status }:
@@ -75,9 +76,17 @@ export const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined })
     return (a.points > b.points ? -1 : 1);
   });
 
-  const latestSubmission = submissionsClone.find(
+  const greatestSubmission = submissionsClone.find(
     (submission) => submission.taskAlias === taskAlias,
   );
 
-  return <Result points={latestSubmission?.points} status={latestSubmission?.status || []} />;
+  if (greatestSubmission === undefined) {
+    return <></>;
+  }
+
+  return (
+    <SubmissionLink id={greatestSubmission.id}>
+      <Result points={greatestSubmission.points} status={greatestSubmission.status || []} />
+    </SubmissionLink>
+  );
 };

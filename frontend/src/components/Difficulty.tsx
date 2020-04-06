@@ -1,17 +1,17 @@
 import * as React from 'react';
-import uuid from 'react-uuid';
 import { FaStar, FaStarHalf } from 'react-icons/fa';
 
-const Difficulty = ({ difficulty }: { difficulty: number }) => {
+const Difficulty = ({ id, difficulty }: { id: any, difficulty: number }) => {
   const halfStar = difficulty % 2 === 1;
 
   const stars = Math.trunc(difficulty / 2);
 
   return (
     <>
-      {Array(stars).fill(0).map(() => (
-        <FaStar color="#ffbb43" key={uuid()} />
-      ))}
+      {Array.from({ length: stars }, (x, i) => i)
+        .map((i) => (
+          <FaStar key={`${id}-difficulty-${i}`} color="#ffbb43" />
+        ))}
 
       {halfStar ? <FaStarHalf color="#ffbb43" /> : <></>}
     </>

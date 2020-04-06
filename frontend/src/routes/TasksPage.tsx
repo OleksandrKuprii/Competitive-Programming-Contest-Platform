@@ -12,19 +12,24 @@ const TasksPage = () => {
   const token = useStoreState((state) => state.auth0.token);
   const tasks = useStoreState((state) => state.taskSubmission.task.list);
   const tasksLoading = useStoreState((state) => state.taskSubmission.task.loading.loading);
+  const authLoading = useStoreState((state) => state.auth0.loading.loading);
 
   const fetchTasks = useStoreActions((actions) => actions.taskSubmission.fetchTasks);
 
   React.useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+
     if (!isAuthenticated || !token) {
       fetchTasks({});
       return;
     }
 
     fetchTasks({ token });
-  }, [fetchTasks, isAuthenticated, token]);
+  }, [fetchTasks, isAuthenticated, token, authLoading]);
 
-  if (tasksLoading) {
+  if (tasksLoading || authLoading) {
     return (
       <Loading />
     );

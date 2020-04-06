@@ -7,7 +7,6 @@ import FormControl from 'react-bootstrap/FormControl';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
 import { useCallback } from 'react';
-import uuid from 'react-uuid';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import CodeViewer from './CodeViewer';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
@@ -98,7 +97,9 @@ const SolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
                         value={language || ''}
                       >
                         {languages.map((element) => (
-                          <option key={uuid()}>{element}</option>
+                          <option key={`language-${element}-option`}>
+                            {element}
+                          </option>
                         ))}
                       </FormControl>
 

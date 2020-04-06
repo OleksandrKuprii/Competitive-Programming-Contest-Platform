@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import uuid from 'react-uuid';
 import { TaskRating } from '../models/taskModel';
 
 
-const RatingHistogram = ({ rating }: { rating: TaskRating }) => (
+const RatingHistogram = ({ id, rating }: { id: any, rating: TaskRating }) => (
   <div style={{ height: 25, padding: 3 }}>
     {[{ value: rating.correct_percent, color: 'green', tooltipInfo: '100 points' },
       { value: rating.incorrect_percent, color: 'yellow', tooltipInfo: '0 < x < 100 points' },
       { value: rating.zero_points_percent, color: 'red', tooltipInfo: '0 points' }].map((({ value, color, tooltipInfo }) => (
         <OverlayTrigger
-          key={uuid()}
+          key={`${id}-rating-${value}-${color}`}
           placement="bottom"
           overlay={(
-            <Tooltip id={uuid()}>
+            <Tooltip id={`tooltip-rating-histogram-${id}-rating-${value}-${color}`}>
               {tooltipInfo}
               {' '}
               |

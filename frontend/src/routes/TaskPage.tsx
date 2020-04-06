@@ -9,28 +9,42 @@ import { GreatestResult } from '../components/Result';
 import SolutionDropZone from '../components/SolutionDropZone';
 import { Task } from '../models/taskModel';
 import Loading from '../components/Loading';
+import ErrorPage from './ErrorPage';
 
 const TaskPage = () => {
   const { t } = useTranslation();
 
   const { taskAlias } = useParams();
 
-  const task: Task | undefined = useStoreState(
+  const task = useStoreState(
     (state) => state.taskSubmission.task.list.find(
       (_task: Task) => _task.alias === taskAlias,
     ),
   );
 
+  const authLoading = useStoreState((state) => state.auth0.loading.loading);
+  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
+  const token = useStoreState((state) => state.auth0.token);
+
   const fetchTask = useStoreActions((actions) => actions.taskSubmission.fetchTask);
 
   React.useEffect(() => {
-    if (taskAlias !== undefined) {
-      fetchTask({ alias: taskAlias });
+    if (authLoading || taskAlias === undefined) {
+      return;
     }
-  }, [taskAlias, fetchTask]);
+
+    if (isAuthenticated) {
+      fetchTask({ alias: taskAlias, token });
+      return;
+    }
+
+    fetchTask({ alias: taskAlias });
+  }, [taskAlias, fetchTask, authLoading, isAuthenticated, token]);
 
   if (task === undefined || taskAlias === undefined) {
-    return <></>;
+    return (
+      <ErrorPage code="notFound" />
+    );
   }
 
   const htmlToReactParser = new HtmlToReactParser();
@@ -59,7 +73,7 @@ const TaskPage = () => {
     .map((str) => str.replace('</p>', ''))
     .map(renderHtmlWithNewlines);
 
-  if (task.loading) {
+  if (task.loading || authLoading) {
     return (
       <Loading />
     );
@@ -92,27 +106,79 @@ const TaskPage = () => {
           {task.examples === undefined ? null
             : (
               <CustomTable
+                tableName="taskExamples"
                 headers={['input', 'output']}
                 padding={10}
                 rows={task.examples.map(
                   ({
                     input,
                     output,
-                  }: { input: string, output: string }) => ([input,
-                    output].map(renderHtmlWithNewlines)),
+                  }: { input: string, output: string }) => (
+                    {
+                      id: `${input}-${output}`,
+                      row: (
+                        <>
+                          <td>
+                            {renderHtmlWithNewlines(input)}
+                          </td>
+                          <td>
+                            {renderHtmlWithNewlines(output)}
+                          </td>
+                        </>
+                      ),
+                    }),
                 )}
               />
             )}
         </Col>
         <Col md="4">
           <CustomTable
+            tableName="taskLimits"
             headers={['cpuTime', 'realtime', 'memory']}
-            rows={[[task.limits?.cpuTime === undefined ? '' : task.limits.cpuTime.toString(),
-              task.limits?.wallTime === undefined ? '' : task.limits.wallTime.toString(),
-              task.limits?.memory === undefined ? '' : task.limits.memory.toString()]]}
+            rows={[
+              {
+                id: `${task.limits?.cpuTime}-${task.limits?.wallTime}-${task.limits?.memory}`,
+                row: (
+                  <>
+                    <td>
+                      {task.limits?.cpuTime === undefined
+                        ? ''
+                        : task.limits.cpuTime}
+                    </td>
+                    <td>
+                      {task.limits?.wallTime === undefined
+                        ? ''
+                        : task.limits.wallTime}
+                    </td>
+                    <td>
+                      {task.limits?.memory === undefined
+                        ? ''
+                        : task.limits.memory}
+                    </td>
+                  </>
+                ),
+              }]}
           />
 
-          <CustomTable headers={['input', 'output']} rows={[['input.txt', 'output.txt']]} />
+          <CustomTable
+            tableName="inputOutput"
+            headers={['input', 'output']}
+            rows={[
+              {
+                id: 'input.txt-output.txt',
+                row: (
+                  <>
+                    <td>
+                      input.txt
+                    </td>
+                    <td>
+                      output.txt
+                    </td>
+                  </>
+                ),
+              },
+            ]}
+          />
         </Col>
       </Row>
 

@@ -10,20 +10,45 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
   const sortedTasks = tasks.slice();
   sortedTasks.sort((a, b) => ((a.name || '') > (b.name || '') ? 1 : -1));
 
-  const rows: CustomTableRow[] = sortedTasks.map(
+  const rows = sortedTasks.map(
     ({
       alias, name, difficulty, rating, category,
-    }) => ([
-      (<TaskNameLinkByTask taskName={name || ''} alias={alias} />),
-      (category === undefined ? '' : category),
-      (difficulty === undefined ? '' : <Difficulty difficulty={difficulty} />),
-      (rating === undefined ? '' : <RatingHistogram rating={rating} />),
-      (<GreatestResult taskAlias={alias} />),
-    ]),
+    }) => ({
+      id: alias,
+      row: (
+        <>
+          <td>
+            <TaskNameLinkByTask taskName={name || ''} alias={alias} />
+          </td>
+          <td>
+            {category === undefined
+              ? ''
+              : category}
+          </td>
+          <td>
+            {difficulty === undefined
+              ? ''
+              : <Difficulty id={alias} difficulty={difficulty} />}
+          </td>
+          <td>
+            {rating === undefined
+              ? ''
+              : <RatingHistogram id={alias} rating={rating} />}
+          </td>
+          <td>
+            <GreatestResult taskAlias={alias} />
+          </td>
+        </>
+      ),
+    } as CustomTableRow),
   );
 
   return (
-    <CustomTable headers={['name', 'category', 'difficulty', 'rating', 'result']} rows={rows} />
+    <CustomTable
+      tableName="taskList"
+      headers={['name', 'category', 'difficulty', 'rating', 'result']}
+      rows={rows}
+    />
   );
 };
 
