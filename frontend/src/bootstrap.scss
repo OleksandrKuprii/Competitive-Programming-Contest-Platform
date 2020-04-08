@@ -40,6 +40,10 @@ $close-font-size: 30;
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
+html {
+  scroll-behavior: smooth;
+}
+
 a {
   outline: none;
 }
@@ -120,5 +124,4 @@ nav {
   transform: translateX(50%) scale(0);
   transition: all 0.3s;
 }
-
 
