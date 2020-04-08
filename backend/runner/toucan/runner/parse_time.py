@@ -1,4 +1,4 @@
-"""Module for parsing output of bash time builth-in."""
+"""Module for parsing output of bash time built-in."""
 import re
 import typing
 
@@ -9,7 +9,7 @@ def check(string: str) -> bool:
 
 
 def parse(string) -> typing.Generator[int, None, None]:
-    """Parse bash time.
+    """Parse bash time command output.
 
     Output is in milliseconds.
     """
