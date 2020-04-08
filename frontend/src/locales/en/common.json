@@ -1,61 +1,66 @@
 {
-    "brandName": "Toucan",
-    "learnMore": "Learn more",
-    "running": "Running",
-    "submission": "Submission",
-    "goHome": "Go home",
-    "loading": "Loading",
-    "homepage": {
-        "welcome": "Welcome to Toucan!",
-        "description": "a powerful programming contest platform"
+  "brandName": "Toucan",
+  "learnMore": "Learn more",
+  "running": "Running",
+  "submission": "Submission",
+  "goHome": "Go home",
+  "loading": "Loading",
+  "homepage": {
+    "welcome": "Welcome to Toucan!",
+    "description": "a powerful programming contest platform"
+  },
+  "pageName": {
+    "home": "Home",
+    "tasks": "Public tasks",
+    "tournaments": "Tournaments",
+    "profile": "Profile",
+    "submissions": "Submissions"
+  },
+  "tasksPage": {
+    "description": "Explore public tasks"
+  },
+  "taskPage": {
+    "description": {
+      "inputFormat": "Input format",
+      "outputFormat": "Output format"
     },
-    "pageName": {
-        "home": "Home",
-        "tasks": "Public tasks",
-        "tournaments": "Tournaments",
-        "profile": "Profile",
-        "submissions":"Submissions"
+    "examples": "Examples",
+    "inputFile": "Input file",
+    "outputFile": "Output file",
+    "submitSolution": "Submit solution",
+    "dropFileHere": "Drop file here or press to select",
+    "limits": {
+      "cpu": "CPU time limit",
+      "wall": "Real time limit",
+      "memory": "Memory limit"
     },
-    "tasksPage": {
-        "description": "Explore public tasks"
-    },
-    "taskPage": {
-        "description": {
-            "inputFormat": "Input format",
-            "outputFormat": "Output format"
-        },
-        "examples": "Examples",
-        "inputFile": "Input file",
-        "outputFile": "Output file",
-        "submitSolution": "Submit solution",
-        "dropFileHere": "Drop file here or press to select",
-        "limits": {
-            "cpu": "CPU time limit",
-            "wall": "Real time limit",
-            "memory": "Memory limit"
-        },
-        "personalResult": "Personal result"
-    },
-    "submissionPage":{
-        "description":"Explore your submissions"
-    },
-    "headers": {
-        "id": "#",
-        "task": "Task",
-        "language": "Language",
-        "result": "Result",
-        "submitted": "Submitted",
-        "difficulty": "Difficulty",
-        "name": "Name",
-        "category": "Category",
-        "rating": "Rating",
-        "realtime": "Real Time",
-        "cpuTime": "CPU Time",
-        "memory": "Memory",
-        "input": "Input",
-        "output": "Output"
-    },
-    "errorMessages": {
-      "notFound": "The requested resource cannot be found"
-    }
+    "personalResult": "Personal result"
+  },
+  "submissionPage": {
+    "description": "Explore your submissions"
+  },
+  "headers": {
+    "id": "#",
+    "task": "Task",
+    "language": "Language",
+    "result": "Result",
+    "submitted": "Submitted",
+    "difficulty": "Difficulty",
+    "name": "Name",
+    "category": "Category",
+    "rating": "Rating",
+    "realtime": "Real Time",
+    "cpuTime": "CPU Time",
+    "memory": "Memory",
+    "input": "Input",
+    "output": "Output"
+  },
+  "errorMessages": {
+    "notFound": "The requested resource cannot be found"
+  },
+  "notificationHeaders": {
+    "submitting": "Submitting",
+    "submitted": "Submitted",
+    "receivedResults": "Result"
+  }
 }

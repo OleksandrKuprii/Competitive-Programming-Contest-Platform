@@ -88,9 +88,9 @@ const auth0Model: Auth0Model = {
     actions.loading.changedLoadingStatus(false);
   }),
 
-  doAuth: action((state, { redirectUri = window.location.href }) => {
+  doAuth: action((state) => {
     state.client?.loginWithRedirect({
-      redirect_uri: redirectUri,
+      redirect_uri: window.location.href,
     }).then();
   }),
 

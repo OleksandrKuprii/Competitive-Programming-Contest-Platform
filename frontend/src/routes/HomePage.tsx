@@ -3,7 +3,7 @@ import { Button, Jumbotron } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import ProfileInfo from '../components/ProfileInfo';
+import ProfileInfo from '../components/user/ProfileInfo';
 
 const Homepage = () => {
   const { t } = useTranslation();
