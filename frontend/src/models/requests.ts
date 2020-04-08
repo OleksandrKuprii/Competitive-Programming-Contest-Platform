@@ -1,5 +1,4 @@
 import baseURL from './apiBaseURL';
-import sleep from '../utils/sleep';
 
 const fetchTasksUrlBuilder = (number: number, offset: number, auth: boolean) => (
   `${baseURL}/${auth ? 'tasks/auth' : 'tasks'}?&number=${number}&offset=${offset}`
@@ -35,9 +34,6 @@ const buildFetch = async (requestURL: string, token?: string, body?: object) => 
   do {
     // eslint-disable-next-line no-await-in-loop
     response = await (getFetch());
-
-    // eslint-disable-next-line no-await-in-loop
-    await sleep(5000);
   } while (!response.ok);
 
   return response;

@@ -5,11 +5,11 @@ import { useParams } from 'react-router-dom';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import CustomTable from '../components/CustomTable';
-import { GreatestResult } from '../components/Result';
-import SolutionDropZone from '../components/SolutionDropZone';
+import TaskSolutionDropZone from '../components/task/TaskSolutionDropZone';
 import { Task } from '../models/taskModel';
 import Loading from '../components/Loading';
 import ErrorPage from './ErrorPage';
+import GreatestResult from '../components/result/GreatestResult';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -186,7 +186,7 @@ const TaskPage = () => {
         <Col>
           <p><b>{t('taskPage.submitSolution')}</b></p>
 
-          <SolutionDropZone taskAlias={taskAlias} />
+          <TaskSolutionDropZone taskAlias={taskAlias} />
         </Col>
       </Row>
     </>

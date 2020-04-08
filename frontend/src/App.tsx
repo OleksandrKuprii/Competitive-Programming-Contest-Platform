@@ -10,6 +10,7 @@ import SubmissionsPage from './routes/SubmissionsPage';
 import SubmissionPage from './routes/SubmissionPage';
 import { useStoreActions } from './hooks/store';
 import ErrorPage from './routes/ErrorPage';
+import Notifications from './components/notification/Notifications';
 
 const App = () => {
   const init = useStoreActions((actions) => actions.auth0.init);
@@ -24,6 +25,8 @@ const App = () => {
 
   return (
     <HashRouter>
+      <Notifications />
+
       <Navbar />
 
       <Container style={{ padding: 0, marginTop: 20 }}>

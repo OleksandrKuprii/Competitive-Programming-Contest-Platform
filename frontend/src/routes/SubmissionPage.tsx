@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import CodeViewer from '../components/CodeViewer';
+import SubmissionCodeViewer from '../components/submission/SubmissionCodeViewer';
 import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
-import { Result } from '../components/Result';
-import { TaskNameLinkByTask } from '../components/TaskNameLink';
+import Result from '../components/result/Result';
+import TaskLinkByTask from '../components/task/TaskLinkByTask';
 import { useStoreState, useStoreActions } from '../hooks/store';
 import { Submission } from '../models/submissionModel';
 import { Task } from '../models/taskModel';
@@ -75,11 +75,23 @@ const SubmissionPage = () => {
 
   const infoTableRow: CustomTableRow = {
     id: `${submission.submitted}-${submission.status}`,
-    row: [
-      (<TaskNameLinkByTask taskName={task.name || ''} alias={task.alias} />),
-      (submission.submitted === undefined ? '' : <PrettyDate timestamp={submission.submitted} />),
-      (submission.status === undefined ? '' : <Result points={submission.points} status={submission.status} />),
-    ],
+    row: (
+      <>
+        <td>
+          <TaskLinkByTask taskName={task.name || ''} alias={task.alias} />
+        </td>
+        <td>
+          {submission.submitted === undefined
+            ? ''
+            : <PrettyDate timestamp={submission.submitted} />}
+        </td>
+        <td>
+          {submission.status === undefined
+            ? ''
+            : <Result points={submission.points} status={submission.status} />}
+        </td>
+      </>
+    ),
   };
 
   const infoTable = (
@@ -92,12 +104,24 @@ const SubmissionPage = () => {
         points, status, cpuTime, realtime,
       }, i) => ({
         id: `${points}-${status}-${cpuTime}-${realtime}`,
-        row: [
-          (i.toString()),
-          (<Result points={points} status={[status]} />),
-          (cpuTime !== undefined ? `${cpuTime}ms` : ''),
-          (realtime !== undefined ? `${realtime}ms` : ''),
-        ],
+        row: (
+          <>
+            <td>{i}</td>
+            <td>
+              <Result points={points} status={[status]} />
+            </td>
+            <td>
+              {cpuTime === undefined
+                ? ''
+                : `${cpuTime}ms`}
+            </td>
+            <td>
+              {realtime === undefined
+                ? ''
+                : `${realtime}ms`}
+            </td>
+          </>
+        ),
       }),
     );
 
@@ -140,7 +164,7 @@ const SubmissionPage = () => {
         {submission.code === undefined
           ? null
           : (
-            <CodeViewer
+            <SubmissionCodeViewer
               code={submission.code}
               language={getGeneralLanguageName(submission.language)}
             />

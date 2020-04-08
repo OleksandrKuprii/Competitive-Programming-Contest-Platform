@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import {
   GiPaperPlane, FaHome, GiArcheryTarget, GiBrutalHelm,
 } from 'react-icons/all';
-import ProfileStatus from './ProfileStatus';
+import ProfileStatus from './user/ProfileStatus';
 
 const ToucanNavbar = () => {
   const { t } = useTranslation();

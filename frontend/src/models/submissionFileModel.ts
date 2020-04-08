@@ -4,21 +4,17 @@ import {
 
 
 export interface SubmissionFileModel {
-  file: File | null,
-  fileText: string | null,
-  language: string | null,
+  file?: File,
+  fileText?: string,
+  language?: string,
   selectedLanguage: Action<SubmissionFileModel, string>,
   uploadFile: Thunk<SubmissionFileModel, File>,
-  updatedFile: Action<SubmissionFileModel, { file: File | null, fileText: string | null }>,
+  updatedFile: Action<SubmissionFileModel, { file?: File, fileText?: string }>,
   canceled: Action<SubmissionFileModel>
 }
 
 
 const submissionFileModel: SubmissionFileModel = {
-  file: null,
-  fileText: '',
-  language: null,
-
   selectedLanguage: action((state, language) => ({
     ...state,
     language,
@@ -38,8 +34,8 @@ const submissionFileModel: SubmissionFileModel = {
 
   canceled: action((state) => ({
     ...state,
-    file: null,
-    fileText: null,
+    file: undefined,
+    fileText: undefined,
   })),
 };
 

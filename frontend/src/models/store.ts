@@ -3,7 +3,7 @@ import auth0Model, { Auth0Model } from './auth0Model';
 
 export interface StoreModel {
   auth0: Auth0Model
-  taskSubmission: TaskSubmissionConnector
+  taskSubmission: TaskSubmissionConnector,
 }
 
 const storeModel: StoreModel = {

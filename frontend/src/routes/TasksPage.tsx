@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStoreState, useStoreActions } from '../hooks/store';
-import TaskList from '../components/TaskList';
+import TaskList from '../components/task/TaskList';
 import Loading from '../components/Loading';
 
 
