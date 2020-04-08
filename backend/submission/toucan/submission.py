@@ -1,12 +1,20 @@
 """Handles submission logic."""
+import dataclasses
+import json
+import os
 from typing import List
+
+import boto3
 
 from toucan import database
 from toucan import storage
-from toucan.dataclass import (SubmissionToRunner, SubmissionToStorage,
+from toucan.dataclass import (SubmissionToRunner,
+                              SubmissionToStorage,
                               UserSubmission)
 
-from .runner import add_submission as runner_add_submission
+sqs = boto3.resource('sqs', endpoint_url=os.getenv('SQS_ENDPOINT'))
+
+queue = sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
 
 
 async def add_submission(user_submission: UserSubmission):
@@ -41,8 +49,9 @@ async def add_submission(user_submission: UserSubmission):
                                               wall_time_limit, cpu_time_limit,
                                               memory_limit)
 
-    # Asks runner to process submission
-    await runner_add_submission(submission_to_runner)
+    # Add submission to the queue
+    queue.send_message(
+        MessageBody=json.dumps(dataclasses.asdict(submission_to_runner)))
 
     return submission_id
 

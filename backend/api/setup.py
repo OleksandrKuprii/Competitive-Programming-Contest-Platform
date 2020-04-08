@@ -2,15 +2,14 @@
 
 from setuptools import setup
 
-microlib_name = 'toucan.coreservices'
+microlib_name = 'toucan.api'
 
 setup(name=microlib_name,
       py_modules=[
-          'toucan.coreservices.api', 'toucan.coreservices.runner',
-          'toucan.coreservices.submission'
+          'toucan.api'
       ],
       namespace_packages=['toucan'],
       install_requires=[
           'aiohttp[speedups]', 'toucan.database', 'toucan.dataclass',
-          'toucan.storage', 'toucan.task', 'markdown2', 'aiohttp_cors'
+          'toucan.storage', 'toucan.task', 'aiohttp_cors'
       ])

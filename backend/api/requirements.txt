@@ -1,0 +1,7 @@
+--index-url https://pypi.python.org/simple
+../dataclass/
+../database/
+../storage/
+../submission/
+boto3
+-e .

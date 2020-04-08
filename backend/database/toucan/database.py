@@ -6,7 +6,7 @@ import asyncpg
 
 from toucan.dataclass import ResultToDB, UserSubmission
 
-# Declaring global variable for connection
+# Database connection pool
 pool = None
 
 
@@ -271,7 +271,7 @@ async def get_tasks(number: int, offset: int) -> List[dict]:
 
 
 async def get_submission_id_from_bests(user_id: str, task_id: int
-                                       ) -> Optional[int, None]:
+                                       ) -> Optional[int]:
     """Get submission id from task_bests table by user id and task id.
 
     Parameters

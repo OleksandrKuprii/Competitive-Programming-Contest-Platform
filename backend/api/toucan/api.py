@@ -1,4 +1,5 @@
 """Toucan API."""
+import asyncio
 import json
 from datetime import datetime
 from functools import wraps
@@ -13,8 +14,8 @@ from jose import jwt
 
 from six.moves.urllib.request import urlopen
 
-from toucan import task
-from toucan.coreservices import submission
+from toucan import submission, task
+from toucan.database import establish_connection_from_env
 from toucan.dataclass import UserSubmission
 
 
@@ -317,6 +318,12 @@ for route in app.router.routes():
     cors.add(route)
 
 
-async def run():
-    """Start api using existing event loop."""
+async def main():
+    """Run api."""
+    await establish_connection_from_env()
+
     await _run_app(app, port=4000)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
