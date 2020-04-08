@@ -3,8 +3,7 @@ from typing import List
 
 from markdown2 import markdown
 
-from toucan import database
-from toucan.coreservices import submission
+from toucan import database, submission
 
 
 async def get_task_info(alias: str) -> dict:
