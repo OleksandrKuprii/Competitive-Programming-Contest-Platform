@@ -73,6 +73,7 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
       onDropAccepted={async (files) => {
         setDragEntered(false);
         await uploadFile(files[0]);
+        window.scrollTo(0, document.body.scrollHeight);
       }}
       onDragEnter={() => setDragEntered(true)}
       onDragLeave={() => setDragEntered(false)}

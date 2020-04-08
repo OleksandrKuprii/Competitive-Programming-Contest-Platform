@@ -61,7 +61,7 @@ const ToucanNavbar = () => {
     ));
 
   return (
-    <Navbar expand="lg" bg="primary" variant="dark">
+    <Navbar expand="lg" bg="primary" variant="dark" sticky="top">
       <Container style={{ padding: 0 }}>
         {navigation}
         <Nav className="mr-auto" />
