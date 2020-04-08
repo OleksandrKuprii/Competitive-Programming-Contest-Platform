@@ -7,8 +7,7 @@ import { useHistory } from 'react-router-dom';
 import {
   GiPaperPlane, FaHome, GiArcheryTarget, GiBrutalHelm,
 } from 'react-icons/all';
-import uuid from 'react-uuid';
-import ProfileStatus from './ProfileStatus';
+import ProfileStatus from './user/ProfileStatus';
 
 const ToucanNavbar = () => {
   const { t } = useTranslation();
@@ -19,38 +18,45 @@ const ToucanNavbar = () => {
     {
       link: '/',
       pageName: 'home',
-      icon: FaHome,
+      icon: (
+        <FaHome />
+      ),
     },
     {
       link: '/tournaments',
       pageName: 'tournaments',
-      icon: GiBrutalHelm,
+      icon: (
+        <GiBrutalHelm />
+      ),
     },
     {
       link: '/tasks',
       pageName: 'tasks',
-      icon: GiArcheryTarget,
+      icon: (
+        <GiArcheryTarget />
+      ),
     },
     {
       link: '/submissions',
       pageName: 'submissions',
-      icon: GiPaperPlane,
+      icon: (
+        <GiPaperPlane />
+      ),
     },
   ]
     .map((item) => ({
       ...item,
       active: item.link === history.location.pathname,
     }))
-    .map((item) => (
-      <Nav.Link key={uuid()} active={item.active} disabled={item.active} href={`#${item.link}`}>
-        <item.icon />
-        {' '}
-        {t(`pageName.${item.pageName}`)}
-      </Nav.Link>
-    ))
-    .map((link) => (
-      <Nav.Item key={uuid()}>
-        {link}
+    .map(({
+      active, link, pageName, icon,
+    }) => (
+      <Nav.Item key={`header-${pageName}-${link}`}>
+        <Nav.Link active={active} disabled={active} href={`#${link}`}>
+          {icon}
+          {' '}
+          {t(`pageName.${pageName}`)}
+        </Nav.Link>
       </Nav.Item>
     ));
 

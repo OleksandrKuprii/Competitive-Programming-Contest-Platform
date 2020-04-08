@@ -1,15 +1,15 @@
 import baseURL from './apiBaseURL';
 
 const fetchTasksUrlBuilder = (number: number, offset: number, auth: boolean) => (
-  `${baseURL}/${auth ? 'tasks/auth' : 'tasks'}?&number=${number}&offset=${offset}&user_id=1`
+  `${baseURL}/${auth ? 'tasks/auth' : 'tasks'}?&number=${number}&offset=${offset}`
 );
 
-const fetchTaskUrlBuilder = (alias: string) => (
-  `${baseURL}/task/${alias}`
+const fetchTaskUrlBuilder = (alias: string, auth: boolean) => (
+  `${baseURL}/${auth ? 'task/auth' : 'task'}/${alias}`
 );
 
 const fetchSubmissionsUrlBuilder = (number: number, offset: number) => (
-  `${baseURL}/submissions?number=${number}&offset=${offset}&user_id=1`
+  `${baseURL}/submissions?number=${number}&offset=${offset}`
 );
 
 const fetchSubmissionUrlBuilder = (id: number) => (
@@ -32,7 +32,7 @@ const buildFetch = async (requestURL: string, token?: string, body?: object) => 
   let response;
 
   do {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-await-in-loop
     response = await (getFetch());
   } while (!response.ok);
 
@@ -44,7 +44,7 @@ export const fetchTasks = (token?: string) => (
 );
 
 export const fetchTask = (alias: string, token?: string) => (
-  buildFetch(fetchTaskUrlBuilder(alias), token)
+  buildFetch(fetchTaskUrlBuilder(alias, token !== undefined), token)
 );
 
 export const fetchSubmissions = (token?: string) => (

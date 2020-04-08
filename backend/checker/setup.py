@@ -9,4 +9,9 @@ setup(name=microlib_name,
       install_requires=['toucan.database',
                         'toucan.storage',
                         'aiohttp',
-                        'aiohttp_cors'])
+                        'aiohttp_cors',
+                        'boto3',
+                        'jose',
+                        'six',
+                        'markdown2',
+                        'docker'])
