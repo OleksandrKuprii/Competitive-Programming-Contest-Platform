@@ -1,7 +1,7 @@
 """Module for sharing common dataclasses between other microlibs."""
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -53,9 +53,9 @@ class TestResult:
 
     test_id: int
     status: str
-    result: str
-    wall_time: int
-    cpu_time: int
+    result: Optional[str]  # Submission program output
+    wall_time: Optional[int]
+    cpu_time: Optional[int]
 
 
 @dataclass
