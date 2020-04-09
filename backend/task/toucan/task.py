@@ -22,17 +22,6 @@ async def get_task_info(alias: str) -> dict:
     # Getting task info from database
     task_info = await database.get_task(alias)
 
-    # Converting markdown to html
-    for x in ['main', 'input_format', 'output_format', 'explanation']:
-        if task_info[x] is not None:
-            task_info[x] = markdown(task_info[x])
-            task_info[x] = task_info[x].replace('\\n', '<br>')
-
-    # Converting markdown to html in examples
-    for x in range(len(task_info['examples'])):
-        for k, v in task_info['examples'][x].items():
-            task_info['examples'][x][k] = markdown(v.replace('\\n', '<br>'))
-
     return task_info
 
 
