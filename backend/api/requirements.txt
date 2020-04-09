@@ -3,5 +3,6 @@
 ../database/
 ../storage/
 ../submission/
+../task/
 boto3
 -e .

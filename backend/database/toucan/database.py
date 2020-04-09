@@ -206,15 +206,23 @@ async def get_task(alias: str) -> dict:
             # Getting task information from tasks and task_description tables
             task_fetch = await conn.fetchrow(
                 '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
-                   main, input_format, output_format, explanation, name
+                   main, input_format, output_format, explanation, tasks.name,
+                   category, categories.name
                    FROM coreschema.tasks as tasks
-                   FULL OUTER JOIN coreschema.task_descriptions as task_desc
+                   JOIN coreschema.task_descriptions as task_desc
                    ON tasks.alias = task_desc.alias
+                   JOIN coreschema.categories
+                   ON category = categories.alias
                    WHERE tasks.alias = $1
                 ''', alias)
 
             # Creating dictionary from fetch from query
             task = {k: v for k, v in task_fetch.items()}
+
+            # Storing information about category in separate dictionary and
+            # putting in task dictionary with key 'category'
+            task['category'] = {'alias': task.pop('category'),
+                                'name': task.pop('name')}
 
             # Getting input and output examples from the task_examples table
             examples_fetch = await conn.fetch(
@@ -253,8 +261,11 @@ async def get_tasks(number: int, offset: int) -> List[dict]:
 
             # Getting information from tasks table
             fetch = await conn.fetch('''
-                SELECT id, alias, name, category, difficulty
+                SELECT tasks.id, tasks.alias, tasks.name as task_name,
+                category, categories.name as category_name, difficulty
                 FROM coreschema.tasks
+                JOIN coreschema.categories
+                ON category = categories.alias
                 LIMIT $1 OFFSET $2
             ''', number, offset)
 
@@ -262,16 +273,29 @@ async def get_tasks(number: int, offset: int) -> List[dict]:
 
     # Getting data from fetch
     for x in fetch:
+
         temp_dict = dict()
+
         for k, v in x.items():
-            temp_dict[k] = v
+
+            # If key is 'task_name' save value with key 'name'
+            if k == 'task_name':
+                temp_dict['name'] = v
+            else:
+                temp_dict[k] = v
+
+        # Storing information about category in separate dictionary and
+        # putting in task dictionary with key 'category'
+        temp_dict['category'] = {'alias': temp_dict.pop('category'),
+                                 'name': temp_dict.pop('category_name')}
+
         data.append(temp_dict)
 
     return data
 
 
-async def get_submission_id_from_bests(user_id: str, task_id: int
-                                       ) -> Optional[int]:
+async def get_submission_id_from_bests(user_id: str, task_id: int) \
+        -> Optional[int]:
     """Get submission id from task_bests table by user id and task id.
 
     Parameters

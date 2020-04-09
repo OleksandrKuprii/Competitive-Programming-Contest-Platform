@@ -59,6 +59,11 @@ create table if not exists coreschema.task_bests (
     submission_id int references coreschema.submissions(id)
 );
 
+create table if not exists coreschema.categories (
+    id serial primary key,
+    alias varchar(50),
+    name varchar
+);
 
 CREATE OR REPLACE FUNCTION coreschema.modify_task_best(integer)
 RETURNS integer
