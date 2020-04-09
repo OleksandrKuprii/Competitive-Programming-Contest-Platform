@@ -1,13 +1,15 @@
 """Handles database logic."""
+import json
 import os
 from typing import List, Optional
 
 import asyncpg
+from asyncpg.pool import Pool
 
 from toucan.dataclass import ResultToDB, UserSubmission
 
 # Database connection pool
-pool = None
+pool: Pool
 
 
 async def establish_connection_from_env() -> None:
@@ -206,8 +208,8 @@ async def get_task(alias: str) -> dict:
             # Getting task information from tasks and task_description tables
             task_fetch = await conn.fetchrow(
                 '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
-                   main, input_format, output_format, explanation, tasks.name,
-                   category, categories.name
+                   main, input_format, output_format, custom_sections,
+                   tasks.name, category, categories.name
                    FROM coreschema.tasks as tasks
                    JOIN coreschema.task_descriptions as task_desc
                    ON tasks.alias = task_desc.alias
@@ -218,6 +220,10 @@ async def get_task(alias: str) -> dict:
 
             # Creating dictionary from fetch from query
             task = {k: v for k, v in task_fetch.items()}
+
+            # Asyncpg converts PostgresSQL's json type to Python's str type,
+            # so we should convert str to json
+            task['custom_sections'] = json.loads(task['custom_sections'])
 
             # Storing information about category in separate dictionary and
             # putting in task dictionary with key 'category'
