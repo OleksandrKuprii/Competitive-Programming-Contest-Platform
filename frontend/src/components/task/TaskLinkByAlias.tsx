@@ -4,21 +4,19 @@ import { useStoreState } from '../../hooks/store';
 import TaskLinkByTask from './TaskLinkByTask';
 
 export interface TaskNameLinkByAliasArgs {
-  alias: string
+  id?: string
   children?: ReactNode
 }
 
-const TaskLinkByAlias = ({ alias, children }: TaskNameLinkByAliasArgs) => {
-  const task = useStoreState((state) => state.taskSubmission.task.list.find(
-    (t: any) => t.alias === alias,
-  ));
+const TaskLinkByAlias = ({ id, children }: TaskNameLinkByAliasArgs) => {
+  const task = useStoreState((state) => (id ? state.task.byId(id) : undefined));
 
   if (task === undefined) {
     return <></>;
   }
 
   return (
-    <TaskLinkByTask taskName={task.name || ''} alias={task.alias}>
+    <TaskLinkByTask taskName={task.name || ''} id={task.id}>
       {children}
     </TaskLinkByTask>
   );

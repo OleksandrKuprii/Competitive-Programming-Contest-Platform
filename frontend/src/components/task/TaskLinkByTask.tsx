@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { ReactNode } from 'react';
 
 export interface TaskLinkByTaskArgs {
-  taskName: string,
-  alias: string
+  taskName?: string,
+  id: string
   children?: ReactNode
 }
 
-const TaskLinkByTask = ({ alias, taskName, children }: TaskLinkByTaskArgs) => (
-  <Link to={`/task/view/${alias}`}>
+const TaskLinkByTask = ({ id, taskName, children }: TaskLinkByTaskArgs) => (
+  <Link to={`/task/view/${id}`}>
     {children === undefined
       ? taskName
       : children}

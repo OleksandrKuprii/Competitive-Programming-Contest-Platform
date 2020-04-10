@@ -8,19 +8,14 @@ import { useStoreState } from '../../hooks/store';
 const guestAvatar = require('../../assets/guestAvatar.png');
 
 const ProfileInfo = () => {
-  const authLoading = useStoreState((state) => state.auth0.loading.loading);
   const username = useStoreState((state) => state.auth0.username);
-  const userPicture = useStoreState((state) => state.auth0.userPicture);
-
-  if (authLoading) {
-    return <></>;
-  }
+  const avatar = useStoreState((state) => state.auth0.avatar);
 
   return (
     <Jumbotron>
       <Row>
         <Col className="text-center">
-          <Image src={userPicture || guestAvatar} width={100} rounded />
+          <Image src={avatar || guestAvatar} width={100} rounded />
         </Col>
       </Row>
       <Row>

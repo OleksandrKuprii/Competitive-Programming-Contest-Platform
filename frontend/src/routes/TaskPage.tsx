@@ -10,41 +10,27 @@ import { Task } from '../models/taskModel';
 import Loading from '../components/Loading';
 import ErrorPage from './ErrorPage';
 import GreatestResult from '../components/result/GreatestResult';
+import {useEffect} from "react";
 
 const TaskPage = () => {
   const { t } = useTranslation();
 
   const { taskAlias } = useParams();
 
-  const task = useStoreState(
-    (state) => state.taskSubmission.task.list.find(
-      (_task: Task) => _task.alias === taskAlias,
-    ),
-  );
+  const task = useStoreState((state) => (taskAlias ? state.task.byId(taskAlias) : undefined));
 
-  const authLoading = useStoreState((state) => state.auth0.loading.loading);
-  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-  const token = useStoreState((state) => state.auth0.token);
+  const fetchTask = useStoreActions((actions) => actions.task.fetchOne);
 
-  const fetchTask = useStoreActions((actions) => actions.taskSubmission.fetchTask);
-
-  React.useEffect(() => {
-    if (authLoading || taskAlias === undefined) {
+  useEffect(() => {
+    if (!taskAlias) {
       return;
     }
 
-    if (isAuthenticated) {
-      fetchTask({ alias: taskAlias, token });
-      return;
-    }
+    fetchTask(taskAlias);
+  }, []);
 
-    fetchTask({ alias: taskAlias });
-  }, [taskAlias, fetchTask, authLoading, isAuthenticated, token]);
-
-  if (task === undefined || taskAlias === undefined) {
-    return (
-      <ErrorPage code="notFound" />
-    );
+  if (!taskAlias || !task) {
+    return <ErrorPage code="notFound" />;
   }
 
   const htmlToReactParser = new HtmlToReactParser();
@@ -72,12 +58,6 @@ const TaskPage = () => {
     .map((str) => str.replace('<p>', ''))
     .map((str) => str.replace('</p>', ''))
     .map(renderHtmlWithNewlines);
-
-  if (task.loading || authLoading) {
-    return (
-      <Loading />
-    );
-  }
 
   return (
     <>

@@ -5,7 +5,7 @@ import SubmissionLink from '../submission/SubmissionLink';
 import Result from './Result';
 
 const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined }) => {
-  const submissions = useStoreState((state) => state.taskSubmission.submission.list);
+  const submissions = useStoreState((state) => state.submission.items);
 
   if (taskAlias === undefined) {
     return <></>;

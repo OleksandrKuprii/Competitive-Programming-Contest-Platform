@@ -21,29 +21,19 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
           <SubmissionLink id={id} />
         </td>
         <td>
-          {taskAlias === undefined
-            ? ''
-            : <TaskLinkByAlias alias={taskAlias} />}
+          <TaskLinkByAlias id={taskAlias} />
         </td>
         <td>
-          {language === undefined
-            ? ''
-            : language}
+          {language || ''}
         </td>
         <td>
-          {status === undefined
-            ? ''
-            : (
-              <Result
-                points={points}
-                status={status}
-              />
-            )}
+          <Result
+            points={points}
+            status={status}
+          />
         </td>
         <td>
-          {submitted === undefined
-            ? ''
-            : <PrettyDate timestamp={submitted} />}
+          <PrettyDate timestamp={submitted} />
         </td>
       </>),
   } as CustomTableRow));

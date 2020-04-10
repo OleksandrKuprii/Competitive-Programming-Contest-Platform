@@ -12,13 +12,13 @@ export type Notification = {
 {
   id: number,
   type: 'submitted',
-  submissionId: number,
+  submissionId: string,
 }
 |
 {
   id: number,
   type: 'receivedResults',
-  submissionId: number,
+  submissionId: string,
   points: number,
   status: string[],
 };

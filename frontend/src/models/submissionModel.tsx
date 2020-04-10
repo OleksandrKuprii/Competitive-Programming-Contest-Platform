@@ -1,154 +1,91 @@
-import {
-  thunk, action, Thunk, Action,
-} from 'easy-peasy';
-import submissionFileModel, { SubmissionFileModel } from './submissionFileModel';
-import updateObjectWithProperty from '../utils/updateObjectWithProperty';
-import { fetchSubmission, submitSubmission } from './requests';
+import { thunkOn, ThunkOn } from 'easy-peasy';
+import dataModel, { DataModel, ObjectWithId } from './generalizers/dataModel';
+import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-import loadingModel, { LoadingModel } from './loadingModel';
-import sleep from '../utils/sleep';
-import mapTestsFromApi from './mapTestsFromApi';
-import notificationModel, {
-  NotificationModel,
+import { Task } from './taskModel';
 
-} from './notificationModel';
+export interface SubmissionTest {
+  status: string;
+  points: number;
+  cpuTime: number;
+  realtime: number;
+}
 
-export interface Submission {
-  id: number
+export interface Submission extends ObjectWithId {
   taskAlias?: string
-  loading: boolean
   language?: string
   status?: string[]
   points?: number
-  submitted?: string,
-  tests?: { status: string, points: number, cpuTime: number, realtime: number }[],
+  submitted?: Date,
+  tests?: SubmissionTest[],
   code?: string
 }
 
-export interface SubmissionModel {
-  list: Submission[],
-  file: SubmissionFileModel,
-  notification: NotificationModel,
-  loading: LoadingModel,
-  addedSubmission: Action<SubmissionModel, Submission>,
-  submitSubmission: Thunk<SubmissionModel,
-  {
-    taskAlias: string,
-    code: string,
-    language: string,
-    token: string
-  }>,
-  fetchSubmission: Thunk<SubmissionModel, {
-    id: number,
-    token: string,
-  }>,
-  huntSubmission: Thunk<SubmissionModel, {
-    id: number,
-    token: string
-  }>,
-}
+export interface SubmissionModel extends DataModel<Submission> {}
 
 const submissionModel: SubmissionModel = {
-  list: [],
-  file: submissionFileModel,
+  ...dataModel<Submission>({
+    dataItemFetcher: async (id, args) => {
+      const { token } = args;
 
-  notification: notificationModel(),
-  loading: loadingModel(),
+      if (!token) {
+        return { item: { id } };
+      }
 
-  addedSubmission: action((state, submission) => {
-    updateObjectWithProperty(state.list, 'id', submission.id, submission);
-  }),
+      const response = await fetch(`${baseURL}/submission/${id}`, {
+        headers: !token ? {} : {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  submitSubmission: thunk(async (actions,
-    {
-      taskAlias, code, language, token,
-    }) => {
-    const submittingNotificationId = +new Date();
+      const body = await response.json();
 
-    actions.notification.receivedNotification({
-      id: submittingNotificationId,
-      type: 'submitting',
-      taskAlias,
-    });
+      console.log(body);
 
-    const response = await submitSubmission(taskAlias, language, code, token);
+      return {
+        item: {
+          id,
+        },
+      };
+    },
+    dataRangeFetcher: async (range, args) => {
+      const { token } = args;
 
-    const data = await response.json();
+      if (!token) {
+        return [];
+      }
 
-    actions.addedSubmission({
-      id: data.submission_id,
-      taskAlias,
-      language,
-      loading: false,
-      points: undefined,
-      status: ['Received'],
-      submitted: data.timestamp,
-      tests: [],
-      code,
-    } as Submission);
+      const response = await fetch(`${baseURL}/submissions?offset=${range.offset}&number=${range.number}`, {
+        headers: !token ? {} : {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setTimeout(() => actions.notification.dismissedNotification(submittingNotificationId), 1000);
+      const body = await response.json();
 
-    actions.notification.addNotificationAndRemoveAfterDelay({
-      id: +new Date(),
-      type: 'submitted',
-      submissionId: data.submission_id,
-    });
+      return body.map((item: any) => ({
+        item: ({
+          id: item.id,
+          taskAlias: item.alias,
+          submitted: new Date(item.published_at),
+          language: item.lang,
+          ...resultToPointsAndStatus(item.result),
+        } as Submission),
+        task: ({
+          id: item.alias,
+          name: item.name,
+        } as Task),
+      }));
+    },
 
-    actions.huntSubmission({
-      id: data.submission_id,
-      token,
-    });
-  }),
+    onChangedManyTargets: (state, storeActions) => [
+      storeActions.task.fetchRange,
+    ],
+    onChangedOneTargets: (state, storeActions) => [
+      storeActions.solutionSubmission.submit,
+    ],
 
-  fetchSubmission: thunk(async (actions, { id, token }) => {
-    actions.addedSubmission({
-      id,
-      loading: true,
-    });
-
-    const response = await fetchSubmission(id, token);
-
-    const data: any = await response.json();
-
-    actions.addedSubmission({
-      id,
-      taskAlias: data.alias,
-      loading: false,
-      language: data.lang,
-      submitted: data.timestamp,
-      tests: mapTestsFromApi(data.tests),
-      code: data.code,
-      ...resultToPointsAndStatus(data.result),
-    });
-  }),
-
-  huntSubmission: thunk(async (actions, idAndToken, { getStoreState }) => {
-    await sleep(5000);
-
-    await actions.fetchSubmission(idAndToken);
-
-    const submissionWithId = (getStoreState() as any).taskSubmission.submission.list.find(
-      (submission: Submission) => submission.id === idAndToken.id,
-    );
-
-    if (!submissionWithId) {
-      await actions.huntSubmission(idAndToken);
-      return;
-    }
-
-    if (!submissionWithId.tests || submissionWithId.tests?.length === 0) {
-      await actions.huntSubmission(idAndToken);
-      return;
-    }
-
-    actions.notification.addNotificationAndRemoveAfterDelay({
-      id: +new Date(),
-      type: 'receivedResults',
-      submissionId: submissionWithId.id,
-      points: submissionWithId.points,
-      status: submissionWithId.status,
-    });
+    dataModelIdentifier: 'submission',
   }),
 };
 

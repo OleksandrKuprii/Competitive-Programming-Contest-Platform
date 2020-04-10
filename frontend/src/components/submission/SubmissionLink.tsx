@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ReactNode } from 'react';
 
 export interface SubmissionLinkArgs {
-  id: number
+  id: string
   children?: ReactNode
 }
 
