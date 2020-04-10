@@ -17,7 +17,7 @@ create table if not exists coreschema.task_descriptions (
     main text,
     input_format text,
     output_format text,
-    explanation text
+    custom_sections json
 );
 
 create table if not exists coreschema.task_examples (
