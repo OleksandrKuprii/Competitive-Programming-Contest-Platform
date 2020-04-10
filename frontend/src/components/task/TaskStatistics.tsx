@@ -65,9 +65,9 @@ const SimpleBarChart = () => {
       <YAxis unit="%" />
       <Tooltip formatter={(value) => `${value}%`} />
       <Legend />
-      <Bar dataKey="correct" fill="#82ca9d" name="Correct"/>
-      <Bar dataKey="partialAnswer" fill="#edcf5f" name = "Not a full answer"/>
-      <Bar dataKey="incorrect" fill="#db504a" name="Incorrect"/>
+      <Bar dataKey="correct" fill="#82ca9d" name="Correct" />
+      <Bar dataKey="partialAnswer" fill="#edcf5f" name="Not a full answer" />
+      <Bar dataKey="incorrect" fill="#db504a" name="Incorrect" />
     </BarChart>
   );
 };
