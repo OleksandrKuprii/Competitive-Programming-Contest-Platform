@@ -1,8 +1,8 @@
 """Handles storage logic."""
 import os
-from typing import Iterable
+from typing import Iterable, List
 
-import boto3
+import aioboto3
 
 from toucan.dataclass import SubmissionToStorage
 
@@ -17,10 +17,8 @@ S3_ENDPOINT = os.getenv('S3_ENDPOINT')
 
 assert S3_ENDPOINT is not None
 
-s3 = boto3.resource('s3', endpoint_url=S3_ENDPOINT)
 
-
-def get_correct_results(test_ids: Iterable[int]) -> Iterable[str]:
+async def get_correct_results(test_ids: Iterable[int]) -> Iterable[str]:
     """Return correct results for given test ids.
 
     Generator function, reads objects from S3 bucket.
@@ -29,12 +27,19 @@ def get_correct_results(test_ids: Iterable[int]) -> Iterable[str]:
     ----------
     tests_ids: Iterable[int] - test ids
     """
+    correct_results = list()
     for test_id in test_ids:
-        obj = s3.Object(TESTS_BUCKET, f'{test_id}.output')
-        yield obj.get()['Body'].read()
+        async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+            obj = await s3.Object(TESTS_BUCKET, f'{test_id}.output')
+
+            obj_body = (await obj.get())['Body']
+
+            correct_results.append(await obj_body.read())
+
+    return correct_results
 
 
-def download_inputs(test_ids: Iterable[int]) -> Iterable[str]:
+async def download_inputs(test_ids: Iterable[int]) -> List[str]:
     """Download inputs for given test ids and return their paths.
 
     Generator function, reads objects from S3 bucket.
@@ -43,15 +48,20 @@ def download_inputs(test_ids: Iterable[int]) -> Iterable[str]:
     ----------
     tests_ids: Iterable[int] - test ids
     """
+    paths = list()
     for test_id in test_ids:
-        path = f'{LOCAL_STORAGE_ROOT}/tests/{test_id}.input'
+        async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+            path = f'{LOCAL_STORAGE_ROOT}/tests/{test_id}.input'
 
-        s3.Bucket(TESTS_BUCKET).download_file(f'{test_id}.input', path)
+            await(await s3.Bucket(TESTS_BUCKET)).download_file(
+                f'{test_id}.input', path)
 
-        yield path
+            paths.append(path)
+
+    return paths
 
 
-def add_code(submission_to_storage: SubmissionToStorage):
+async def add_code(submission_to_storage: SubmissionToStorage):
     """Add submission code to storage.
 
     Uploads object to S3 bucket.
@@ -60,12 +70,13 @@ def add_code(submission_to_storage: SubmissionToStorage):
     ----------
     submission_to_storage: SubmissionToStorage - code and submission_id
     """
-    obj = s3.Object(SUBMISSIONS_BUCKET,
-                    str(submission_to_storage.submission_id))
-    obj.put(Body=submission_to_storage.code)
+    async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+        obj = await s3.Object(SUBMISSIONS_BUCKET,
+                              str(submission_to_storage.submission_id))
+        await obj.put(Body=submission_to_storage.code)
 
 
-def get_extension_by_lang(lang: str) -> str:
+async def get_extension_by_lang(lang: str) -> str:
     """Get file extension by language."""
     ext = None
 
@@ -77,18 +88,26 @@ def get_extension_by_lang(lang: str) -> str:
     return ext
 
 
-def download_submission_code(submission_id: int, lang: str) -> str:
+async def download_submission_code(submission_id: int, lang: str) -> str:
     """Download submission code and return path to local file."""
-    ext = get_extension_by_lang(lang)
+    ext = await get_extension_by_lang(lang)
 
     path = f'{LOCAL_STORAGE_ROOT}/submissions/{submission_id}.{ext}'
 
-    s3.Bucket(SUBMISSIONS_BUCKET).download_file(str(submission_id), path)
+    async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+        await (await s3.Bucket(SUBMISSIONS_BUCKET)).download_file(str(
+            submission_id), path)
 
     return path
 
 
-def get_code(submission_id: int) -> str:
+async def get_code(submission_id: int) -> str:
     """Get file from storage and returns its content."""
-    obj = s3.Object(SUBMISSIONS_BUCKET, f'{submission_id}')
-    return obj.get()['Body'].read().decode()
+    async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+        obj = await s3.Object(SUBMISSIONS_BUCKET, f'{submission_id}')
+
+        obj_body = (await obj.get())['Body']
+
+        code = await obj_body.read()
+
+        return code.decode()
