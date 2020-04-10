@@ -4,17 +4,13 @@ import json
 import os
 from typing import List
 
-import boto3
+import aioboto3
 
 from toucan import database
 from toucan import storage
 from toucan.dataclass import (SubmissionToRunner,
                               SubmissionToStorage,
                               UserSubmission)
-
-sqs = boto3.resource('sqs', endpoint_url=os.getenv('SQS_ENDPOINT'))
-
-queue = sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
 
 
 async def add_submission(user_submission: UserSubmission):
@@ -35,7 +31,7 @@ async def add_submission(user_submission: UserSubmission):
                                                 user_submission.code)
 
     # Adds code to the storage
-    storage.add_code(submission_to_storage)
+    await storage.add_code(submission_to_storage)
 
     # Gets limits for this task from database
     limits = await database.get_limits(task_id)
@@ -50,8 +46,14 @@ async def add_submission(user_submission: UserSubmission):
                                               memory_limit)
 
     # Add submission to the queue
-    queue.send_message(
-        MessageBody=json.dumps(dataclasses.asdict(submission_to_runner)))
+    async with aioboto3.resource('sqs', endpoint_url=os.getenv(
+            'SQS_ENDPOINT')) \
+            as sqs:
+
+        queue = await sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
+
+        await queue.send_message(
+            MessageBody=json.dumps(dataclasses.asdict(submission_to_runner)))
 
     return submission_id
 
@@ -166,7 +168,7 @@ async def get_submission(submission_id: int, user_id: str) -> dict:
     submission['tests'] = tests
 
     # Getting code from storage
-    submission['code'] = storage.get_code(submission_id)
+    submission['code'] = await storage.get_code(submission_id)
 
     return submission
 

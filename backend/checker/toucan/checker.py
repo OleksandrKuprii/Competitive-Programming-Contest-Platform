@@ -1,5 +1,5 @@
 """Checks user submission program output."""
-from typing import Callable, Generator, Iterable, List
+from typing import Callable, Iterable, List
 
 from toucan import database
 from toucan import storage
@@ -21,7 +21,7 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
     test_ids = [x.test_id for x in result_to_checker.test_results]
 
     # Getting correct results from storage
-    correct_results = storage.get_correct_results(test_ids)
+    correct_results = await storage.get_correct_results(test_ids)
 
     # Getting points for each test from database
     points = await database.get_points_for_tests(test_ids)
@@ -29,7 +29,7 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
     # Checking results
     results_to_db = (
         result_to_db_without_submission_id(submission_id)
-        for result_to_db_without_submission_id in check_test_results(
+        for result_to_db_without_submission_id in await check_test_results(
             result_to_checker.test_results, correct_results, points))
 
     # Adding results to database
@@ -42,16 +42,17 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
     await database.change_submission_status(submission_id, 'Completed')
 
 
-def check_test_results(
+async def check_test_results(
         test_results: List[TestResult],
         correct_results: Iterable[str],
         points_list: List[int]
-) -> Generator[Callable[[int], ResultToDB], None, None]:
+) -> List[Callable[[int], ResultToDB]]:
     """Compare correct results with given, calculate points.
 
     Returns anonymous ResultToDB instances -
     submission_id should be given as an argument.
     """
+    results = list()
     for test_result, correct, points in zip(test_results, correct_results,
                                             points_list):
         status = test_result.status  # Inherit status from runner
@@ -66,6 +67,8 @@ def check_test_results(
             else:
                 status = 'WrongAnswer'
 
-        yield lambda submission_id: ResultToDB(
+        results.append(lambda submission_id: ResultToDB(
             submission_id, test_result.test_id, status, test_points,
-            test_result.wall_time, test_result.cpu_time)
+            test_result.wall_time, test_result.cpu_time))
+
+    return results
