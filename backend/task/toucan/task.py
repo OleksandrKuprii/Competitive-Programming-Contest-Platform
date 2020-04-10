@@ -1,8 +1,6 @@
 """Task module."""
 from typing import List
 
-from markdown2 import markdown
-
 from toucan import database, submission
 
 
