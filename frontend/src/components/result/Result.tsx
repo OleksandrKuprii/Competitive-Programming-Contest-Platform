@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 
 const Result = (
   { points, status }:
-  { points: number | undefined, status: string[] },
+  { points: number | undefined, status?: string[] },
 ) => {
   const { t } = useTranslation();
 
-  if (status.length === 0) {
+  if (!status || status.length === 0) {
     return (<></>);
   }
 

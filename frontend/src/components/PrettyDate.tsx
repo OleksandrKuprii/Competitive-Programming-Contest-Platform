@@ -1,54 +1,80 @@
 import * as React from 'react';
 
-const PrettyDate = ({ timestamp }: { timestamp: string }) => (
-  <span>
-    {(() => {
-      const now = new Date();
+const PrettyDate = ({ timestamp }: { timestamp?: Date }) => {
+  if (!timestamp) {
+    return <></>;
+  }
 
-      const delta = +now - +new Date(timestamp);
+  const now = new Date();
 
-      const deltaMinutes = Math.round(delta / 1000 / 60);
+  const delta = +now - +timestamp;
 
-      if (deltaMinutes < 1) {
-        return 'Recently';
-      }
+  const deltaMinutes = Math.round(delta / 1000 / 60);
 
-      if (deltaMinutes < 60) {
-        return `${deltaMinutes} minutes ago`;
-      }
+  if (deltaMinutes < 1) {
+    return <>Recently</>;
+  }
 
-      const deltaHours = Math.round(deltaMinutes / 60);
+  if (deltaMinutes < 60) {
+    return (
+      <>
+        {deltaMinutes}
+        {' '}
+        minutes ago
+      </>
+    );
+  }
 
-      if (deltaHours < 24) {
-        return `${deltaHours} hours ago`;
-      }
+  const deltaHours = Math.round(deltaMinutes / 60);
 
-      const deltaDays = Math.round(deltaHours / 24);
+  if (deltaHours < 24) {
+    return (
+      <>
+        {deltaHours}
+        {' '}
+        hours ago
+      </>
+    );
+  }
 
-      if (deltaDays < 365) {
-        return `${deltaDays} days ago`;
-      }
+  const deltaDays = Math.round(deltaHours / 24);
 
-      const currentDate = new Date(timestamp);
+  if (deltaDays < 365) {
+    return (
+      <>
+        {deltaDays}
+        {' '}
+        days ago
+      </>
+    );
+  }
 
-      const day = currentDate.getDay();
-      const month = currentDate.getMonth();
+  const currentDate = new Date(timestamp);
 
-      let dayString = day.toString();
+  const day = currentDate.getDay();
+  const month = currentDate.getMonth();
 
-      if (dayString.length === 1) {
-        dayString = `0${dayString}`;
-      }
+  let dayString = day.toString();
 
-      let monthString = month.toString();
+  if (dayString.length === 1) {
+    dayString = `0${dayString}`;
+  }
 
-      if (monthString.length === 1) {
-        monthString = `0${monthString}`;
-      }
+  let monthString = month.toString();
 
-      return `${dayString}.${monthString}.${currentDate.getFullYear()}`;
-    })()}
-  </span>
-);
+  if (monthString.length === 1) {
+    monthString = `0${monthString}`;
+  }
+
+  return (
+    <span>
+      {dayString}
+      .
+      {monthString}
+      .
+      {currentDate.getFullYear()}
+    </span>
+  );
+};
 
 export default PrettyDate;

@@ -1,21 +1,23 @@
 import * as React from 'react';
-import Spinner from 'react-bootstrap/Spinner';
 import { useTranslation } from 'react-i18next';
+import { memo } from 'react';
 
 const Loading = () => {
   const { t } = useTranslation();
 
   return (
-    <>
-      <div className="display-1 text-center">
-        <Spinner animation="border" />
+    <div className="text-center">
+      <div className="lds-facebook">
+        <div />
+        <div />
+        <div />
       </div>
-      <p className="h6 text-center p-3">
+      <p className="big p-0 font-weight-bold">
         {t('loading')}
         ...
       </p>
-    </>
+    </div>
   );
 };
 
-export default Loading;
+export default memo(Loading);

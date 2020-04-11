@@ -4,7 +4,7 @@ import NotificationToast from './NotificationToast';
 import { useStoreState } from '../../hooks/store';
 
 const Notifications = () => {
-  const notifications = useStoreState((state) => state.taskSubmission.submission.notification.list);
+  const notifications = useStoreState((state) => state.notification.list);
 
   return (
     <div style={{
@@ -30,5 +30,4 @@ const Notifications = () => {
     </div>
   );
 };
-
 export default Notifications;

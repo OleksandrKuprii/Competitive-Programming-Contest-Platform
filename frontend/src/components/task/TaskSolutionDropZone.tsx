@@ -10,6 +10,7 @@ import { useCallback } from 'react';
 import { useStoreActions, useStoreState } from '../../hooks/store';
 import SubmissionCodeViewer from '../submission/SubmissionCodeViewer';
 import getGeneralLanguageName from '../../utils/getGeneralLanguageName';
+import Loading from '../Loading';
 
 export interface SolutionDropZoneArgs {
   taskAlias: string
@@ -20,56 +21,32 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
 
   const [dragEntered, setDragEntered] = React.useState(false);
 
-  const file = useStoreState((state) => state.taskSubmission.submission.file.file);
-  const fileText = useStoreState((state) => state.taskSubmission.submission.file.fileText);
-  const language = useStoreState((state) => state.taskSubmission.submission.file.language);
+  const code = useStoreState((state) => state.solutionSubmission.code);
+  const language = useStoreState((state) => state.solutionSubmission.language);
+  const filename = useStoreState((state) => state.solutionSubmission.filename);
+  const fileLoading = useStoreState((state) => state.solutionSubmission.loading.flag);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-  const token = useStoreState((state) => state.auth0.token);
 
-  const canceled = useStoreActions(
-    (actions) => actions.taskSubmission.submission.file.canceled,
-  );
-  const selectedLanguage = useStoreActions(
-    (actions) => actions.taskSubmission.submission.file.selectedLanguage,
-  );
-  const updatedFile = useStoreActions(
-    (actions) => actions.taskSubmission.submission.file.updatedFile,
-  );
-  const uploadFile = useStoreActions(
-    (actions) => actions.taskSubmission.submission.file.uploadFile,
-  );
-  const submitSubmission = useStoreActions(
-    (actions) => actions.taskSubmission.submission.submitSubmission,
-  );
+  const uploadFile = useStoreActions((state) => state.solutionSubmission.uploadFile);
+  const selectedLanguage = useStoreActions((state) => state.solutionSubmission.selectedLanguage);
+  const submit = useStoreActions((state) => state.solutionSubmission.submit);
+  const canceled = useStoreActions((state) => state.solutionSubmission.canceled);
 
   const languages = ['python3', 'python2', 'c++', 'c'];
 
   const submitSolutionCallback = useCallback(async () => {
-    if (!taskAlias || !token || !fileText) {
-      return;
-    }
-
-    updatedFile({ file: undefined, fileText: undefined });
-
-    await submitSubmission({
-      language: language || languages[0],
-      taskAlias,
-      token,
-      code: fileText,
-    });
+    submit(taskAlias);
   },
-  [submitSubmission,
-    languages,
-    language,
-    token,
-    fileText,
-    taskAlias,
-    updatedFile]);
+  [submit, taskAlias]);
+
+  if (fileLoading) {
+    return <Loading />;
+  }
 
   return (
     <Dropzone
       multiple={false}
-      disabled={file !== undefined}
+      disabled={code !== undefined}
       onDropAccepted={async (files) => {
         setDragEntered(false);
         await uploadFile(files[0]);
@@ -87,18 +64,16 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
             {/* eslint-enable react/jsx-props-no-spreading */}
 
             <div className={dragEntered ? 'drop-zone drop-zone-drag-on' : 'drop-zone'}>
-              {file === undefined ? t('taskPage.dropFileHere')
+              {code === undefined ? t('taskPage.dropFileHere')
                 : (
                   <Row>
                     <Col>
-                      <p className="h4 text-center">{file?.name}</p>
+                      <p className="h4 text-center">{filename}</p>
 
                       <FormControl
                         as="select"
-                        onChange={
-                          (e) => selectedLanguage((e.target as HTMLSelectElement).value)
-                        }
-                        value={language || ''}
+                        onChange={(e) => selectedLanguage((e.target as HTMLSelectElement).value)}
+                        value={language || languages[0]}
                       >
                         {languages.map((element) => (
                           <option key={`language-${element}-option`}>
@@ -122,7 +97,7 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
                       </ButtonGroup>
                     </Col>
                     <Col md={8}>
-                      <SubmissionCodeViewer code={fileText || ''} language={getGeneralLanguageName(language || undefined)} />
+                      <SubmissionCodeViewer code={code || ''} language={getGeneralLanguageName(language || undefined)} />
                     </Col>
                   </Row>
                 )}

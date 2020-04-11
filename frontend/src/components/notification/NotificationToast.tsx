@@ -6,14 +6,14 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { FaAngleDoubleRight } from 'react-icons/fa';
 import { useStoreActions } from '../../hooks/store';
-import { Notification } from '../../models/notificationModel';
 import SubmissionLink from '../submission/SubmissionLink';
 import Result from '../result/Result';
 import TaskLinkByAlias from '../task/TaskLinkByAlias';
+import { Notification } from '../../models/interfaces';
 
 const notificationBodyBuilders = {
   submitting: (notification: { id: number, type: 'submitting', taskAlias: string }) => (
-    <TaskLinkByAlias alias={notification.taskAlias} />
+    <TaskLinkByAlias id={notification.taskAlias} />
   ),
   submitted: (notification: { id: number, type: 'submitted', submissionId: number }) => (
     <SubmissionLink id={notification.submissionId}>
@@ -32,7 +32,7 @@ const NotificationToast = ({ notification }: { notification: Notification }) => 
   const { t } = useTranslation();
 
   const dismissedNotification = useStoreActions(
-    (actions) => actions.taskSubmission.submission.notification.dismissedNotification,
+    (actions) => actions.notification.dismissedNotification,
   );
 
   const onClose = useCallback(() => {

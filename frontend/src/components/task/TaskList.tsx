@@ -3,40 +3,36 @@ import CustomTable, { CustomTableRow } from '../CustomTable';
 import TaskDifficulty from './TaskDifficulty';
 import TaskRatingHistogram from './TaskRatingHistogram';
 import TaskLinkByTask from './TaskLinkByTask';
-import { Task } from '../../models/taskModel';
 import GreatestResult from '../result/GreatestResult';
+import CategoryName from '../category/CategoryName';
+import { Task } from '../../models/interfaces';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
-  const sortedTasks = tasks.slice();
-  sortedTasks.sort((a, b) => ((a.name || '') > (b.name || '') ? 1 : -1));
-
-  const rows = sortedTasks.map(
+  const rows = tasks.map(
     ({
-      alias, name, difficulty, rating, category,
+      id, name, difficulty, rating, category,
     }) => ({
-      id: alias,
+      id,
       row: (
         <>
           <td>
-            <TaskLinkByTask taskName={name || ''} alias={alias} />
+            <TaskLinkByTask taskName={name} id={id} />
           </td>
           <td>
-            {category === undefined
-              ? ''
-              : category}
+            <CategoryName id={category} />
           </td>
           <td>
             {difficulty === undefined
               ? ''
-              : <TaskDifficulty id={alias} difficulty={difficulty} />}
+              : <TaskDifficulty id={id} difficulty={difficulty} />}
           </td>
           <td>
             {rating === undefined
               ? ''
-              : <TaskRatingHistogram id={alias} rating={rating} />}
+              : <TaskRatingHistogram id={id} rating={rating} />}
           </td>
           <td>
-            <GreatestResult taskAlias={alias} />
+            <GreatestResult taskAlias={id} />
           </td>
         </>
       ),
