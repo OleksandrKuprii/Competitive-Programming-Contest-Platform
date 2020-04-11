@@ -2,6 +2,7 @@
 import asyncio
 import concurrent.futures
 import json
+import logging
 import os
 
 import aioboto3
@@ -13,6 +14,12 @@ from toucan.runner import worker
 SUBMISSIONS_QUEUE_URL = os.getenv('SUBMISSIONS_QUEUE_URL')
 
 assert SUBMISSIONS_QUEUE_URL is not None
+
+logging.basicConfig(filename='runner.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
 
 
 async def main():
@@ -49,6 +56,12 @@ async def main():
                     # of SubmissionToRunner dataclass
                     submission_to_runner = [SubmissionToRunner(**json.loads(
                         await message.body)) for message in messages]
+
+                    for message in messages:
+                        submission_id = json.loads(await message.body)[
+                            'submission_id']
+
+                        logging.info(f'#{submission_id} Received')
 
                 except TypeError:
                     return

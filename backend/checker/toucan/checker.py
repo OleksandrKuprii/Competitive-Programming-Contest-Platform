@@ -1,9 +1,17 @@
 """Checks user submission program output."""
+import logging
 from typing import Callable, Iterable, List
 
 from toucan import database
 from toucan import storage
 from toucan.dataclass import ResultToChecker, ResultToDB, TestResult
+
+
+logging.basicConfig(filename='runner.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
 
 
 async def process_result_to_checker(result_to_checker: ResultToChecker
@@ -23,6 +31,8 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
     # Getting correct results from storage
     correct_results = await storage.get_correct_results(test_ids)
 
+    logging.info(f'#{submission_id} Checker got correct results')
+
     # Getting points for each test from database
     points = await database.get_points_for_tests(test_ids)
 
@@ -32,6 +42,8 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
         for result_to_db_without_submission_id in await check_test_results(
             result_to_checker.test_results, correct_results, points))
 
+    logging.info(f'#{submission_id} Checked results')
+
     # Adding results to database
     await database.add_results_to_db(results_to_db)
 
@@ -40,6 +52,8 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
 
     # Changing submission status in database to 'Completed'
     await database.change_submission_status(submission_id, 'Completed')
+
+    logging.info(f'#{submission_id} Finished everything')
 
 
 async def check_test_results(

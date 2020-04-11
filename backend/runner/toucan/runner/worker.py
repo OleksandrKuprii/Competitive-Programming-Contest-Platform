@@ -1,5 +1,6 @@
 """Worker logic."""
 import asyncio
+import logging
 import os
 import tempfile
 import typing
@@ -14,6 +15,12 @@ from toucan.dataclass import ResultToChecker, SubmissionToRunner, TestResult
 client = docker.from_env()
 
 lang_to_image = {'python3': 'python:3.8-slim'}
+
+logging.basicConfig(filename='runner.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
 
 
 def process_submission_to_runner(
@@ -168,24 +175,29 @@ async def execute_tests(
     submission_code_path = await toucan.storage.download_submission_code(
         submission_to_runner.submission_id, submission_to_runner.lang)
 
+    logging.info(f'#{submission_to_runner.submission_id} Downloaded code')
+
     # Submission code basename
     submission_code_path_basename = os.path.basename(submission_code_path)
 
     # Submission code absolute path
     submission_code_path = os.path.abspath(submission_code_path)
 
-    inputs = list()
+    execute_result = list()
     for test_id, input_path in zip(
             submission_to_runner.test_ids,
             await toucan.storage.download_inputs(
                 submission_to_runner.test_ids)):
-        inputs.append((await execute_test(container_image,
-                                          submission_code_path,
-                                          submission_code_path_basename,
-                                          os.path.abspath(input_path),
-                                          submission_to_runner.memory_limit,
-                                          submission_to_runner.wall_time_limit,
-                                          submission_to_runner.cpu_time_limit))
-                      (test_id))
+        execute_result.append(
+            (await execute_test(container_image,
+                                submission_code_path,
+                                submission_code_path_basename,
+                                os.path.abspath(input_path),
+                                submission_to_runner.memory_limit,
+                                submission_to_runner.wall_time_limit,
+                                submission_to_runner.cpu_time_limit))
+            (test_id))
 
-    return inputs
+    logging.info(f'#{submission_to_runner.submission_id} Executed tests')
+
+    return execute_result
