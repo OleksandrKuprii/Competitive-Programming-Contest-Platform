@@ -425,6 +425,7 @@ async def get_submissions(user_id: str, number: int, offset: int) \
                    LEFT JOIN coreschema.tasks
                    ON tasks.id = task_id
                    WHERE user_id = $1
+                   ORDER BY id DESC
                    LIMIT $2 OFFSET $3;''',
                 user_id, number, offset)
 
