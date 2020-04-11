@@ -35,8 +35,6 @@ const main = async () => {
 
     avatar = user.picture;
     username = user.name;
-
-    console.log(await auth0.getTokenSilently());
   }
 
   const store = createStore(storeModel({

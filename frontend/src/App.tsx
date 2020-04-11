@@ -1,10 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Container } from 'react-bootstrap';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import createAuth0Client from '@auth0/auth0-spa-js';
-import { createStore, StoreProvider } from 'easy-peasy';
-// eslint-disable-next-line import/no-unresolved
-import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import Navbar from './components/Navbar';
 import HomePage from './routes/HomePage';
 import TasksPage from './routes/TasksPage';

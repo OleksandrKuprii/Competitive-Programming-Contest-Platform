@@ -10,6 +10,7 @@ import { useCallback } from 'react';
 import { useStoreActions, useStoreState } from '../../hooks/store';
 import SubmissionCodeViewer from '../submission/SubmissionCodeViewer';
 import getGeneralLanguageName from '../../utils/getGeneralLanguageName';
+import Loading from '../Loading';
 
 export interface SolutionDropZoneArgs {
   taskAlias: string
@@ -23,18 +24,24 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
   const code = useStoreState((state) => state.solutionSubmission.code);
   const language = useStoreState((state) => state.solutionSubmission.language);
   const filename = useStoreState((state) => state.solutionSubmission.filename);
+  const fileLoading = useStoreState((state) => state.solutionSubmission.loading.flag);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
   const uploadFile = useStoreActions((state) => state.solutionSubmission.uploadFile);
   const selectedLanguage = useStoreActions((state) => state.solutionSubmission.selectedLanguage);
   const submit = useStoreActions((state) => state.solutionSubmission.submit);
+  const canceled = useStoreActions((state) => state.solutionSubmission.canceled);
 
   const languages = ['python3', 'python2', 'c++', 'c'];
 
   const submitSolutionCallback = useCallback(async () => {
     submit(taskAlias);
   },
-  []);
+  [submit, taskAlias]);
+
+  if (fileLoading) {
+    return <Loading />;
+  }
 
   return (
     <Dropzone
@@ -65,10 +72,8 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
 
                       <FormControl
                         as="select"
-                        onChange={
-                          (e) => selectedLanguage((e.target as HTMLSelectElement).value)
-                        }
-                        value={language || ''}
+                        onChange={(e) => selectedLanguage((e.target as HTMLSelectElement).value)}
+                        value={language || languages[0]}
                       >
                         {languages.map((element) => (
                           <option key={`language-${element}-option`}>
@@ -88,7 +93,7 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
                         )}
                       <ButtonGroup>
                         <Button variant="primary" disabled={!isAuthenticated} onClick={() => submitSolutionCallback()}>Submit</Button>
-                        <Button variant="secondary" onClick={() => alert('Doesn"t work')}>Cancel</Button>
+                        <Button variant="secondary" onClick={() => canceled()}>Cancel</Button>
                       </ButtonGroup>
                     </Col>
                     <Col md={8}>
@@ -102,8 +107,6 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
       )}
     </Dropzone>
   );
-
-  return <></>;
 };
 
 export default TaskSolutionDropZone;

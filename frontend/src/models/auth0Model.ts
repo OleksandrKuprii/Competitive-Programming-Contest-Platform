@@ -1,17 +1,5 @@
-import { thunk, Thunk } from 'easy-peasy';
-import Injections from '../injections';
-
-export interface Auth0ModelInitialState {
-  isAuthenticated: boolean,
-  user: any,
-  username: string,
-  avatar: string,
-}
-
-export interface Auth0Model extends Auth0ModelInitialState {
-  signIn: Thunk<Auth0Model, undefined, Injections>,
-  signOut: Thunk<Auth0Model, undefined, Injections>,
-}
+import { thunk } from 'easy-peasy';
+import { Auth0Model, Auth0ModelInitialState } from './interfaces';
 
 const auth0Model: (initialState: Auth0ModelInitialState) => Auth0Model = (initialState) => ({
   ...initialState,

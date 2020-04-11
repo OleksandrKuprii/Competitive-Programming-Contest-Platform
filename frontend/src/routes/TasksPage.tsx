@@ -9,14 +9,19 @@ import Loading from '../components/Loading';
 const TasksPage = () => {
   const { t } = useTranslation();
 
-  const tasks = useStoreState((state) => state.task.items);
+  const nTasks = useStoreState((state) => state.task.nItems);
   const tasksLoading = useStoreState((state) => state.task.loading.flag);
 
   const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
 
+  const tasks = nTasks(50);
+
   useEffect(() => {
-    fetchTasks({ offset: 0, number: 10 });
-  }, [fetchTasks]);
+    if (!tasksLoading && tasks.length < 50) {
+      fetchTasks({ offset: 0, number: 50 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (tasksLoading) {
     return <Loading />;

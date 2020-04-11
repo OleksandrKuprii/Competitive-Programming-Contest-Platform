@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { TaskRating } from '../../models/taskModel';
+import { TaskRating } from '../../models/interfaces';
 
 
 const TaskRatingHistogram = ({ id, rating }: { id: any, rating: TaskRating }) => (

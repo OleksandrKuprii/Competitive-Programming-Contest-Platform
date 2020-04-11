@@ -1,10 +1,5 @@
-import { action, Action } from 'easy-peasy';
-
-export interface LoadingModel {
-  flag: boolean,
-  loading: Action<LoadingModel>,
-  loaded: Action<LoadingModel>,
-}
+import { action } from 'easy-peasy';
+import { LoadingModel } from '../interfaces';
 
 const loadingModel: () => LoadingModel = () => ({
   flag: false,

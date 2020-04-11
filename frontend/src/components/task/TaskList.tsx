@@ -3,9 +3,9 @@ import CustomTable, { CustomTableRow } from '../CustomTable';
 import TaskDifficulty from './TaskDifficulty';
 import TaskRatingHistogram from './TaskRatingHistogram';
 import TaskLinkByTask from './TaskLinkByTask';
-import { Task } from '../../models/taskModel';
 import GreatestResult from '../result/GreatestResult';
 import CategoryName from '../category/CategoryName';
+import { Task } from '../../models/interfaces';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
   const rows = tasks.map(

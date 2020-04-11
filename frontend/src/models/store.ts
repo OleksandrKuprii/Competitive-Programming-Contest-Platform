@@ -1,18 +1,11 @@
-import auth0Model, { Auth0Model, Auth0ModelInitialState } from './auth0Model';
-import taskModel, { TaskModel } from './taskModel';
-import submissionModel, { SubmissionModel } from './submissionModel';
-import categoryModel, { CategoryModel } from './categoryModel';
-import solutionSubmissionModel, { SolutionSubmissionModel } from './solutionSubmissionModel';
-import notificationModel, { NotificationModel } from './notificationModel';
-
-export interface StoreModel {
-  auth0: Auth0Model,
-  task: TaskModel,
-  category: CategoryModel,
-  submission: SubmissionModel,
-  solutionSubmission: SolutionSubmissionModel,
-  notification: NotificationModel,
-}
+import auth0Model from './auth0Model';
+import taskModel from './taskModel';
+import submissionModel from './submissionModel';
+import categoryModel from './categoryModel';
+import solutionSubmissionModel from './solutionSubmissionModel';
+import notificationModel from './notificationModel';
+import submissionHunterModel from './submissionHunterModel';
+import { Auth0ModelInitialState, StoreModel } from './interfaces';
 
 const storeModel: (auth0ModelInitialState: Auth0ModelInitialState) => StoreModel = (
   auth0ModelInitialState,
@@ -23,6 +16,7 @@ const storeModel: (auth0ModelInitialState: Auth0ModelInitialState) => StoreModel
   submission: submissionModel,
   solutionSubmission: solutionSubmissionModel,
   notification: notificationModel,
+  submissionHunter: submissionHunterModel,
 });
 
 export default storeModel;

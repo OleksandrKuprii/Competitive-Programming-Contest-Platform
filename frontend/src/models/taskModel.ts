@@ -1,47 +1,13 @@
-import { thunk, Thunk, thunkOn } from 'easy-peasy';
-import dataModel, { DataModel, ObjectWithId } from './generalizers/dataModel';
+import { thunk } from 'easy-peasy';
+import dataModel from './generalizers/dataModel';
 import baseURL from './apiBaseURL';
-import { Category } from './categoryModel';
-import { Submission } from './submissionModel';
-import resultToPointsAndStatus from "../utils/resultToPointsAndStatus";
-
-export interface TaskRating {
-  correct: number,
-  partiallyCorrect: number,
-  zeroPointAnswer: number
-}
-
-export interface TaskExample {
-  input: string,
-  output: string,
-}
-
-export interface TaskLimits {
-  cpuTime: number,
-  wallTime: number,
-  memory: number,
-}
-
-export interface Task extends ObjectWithId {
-  name?: string,
-  category?: string,
-  difficulty?: number,
-  rating: TaskRating,
-  description?: {
-    main?: string,
-    inputFormat?: string,
-    outputFormat?: string,
-  },
-  examples?: TaskExample[],
-  limits?: TaskLimits,
-}
-
-export interface TaskModel extends DataModel<Task> {
-  updateTaskCategory: Thunk<TaskModel, Category>
-}
+import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
+import {
+  Category, Submission, Task, TaskModel,
+} from './interfaces';
 
 const taskModel: TaskModel = {
-  ...dataModel<Task>({
+  ...dataModel<string, Task>({
     dataItemFetcher: async (id, args) => {
       const { token } = args;
 
@@ -53,12 +19,11 @@ const taskModel: TaskModel = {
 
       const data = await response.json();
 
-      console.log(data);
-
       return {
-        item: {
+        item: ({
           id,
           name: data.name,
+          loading: false,
           description: {
             main: data.main,
             inputFormat: data.input_format,
@@ -72,8 +37,8 @@ const taskModel: TaskModel = {
           examples: data.examples.map((item: any) => ({
             input: item.input_data,
             output: item.output_data,
-          }))
-        },
+          })),
+        } as Task),
       };
     },
     dataRangeFetcher: async (range, args) => {

@@ -6,28 +6,44 @@ import SubmissionCodeViewer from '../components/submission/SubmissionCodeViewer'
 import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
 import Result from '../components/result/Result';
-import TaskLinkByTask from '../components/task/TaskLinkByTask';
 import { useStoreState, useStoreActions } from '../hooks/store';
-import { Submission } from '../models/submissionModel';
-import { Task } from '../models/taskModel';
 import getGeneralLanguageName from '../utils/getGeneralLanguageName';
-import ErrorPage from './ErrorPage';
 import Loading from '../components/Loading';
-import TaskLinkByAlias from "../components/task/TaskLinkByAlias";
+import TaskLinkByAlias from '../components/task/TaskLinkByAlias';
 
 
 const SubmissionPage = () => {
-  const { id } = useParams();
+  const { id: idStr } = useParams();
 
-  const submission = useStoreState((state) => id ? state.submission.byId(id) : undefined);
+  const id = idStr ? parseInt(idStr, 10) : undefined;
+
+  const submission = useStoreState((state) => (id ? state.submission.byId(id) : undefined));
+  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
+
+  const isHunting = useStoreState(
+    (state) => (id ? state.submissionHunter.isHunting(id) : undefined),
+  );
 
   const fetchSubmission = useStoreActions((actions) => actions.submission.fetchOne);
+  const signIn = useStoreActions((actions) => actions.auth0.signIn);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      signIn();
+    }
+
+    if (isHunting) {
+      return;
+    }
+
     if (id) {
       fetchSubmission(id);
     }
-  }, []);
+  }, [signIn, isAuthenticated, id, isHunting, fetchSubmission]);
+
+  if (submission?.loading || isHunting) {
+    return <Loading />;
+  }
 
   const infoTableRow: CustomTableRow = {
     id: `${submission?.submitted}-${submission?.status}`,
@@ -59,7 +75,7 @@ const SubmissionPage = () => {
       ({
         points, status, cpuTime, realtime,
       }, i) => ({
-        id: `${points}-${status}-${cpuTime}-${realtime}`,
+        id: i,
         row: (
           <>
             <td>{i}</td>

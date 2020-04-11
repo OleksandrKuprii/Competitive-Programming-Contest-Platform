@@ -1,58 +1,14 @@
 import {
-  action, Action, computed, Computed, TargetResolver, thunk, Thunk, ThunkOn, thunkOn,
+  action, computed, thunk, thunkOn,
 } from 'easy-peasy';
-import loadingModel, { LoadingModel } from './loadingModel';
+import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
-import Injections from '../../injections';
-import {StoreModel} from "../store";
+import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
 
-export type DataItemIdentifier = string;
-export type DataItemRangeIdentifier = { offset: number, number: number };
-
-interface StringIndexSignature {
-  [key: string]: any
-}
-
-export interface ObjectWithId extends StringIndexSignature {
-  id: DataItemIdentifier;
-}
-
-export interface DataModel<DataItem extends ObjectWithId> {
-  loading: LoadingModel,
-
-  items: Array<DataItem>,
-
-  updated: Action<DataModel<DataItem>, DataItem>,
-
-  fetchOne: Thunk<DataModel<DataItem>, DataItemIdentifier, Injections>,
-  fetchRange: Thunk<DataModel<DataItem>, DataItemRangeIdentifier, Injections>,
-
-  onFetchedOne: ThunkOn<DataModel<DataItem>>,
-  onFetchedRange: ThunkOn<DataModel<DataItem>>,
-
-  onChangedOne: ThunkOn<DataModel<DataItem>, Injections, StoreModel>,
-  onChangedMany: ThunkOn<DataModel<DataItem>, Injections, StoreModel>,
-
-  byId: Computed<DataModel<DataItem>, (id: DataItemIdentifier) => DataItem | undefined>,
-}
-
-export interface DataFetcherArgs {
-  token?: string,
-}
-
-export interface DataModelFactoryArgs {
-  dataItemFetcher: (id: DataItemIdentifier,
-    args: DataFetcherArgs) => Promise<{ item: ObjectWithId }>,
-  dataRangeFetcher: (range: DataItemRangeIdentifier,
-    args: DataFetcherArgs) => Promise<Array<{ item: ObjectWithId }>>,
-
-  onChangedOneTargets: TargetResolver<DataModel<ObjectWithId>, StoreModel>,
-  onChangedManyTargets: TargetResolver<DataModel<ObjectWithId>, StoreModel>,
-
-  dataModelIdentifier: string,
-}
-
-const dataModel: <T extends ObjectWithId>(args: DataModelFactoryArgs) => DataModel<T> = ({
+const dataModel: <Identifier,
+  Item extends DataModelItem<Identifier>
+  >(args: DataModelFactoryArgs<Identifier, Item>) =>
+DataModel<Identifier, Item> = ({
   dataItemFetcher, dataRangeFetcher,
   onChangedOneTargets, onChangedManyTargets,
   dataModelIdentifier,
@@ -66,19 +22,24 @@ const dataModel: <T extends ObjectWithId>(args: DataModelFactoryArgs) => DataMod
   }),
 
   fetchOne: thunk(async (actions, id, { injections }) => {
-    actions.loading.loading();
+    const loadingItem: any = {
+      id,
+      loading: true,
+    };
+
+    actions.updated(loadingItem);
 
     let token;
 
     try {
       token = await injections.auth0.getTokenSilently();
-    } catch {}
+    } catch {
+      token = undefined;
+    }
 
     const item = await dataItemFetcher(id, {
       token,
     });
-
-    actions.loading.loaded();
 
     return item;
   }),
@@ -90,7 +51,9 @@ const dataModel: <T extends ObjectWithId>(args: DataModelFactoryArgs) => DataMod
 
     try {
       token = await injections.auth0.getTokenSilently();
-    } catch {}
+    } catch {
+      token = undefined;
+    }
 
     const items = await dataRangeFetcher(range, {
       token,
@@ -141,6 +104,9 @@ const dataModel: <T extends ObjectWithId>(args: DataModelFactoryArgs) => DataMod
 
   byId: computed((state) => (id) => (
     state.items.find((item) => item.id === id))),
+
+  nItems: computed((state) => (number) => (
+    state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number))),
 });
 
 export default dataModel;

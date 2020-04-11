@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useStoreState } from '../../hooks/store';
-import { Submission } from '../../models/submissionModel';
 import SubmissionLink from '../submission/SubmissionLink';
 import Result from './Result';
+import { Submission } from '../../models/interfaces';
 
 const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined }) => {
   const submissions = useStoreState((state) => state.submission.items);

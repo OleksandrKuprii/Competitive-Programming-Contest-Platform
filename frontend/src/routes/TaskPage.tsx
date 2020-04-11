@@ -3,14 +3,13 @@ import { Col, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Parser as HtmlToReactParser } from 'html-to-react';
+import { useEffect } from 'react';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import CustomTable from '../components/CustomTable';
 import TaskSolutionDropZone from '../components/task/TaskSolutionDropZone';
-import { Task } from '../models/taskModel';
 import Loading from '../components/Loading';
 import ErrorPage from './ErrorPage';
 import GreatestResult from '../components/result/GreatestResult';
-import {useEffect} from "react";
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -27,10 +26,15 @@ const TaskPage = () => {
     }
 
     fetchTask(taskAlias);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!taskAlias || !task) {
     return <ErrorPage code="notFound" />;
+  }
+
+  if (task.loading) {
+    return <Loading />;
   }
 
   const htmlToReactParser = new HtmlToReactParser();

@@ -1,26 +1,7 @@
-import {
-  action, Action, Thunk, thunk,
-} from 'easy-peasy';
-import loadingModel, { LoadingModel } from './generalizers/loadingModel';
-import Injections from '../injections';
+import { action, thunk } from 'easy-peasy';
+import loadingModel from './generalizers/loadingModel';
 import baseURL from './apiBaseURL';
-import { Submission, SubmissionModel } from './submissionModel';
-
-export interface SolutionSubmissionModel {
-  code?: string;
-  filename?: string;
-  language?: string;
-
-  loading: LoadingModel,
-
-  selectedLanguage: Action<SolutionSubmissionModel, string>,
-  uploadedFile: Action<SolutionSubmissionModel, { code: string, filename: string }>
-  canceled: Action<SolutionSubmissionModel>,
-  onSubmitRequested: Action<SolutionSubmissionModel, string>,
-
-  uploadFile: Thunk<SolutionSubmissionModel, File>,
-  submit: Thunk<SolutionSubmissionModel, string, Injections>,
-}
+import { SolutionSubmissionModel, Submission } from './interfaces';
 
 const solutionSubmissionModel: SolutionSubmissionModel = {
   loading: loadingModel(),
@@ -36,17 +17,21 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     code,
     filename,
     language: state.language,
-    loading: state.loading,
+    loading: {
+      flag: state.loading.flag,
+    },
   })),
 
   canceled: action((state) => ({
     code: undefined,
     filename: undefined,
     language: undefined,
-    loading: state.loading,
+    loading: {
+      flag: state.loading.flag,
+    },
   })),
 
-  onSubmitRequested: action((state, taskName) => {}),
+  onSubmitRequested: action(() => {}),
 
   uploadFile: thunk(async (actions, file) => {
     actions.loading.loading();
@@ -68,7 +53,9 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
 
     try {
       token = await injections.auth0.getTokenSilently();
-    } catch {}
+    } catch {
+      token = undefined;
+    }
 
     const response = await fetch(`${baseURL}/submission`, {
       method: 'POST',
@@ -88,6 +75,7 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
       submission: ({
         id: body.submission_id,
         submitted: new Date(body.timestamp),
+        loading: true,
       } as Submission),
     };
   }),

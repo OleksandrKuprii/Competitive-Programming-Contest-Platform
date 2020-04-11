@@ -1,34 +1,15 @@
-import dataModel, { DataModel, ObjectWithId } from './generalizers/dataModel';
+import dataModel from './generalizers/dataModel';
 import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-import { Task } from './taskModel';
-
-export interface SubmissionTest {
-  status: string;
-  points: number;
-  cpuTime: number;
-  realtime: number;
-}
-
-export interface Submission extends ObjectWithId {
-  taskAlias?: string
-  language?: string
-  status?: string[]
-  points?: number
-  submitted?: Date,
-  tests?: SubmissionTest[],
-  code?: string
-}
-
-export interface SubmissionModel extends DataModel<Submission> {}
+import { Submission, SubmissionModel, Task } from './interfaces';
 
 const submissionModel: SubmissionModel = {
-  ...dataModel<Submission>({
+  ...dataModel<number, Submission>({
     dataItemFetcher: async (id, args) => {
       const { token } = args;
 
       if (!token) {
-        return { item: { id } };
+        return { item: { id, loading: false } };
       }
 
       const response = await fetch(`${baseURL}/submission/${id}`, {
@@ -42,6 +23,7 @@ const submissionModel: SubmissionModel = {
       return {
         item: ({
           id,
+          loading: false,
           submitted: new Date(body.timestamp),
           taskAlias: body.alias,
           language: body.lang,
@@ -81,6 +63,7 @@ const submissionModel: SubmissionModel = {
         item: ({
           id: item.id,
           taskAlias: item.alias,
+          loading: false,
           submitted: new Date(item.published_at),
           language: item.lang,
           ...resultToPointsAndStatus(item.result),
