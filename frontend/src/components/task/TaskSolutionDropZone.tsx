@@ -32,7 +32,7 @@ const TaskSolutionDropZone = ({ taskAlias }: SolutionDropZoneArgs) => {
   const languages = ['python3', 'python2', 'c++', 'c'];
 
   const submitSolutionCallback = useCallback(async () => {
-    submit();
+    submit(taskAlias);
   },
   []);
 

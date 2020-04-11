@@ -3,6 +3,7 @@ import dataModel, { DataModel, ObjectWithId } from './generalizers/dataModel';
 import baseURL from './apiBaseURL';
 import { Category } from './categoryModel';
 import { Submission } from './submissionModel';
+import resultToPointsAndStatus from "../utils/resultToPointsAndStatus";
 
 export interface TaskRating {
   correct: number,
@@ -97,10 +98,10 @@ const taskModel: TaskModel = {
           id: task.category.alias,
           name: task.category.name,
         } as Category),
-        submission: (!task.best_submission ? undefined : {
+        submission: (task.best_submission.id === null ? undefined : {
           id: task.best_submission.id,
-          status: ['Correct'],
-          points: 100,
+          taskAlias: task.alias,
+          ...resultToPointsAndStatus(task.best_submission.result),
         } as Submission),
       }));
     },
@@ -108,7 +109,9 @@ const taskModel: TaskModel = {
     onChangedManyTargets: (state, storeActions) => [
       storeActions.submission.fetchRange,
     ],
-    onChangedOneTargets: (state, storeActions) => [],
+    onChangedOneTargets: (state, storeActions) => [
+      storeActions.submission.fetchOne,
+    ],
 
     dataModelIdentifier: 'task',
   }),

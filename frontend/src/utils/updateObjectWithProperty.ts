@@ -4,7 +4,7 @@ interface StringIndexSignature {
 
 function updateObjectWithProperty(arr: StringIndexSignature[],
   key: string, value: any, newObj: any) {
-  const objWithProperty = arr.find((obj) => value === obj[key]);
+  const objWithProperty = arr.find((obj) => value == obj[key]);
 
   let changed = false;
 

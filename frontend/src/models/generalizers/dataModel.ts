@@ -104,6 +104,10 @@ const dataModel: <T extends ObjectWithId>(args: DataModelFactoryArgs) => DataMod
   onFetchedOne: thunkOn(
     (actions) => actions.fetchOne,
     (actions, target) => {
+      if (!target.result) {
+        return;
+      }
+
       actions.updated(target.result.item);
     },
   ),
@@ -122,12 +126,16 @@ const dataModel: <T extends ObjectWithId>(args: DataModelFactoryArgs) => DataMod
   ),
 
   onChangedOne: thunkOn(onChangedOneTargets, (actions, target) => {
-    actions.updated(target.result[dataModelIdentifier]);
+    if (target.result[dataModelIdentifier]) {
+      actions.updated(target.result[dataModelIdentifier]);
+    }
   }),
 
   onChangedMany: thunkOn(onChangedManyTargets, (actions, target) => {
     target.result.forEach((item: any) => {
-      actions.updated(item[dataModelIdentifier]);
+      if (item[dataModelIdentifier]) {
+        actions.updated(item[dataModelIdentifier]);
+      }
     });
   }),
 

@@ -3,6 +3,7 @@ import taskModel, { TaskModel } from './taskModel';
 import submissionModel, { SubmissionModel } from './submissionModel';
 import categoryModel, { CategoryModel } from './categoryModel';
 import solutionSubmissionModel, { SolutionSubmissionModel } from './solutionSubmissionModel';
+import notificationModel, { NotificationModel } from './notificationModel';
 
 export interface StoreModel {
   auth0: Auth0Model,
@@ -10,6 +11,7 @@ export interface StoreModel {
   category: CategoryModel,
   submission: SubmissionModel,
   solutionSubmission: SolutionSubmissionModel,
+  notification: NotificationModel,
 }
 
 const storeModel: (auth0ModelInitialState: Auth0ModelInitialState) => StoreModel = (
@@ -20,6 +22,7 @@ const storeModel: (auth0ModelInitialState: Auth0ModelInitialState) => StoreModel
   category: categoryModel,
   submission: submissionModel,
   solutionSubmission: solutionSubmissionModel,
+  notification: notificationModel,
 });
 
 export default storeModel;

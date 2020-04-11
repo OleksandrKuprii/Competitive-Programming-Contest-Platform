@@ -1,7 +1,9 @@
 import {
-  action, Action, thunk, Thunk,
+  action, Action, State, thunk, Thunk, thunkOn, ThunkOn,
 } from 'easy-peasy';
 import sleep from '../utils/sleep';
+import Injections from '../injections';
+import { StoreModel } from './store';
 
 export type Notification = {
   id: number,
@@ -30,9 +32,12 @@ export interface NotificationModel {
   dismissedNotification: Action<NotificationModel, number>,
 
   addNotificationAndRemoveAfterDelay: Thunk<NotificationModel, Notification>,
+
+  onSubmitRequested: ThunkOn<NotificationModel, Injections, StoreModel>,
+  onSubmitted: ThunkOn<NotificationModel, Injections, StoreModel>,
 }
 
-const notificationModel: () => NotificationModel = () => ({
+const notificationModel: NotificationModel = {
   list: [],
 
   receivedNotification: action((state, notification) => {
@@ -51,6 +56,24 @@ const notificationModel: () => NotificationModel = () => ({
 
     actions.dismissedNotification(notification.id);
   }),
-});
+
+  onSubmitRequested: thunkOn(
+    (actions, storeActions) => storeActions.solutionSubmission.onSubmitRequested,
+    (actions, target) => {
+      actions.receivedNotification({
+        id: +new Date(),
+        type: 'submitting',
+        taskAlias: target.payload,
+      });
+    },
+  ),
+
+  onSubmitted: thunkOn(
+    (actions, storeActions) => storeActions.solutionSubmission.submit,
+    (actions, target) => {
+
+    },
+  ),
+};
 
 export default notificationModel;

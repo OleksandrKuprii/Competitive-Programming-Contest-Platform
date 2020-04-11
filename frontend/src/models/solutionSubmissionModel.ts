@@ -3,8 +3,8 @@ import {
 } from 'easy-peasy';
 import loadingModel, { LoadingModel } from './generalizers/loadingModel';
 import Injections from '../injections';
-import baseURL from "./apiBaseURL";
-import {Submission, SubmissionModel} from "./submissionModel";
+import baseURL from './apiBaseURL';
+import { Submission, SubmissionModel } from './submissionModel';
 
 export interface SolutionSubmissionModel {
   code?: string;
@@ -16,9 +16,10 @@ export interface SolutionSubmissionModel {
   selectedLanguage: Action<SolutionSubmissionModel, string>,
   uploadedFile: Action<SolutionSubmissionModel, { code: string, filename: string }>
   canceled: Action<SolutionSubmissionModel>,
+  onSubmitRequested: Action<SolutionSubmissionModel, string>,
 
   uploadFile: Thunk<SolutionSubmissionModel, File>,
-  submit: Thunk<SolutionSubmissionModel, undefined, Injections>,
+  submit: Thunk<SolutionSubmissionModel, string, Injections>,
 }
 
 const solutionSubmissionModel: SolutionSubmissionModel = {
@@ -45,6 +46,8 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     loading: state.loading,
   })),
 
+  onSubmitRequested: action((state, taskName) => {}),
+
   uploadFile: thunk(async (actions, file) => {
     actions.loading.loading();
 
@@ -56,7 +59,9 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     actions.loading.loaded();
   }),
 
-  submit: thunk(async (actions, payload, { injections, getState }) => {
+  submit: thunk(async (actions, taskAlias, { injections, getState }) => {
+    actions.onSubmitRequested(taskAlias);
+
     const { code, language } = getState();
 
     let token;
@@ -71,15 +76,13 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        alias: 'coins',
+        alias: taskAlias,
         code,
         lang: language || 'python3',
       }),
     });
 
     const body = await response.json();
-
-    console.log(body);
 
     return {
       submission: ({

@@ -49,8 +49,8 @@ async def download_inputs(test_ids: Iterable[int]) -> List[str]:
     tests_ids: Iterable[int] - test ids
     """
     paths = list()
-    for test_id in test_ids:
-        async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+    async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+        for test_id in test_ids:
             path = f'{LOCAL_STORAGE_ROOT}/tests/{test_id}.input'
 
             await(await s3.Bucket(TESTS_BUCKET)).download_file(
