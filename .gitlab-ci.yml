@@ -10,7 +10,7 @@ stages:
   - test
 
 test-backend:
-  image: python:3.7-alpine
+  image: python:3.8-alpine
   stage: test
   script:
     - pip install tox
