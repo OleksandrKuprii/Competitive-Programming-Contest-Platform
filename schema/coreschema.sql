@@ -8,7 +8,8 @@ create table if not exists coreschema.tasks (
     difficulty int,
     wall_time_limit int,
     cpu_time_limit int,
-    memory_limit int
+    memory_limit int,
+    created timestamp
 );
 
 create table if not exists coreschema.task_descriptions (

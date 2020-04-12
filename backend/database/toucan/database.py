@@ -207,9 +207,10 @@ async def get_task(alias: str) -> dict:
         async with conn.transaction():
             # Getting task information from tasks and task_description tables
             task_fetch = await conn.fetchrow(
-                '''SELECT wall_time_limit, cpu_time_limit, memory_limit,
-                   main, input_format, output_format, custom_sections,
-                   tasks.name, category, categories.name
+                '''SELECT tasks.name as task_name, tasks.alias as
+                    task_alias, wall_time_limit, cpu_time_limit, memory_limit,
+                    main, input_format, output_format, custom_sections,
+                    category, categories.name
                    FROM coreschema.tasks as tasks
                    JOIN coreschema.task_descriptions as task_desc
                    ON tasks.alias = task_desc.alias
@@ -229,6 +230,11 @@ async def get_task(alias: str) -> dict:
             # putting in task dictionary with key 'category'
             task['category'] = {'alias': task.pop('category'),
                                 'name': task.pop('name')}
+
+            # Changing keys in task dictionary to shorter and more
+            # comfortable to use in frontend
+            task['name'] = task.pop('task_name')
+            task['alias'] = task.pop('task_alias')
 
             # Getting input and output examples from the task_examples table
             examples_fetch = await conn.fetch(
