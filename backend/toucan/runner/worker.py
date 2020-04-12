@@ -16,6 +16,11 @@ client = docker.from_env()
 
 lang_to_image = {'python3': 'python:3.8-slim'}
 
+LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
+
+assert LOCAL_STORAGE_ROOT is not None
+
+
 logging.basicConfig(filename='runner.log',
                     filemode='w',
                     level=logging.INFO,
@@ -67,7 +72,8 @@ async def execute_test(image: str, submission_code_abspath: str,
         Anonymous TestResult - without id
     """
     # Create temporary file for output.txt
-    temporary_file_descriptor, temporary_file_path = tempfile.mkstemp()
+    temporary_file_descriptor, temporary_file_path = tempfile.mkstemp(
+        dir=LOCAL_STORAGE_ROOT + '/temp')
 
     container = client.containers.run(
         image,
