@@ -7,7 +7,8 @@ import os
 
 import aioboto3
 
-import toucan.database
+from toucan import checker
+from toucan import database
 from toucan.dataclass import SubmissionToRunner
 from toucan.runner import worker
 
@@ -24,7 +25,7 @@ logging.basicConfig(filename='runner.log',
 
 async def main():
     """Run runner."""
-    await toucan.database.establish_connection_from_env()
+    await database.establish_connection_from_env()
 
     # Aioboto3 resource for Amazon SQS
     async with aioboto3.resource('sqs', endpoint_url=os.getenv(
@@ -61,6 +62,11 @@ async def main():
                         submission_id = json.loads(await message.body)[
                             'submission_id']
 
+                        # Changing submission status in the database to
+                        # 'Running'
+                        await database.change_submission_status(submission_id,
+                                                                'Running')
+
                         logging.info(f'#{submission_id} Received')
 
                 except TypeError:
@@ -87,8 +93,7 @@ async def main():
 
                 # Process results
                 for result_to_checker in submission_result:
-                    await toucan.checker.process_result_to_checker(
-                        result_to_checker)
+                    await checker.process_result_to_checker(result_to_checker)
 
 
 if __name__ == '__main__':
