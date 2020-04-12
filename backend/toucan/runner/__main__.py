@@ -97,4 +97,5 @@ async def main():
 
 
 if __name__ == '__main__':
+    print('Runner is starting!')
     asyncio.run(main())
