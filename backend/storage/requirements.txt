@@ -1,4 +1,0 @@
---index-url https://pypi.python.org/simple
-../dataclass/
-boto3
--e .

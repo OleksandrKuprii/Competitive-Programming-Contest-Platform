@@ -9,3 +9,4 @@ venv
 .DS_Store
 devenv/s3
 schema/fill.sql
+*.log
