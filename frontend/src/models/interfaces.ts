@@ -37,6 +37,11 @@ export interface ObjectWithLoadingStatus {
 export interface DataModelItem<T> extends ObjectWithId<T>, ObjectWithLoadingStatus {
 }
 
+export interface TaskCustomSection {
+  name: string,
+  data: string,
+}
+
 export interface Task extends DataModelItem<string> {
   name?: string,
   category?: string,
@@ -49,6 +54,7 @@ export interface Task extends DataModelItem<string> {
   },
   examples?: TaskExample[],
   limits?: TaskLimits,
+  customSections?: TaskCustomSection[]
 }
 
 export type Notification = {
