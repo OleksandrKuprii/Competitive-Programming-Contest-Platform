@@ -114,21 +114,22 @@ async def execute_test(image: str, submission_code_abspath: str,
 
         logs = container.logs().decode()
 
+        # Real(wall) time, user(cpu) time, sys(kernel) time
+        real, user, _sys = toucan.runner.parse_time.parse(logs)
+
         # Logs contain error stream
         # (time command output + optional error of program)
         # So we check if it matches the time command output regex
-        if not toucan.runner.parse_time.check(logs):
-            # Someone hacked the universe
-            if status_code == 0:
-                return lambda test_id: TestResult(test_id, 'UnknownError',
-                                                  None, None, None)
-            else:
-                # Normal case
-                return lambda test_id: TestResult(test_id, 'RuntimeError',
-                                                  None, None, None)
-
-        # Real(wall) time, user(cpu) time, sys(kernel) time
-        real, user, _sys = toucan.runner.parse_time.parse(logs)
+        if status_code in (0, 124):
+            if not toucan.runner.parse_time.check(logs):
+                # Someone hacked the universe
+                if status_code == 0:
+                    return lambda test_id: TestResult(test_id, 'UnknownError',
+                                                      None, None, None)
+                else:
+                    # Normal case
+                    return lambda test_id: TestResult(test_id, 'RuntimeError',
+                                                      None, None, None)
 
         # Program exited properly
         # But it doesn't mean program haven't violated CPU time limit
