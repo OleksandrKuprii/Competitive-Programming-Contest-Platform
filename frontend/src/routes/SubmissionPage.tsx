@@ -33,10 +33,10 @@ const SubmissionPage = () => {
     }
   }, [isAuthenticated, signIn]);
 
-  const needFetch = id && !submission?.tests;
+  const needFetch = !isHunting && !submission?.tests;
 
   useEffect(() => {
-    if (isHunting) {
+    if (!id) {
       return;
     }
 

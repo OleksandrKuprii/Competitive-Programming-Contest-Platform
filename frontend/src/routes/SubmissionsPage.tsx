@@ -24,11 +24,12 @@ const SubmissionsPage = () => {
 
   const submissions = nSubmissions(n);
 
+  // TODO: pagination
   const loadMoreCallback = useCallback(() => {
     setN(n + 5);
   }, [n]);
 
-  const needFetch = isAuthenticated && !submissionsLoading && submissions.length < n;
+  const needFetch = isAuthenticated && submissions.length < n;
 
   const fetchSubmissionsPagination = useCallback(() => {
     if (needFetch) {
