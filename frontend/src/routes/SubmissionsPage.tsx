@@ -28,12 +28,17 @@ const SubmissionsPage = () => {
     setN(n + 5);
   }, [n]);
 
-  useEffect(() => {
-    if (isAuthenticated && !submissionsLoading && submissions.length < n) {
+  const needFetch = isAuthenticated && !submissionsLoading && submissions.length < n;
+
+  const fetchSubmissionsPagination = useCallback(() => {
+    if (needFetch) {
       fetchSubmissions({ offset: 0, number: n });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submissions.length, n]);
+  }, [n, fetchSubmissions, needFetch]);
+
+  useEffect(() => {
+    fetchSubmissionsPagination();
+  }, [fetchSubmissionsPagination]);
 
   if (!isAuthenticated) {
     signIn();
@@ -41,7 +46,7 @@ const SubmissionsPage = () => {
   }
 
   if (submissionsLoading) {
-    return <Loading />;
+    return <Loading variant="loading" />;
   }
 
   return (

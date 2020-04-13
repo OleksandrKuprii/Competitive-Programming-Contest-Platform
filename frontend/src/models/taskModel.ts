@@ -1,4 +1,3 @@
-import { thunk } from 'easy-peasy';
 import dataModel from './generalizers/dataModel';
 import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
@@ -16,6 +15,10 @@ const taskModel: TaskModel = {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (!response.ok) {
+        return undefined;
+      }
 
       const data = await response.json();
 
@@ -50,6 +53,10 @@ const taskModel: TaskModel = {
         },
       });
 
+      if (!response.ok) {
+        return [];
+      }
+
       const tasks = await response.json();
 
       return tasks.map((task: any) => ({
@@ -80,8 +87,6 @@ const taskModel: TaskModel = {
 
     dataModelIdentifier: 'task',
   }),
-
-  updateTaskCategory: thunk((actions, category) => category),
 };
 
 export default taskModel;

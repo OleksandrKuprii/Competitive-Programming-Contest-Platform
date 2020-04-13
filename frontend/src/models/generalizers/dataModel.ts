@@ -21,6 +21,7 @@ DataModel<Identifier, Item> = ({
     updateObjectWithProperty(state.items, 'id', item.id, item);
   }),
 
+  // TODO: fetch one more time data after delay on server error
   fetchOne: thunk(async (actions, id, { injections }) => {
     const loadingItem: any = {
       id,
@@ -37,6 +38,7 @@ DataModel<Identifier, Item> = ({
       token = undefined;
     }
 
+    // noinspection UnnecessaryLocalVariableJS
     const item = await dataItemFetcher(id, {
       token,
     });
@@ -44,6 +46,7 @@ DataModel<Identifier, Item> = ({
     return item;
   }),
 
+  // TODO: fetch one more time data after delay on server error
   fetchRange: thunk(async (actions, range, { injections }) => {
     actions.loading.loading();
 
@@ -89,12 +92,20 @@ DataModel<Identifier, Item> = ({
   ),
 
   onChangedOne: thunkOn(onChangedOneTargets, (actions, target) => {
+    if (!target.result) {
+      return;
+    }
+
     if (target.result[dataModelIdentifier]) {
       actions.updated(target.result[dataModelIdentifier]);
     }
   }),
 
   onChangedMany: thunkOn(onChangedManyTargets, (actions, target) => {
+    if (!target.result) {
+      return;
+    }
+
     target.result.forEach((item: any) => {
       if (item[dataModelIdentifier]) {
         actions.updated(item[dataModelIdentifier]);
