@@ -1,13 +1,14 @@
 import * as React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import getGeneralLanguageName from '../../utils/getGeneralLanguageName';
 
 const SubmissionCodeViewer = ({ code, language }: { code: string, language: string }) => (
   <SyntaxHighlighter
-    language={language}
-    style={atomOneDark}
+    language={getGeneralLanguageName(language)}
+    style={tomorrowNight}
     showLineNumbers
-    customStyle={{ maxHeight: 500 }}
+    customStyle={{ maxHeight: 500, width: '100%', borderRadius: 3 }}
   >
     {code}
   </SyntaxHighlighter>

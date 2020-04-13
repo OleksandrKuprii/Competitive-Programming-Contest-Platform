@@ -41,6 +41,16 @@ const taskModel: TaskModel = {
             input: item.input_data,
             output: item.output_data,
           })),
+          customSections: data.custom_sections
+            ? Object.entries(data.custom_sections)
+              .map(
+                (entry: any) => (
+                  {
+                    name: entry[0],
+                    data: entry[1],
+                  }
+                ),
+              ) : [],
         } as Task),
       };
     },
