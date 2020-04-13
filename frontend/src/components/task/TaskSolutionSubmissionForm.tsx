@@ -13,10 +13,14 @@ const TaskSolutionSubmissionForm = () => {
   const { taskAlias } = useParams();
 
   const code = useStoreState((state) => state.solutionSubmission.code);
+  const language = useStoreState((state) => state.solutionSubmission.language);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
   const canceled = useStoreActions((actions) => actions.solutionSubmission.canceled);
   const submit = useStoreActions((actions) => actions.solutionSubmission.submit);
+  const selectedLanguage = useStoreActions(
+    (actions) => actions.solutionSubmission.selectedLanguage,
+  );
 
   const cancelCallback = useCallback(() => {
     canceled();
@@ -29,6 +33,13 @@ const TaskSolutionSubmissionForm = () => {
 
     submit(taskAlias);
   }, [submit, taskAlias]);
+
+  const languages = [
+    'python3',
+    'python2',
+    'c++',
+    'c',
+  ];
 
   return (
     <Form>
@@ -47,14 +58,18 @@ const TaskSolutionSubmissionForm = () => {
 
       <Form.Row>
         <Form.Group as={Col}>
-          <Form.Control as="select">
-            <option>python3</option>
-            <option>python2</option>
-            <option>c++</option>
-            <option>c</option>
+          <Form.Control as="select" value={language} onChange={(e) => selectedLanguage((e.target as any).value)}>
+            {languages.map((lang) => (
+              <option key={lang}>
+                {lang}
+              </option>
+            ))}
           </Form.Control>
         </Form.Group>
-        <Form.Group>
+      </Form.Row>
+
+      <Form.Row>
+        <Form.Group as={Col}>
           <ButtonGroup>
             <Button variant="primary" disabled={!isAuthenticated} onClick={submitCallback}>
               Submit

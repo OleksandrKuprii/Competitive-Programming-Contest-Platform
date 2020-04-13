@@ -1,4 +1,4 @@
-import { action, thunk } from 'easy-peasy';
+import { action, computed, thunk } from 'easy-peasy';
 import loadingModel from './generalizers/loadingModel';
 import baseURL from './apiBaseURL';
 import { SolutionSubmissionModel, Submission } from './interfaces';
@@ -6,11 +6,16 @@ import { SolutionSubmissionModel, Submission } from './interfaces';
 const solutionSubmissionModel: SolutionSubmissionModel = {
   loading: loadingModel(),
 
+  language: 'python3',
+
+  fileUploaded: computed((state) => state.code !== undefined),
+
   selectedLanguage: action((state, language) => ({
     code: state.code,
     filename: state.filename,
     language,
     loading: state.loading,
+    fileUploaded: state.fileUploaded,
   })),
 
   uploadedFile: action((state, { code, filename }) => ({
@@ -20,15 +25,17 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     loading: {
       flag: state.loading.flag,
     },
+    fileUploaded: true,
   })),
 
-  canceled: action((state) => ({
+  canceled: action(() => ({
     code: undefined,
     filename: undefined,
-    language: undefined,
+    language: 'python3',
     loading: {
-      flag: state.loading.flag,
+      flag: false,
     },
+    fileUploaded: false,
   })),
 
   onSubmitRequested: action(() => {}),
@@ -49,6 +56,8 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
 
     const { code, language } = getState();
 
+    actions.canceled();
+
     let token;
 
     try {
@@ -65,7 +74,7 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
       body: JSON.stringify({
         alias: taskAlias,
         code,
-        lang: language || 'python3',
+        lang: language,
       }),
     });
 
