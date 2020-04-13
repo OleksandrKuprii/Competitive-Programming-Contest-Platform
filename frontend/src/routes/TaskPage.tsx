@@ -10,6 +10,7 @@ import TaskSolutionDropZone from '../components/task/TaskSolutionDropZone';
 import Loading from '../components/Loading';
 import ErrorPage from './ErrorPage';
 import GreatestResult from '../components/result/GreatestResult';
+import TaskSolutionSubmissionForm from '../components/task/TaskSolutionSubmissionForm';
 
 const TaskPage = () => {
   const { t } = useTranslation();
@@ -26,15 +27,14 @@ const TaskPage = () => {
     }
 
     fetchTask(taskAlias);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchTask, taskAlias]);
 
   if (!taskAlias || !task) {
     return <ErrorPage code="notFound" />;
   }
 
   if (task.loading) {
-    return <Loading />;
+    return <Loading variant="loading" />;
   }
 
   const htmlToReactParser = new HtmlToReactParser();
@@ -170,9 +170,13 @@ const TaskPage = () => {
         <Col>
           <p><b>{t('taskPage.submitSolution')}</b></p>
 
-          <TaskSolutionDropZone taskAlias={taskAlias} />
+          <TaskSolutionDropZone>
+            <TaskSolutionSubmissionForm />
+          </TaskSolutionDropZone>
         </Col>
       </Row>
+
+      <div className="p-3" />
     </>
   );
 };

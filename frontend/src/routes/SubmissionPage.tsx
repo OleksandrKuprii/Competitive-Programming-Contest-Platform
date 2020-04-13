@@ -31,18 +31,28 @@ const SubmissionPage = () => {
     if (!isAuthenticated) {
       signIn();
     }
+  }, [isAuthenticated, signIn]);
 
-    if (isHunting) {
+  const needFetch = !isHunting && !submission?.tests;
+
+  useEffect(() => {
+    if (!id) {
       return;
     }
 
-    if (id) {
+    if (needFetch) {
       fetchSubmission(id);
     }
-  }, [signIn, isAuthenticated, id, isHunting, fetchSubmission]);
+  }, [id, needFetch, isHunting, fetchSubmission]);
 
   if (submission?.loading || isHunting) {
-    return <Loading />;
+    if (submission && submission.status) {
+      if (submission.status[0] === 'Running') {
+        return <Loading variant="running" />;
+      }
+    }
+
+    return <Loading variant={isHunting ? 'processing' : 'loading'} />;
   }
 
   const infoTableRow: CustomTableRow = {

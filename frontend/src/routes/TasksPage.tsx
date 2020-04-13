@@ -5,7 +5,6 @@ import { useStoreState, useStoreActions } from '../hooks/store';
 import TaskList from '../components/task/TaskList';
 import Loading from '../components/Loading';
 
-
 const TasksPage = () => {
   const { t } = useTranslation();
 
@@ -14,17 +13,15 @@ const TasksPage = () => {
 
   const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
 
+
   const tasks = nTasks(50);
 
   useEffect(() => {
-    if (!tasksLoading && tasks.length < 50) {
-      fetchTasks({ offset: 0, number: 50 });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    fetchTasks({ offset: 0, number: 50 });
+  }, [fetchTasks]);
 
   if (tasksLoading) {
-    return <Loading />;
+    return <Loading variant="loading" />;
   }
 
   return (

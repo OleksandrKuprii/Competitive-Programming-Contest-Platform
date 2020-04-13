@@ -124,7 +124,7 @@ export interface DataFetcherArgs {
 
 export interface DataModelFactoryArgs<Identifier, Item extends DataModelItem<any>> {
   dataItemFetcher: (id: Identifier,
-    args: DataFetcherArgs) => Promise<{ item: Item }>,
+    args: DataFetcherArgs) => Promise<{ item: Item } | undefined>,
   dataRangeFetcher: (range: DataItemRangeIdentifier,
     args: DataFetcherArgs) => Promise<Array<{ item: Item }>>,
 
@@ -148,9 +148,7 @@ export interface SubmissionHunterModel {
   onSubmit: ThunkOn<SubmissionHunterModel, Injections, StoreModel>,
 }
 
-export interface TaskModel extends DataModel<string, Task> {
-  updateTaskCategory: Thunk<TaskModel, Category>
-}
+export interface TaskModel extends DataModel<string, Task> {}
 
 export interface Auth0ModelInitialState {
   isAuthenticated: boolean,
@@ -170,7 +168,9 @@ export interface CategoryModel extends DataModel<String, Category> {
 export interface SolutionSubmissionModel {
   code?: string;
   filename?: string;
-  language?: string;
+  language: string;
+
+  fileUploaded: Computed<SolutionSubmissionModel, boolean>;
 
   loading: LoadingModel,
 

@@ -1,10 +1,13 @@
 {
   "brandName": "Toucan",
   "learnMore": "Learn more",
-  "running": "Running",
   "submission": "Submission",
   "goHome": "Go home",
-  "loading": "Loading",
+  "preloader": {
+    "running": "Running",
+    "loading": "Loading",
+    "processing": "Processing submission"
+  },
   "homepage": {
     "welcome": "Welcome to Toucan!",
     "description": "a powerful programming contest platform"
