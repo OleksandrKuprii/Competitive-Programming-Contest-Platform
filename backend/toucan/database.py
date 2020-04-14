@@ -6,7 +6,7 @@ from typing import List, Optional
 import asyncpg
 from asyncpg.pool import Pool
 
-from toucan.dataclass import ResultToDB, UserSubmission
+from dataclass import ResultToDB, UserSubmission
 
 # Database connection pool
 pool: Pool
@@ -253,15 +253,15 @@ async def get_task(alias: str) -> dict:
     return task
 
 
-async def get_tasks(number: int, offset: int) -> List[dict]:
+async def get_tasks(additional_sql: str) \
+        -> List[dict]:
     """Get {number} of tasks skipping first {offset} ones.
 
     Parameters
     ----------
-    number: int
-        The number of tasks to return
-    offset: int
-        The number of tasks to skip from starting
+    additional_sql: str
+        The string contains SQL with sorting and filtering. Must be added to
+        main SQL script
 
     Returns
     -------
@@ -272,14 +272,14 @@ async def get_tasks(number: int, offset: int) -> List[dict]:
         async with conn.transaction():
 
             # Getting information from tasks table
-            fetch = await conn.fetch('''
+            fetch = await conn.fetch(f'''
                 SELECT tasks.id, tasks.alias, tasks.name as task_name,
                 category, categories.name as category_name, difficulty
                 FROM coreschema.tasks
                 JOIN coreschema.categories
                 ON category = categories.alias
-                LIMIT $1 OFFSET $2
-            ''', number, offset)
+                {additional_sql}
+            ''')
 
     data = list()
 

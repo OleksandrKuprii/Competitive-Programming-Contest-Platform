@@ -1,6 +1,7 @@
 """Toucan API."""
 import asyncio
 import json
+import re
 from datetime import datetime
 from functools import wraps
 
@@ -9,14 +10,18 @@ from aiohttp.web import Application, Response, _run_app, json_response
 
 import aiohttp_cors
 
+from database import establish_connection_from_env
+
+from dataclass import UserSubmission
+
 import jose
 from jose import jwt
 
 from six.moves.urllib.request import urlopen
 
-from toucan import submission, task
-from toucan.database import establish_connection_from_env
-from toucan.dataclass import UserSubmission
+import submission
+
+import task
 
 
 routes = web.RouteTableDef()
@@ -88,8 +93,10 @@ def requires_auth(f):
         try:
             unverified_header = jwt.get_unverified_header(token)
         except jose.exceptions.JWTError:
-            return json_response({'code': 'invalid token', 'description':
-                                  'error decoding token headers'}, status=401)
+            return json_response(
+                {'code': 'invalid token',
+                 'description': 'error decoding token headers'},
+                status=401)
 
         rsa_key = {}
         for key in jwks["keys"]:
@@ -134,6 +141,79 @@ def requires_auth(f):
     return decorated
 
 
+def parse_task_params(params):
+    """Parse tasks params."""
+    required_params = ['number', 'offset']
+
+    for param in required_params:
+        try:
+            params[param] = int(params[param])
+        except (KeyError, ValueError):
+            return
+
+    sort_params = ['name_sort', 'category_sort', 'difficulty_sort',
+                   'result_sort']
+
+    for param in sort_params:
+        try:
+            if params[param] == '':
+                del params[param]
+            elif params[param] != 'DESC':
+                params[param] = 'ASC'
+        except KeyError:
+            continue
+
+    try:
+        cats = params['categories'].strip(',').split(',')
+        params['categories'] = {cat for cat in cats if cat != ''}
+    except KeyError:
+        pass
+
+    try:
+        difficulty = params['difficulty'].strip(',').split(',')
+        params['difficulty'] = set()
+
+        for diff in difficulty:
+            diff = diff.strip()
+            if diff.isnumeric():
+                params['difficulty'].add(int(diff))
+            elif reg := re.search(r'^(\d+)-(\d+)$', diff):
+                temp_diff = range(int(reg.group(1)), int(reg.group(2)) + 1)
+                for d in temp_diff:
+                    params['difficulty'].add(d)
+    except KeyError:
+        pass
+
+    try:
+        results = params['result'].strip(',').split(',')
+        result_map = {
+            'full': 100,
+            'partial': list(range(1, 100)),
+            'zero': 0,
+            'null': None
+        }
+
+        params['result'] = set()
+
+        for r in results:
+            r = r.strip()
+            if re.match(r'^full|zero|null$', r):
+                params['result'].add(result_map[r])
+            elif r == 'partial':
+                for i in result_map[r]:
+                    params['result'].add(i)
+            elif r.isnumeric():
+                params['result'].add(int(r))
+            elif reg := re.search(r'^(\d+)-(\d+)$', r):
+                temp_result = range(int(reg.group(1)), int(reg.group(2)) + 1)
+                for d in temp_result:
+                    params['result'].add(d)
+    except KeyError:
+        pass
+
+    return params
+
+
 @routes.post('/submission')
 @requires_auth
 async def post_submission(request, **kwargs):
@@ -160,17 +240,20 @@ async def post_submission(request, **kwargs):
 @routes.get('/tasks')
 async def get_tasks(request):
     """GET tasks."""
-    params = request.rel_url.query
+    params = dict(request.rel_url.query)
 
-    if list(params.values()).count('') or \
-            ('number' not in list(params.keys()) or
-             'offset' not in list(params.keys())):
+    params = parse_task_params(params)
+
+    for key in ['result', 'result_sort']:
+        try:
+            del params[key]
+        except KeyError:
+            pass
+
+    if params is None:
         return Response(status=400)
 
-    number = int(params.get('number'))
-    offset = int(params.get('offset'))
-
-    tasks = await task.get_tasks('', number, offset)
+    tasks = await task.get_tasks('', params)
 
     return json_response(tasks)
 
@@ -179,19 +262,17 @@ async def get_tasks(request):
 @requires_auth
 async def get_tasks_auth(request, **kwargs):
     """Get task for authorised user."""
-    params = request.rel_url.query
+    params = dict(request.rel_url.query)
 
-    user_info = kwargs['user_info']
-    if list(params.values()).count('') or \
-            ('number' not in list(params.keys()) or
-             'offset' not in list(params.keys())):
+    params = parse_task_params(params)
+
+    if params is None:
         return Response(status=400)
 
+    user_info = kwargs['user_info']
     user_id = user_info['sub']
-    number = int(params.get('number'))
-    offset = int(params.get('offset'))
 
-    tasks = await task.get_tasks(user_id, number, offset)
+    tasks = await task.get_tasks(user_id, params)
 
     return json_response(tasks)
 
