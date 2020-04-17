@@ -4,8 +4,8 @@ import { useStoreState } from '../../hooks/store';
 import TaskLinkByTask from './TaskLinkByTask';
 
 export interface TaskNameLinkByAliasArgs {
-  id?: string
-  children?: ReactNode
+  id?: string;
+  children?: ReactNode;
 }
 
 const TaskLinkByAlias = ({ id, children }: TaskNameLinkByAliasArgs) => {

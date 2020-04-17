@@ -1,16 +1,15 @@
-import {
-  action, computed, thunk, thunkOn,
-} from 'easy-peasy';
+import { action, computed, thunk, thunkOn } from 'easy-peasy';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
 import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
 
-const dataModel: <Identifier,
-  Item extends DataModelItem<Identifier>
-  >(args: DataModelFactoryArgs<Identifier, Item>) =>
-DataModel<Identifier, Item> = ({
-  dataItemFetcher, dataRangeFetcher,
-  onChangedOneTargets, onChangedManyTargets,
+const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
+  args: DataModelFactoryArgs<Identifier, Item>,
+) => DataModel<Identifier, Item> = ({
+  dataItemFetcher,
+  dataRangeFetcher,
+  onChangedOneTargets,
+  onChangedManyTargets,
   dataModelIdentifier,
 }) => ({
   loading: loadingModel(),
@@ -113,11 +112,11 @@ DataModel<Identifier, Item> = ({
     });
   }),
 
-  byId: computed((state) => (id) => (
-    state.items.find((item) => item.id === id))),
+  byId: computed((state) => (id) => state.items.find((item) => item.id === id)),
 
-  nItems: computed((state) => (number) => (
-    state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number))),
+  nItems: computed((state) => (number) =>
+    state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
+  ),
 });
 
 export default dataModel;

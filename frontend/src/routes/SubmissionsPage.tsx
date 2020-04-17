@@ -1,13 +1,10 @@
 import * as React from 'react';
-import {
-  useCallback, useEffect, useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'react-bootstrap';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import SubmissionList from '../components/submission/SubmissionList';
 import Loading from '../components/Loading';
-
 
 const SubmissionsPage = () => {
   const { t } = useTranslation();

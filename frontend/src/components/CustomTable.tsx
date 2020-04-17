@@ -3,25 +3,20 @@ import { useTranslation } from 'react-i18next';
 import Table from 'react-bootstrap/Table';
 import { ReactNode } from 'react';
 
-
 export type CustomTableRowIdentifier = number | string;
 export type CustomTableRow = {
-  id: CustomTableRowIdentifier,
-  row: ReactNode,
+  id: CustomTableRowIdentifier;
+  row: ReactNode;
 };
 
-
 export interface CustomTableArgs {
-  headers: string[]
-  rows: CustomTableRow[]
-  padding?: number,
-  tableName: string,
+  headers: string[];
+  rows: CustomTableRow[];
+  padding?: number;
+  tableName: string;
 }
 
-
-const CustomTable = ({
-  headers, rows, padding, tableName,
-}: CustomTableArgs) => {
+const CustomTable = ({ headers, rows, padding, tableName }: CustomTableArgs) => {
   const { t } = useTranslation();
 
   return (
@@ -38,9 +33,7 @@ const CustomTable = ({
 
       <tbody>
         {rows.map(({ row, id }) => (
-          <tr key={`table-${tableName}-row-${id}`}>
-            {row}
-          </tr>
+          <tr key={`table-${tableName}-row-${id}`}>{row}</tr>
         ))}
       </tbody>
     </Table>

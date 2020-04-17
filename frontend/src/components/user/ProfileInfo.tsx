@@ -20,9 +20,7 @@ const ProfileInfo = () => {
       </Row>
       <Row>
         <Col className="text-center">
-          <p className="h4 m-2">
-            {username || 'Guest'}
-          </p>
+          <p className="h4 m-2">{username || 'Guest'}</p>
         </Col>
       </Row>
     </Jumbotron>

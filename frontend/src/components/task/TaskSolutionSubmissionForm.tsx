@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Form from 'react-bootstrap/Form';
-import {
-  Alert,
-  Button, ButtonGroup, Col,
-} from 'react-bootstrap';
+import { Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreState, useStoreActions } from '../../hooks/store';
@@ -34,42 +31,29 @@ const TaskSolutionSubmissionForm = () => {
     submit(taskAlias);
   }, [submit, taskAlias]);
 
-  const languages = [
-    'python3',
-    'python2',
-    'c++',
-    'c',
-  ];
+  const languages = ['python3', 'python2', 'c++', 'c'];
 
   return (
-    <Form>
-      <Form.Row>
-        <Form.Group as={Col}>
+    <div className="bg-secondary p-4 rounded">
+      <Form>
+        <Form.Row>
           <SubmissionCodeViewer code={code || ''} language="python3" />
-        </Form.Group>
-      </Form.Row>
+        </Form.Row>
 
-      {!isAuthenticated
-        ? (
-          <Alert variant="danger">
-            Sign in to submit solution!
-          </Alert>
-        ) : <></>}
+        {!isAuthenticated ? <Alert variant="danger">Sign in to submit solution!</Alert> : <></>}
 
-      <Form.Row>
-        <Form.Group as={Col}>
-          <Form.Control as="select" value={language} onChange={(e) => selectedLanguage((e.target as any).value)}>
+        <Form.Row>
+          <Form.Control
+            style={{ maxWidth: 200 }}
+            as="select"
+            value={language}
+            onChange={(e) => selectedLanguage((e.target as any).value)}
+          >
             {languages.map((lang) => (
-              <option key={lang}>
-                {lang}
-              </option>
+              <option key={lang}>{lang}</option>
             ))}
           </Form.Control>
-        </Form.Group>
-      </Form.Row>
-
-      <Form.Row>
-        <Form.Group as={Col}>
+          <div style={{ paddingLeft: 10 }} />
           <ButtonGroup>
             <Button variant="primary" disabled={!isAuthenticated} onClick={submitCallback}>
               Submit
@@ -78,9 +62,9 @@ const TaskSolutionSubmissionForm = () => {
               Cancel
             </Button>
           </ButtonGroup>
-        </Form.Group>
-      </Form.Row>
-    </Form>
+        </Form.Row>
+      </Form>
+    </div>
   );
 };
 

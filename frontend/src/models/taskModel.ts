@@ -1,9 +1,7 @@
 import dataModel from './generalizers/dataModel';
 import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-import {
-  Category, Submission, Task, TaskModel,
-} from './interfaces';
+import { Category, Submission, Task, TaskModel } from './interfaces';
 
 const taskModel: TaskModel = {
   ...dataModel<string, Task>({
@@ -11,9 +9,11 @@ const taskModel: TaskModel = {
       const { token } = args;
 
       const response = await fetch(`${baseURL}/${token ? 'task/auth' : 'task'}/${id}`, {
-        headers: !token ? {} : {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: !token
+          ? {}
+          : {
+              Authorization: `Bearer ${token}`,
+            },
       });
 
       if (!response.ok) {
@@ -23,7 +23,7 @@ const taskModel: TaskModel = {
       const data = await response.json();
 
       return {
-        item: ({
+        item: {
           id,
           name: data.name,
           loading: false,
@@ -41,17 +41,30 @@ const taskModel: TaskModel = {
             input: item.input_data,
             output: item.output_data,
           })),
-        } as Task),
+          customSections: data.custom_sections
+            ? Object.entries(data.custom_sections).map((entry: any) => ({
+                name: entry[0],
+                data: entry[1],
+              }))
+            : [],
+        } as Task,
       };
     },
     dataRangeFetcher: async (range, args) => {
       const { token } = args;
 
-      const response = await fetch(`${baseURL}/${token ? 'tasks/auth' : 'tasks'}?offset=${range.offset}&number=${range.number}`, {
-        headers: !token ? {} : {
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?offset=${range.offset}&number=${
+          range.number
+        }`,
+        {
+          headers: !token
+            ? {}
+            : {
+                Authorization: `Bearer ${token}`,
+              },
         },
-      });
+      );
 
       if (!response.ok) {
         return [];
@@ -60,30 +73,29 @@ const taskModel: TaskModel = {
       const tasks = await response.json();
 
       return tasks.map((task: any) => ({
-        item: ({
+        item: {
           id: task.alias,
           name: task.name,
           category: task.category.alias,
           difficulty: task.difficulty,
-        } as Task),
-        category: ({
+        } as Task,
+        category: {
           id: task.category.alias,
           name: task.category.name,
-        } as Category),
-        submission: (task.best_submission.id === null ? undefined : {
-          id: task.best_submission.id,
-          taskAlias: task.alias,
-          ...resultToPointsAndStatus(task.best_submission.result),
-        } as Submission),
+        } as Category,
+        submission:
+          task.best_submission.id === null
+            ? undefined
+            : ({
+                id: task.best_submission.id,
+                taskAlias: task.alias,
+                ...resultToPointsAndStatus(task.best_submission.result),
+              } as Submission),
       }));
     },
 
-    onChangedManyTargets: (state, storeActions) => [
-      storeActions.submission.fetchRange,
-    ],
-    onChangedOneTargets: (state, storeActions) => [
-      storeActions.submission.fetchOne,
-    ],
+    onChangedManyTargets: (state, storeActions) => [storeActions.submission.fetchRange],
+    onChangedOneTargets: (state, storeActions) => [storeActions.submission.fetchOne],
 
     dataModelIdentifier: 'task',
   }),

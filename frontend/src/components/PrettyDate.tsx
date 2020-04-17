@@ -16,37 +16,19 @@ const PrettyDate = ({ timestamp }: { timestamp?: Date }) => {
   }
 
   if (deltaMinutes < 60) {
-    return (
-      <>
-        {deltaMinutes}
-        {' '}
-        minutes ago
-      </>
-    );
+    return <>{deltaMinutes} minutes ago</>;
   }
 
   const deltaHours = Math.round(deltaMinutes / 60);
 
   if (deltaHours < 24) {
-    return (
-      <>
-        {deltaHours}
-        {' '}
-        hours ago
-      </>
-    );
+    return <>{deltaHours} hours ago</>;
   }
 
   const deltaDays = Math.round(deltaHours / 24);
 
   if (deltaDays < 365) {
-    return (
-      <>
-        {deltaDays}
-        {' '}
-        days ago
-      </>
-    );
+    return <>{deltaDays} days ago</>;
   }
 
   const currentDate = new Date(timestamp);
@@ -68,11 +50,7 @@ const PrettyDate = ({ timestamp }: { timestamp?: Date }) => {
 
   return (
     <span>
-      {dayString}
-      .
-      {monthString}
-      .
-      {currentDate.getFullYear()}
+      {dayString}.{monthString}.{currentDate.getFullYear()}
     </span>
   );
 };
