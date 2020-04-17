@@ -6,14 +6,14 @@ from typing import List
 
 import aioboto3
 
-from toucan import database
-from toucan import storage
-from toucan.dataclass import (SubmissionToRunner,
-                              SubmissionToStorage,
-                              UserSubmission)
+import database
+
+from dataclass import (SubmissionToRunner, SubmissionToStorage, UserSubmission)
+
+import storage
 
 
-async def add_submission(user_submission: UserSubmission):
+async def add_submission(user_submission: UserSubmission, conn):
     """Get submission from API and communicates with database and storage.
 
     Parameters
@@ -21,10 +21,11 @@ async def add_submission(user_submission: UserSubmission):
     user_submission : UserSubmission
     """
     # Adds submission to database
-    submission_id, task_id = await database.add_submission(user_submission)
+    submission_id, task_id = await database.add_submission(user_submission,
+                                                           conn)
 
     # Gets ids of all test for this task from database
-    test_ids = await database.get_test_ids(task_id)
+    test_ids = await database.get_test_ids(task_id, conn)
 
     # Creates SubmissionToStorage object
     submission_to_storage = SubmissionToStorage(submission_id,
@@ -34,7 +35,7 @@ async def add_submission(user_submission: UserSubmission):
     await storage.add_code(submission_to_storage)
 
     # Gets limits for this task from database
-    limits = await database.get_limits(task_id)
+    limits = await database.get_limits(task_id, conn)
     wall_time_limit = limits['wall_time_limit']
     cpu_time_limit = limits['cpu_time_limit']
     memory_limit = limits['memory_limit']
@@ -58,7 +59,7 @@ async def add_submission(user_submission: UserSubmission):
     return submission_id
 
 
-async def get_all(user_id: str, number: int, offset: int) -> dict:
+async def get_all(user_id: str, number: int, offset: int, conn) -> dict:
     """Get {number} submissions from database for specific user.
 
     Parameters
@@ -76,17 +77,17 @@ async def get_all(user_id: str, number: int, offset: int) -> dict:
         The dictionary of all submissions made by specific user
     """
     # Getting submissions from database
-    submissions = await database.get_submissions(user_id, number, offset)
+    submissions = await database.get_submissions(user_id, number, offset, conn)
 
     for i in range(len(submissions)):
         # Getting result for each submission
         submissions[i]['result'] = \
-            await get_result(submissions[i]['id'], user_id)
+            await get_result(submissions[i]['id'], user_id, conn)
 
     return submissions
 
 
-async def get_result(submission_id: int, user_id: str) -> dict:
+async def get_result(submission_id: int, user_id: str, conn) -> dict:
     """Get result from database by submission and user id.
 
     Parameters
@@ -95,6 +96,8 @@ async def get_result(submission_id: int, user_id: str) -> dict:
         The id of submission
     user_id: str
         The id of user
+    pool: Pool or None
+        A database pool if it's passed, in other case it must be created there
 
     Returns
     -------
@@ -102,7 +105,7 @@ async def get_result(submission_id: int, user_id: str) -> dict:
         The dictionary contains number of points and status of submission
     """
     # Getting result from database
-    result = await database.get_result(submission_id, user_id)
+    result = await database.get_result(submission_id, user_id, conn)
 
     # If submission was checked and result is not full
     if result[0] != 100 and isinstance(result[1], list):
@@ -113,7 +116,8 @@ async def get_result(submission_id: int, user_id: str) -> dict:
     return {'points': result[0], 'status': result[1]}
 
 
-async def get_test_results(submission_id: int, user_id: str) -> List[dict]:
+async def get_test_results(submission_id: int, user_id: str, conn) \
+        -> List[dict]:
     """Get results of tests for specific submission.
 
     Parameters
@@ -129,12 +133,12 @@ async def get_test_results(submission_id: int, user_id: str) -> List[dict]:
         The list of dictionaries, which represents each test
     """
     # Getting tests from database
-    tests = await database.get_test_results(submission_id, user_id)
+    tests = await database.get_test_results(submission_id, user_id, conn)
 
     return tests
 
 
-async def get_submission(submission_id: int, user_id: str) -> dict:
+async def get_submission(submission_id: int, user_id: str, conn) -> dict:
     """Get submission from database by its id.
 
     Parameters
@@ -150,10 +154,10 @@ async def get_submission(submission_id: int, user_id: str) -> dict:
         The dictionary represents info about this submission
     """
     # Getting submission from database
-    submission = await database.get_submission(submission_id, user_id)
+    submission = await database.get_submission(submission_id, user_id, conn)
 
     # Getting result from current module
-    result = await get_result(submission_id, user_id)
+    result = await get_result(submission_id, user_id, conn)
 
     submission['result'] = result
 
@@ -163,7 +167,7 @@ async def get_submission(submission_id: int, user_id: str) -> dict:
         tests = list()
     else:
         # Getting tests from current module
-        tests = await get_test_results(submission_id, user_id)
+        tests = await get_test_results(submission_id, user_id, conn)
 
     submission['tests'] = tests
 
@@ -173,7 +177,8 @@ async def get_submission(submission_id: int, user_id: str) -> dict:
     return submission
 
 
-async def get_submission_id_from_bests(user_id: str, task_id: int) -> int:
+async def get_submission_id_from_bests(user_id: str, task_id: int, conn) \
+        -> int:
     """Get submission id from database by user and task id.
 
     Parameters
@@ -188,4 +193,4 @@ async def get_submission_id_from_bests(user_id: str, task_id: int) -> int:
     _: int
         The id of the submission
     """
-    return await database.get_submission_id_from_bests(user_id, task_id)
+    return await database.get_submission_id_from_bests(user_id, task_id, conn)

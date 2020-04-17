@@ -2,9 +2,9 @@
 import logging
 from typing import Callable, Iterable, List
 
-from toucan import database
-from toucan import storage
-from toucan.dataclass import ResultToChecker, ResultToDB, TestResult
+import database
+import storage
+from dataclass import ResultToChecker, ResultToDB, TestResult
 
 
 logging.basicConfig(filename='runner.log',
@@ -14,7 +14,7 @@ logging.basicConfig(filename='runner.log',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
 
-async def process_result_to_checker(result_to_checker: ResultToChecker
+async def process_result_to_checker(result_to_checker: ResultToChecker, conn
                                     ) -> None:
     """Check result_to_checker and update corresponding rows in database.
 
@@ -34,7 +34,7 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
     logging.info(f'#{submission_id} Checker got correct results')
 
     # Getting points for each test from database
-    points = await database.get_points_for_tests(test_ids)
+    points = await database.get_points_for_tests(test_ids, conn)
 
     # Checking results
     results_to_db = (
@@ -45,13 +45,13 @@ async def process_result_to_checker(result_to_checker: ResultToChecker
     logging.info(f'#{submission_id} Checked results')
 
     # Adding results to database
-    await database.add_results_to_db(results_to_db)
+    await database.add_results_to_db(results_to_db, conn)
 
     # Calling database to update task bests
-    await database.update_task_bests(submission_id)
+    await database.update_task_bests(submission_id, conn)
 
     # Changing submission status in database to 'Completed'
-    await database.change_submission_status(submission_id, 'Completed')
+    await database.change_submission_status(submission_id, 'Completed', conn)
 
     logging.info(f'#{submission_id} Finished everything')
 

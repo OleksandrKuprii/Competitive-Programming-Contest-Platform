@@ -3,14 +3,15 @@ import asyncio
 import logging
 import os
 import tempfile
-import typing
+from typing import Callable, Optional
 
 import docker
 
-import toucan.checker
-import toucan.runner.parse_time
-import toucan.storage
-from toucan.dataclass import ResultToChecker, SubmissionToRunner, TestResult
+import checker
+import database
+import runner.parse_time
+import storage
+from dataclass import ResultToChecker, SubmissionToRunner, TestResult
 
 client = docker.from_env()
 
@@ -28,25 +29,39 @@ logging.basicConfig(filename='runner.log',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
 
+async def execute(submission_to_runner: SubmissionToRunner):
+    """Execute."""
+    # Creating a database pool
+    pool = await database.establish_connection_from_env()
+
+    async with pool.acquire() as conn:
+        await database.change_submission_status(
+            submission_to_runner.submission_id, 'Running', conn)
+
+        test_results = list(
+            await execute_tests(submission_to_runner))
+        print(1)
+        result_to_checker = ResultToChecker(submission_to_runner.submission_id,
+                                            test_results)
+
+        await checker.process_result_to_checker(result_to_checker, conn)
+    print(2)
+    # Closing the database pool
+    await pool.close()
+
+
 def process_submission_to_runner(
         submission_to_runner: SubmissionToRunner) -> ResultToChecker:
     """Run SubmissionToRunner and return ResultToChecker."""
     loop = asyncio.new_event_loop()
-
-    test_results = list(
-        loop.run_until_complete(execute_tests(submission_to_runner)))
-
-    result_to_checker = ResultToChecker(submission_to_runner.submission_id,
-                                        test_results)
-
-    return result_to_checker
+    loop.run_until_complete(execute(submission_to_runner))
 
 
 async def execute_test(image: str, submission_code_abspath: str,
                        submission_code_path_basename: str, input_abspath: str,
                        memory_limit: int, wall_time_limit: int,
                        cpu_time_limit: int) \
-        -> typing.Callable[[int], TestResult]:
+        -> Callable[[int], TestResult]:
     """Execute test of submission.
 
     Parameters
@@ -71,6 +86,7 @@ async def execute_test(image: str, submission_code_abspath: str,
     _: Callable[[int], TestResult]
         Anonymous TestResult - without id
     """
+    print(submission_code_path_basename)
     # Create temporary file for output.txt
     temporary_file_descriptor, temporary_file_path = tempfile.mkstemp(
         dir=LOCAL_STORAGE_ROOT + '/temp')
@@ -115,13 +131,13 @@ async def execute_test(image: str, submission_code_abspath: str,
         logs = container.logs().decode()
 
         # Real(wall) time, user(cpu) time, sys(kernel) time
-        real, user, _sys = toucan.runner.parse_time.parse(logs)
+        real, user, _sys = runner.parse_time.parse(logs)
 
         # Logs contain error stream
         # (time command output + optional error of program)
         # So we check if it matches the time command output regex
         if status_code in (0, 124):
-            if not toucan.runner.parse_time.check(logs):
+            if not runner.parse_time.check(logs):
                 # Someone hacked the universe
                 if status_code == 0:
                     return lambda test_id: TestResult(test_id, 'UnknownError',
@@ -169,7 +185,7 @@ async def execute_test(image: str, submission_code_abspath: str,
 
 async def execute_tests(
         submission_to_runner: SubmissionToRunner
-) -> list:
+) -> Optional[list]:
     """Execute all test for submission."""
     try:
         # Get docker image from language
@@ -179,7 +195,7 @@ async def execute_tests(
         return
 
     # Download submission code and get path to it
-    submission_code_path = await toucan.storage.download_submission_code(
+    submission_code_path = await storage.download_submission_code(
         submission_to_runner.submission_id, submission_to_runner.lang)
 
     logging.info(f'#{submission_to_runner.submission_id} Downloaded code')
@@ -190,11 +206,12 @@ async def execute_tests(
     # Submission code absolute path
     submission_code_path = os.path.abspath(submission_code_path)
 
+    print(submission_code_path_basename)
+
     execute_result = list()
     for test_id, input_path in zip(
             submission_to_runner.test_ids,
-            await toucan.storage.download_inputs(
-                submission_to_runner.test_ids)):
+            await storage.download_inputs(submission_to_runner.test_ids)):
         execute_result.append(
             (await execute_test(container_image,
                                 submission_code_path,

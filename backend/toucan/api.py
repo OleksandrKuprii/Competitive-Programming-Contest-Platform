@@ -1,6 +1,7 @@
 """Toucan API."""
 import asyncio
 import json
+import logging
 from datetime import datetime
 from functools import wraps
 
@@ -9,14 +10,18 @@ from aiohttp.web import Application, Response, _run_app, json_response
 
 import aiohttp_cors
 
+from asyncpg.pool import Pool
+
 import jose
 from jose import jwt
 
 from six.moves.urllib.request import urlopen
 
-from toucan import submission, task
-from toucan.database import establish_connection_from_env
-from toucan.dataclass import UserSubmission
+
+import database
+import submission
+import task
+from dataclass import UserSubmission
 
 
 routes = web.RouteTableDef()
@@ -24,6 +29,14 @@ routes = web.RouteTableDef()
 AUTH0_DOMAIN = 'dev-gly-dk66.eu.auth0.com'
 API_IDENTIFIER = 'toucan-api'
 ALGORITHMS = ["RS256"]
+
+logging.basicConfig(filename='api.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
+
+pool: Pool
 
 
 def get_token_auth_header(request):
@@ -149,7 +162,8 @@ async def post_submission(request, **kwargs):
     except TypeError:
         return Response(status=400)
 
-    submission_id = await submission.add_submission(submission_data)
+    async with pool.acquire() as conn:
+        submission_id = await submission.add_submission(submission_data, conn)
 
     return json_response({
         'submission_id': submission_id,
@@ -170,7 +184,8 @@ async def get_tasks(request):
     number = int(params.get('number'))
     offset = int(params.get('offset'))
 
-    tasks = await task.get_tasks('', number, offset)
+    async with pool.acquire() as conn:
+        tasks = await task.get_tasks('', number, offset, conn)
 
     return json_response(tasks)
 
@@ -191,7 +206,8 @@ async def get_tasks_auth(request, **kwargs):
     number = int(params.get('number'))
     offset = int(params.get('offset'))
 
-    tasks = await task.get_tasks(user_id, number, offset)
+    async with pool.acquire() as conn:
+        tasks = await task.get_tasks(user_id, number, offset, conn)
 
     return json_response(tasks)
 
@@ -200,7 +216,9 @@ async def get_tasks_auth(request, **kwargs):
 async def get_task_by_alias(request):
     """GET task by alias."""
     alias = request.match_info['alias']
-    task_info = await task.get_task_info(alias)
+
+    async with pool.acquire() as conn:
+        task_info = await task.get_task_info(alias, conn)
 
     if task_info is None:
         return Response(status=400)
@@ -219,18 +237,19 @@ async def get_task_by_alias_auth(request, **kwargs):
     """GET task by alias."""
     user_info = kwargs['user_info']
 
-    alias = request.match_info['alias']
-    task_info = await task.get_task_info(alias)
+    async with pool.acquire() as conn:
+        alias = request.match_info['alias']
+        task_info = await task.get_task_info(alias, conn)
 
-    if task_info is None:
-        return Response(status=400)
+        if task_info is None:
+            return Response(status=400)
 
-    user_id = user_info['sub']
-    task_id = await task.get_task_id_from_alias(alias)
-    submission_id = await submission.get_submission_id_from_bests(
-        user_id, task_id)
+        user_id = user_info['sub']
+        task_id = await task.get_task_id_from_alias(alias, conn)
+        submission_id = await submission.get_submission_id_from_bests(
+            user_id, task_id, conn)
 
-    result = await submission.get_result(submission_id, user_id)
+        result = await submission.get_result(submission_id, user_id, conn)
 
     task_info['best_submission'] = {
         'result': result,
@@ -256,7 +275,8 @@ async def get_submissions(request, **kwargs):
     number = int(params.get('number'))
     offset = int(params.get('offset'))
 
-    submissions = await submission.get_all(user_id, number, offset)
+    async with pool.acquire() as conn:
+        submissions = await submission.get_all(user_id, number, offset, conn)
 
     return json_response(submissions)
 
@@ -269,7 +289,9 @@ async def get_submission(request, **kwargs):
     user_id = user_info['sub']
     submission_id = int(request.match_info['submission_id'])
 
-    submission_data = await submission.get_submission(submission_id, user_id)
+    async with pool.acquire() as conn:
+        submission_data = await submission.get_submission(submission_id,
+                                                          user_id, conn)
 
     return json_response(submission_data)
 
@@ -282,7 +304,8 @@ async def get_result(request, **kwargs):
     user_id = user_info['sub']
     submission_id = int(request.match_info['submission_id'])
 
-    result = await submission.get_result(submission_id, user_id)
+    async with pool.acquire() as conn:
+        result = await submission.get_result(submission_id, user_id, conn)
 
     return json_response(result)
 
@@ -295,7 +318,8 @@ async def get_test_results(request, **kwargs):
     user_id = user_info['sub']
     submission_id = int(request.match_info['submission_id'])
 
-    tests = await submission.get_test_results(submission_id, user_id)
+    async with pool.acquire() as conn:
+        tests = await submission.get_test_results(submission_id, user_id, conn)
 
     return json_response(tests)
 
@@ -320,7 +344,8 @@ for route in app.router.routes():
 
 async def main():
     """Run api."""
-    await establish_connection_from_env()
+    global pool
+    pool = await database.establish_connection_from_env()
 
     await _run_app(app, port=4000)
 
