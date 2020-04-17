@@ -22,7 +22,6 @@ test-frontend:
     paths:
       - frontend/.npm/
   before_script:
-    - cd frontend
     - npm ci --cache .npm --prefer-offline
   script:
     - cd frontend
