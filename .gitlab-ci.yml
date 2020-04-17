@@ -8,11 +8,11 @@ test-backend:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
     paths:
-      - .cache/pip
-      - venv/
+      - backend/.cache/pip
   script:
     - pip install tox
-    - (cd backend; tox)
+    - cd backend
+    - tox
 
 test-frontend:
   image: node
@@ -20,8 +20,9 @@ test-frontend:
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - .npm/
+      - frontend/.npm/
   before_script:
+    - cd frontend
     - npm ci --cache .npm --prefer-offline
   script:
     - cd frontend
