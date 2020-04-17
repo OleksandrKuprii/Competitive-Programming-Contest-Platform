@@ -1,25 +1,27 @@
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-
-cache:
-  paths:
-    - node_modules/
-
 stages:
   - test
 
 test-backend:
   image: python:3.8-alpine
   stage: test
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - backend/.cache/pip
   script:
     - pip install tox
-    - (cd backend; tox)
+    - cd backend
+    - tox
 
 test-frontend:
   image: node
   stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - frontend/.npm/
   script:
     - cd frontend
-    - npm install
+    - npm ci --cache .npm --prefer-offline
     - npm run lint
