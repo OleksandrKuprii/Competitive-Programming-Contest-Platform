@@ -1,5 +1,5 @@
 @use "sass:map";
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Raleway:wght@400;700&display=swap');
 
 $body-color: #eee;
 
@@ -11,26 +11,26 @@ $theme-colors: (
   primary: darken($base-color, 2),
   secondary: darken($base-color, 6),
   dark: #111,
-  info: lighten($base-color, 40)
+  info: lighten($base-color, 40),
 );
 
-$body-bg: darken(map_get($theme-colors, "primary"), 6);
+$body-bg: darken(map_get($theme-colors, 'primary'), 6);
 
-$jumbotron-bg: map_get($theme-colors, "secondary");
+$jumbotron-bg: map_get($theme-colors, 'secondary');
 
-$table-dark-bg: map_get($theme-colors, "secondary");
-$table-accent-bg: map_get($theme-colors, "primary");
+$table-dark-bg: map_get($theme-colors, 'secondary');
+$table-accent-bg: map_get($theme-colors, 'primary');
 
-$input-bg: map_get($theme-colors, "primary");
-$input-border-color: map_get($theme-colors, "secondary");
+$input-bg: map_get($theme-colors, 'primary');
+$input-border-color: map_get($theme-colors, 'secondary');
 $input-color: #eee;
 
 $hr-border-width: 2px;
 $hr-border-color: #777;
 
-$toast-background-color: map_get($theme-colors, "secondary");
+$toast-background-color: map_get($theme-colors, 'secondary');
 $toast-color: $body-color;
-$toast-header-background-color: map_get($theme-colors, "primary");
+$toast-header-background-color: map_get($theme-colors, 'primary');
 $toast-header-color: $body-color;
 $toast-border-width: 0;
 $toast-box-shadow: 5px 5px 0 0 black;
@@ -38,7 +38,7 @@ $toast-box-shadow: 5px 5px 0 0 black;
 $close-color: white;
 $close-font-size: 30;
 
-@import "../node_modules/bootstrap/scss/bootstrap";
+@import '../node_modules/bootstrap/scss/bootstrap';
 
 html {
   scroll-behavior: smooth;
@@ -53,8 +53,12 @@ a {
     opacity: 0;
     transform: translateY(10%);
   }
-  60% { opacity: 0.3 }
-  100% { opacity: 1 }
+  60% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 td {
@@ -66,11 +70,11 @@ body {
 }
 
 blockquote {
-  border-left: 8px map_get($theme-colors, "primary") solid;
+  border-left: 8px map_get($theme-colors, 'primary') solid;
   padding: 15px;
   font-size: 18px;
   font-family: 'Raleway', sans-serif;
-  background-color: map_get($theme-colors, "secondary");
+  background-color: map_get($theme-colors, 'secondary');
 }
 
 a {
@@ -86,7 +90,7 @@ nav {
 }
 
 .notification {
-  background-color: map_get($theme-colors, "secondary");
+  background-color: map_get($theme-colors, 'secondary');
   padding: 20px;
   margin-top: 10px;
   border-radius: 5px;
@@ -114,7 +118,7 @@ nav {
   transition: all 0.3s;
 }
 
-@import "./lib/lds";
+@import './lib/lds';
 
 /* width */
 ::-webkit-scrollbar {
@@ -123,15 +127,32 @@ nav {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: map_get($theme-colors, "primary");
+  background: map_get($theme-colors, 'primary');
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: lighten(map_get($theme-colors, "secondary"), 15);
+  background: lighten(map_get($theme-colors, 'secondary'), 15);
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: lighten(map_get($theme-colors, "secondary"), 20);
+  background: lighten(map_get($theme-colors, 'secondary'), 20);
+}
+
+.notificationToast {
+  background-color: map_get($theme-colors, 'primary');
+  padding: 15px;
+
+  transition: 0.3s background-color ease-in-out;
+
+  font-size: 15px;
+
+  &:hover {
+    background-color: lighten(map_get($theme-colors, 'primary'), 10);
+  }
+
+  *:hover {
+    text-decoration: none;
+  }
 }

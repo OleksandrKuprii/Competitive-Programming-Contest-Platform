@@ -17,11 +17,13 @@ const main = async () => {
     audience: 'toucan-api',
   });
 
-  if (window.location.search.includes('code=')
-    && window.location.search.includes('state=')) {
+  if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
     await auth0.handleRedirectCallback();
-    window.history.replaceState({},
-      document.title, window.location.pathname + window.location.hash);
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.pathname + window.location.hash,
+    );
   }
 
   const isAuthenticated = await auth0.isAuthenticated();
@@ -37,13 +39,19 @@ const main = async () => {
     username = user.name;
   }
 
-  const store = createStore(storeModel({
-    isAuthenticated, user, avatar, username,
-  }), {
-    injections: {
-      auth0,
+  const store = createStore(
+    storeModel({
+      isAuthenticated,
+      user,
+      avatar,
+      username,
+    }),
+    {
+      injections: {
+        auth0,
+      },
     },
-  });
+  );
 
   ReactDOM.render(
     <StoreProvider store={store}>

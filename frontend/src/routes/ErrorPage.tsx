@@ -11,15 +11,10 @@ const ErrorPage = ({ code }: { code: 'notFound' | 'pleaseSignIn' }) => {
       <p className="display-1 text-center text-danger">
         <MdReportProblem />
       </p>
-      <p className="h4 text-center font-weight-bold">
-        {' '}
-        {t(`errorMessages.${code}`)}
-      </p>
+      <p className="h4 text-center font-weight-bold"> {t(`errorMessages.${code}`)}</p>
 
       <p className="text-center">
-        <Link to="/">
-          {t('goHome')}
-        </Link>
+        <Link to="/">{t('goHome')}</Link>
       </p>
     </>
   );

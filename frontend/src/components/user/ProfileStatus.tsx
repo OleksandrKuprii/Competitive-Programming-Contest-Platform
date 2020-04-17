@@ -10,17 +10,15 @@ const ProfileStatus = () => {
 
   return (
     <>
-      { isAuthenticated
-        ? (
-          <Button variant="outline-danger" onClick={() => signOut()}>
-            Sign out
-          </Button>
-        )
-        : (
-          <Button variant="outline-info" onClick={() => signIn()}>
-            Sign in
-          </Button>
-        )}
+      {isAuthenticated ? (
+        <Button variant="outline-danger" onClick={() => signOut()}>
+          Sign out
+        </Button>
+      ) : (
+        <Button variant="outline-info" onClick={() => signIn()}>
+          Sign in
+        </Button>
+      )}
     </>
   );
 };

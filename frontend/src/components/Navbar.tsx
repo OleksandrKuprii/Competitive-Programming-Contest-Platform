@@ -1,12 +1,8 @@
 import * as React from 'react';
-import {
-  Container, Nav, Navbar,
-} from 'react-bootstrap';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import {
-  GiPaperPlane, FaHome, GiArcheryTarget, GiBrutalHelm,
-} from 'react-icons/all';
+import { GiPaperPlane, FaHome, GiArcheryTarget, GiBrutalHelm } from 'react-icons/all';
 import ProfileStatus from './user/ProfileStatus';
 
 const ToucanNavbar = () => {
@@ -18,44 +14,32 @@ const ToucanNavbar = () => {
     {
       link: '/',
       pageName: 'home',
-      icon: (
-        <FaHome />
-      ),
+      icon: <FaHome />,
     },
     {
       link: '/tournaments',
       pageName: 'tournaments',
-      icon: (
-        <GiBrutalHelm />
-      ),
+      icon: <GiBrutalHelm />,
     },
     {
       link: '/tasks',
       pageName: 'tasks',
-      icon: (
-        <GiArcheryTarget />
-      ),
+      icon: <GiArcheryTarget />,
     },
     {
       link: '/submissions',
       pageName: 'submissions',
-      icon: (
-        <GiPaperPlane />
-      ),
+      icon: <GiPaperPlane />,
     },
   ]
     .map((item) => ({
       ...item,
       active: item.link === history.location.pathname,
     }))
-    .map(({
-      active, link, pageName, icon,
-    }) => (
+    .map(({ active, link, pageName, icon }) => (
       <Nav.Item key={`header-${pageName}-${link}`}>
         <Nav.Link active={active} disabled={active} href={`#${link}`}>
-          {icon}
-          {' '}
-          {t(`pageName.${pageName}`)}
+          {icon} {t(`pageName.${pageName}`)}
         </Nav.Link>
       </Nav.Item>
     ));

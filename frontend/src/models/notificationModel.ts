@@ -29,8 +29,10 @@ const notificationModel: NotificationModel = {
       actions.addNotificationAndRemoveAfterDelay({
         notification: {
           id: +new Date(),
-          type: 'submitting',
-          taskAlias: target.payload,
+          payload: {
+            type: 'submitting',
+            taskId: target.payload,
+          },
         },
         delay: 1000,
       });
@@ -43,8 +45,10 @@ const notificationModel: NotificationModel = {
       actions.addNotificationAndRemoveAfterDelay({
         notification: {
           id: +new Date(),
-          type: 'submitted',
-          submissionId: target.result.submission.id,
+          payload: {
+            type: 'submitted',
+            submissionId: target.result.submission.id,
+          },
         },
       });
     },
@@ -58,10 +62,12 @@ const notificationModel: NotificationModel = {
       actions.addNotificationAndRemoveAfterDelay({
         notification: {
           id: +new Date(),
-          type: 'receivedResults',
-          submissionId: submission.id,
-          status: submission.status === undefined ? [] : submission.status,
-          points: submission.points === undefined ? -1 : submission.points,
+          payload: {
+            type: 'receivedResults',
+            submissionId: submission.id,
+            status: submission.status === undefined ? [] : submission.status,
+            points: submission.points === undefined ? -1 : submission.points,
+          },
         },
       });
     },

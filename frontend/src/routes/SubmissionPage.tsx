@@ -11,7 +11,6 @@ import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 import Loading from '../components/Loading';
 import TaskLinkByAlias from '../components/task/TaskLinkByAlias';
 
-
 const SubmissionPage = () => {
   const { id: idStr } = useParams();
 
@@ -20,8 +19,8 @@ const SubmissionPage = () => {
   const submission = useStoreState((state) => (id ? state.submission.byId(id) : undefined));
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
-  const isHunting = useStoreState(
-    (state) => (id ? state.submissionHunter.isHunting(id) : undefined),
+  const isHunting = useStoreState((state) =>
+    id ? state.submissionHunter.isHunting(id) : undefined,
   );
 
   const fetchSubmission = useStoreActions((actions) => actions.submission.fetchOne);
@@ -63,14 +62,18 @@ const SubmissionPage = () => {
           <TaskLinkByAlias id={submission?.taskAlias} />
         </td>
         <td>
-          {submission?.submitted === undefined
-            ? ''
-            : <PrettyDate timestamp={submission.submitted} />}
+          {submission?.submitted === undefined ? (
+            ''
+          ) : (
+            <PrettyDate timestamp={submission.submitted} />
+          )}
         </td>
         <td>
-          {submission?.status === undefined
-            ? ''
-            : <Result points={submission?.points} status={submission?.status} />}
+          {submission?.status === undefined ? (
+            ''
+          ) : (
+            <Result points={submission?.points} status={submission?.status} />
+          )}
         </td>
       </>
     ),
@@ -80,32 +83,22 @@ const SubmissionPage = () => {
     <CustomTable tableName="info" headers={['task', 'submitted', 'result']} rows={[infoTableRow]} />
   );
 
-  const testsTableRows: CustomTableRow[] = submission?.tests === undefined
-    ? [] : submission.tests.map(
-      ({
-        points, status, cpuTime, realtime,
-      }, i) => ({
-        id: i,
-        row: (
-          <>
-            <td>{i}</td>
-            <td>
-              <Result points={points} status={[status]} />
-            </td>
-            <td>
-              {cpuTime === undefined
-                ? ''
-                : `${cpuTime}ms`}
-            </td>
-            <td>
-              {realtime === undefined
-                ? ''
-                : `${realtime}ms`}
-            </td>
-          </>
-        ),
-      }),
-    );
+  const testsTableRows: CustomTableRow[] =
+    submission?.tests === undefined
+      ? []
+      : submission.tests.map(({ points, status, cpuTime, realtime }, i) => ({
+          id: i,
+          row: (
+            <>
+              <td>{i}</td>
+              <td>
+                <Result points={points} status={[status]} />
+              </td>
+              <td>{cpuTime === undefined ? '' : `${cpuTime}ms`}</td>
+              <td>{realtime === undefined ? '' : `${realtime}ms`}</td>
+            </>
+          ),
+        }));
 
   const testsTable = (
     <CustomTable
@@ -118,39 +111,30 @@ const SubmissionPage = () => {
   return (
     <Row>
       <Col md={5}>
-        <p className="h3">
-          Submission #
-          {submission?.id}
-        </p>
+        <p className="h3">Submission #{submission?.id}</p>
 
-        <p className="description">
-          Overall results
-        </p>
+        <p className="description">Overall results</p>
 
         {infoTable}
 
-        {submission?.tests !== undefined
-          ? (
-            <>
-              <p className="description">
-                Results per test
-              </p>
+        {submission?.tests !== undefined ? (
+          <>
+            <p className="description">Results per test</p>
 
-              {testsTable}
-            </>
-          )
-          : null}
+            {testsTable}
+          </>
+        ) : null}
       </Col>
       <Col>
-        <p><b>{submission?.language}</b></p>
-        {submission?.code === undefined
-          ? null
-          : (
-            <SubmissionCodeViewer
-              code={submission?.code}
-              language={getGeneralLanguageName(submission.language)}
-            />
-          )}
+        <p>
+          <b>{submission?.language}</b>
+        </p>
+        {submission?.code === undefined ? null : (
+          <SubmissionCodeViewer
+            code={submission?.code}
+            language={getGeneralLanguageName(submission.language)}
+          />
+        )}
       </Col>
     </Row>
   );

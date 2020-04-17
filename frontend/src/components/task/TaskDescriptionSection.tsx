@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 
 export interface TaskDescriptionSectionArgs {
-  text: string,
-  header: string,
+  text: string;
+  header: string;
 }
 
 const TaskDescriptionSection = ({ header, text }: TaskDescriptionSectionArgs) => {
@@ -15,9 +15,7 @@ const TaskDescriptionSection = ({ header, text }: TaskDescriptionSectionArgs) =>
     <>
       <p className="h5 font-weight-bold">{header}</p>
 
-      <blockquote>
-        {parsed}
-      </blockquote>
+      <blockquote>{parsed}</blockquote>
     </>
   );
 };

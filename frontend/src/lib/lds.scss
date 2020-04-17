@@ -29,7 +29,8 @@
     top: 8px;
     height: 64px;
   }
-  50%, 100% {
+  50%,
+  100% {
     top: 24px;
     height: 32px;
   }
@@ -95,7 +96,8 @@
   animation-delay: -1.6s;
 }
 @keyframes lds-grid {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
