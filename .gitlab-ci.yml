@@ -21,9 +21,8 @@ test-frontend:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - frontend/.npm/
-  before_script:
-    - npm ci --cache .npm --prefer-offline
   script:
     - cd frontend
+    - npm ci --cache .npm --prefer-offline
     - npm install
     - npm run lint
