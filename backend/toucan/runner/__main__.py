@@ -7,10 +7,8 @@ import os
 
 import aioboto3
 
-from toucan import checker
-from toucan import database
-from toucan.dataclass import SubmissionToRunner
-from toucan.runner import worker
+from dataclass import SubmissionToRunner
+from runner import worker
 
 SUBMISSIONS_QUEUE_URL = os.getenv('SUBMISSIONS_QUEUE_URL')
 
@@ -25,8 +23,6 @@ logging.basicConfig(filename='runner.log',
 
 async def main():
     """Run runner."""
-    await database.establish_connection_from_env()
-
     # Aioboto3 resource for Amazon SQS
     async with aioboto3.resource('sqs', endpoint_url=os.getenv(
             'SQS_ENDPOINT')) \
@@ -62,11 +58,6 @@ async def main():
                         submission_id = json.loads(await message.body)[
                             'submission_id']
 
-                        # Changing submission status in the database to
-                        # 'Running'
-                        await database.change_submission_status(submission_id,
-                                                                'Running')
-
                         logging.info(f'#{submission_id} Received')
 
                 except TypeError:
@@ -78,23 +69,11 @@ async def main():
 
                 loop = asyncio.get_event_loop()
 
-                tasks = [loop.run_in_executor(executor,
-                         worker.process_submission_to_runner, i) for i in
-                         submission_to_runner]
-
-                completed, pending = await asyncio.wait(tasks)
-                submission_result = [x.result() for x in completed]
-
-                # Submission result
-                # Use executor.map as it controls number of running submissions
-                # submission_result = executor.map(
-                #     worker.process_submission_to_runner,
-                #     submission_to_runner)
-
-                # Process results
-                for result_to_checker in submission_result:
-                    await checker.process_result_to_checker(result_to_checker)
+                [loop.run_in_executor(executor,
+                 worker.process_submission_to_runner, i) for i in
+                 submission_to_runner]
 
 
 if __name__ == '__main__':
+    print('Runner is starting!')
     asyncio.run(main())

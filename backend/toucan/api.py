@@ -1,6 +1,9 @@
 """Toucan API."""
 import asyncio
 import json
+import logging
+import re
+
 from datetime import datetime
 from functools import wraps
 
@@ -9,14 +12,18 @@ from aiohttp.web import Application, Response, _run_app, json_response
 
 import aiohttp_cors
 
+
+from asyncpg.pool import Pool
+
 import jose
 from jose import jwt
 
 from six.moves.urllib.request import urlopen
 
-from toucan import submission, task
-from toucan.database import establish_connection_from_env
-from toucan.dataclass import UserSubmission
+import database
+import submission
+import task
+from dataclass import UserSubmission
 
 
 routes = web.RouteTableDef()
@@ -24,6 +31,14 @@ routes = web.RouteTableDef()
 AUTH0_DOMAIN = 'dev-gly-dk66.eu.auth0.com'
 API_IDENTIFIER = 'toucan-api'
 ALGORITHMS = ["RS256"]
+
+logging.basicConfig(filename='api.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
+
+pool: Pool
 
 
 def get_token_auth_header(request):
@@ -88,8 +103,10 @@ def requires_auth(f):
         try:
             unverified_header = jwt.get_unverified_header(token)
         except jose.exceptions.JWTError:
-            return json_response({'code': 'invalid token', 'description':
-                                  'error decoding token headers'}, status=401)
+            return json_response(
+                {'code': 'invalid token',
+                 'description': 'error decoding token headers'},
+                status=401)
 
         rsa_key = {}
         for key in jwks["keys"]:
@@ -134,6 +151,84 @@ def requires_auth(f):
     return decorated
 
 
+def parse_task_params(params):
+    """Parse tasks params."""
+    required_params = ['number', 'offset']
+
+    for param in required_params:
+        try:
+            params[param] = int(params[param])
+        except (KeyError, ValueError):
+            return
+
+    sort_params = ['name_sort', 'category_sort', 'difficulty_sort',
+                   'result_sort']
+
+    for param in sort_params:
+        try:
+            if params[param] == '':
+                del params[param]
+            elif params[param] != 'DESC':
+                params[param] = 'ASC'
+        except KeyError:
+            continue
+
+    try:
+        cats = params['categories'].strip(',').split(',')
+        params['categories'] = {cat for cat in cats if cat != ''}
+    except KeyError:
+        pass
+
+    try:
+        difficulty = params['difficulty'].strip(',').split(',')
+        params['difficulty'] = set()
+
+        for diff in difficulty:
+            diff = diff.strip()
+            if diff.isnumeric():
+                params['difficulty'].add(int(diff))
+            else:
+                reg = re.search(r'^(\d+)-(\d+)$', diff)
+                if reg:
+                    temp_diff = range(int(reg.group(1)), int(reg.group(2)) + 1)
+                    for d in temp_diff:
+                        params['difficulty'].add(d)
+    except KeyError:
+        pass
+
+    try:
+        results = params['result'].strip(',').split(',')
+        result_map = {
+            'full': 100,
+            'partial': list(range(1, 100)),
+            'zero': 0,
+            'null': None
+        }
+
+        params['result'] = set()
+
+        for r in results:
+            r = r.strip()
+            if re.match(r'^full|zero|null$', r):
+                params['result'].add(result_map[r])
+            elif r == 'partial':
+                for i in result_map[r]:
+                    params['result'].add(i)
+            elif r.isnumeric():
+                params['result'].add(int(r))
+            else:
+                reg = re.search(r'^(\d+)-(\d+)$', r)
+                if reg:
+                    temp_result = range(int(reg.group(1)),
+                                        int(reg.group(2)) + 1)
+                    for d in temp_result:
+                        params['result'].add(d)
+    except KeyError:
+        pass
+
+    return params
+
+
 @routes.post('/submission')
 @requires_auth
 async def post_submission(request, **kwargs):
@@ -149,7 +244,8 @@ async def post_submission(request, **kwargs):
     except TypeError:
         return Response(status=400)
 
-    submission_id = await submission.add_submission(submission_data)
+    async with pool.acquire() as conn:
+        submission_id = await submission.add_submission(submission_data, conn)
 
     return json_response({
         'submission_id': submission_id,
@@ -160,17 +256,21 @@ async def post_submission(request, **kwargs):
 @routes.get('/tasks')
 async def get_tasks(request):
     """GET tasks."""
-    params = request.rel_url.query
+    params = dict(request.rel_url.query)
 
-    if list(params.values()).count('') or \
-            ('number' not in list(params.keys()) or
-             'offset' not in list(params.keys())):
+    params = parse_task_params(params)
+
+    for key in ['result', 'result_sort']:
+        try:
+            del params[key]
+        except KeyError:
+            pass
+
+    if params is None:
         return Response(status=400)
 
-    number = int(params.get('number'))
-    offset = int(params.get('offset'))
-
-    tasks = await task.get_tasks('', number, offset)
+    async with pool.acquire() as conn:
+        tasks = await task.get_tasks('', params, conn)
 
     return json_response(tasks)
 
@@ -179,19 +279,18 @@ async def get_tasks(request):
 @requires_auth
 async def get_tasks_auth(request, **kwargs):
     """Get task for authorised user."""
-    params = request.rel_url.query
+    params = dict(request.rel_url.query)
 
-    user_info = kwargs['user_info']
-    if list(params.values()).count('') or \
-            ('number' not in list(params.keys()) or
-             'offset' not in list(params.keys())):
+    params = parse_task_params(params)
+
+    if params is None:
         return Response(status=400)
 
+    user_info = kwargs['user_info']
     user_id = user_info['sub']
-    number = int(params.get('number'))
-    offset = int(params.get('offset'))
 
-    tasks = await task.get_tasks(user_id, number, offset)
+    async with pool.acquire() as conn:
+        tasks = await task.get_tasks(user_id, params, conn)
 
     return json_response(tasks)
 
@@ -200,7 +299,9 @@ async def get_tasks_auth(request, **kwargs):
 async def get_task_by_alias(request):
     """GET task by alias."""
     alias = request.match_info['alias']
-    task_info = await task.get_task_info(alias)
+
+    async with pool.acquire() as conn:
+        task_info = await task.get_task_info(alias, conn)
 
     if task_info is None:
         return Response(status=400)
@@ -219,18 +320,19 @@ async def get_task_by_alias_auth(request, **kwargs):
     """GET task by alias."""
     user_info = kwargs['user_info']
 
-    alias = request.match_info['alias']
-    task_info = await task.get_task_info(alias)
+    async with pool.acquire() as conn:
+        alias = request.match_info['alias']
+        task_info = await task.get_task_info(alias, conn)
 
-    if task_info is None:
-        return Response(status=400)
+        if task_info is None:
+            return Response(status=400)
 
-    user_id = user_info['sub']
-    task_id = await task.get_task_id_from_alias(alias)
-    submission_id = await submission.get_submission_id_from_bests(
-        user_id, task_id)
+        user_id = user_info['sub']
+        task_id = await task.get_task_id_from_alias(alias, conn)
+        submission_id = await submission.get_submission_id_from_bests(
+            user_id, task_id, conn)
 
-    result = await submission.get_result(submission_id, user_id)
+        result = await submission.get_result(submission_id, user_id, conn)
 
     task_info['best_submission'] = {
         'result': result,
@@ -256,7 +358,8 @@ async def get_submissions(request, **kwargs):
     number = int(params.get('number'))
     offset = int(params.get('offset'))
 
-    submissions = await submission.get_all(user_id, number, offset)
+    async with pool.acquire() as conn:
+        submissions = await submission.get_all(user_id, number, offset, conn)
 
     return json_response(submissions)
 
@@ -269,7 +372,9 @@ async def get_submission(request, **kwargs):
     user_id = user_info['sub']
     submission_id = int(request.match_info['submission_id'])
 
-    submission_data = await submission.get_submission(submission_id, user_id)
+    async with pool.acquire() as conn:
+        submission_data = await submission.get_submission(submission_id,
+                                                          user_id, conn)
 
     return json_response(submission_data)
 
@@ -282,7 +387,8 @@ async def get_result(request, **kwargs):
     user_id = user_info['sub']
     submission_id = int(request.match_info['submission_id'])
 
-    result = await submission.get_result(submission_id, user_id)
+    async with pool.acquire() as conn:
+        result = await submission.get_result(submission_id, user_id, conn)
 
     return json_response(result)
 
@@ -295,7 +401,8 @@ async def get_test_results(request, **kwargs):
     user_id = user_info['sub']
     submission_id = int(request.match_info['submission_id'])
 
-    tests = await submission.get_test_results(submission_id, user_id)
+    async with pool.acquire() as conn:
+        tests = await submission.get_test_results(submission_id, user_id, conn)
 
     return json_response(tests)
 
@@ -320,7 +427,8 @@ for route in app.router.routes():
 
 async def main():
     """Run api."""
-    await establish_connection_from_env()
+    global pool
+    pool = await database.establish_connection_from_env()
 
     await _run_app(app, port=4000)
 

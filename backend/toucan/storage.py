@@ -4,7 +4,8 @@ from typing import Iterable, List
 
 import aioboto3
 
-from toucan.dataclass import SubmissionToStorage
+from dataclass import SubmissionToStorage
+
 
 SUBMISSIONS_BUCKET = 'submissions'
 TESTS_BUCKET = 'tests'
