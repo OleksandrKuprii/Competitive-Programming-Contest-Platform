@@ -1,9 +1,13 @@
 interface StringIndexSignature {
-  [key: string]: any
+  [key: string]: any;
 }
 
-function updateObjectWithProperty(arr: StringIndexSignature[],
-  key: string, value: any, newObj: any) {
+function updateObjectWithProperty(
+  arr: StringIndexSignature[],
+  key: string,
+  value: any,
+  newObj: any,
+) {
   const objWithProperty = arr.find((obj) => value.toString() === obj[key].toString());
 
   let changed = false;

@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Form from 'react-bootstrap/Form';
-import {
-  Alert,
-  Button, ButtonGroup,
-} from 'react-bootstrap';
+import { Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreState, useStoreActions } from '../../hooks/store';
@@ -34,12 +31,7 @@ const TaskSolutionSubmissionForm = () => {
     submit(taskAlias);
   }, [submit, taskAlias]);
 
-  const languages = [
-    'python3',
-    'python2',
-    'c++',
-    'c',
-  ];
+  const languages = ['python3', 'python2', 'c++', 'c'];
 
   return (
     <div className="bg-secondary p-4 rounded">
@@ -48,12 +40,7 @@ const TaskSolutionSubmissionForm = () => {
           <SubmissionCodeViewer code={code || ''} language="python3" />
         </Form.Row>
 
-        {!isAuthenticated
-          ? (
-            <Alert variant="danger">
-              Sign in to submit solution!
-            </Alert>
-          ) : <></>}
+        {!isAuthenticated ? <Alert variant="danger">Sign in to submit solution!</Alert> : <></>}
 
         <Form.Row>
           <Form.Control
@@ -63,9 +50,7 @@ const TaskSolutionSubmissionForm = () => {
             onChange={(e) => selectedLanguage((e.target as any).value)}
           >
             {languages.map((lang) => (
-              <option key={lang}>
-                {lang}
-              </option>
+              <option key={lang}>{lang}</option>
             ))}
           </Form.Control>
           <div style={{ paddingLeft: 10 }} />

@@ -81,11 +81,11 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     const body = await response.json();
 
     return {
-      submission: ({
+      submission: {
         id: body.submission_id,
         submitted: new Date(body.timestamp),
         loading: true,
-      } as Submission),
+      } as Submission,
     };
   }),
 };

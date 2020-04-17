@@ -5,9 +5,7 @@ import { SubmissionHunterModel } from './interfaces';
 const submissionHunterModel: SubmissionHunterModel = {
   nowHunting: new Set(),
 
-  isHunting: computed(
-    (state) => (id) => state.nowHunting.has(id),
-  ),
+  isHunting: computed((state) => (id) => state.nowHunting.has(id)),
 
   startedHunting: action((state, id) => {
     state.nowHunting.add(id);

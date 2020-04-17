@@ -2,23 +2,18 @@ import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-const Result = (
-  { points, status }:
-  { points: number | undefined, status?: string[] },
-) => {
+const Result = ({ points, status }: { points: number | undefined; status?: string[] }) => {
   const { t } = useTranslation();
 
   if (!status || status.length === 0) {
-    return (<></>);
+    return <></>;
   }
 
   if (status[0] === 'Running') {
     return (
       <>
         <span className="disabled">
-          {t('running')}
-          {' '}
-          <Spinner animation="border" size="sm" />
+          {t('running')} <Spinner animation="border" size="sm" />
         </span>
       </>
     );
@@ -38,18 +33,12 @@ const Result = (
 
     return (
       <span className={`text-${color}`}>
-        {points === undefined ? '' : points.toString()}
-        {' '}
-        {status.join(', ')}
+        {points === undefined ? '' : points.toString()} {status.join(', ')}
       </span>
     );
   }
 
-  return (
-    <>
-      {status.join(', ')}
-    </>
-  );
+  return <>{status.join(', ')}</>;
 };
 
 export default Result;

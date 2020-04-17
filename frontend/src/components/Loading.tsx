@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { memo } from 'react';
 
 interface LoadingArgs {
-  variant: 'running' | 'processing' | 'loading'
+  variant: 'running' | 'processing' | 'loading';
 }
 
 const LoadingSpinner = () => (

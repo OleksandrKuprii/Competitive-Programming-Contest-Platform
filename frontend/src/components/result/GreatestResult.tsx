@@ -22,7 +22,7 @@ const GreatestResult = ({ taskAlias }: { taskAlias: string | undefined }) => {
       return -1;
     }
 
-    return (a.points > b.points ? -1 : 1);
+    return a.points > b.points ? -1 : 1;
   });
 
   const greatestSubmission = submissionsClone.find(

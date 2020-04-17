@@ -12,7 +12,6 @@ import GreatestResult from '../components/result/GreatestResult';
 import TaskSolutionSubmissionForm from '../components/task/TaskSolutionSubmissionForm';
 import TaskDescriptionSection from '../components/task/TaskDescriptionSection';
 
-
 const TaskPage = () => {
   const { t } = useTranslation();
 
@@ -40,8 +39,16 @@ const TaskPage = () => {
 
   const sections = [
     { id: 1, text: task.description?.main },
-    { id: 2, header: t('taskPage.description.inputFormat'), text: task.description?.inputFormat },
-    { id: 3, header: t('taskPage.description.outputFormat'), text: task.description?.outputFormat },
+    {
+      id: 2,
+      header: t('taskPage.description.inputFormat'),
+      text: task.description?.inputFormat,
+    },
+    {
+      id: 3,
+      header: t('taskPage.description.outputFormat'),
+      text: task.description?.outputFormat,
+    },
   ];
 
   if (task.customSections) {
@@ -62,41 +69,33 @@ const TaskPage = () => {
           <p className="h6">
             {t('taskPage.personalResult')}
             {': '}
-            <GreatestResult taskAlias={taskAlias} />
-            {' '}
+            <GreatestResult taskAlias={taskAlias} />{' '}
           </p>
 
           {sections.map((section) => (
-            <TaskDescriptionSection key={section.id} text={section.text || ''} header={section.header || ''} />
+            <TaskDescriptionSection
+              key={section.id}
+              text={section.text || ''}
+              header={section.header || ''}
+            />
           ))}
 
-          {task.examples === undefined ? null
-            : (
-              <CustomTable
-                tableName="taskExamples"
-                headers={['input', 'output']}
-                padding={10}
-                rows={task.examples.map(
-                  ({
-                    input,
-                    output,
-                  }: { input: string, output: string }) => (
-                    {
-                      id: `${input}-${output}`,
-                      row: (
-                        <>
-                          <td>
-                            {input}
-                          </td>
-                          <td>
-                            {output}
-                          </td>
-                        </>
-                      ),
-                    }),
-                )}
-              />
-            )}
+          {task.examples === undefined ? null : (
+            <CustomTable
+              tableName="taskExamples"
+              headers={['input', 'output']}
+              padding={10}
+              rows={task.examples.map(({ input, output }: { input: string; output: string }) => ({
+                id: `${input}-${output}`,
+                row: (
+                  <>
+                    <td>{input}</td>
+                    <td>{output}</td>
+                  </>
+                ),
+              }))}
+            />
+          )}
         </Col>
         <Col md="4">
           <CustomTable
@@ -107,24 +106,13 @@ const TaskPage = () => {
                 id: `${task.limits?.cpuTime}-${task.limits?.wallTime}-${task.limits?.memory}`,
                 row: (
                   <>
-                    <td>
-                      {task.limits?.cpuTime === undefined
-                        ? ''
-                        : task.limits.cpuTime}
-                    </td>
-                    <td>
-                      {task.limits?.wallTime === undefined
-                        ? ''
-                        : task.limits.wallTime}
-                    </td>
-                    <td>
-                      {task.limits?.memory === undefined
-                        ? ''
-                        : task.limits.memory}
-                    </td>
+                    <td>{task.limits?.cpuTime === undefined ? '' : task.limits.cpuTime}</td>
+                    <td>{task.limits?.wallTime === undefined ? '' : task.limits.wallTime}</td>
+                    <td>{task.limits?.memory === undefined ? '' : task.limits.memory}</td>
                   </>
                 ),
-              }]}
+              },
+            ]}
           />
 
           <CustomTable
@@ -135,12 +123,8 @@ const TaskPage = () => {
                 id: 'input.txt-output.txt',
                 row: (
                   <>
-                    <td>
-                      input.txt
-                    </td>
-                    <td>
-                      output.txt
-                    </td>
+                    <td>input.txt</td>
+                    <td>output.txt</td>
                   </>
                 ),
               },
@@ -151,7 +135,9 @@ const TaskPage = () => {
 
       <Row>
         <Col>
-          <p><b>{t('taskPage.submitSolution')}</b></p>
+          <p>
+            <b>{t('taskPage.submitSolution')}</b>
+          </p>
 
           <TaskSolutionDropZone>
             <TaskSolutionSubmissionForm />

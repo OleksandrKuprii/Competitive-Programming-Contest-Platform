@@ -1,7 +1,6 @@
 const resultToPointsAndStatus = (result: any) => {
   let points;
-  let
-    status = [];
+  let status = [];
 
   if (result == null) {
     points = null;

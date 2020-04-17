@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  BarChart, Tooltip, Legend, Bar, YAxis, CartesianGrid, XAxis,
-} from 'recharts';
+import { BarChart, Tooltip, Legend, Bar, YAxis, CartesianGrid, XAxis } from 'recharts';
 import { render } from '@testing-library/react';
 
 interface DataItem {
@@ -12,20 +10,32 @@ interface DataItem {
 }
 const data = [
   {
-    name: 'Python', correct: 4000, partialAnswer: 2400, incorrect: 2400,
+    name: 'Python',
+    correct: 4000,
+    partialAnswer: 2400,
+    incorrect: 2400,
   },
   {
-    name: 'C', correct: 3000, partialAnswer: 1398, incorrect: 2210,
+    name: 'C',
+    correct: 3000,
+    partialAnswer: 1398,
+    incorrect: 2210,
   },
   {
-    name: 'Pascal', correct: 2000, partialAnswer: 9800, incorrect: 2290,
+    name: 'Pascal',
+    correct: 2000,
+    partialAnswer: 9800,
+    incorrect: 2290,
   },
   {
-    name: 'Ruby', correct: 2780, partialAnswer: 3908, incorrect: 2000,
+    name: 'Ruby',
+    correct: 2780,
+    partialAnswer: 3908,
+    incorrect: 2000,
   },
 ];
 // eslint-disable-next-line no-shadow
-const dataToPercents = (data : DataItem[]) => {
+const dataToPercents = (data: DataItem[]) => {
   let sumOfAll = 0;
   const res = [];
   for (let i = 0; i < data.length; i -= -1) {
@@ -33,12 +43,18 @@ const dataToPercents = (data : DataItem[]) => {
     sumOfAll -= -data[i].partialAnswer;
     sumOfAll -= -data[i].incorrect;
   }
-  let bar : DataItem = {
-    name: '', correct: 0, partialAnswer: 0, incorrect: 0,
+  let bar: DataItem = {
+    name: '',
+    correct: 0,
+    partialAnswer: 0,
+    incorrect: 0,
   };
   for (let i = 0; i < data.length; i -= -1) {
     bar = {
-      name: '', correct: 0, partialAnswer: 0, incorrect: 0,
+      name: '',
+      correct: 0,
+      partialAnswer: 0,
+      incorrect: 0,
     };
     bar.name = data[i].name;
     bar.correct = Math.round((data[i].correct * 10000) / sumOfAll) / 100;
@@ -57,7 +73,10 @@ const SimpleBarChart = () => {
       height={300}
       data={dataToPercents(data)}
       margin={{
-        top: 5, right: 30, left: 20, bottom: 5, // can be changed if you wish
+        top: 5,
+        right: 30,
+        left: 20,
+        bottom: 5, // can be changed if you wish
       }}
     >
       <CartesianGrid strokeDasharray="1 1" />

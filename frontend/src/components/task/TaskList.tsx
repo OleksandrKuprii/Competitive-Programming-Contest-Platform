@@ -9,34 +9,27 @@ import { Task } from '../../models/interfaces';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
   const rows = tasks.map(
-    ({
-      id, name, difficulty, rating, category,
-    }) => ({
-      id,
-      row: (
-        <>
-          <td>
-            <TaskLinkByTask taskName={name} id={id} />
-          </td>
-          <td>
-            <CategoryName id={category} />
-          </td>
-          <td>
-            {difficulty === undefined
-              ? ''
-              : <TaskDifficulty id={id} difficulty={difficulty} />}
-          </td>
-          <td>
-            {rating === undefined
-              ? ''
-              : <TaskRatingHistogram id={id} rating={rating} />}
-          </td>
-          <td>
-            <GreatestResult taskAlias={id} />
-          </td>
-        </>
-      ),
-    } as CustomTableRow),
+    ({ id, name, difficulty, rating, category }) =>
+      ({
+        id,
+        row: (
+          <>
+            <td>
+              <TaskLinkByTask taskName={name} id={id} />
+            </td>
+            <td>
+              <CategoryName id={category} />
+            </td>
+            <td>
+              {difficulty === undefined ? '' : <TaskDifficulty id={id} difficulty={difficulty} />}
+            </td>
+            <td>{rating === undefined ? '' : <TaskRatingHistogram id={id} rating={rating} />}</td>
+            <td>
+              <GreatestResult taskAlias={id} />
+            </td>
+          </>
+        ),
+      } as CustomTableRow),
   );
 
   return (

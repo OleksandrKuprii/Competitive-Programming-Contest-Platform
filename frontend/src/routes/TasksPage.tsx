@@ -13,7 +13,6 @@ const TasksPage = () => {
 
   const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
 
-
   const tasks = nTasks(50);
 
   useEffect(() => {
