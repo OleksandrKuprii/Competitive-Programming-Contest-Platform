@@ -1,65 +1,49 @@
 import React from 'react';
-import { BarChart, Tooltip, Legend, Bar, YAxis, CartesianGrid, XAxis } from 'recharts';
+import {
+  BarChart, Tooltip, Legend, Bar, YAxis, CartesianGrid, XAxis,
+} from 'recharts';
 import { render } from '@testing-library/react';
 
 interface DataItem {
-  name: string;
-  correct: number;
-  partialAnswer: number;
-  incorrect: number;
+  lang: string;
+  full: number;
+  partial: number;
+  zero: number;
 }
 const data = [
   {
-    name: 'Python',
-    correct: 4000,
-    partialAnswer: 2400,
-    incorrect: 2400,
+    lang: 'Python', full: 4000, partial: 2400, zero: 2400,
   },
   {
-    name: 'C',
-    correct: 3000,
-    partialAnswer: 1398,
-    incorrect: 2210,
+    lang: 'C', full: 3000, partial: 1398, zero: 2210,
   },
   {
-    name: 'Pascal',
-    correct: 2000,
-    partialAnswer: 9800,
-    incorrect: 2290,
+    lang: 'Pascal', full: 2000, partial: 9800, zero: 2290,
   },
   {
-    name: 'Ruby',
-    correct: 2780,
-    partialAnswer: 3908,
-    incorrect: 2000,
+    lang: 'Ruby', full: 2780, partial: 3908, zero: 2000,
   },
 ];
 // eslint-disable-next-line no-shadow
-const dataToPercents = (data: DataItem[]) => {
+const dataToPercents = (data : DataItem[]) => {
   let sumOfAll = 0;
   const res = [];
   for (let i = 0; i < data.length; i -= -1) {
-    sumOfAll -= -data[i].correct;
-    sumOfAll -= -data[i].partialAnswer;
-    sumOfAll -= -data[i].incorrect;
+    sumOfAll -= -data[i].full;
+    sumOfAll -= -data[i].partial;
+    sumOfAll -= -data[i].zero;
   }
-  let bar: DataItem = {
-    name: '',
-    correct: 0,
-    partialAnswer: 0,
-    incorrect: 0,
+  let bar : DataItem = {
+    lang: '', full: 0, partial: 0, zero: 0,
   };
   for (let i = 0; i < data.length; i -= -1) {
     bar = {
-      name: '',
-      correct: 0,
-      partialAnswer: 0,
-      incorrect: 0,
+      lang: '', full: 0, partial: 0, zero: 0,
     };
-    bar.name = data[i].name;
-    bar.correct = Math.round((data[i].correct * 10000) / sumOfAll) / 100;
-    bar.partialAnswer = Math.round((data[i].partialAnswer * 10000) / sumOfAll) / 100;
-    bar.incorrect = Math.round((data[i].incorrect * 10000) / sumOfAll) / 100;
+    bar.lang = data[i].lang;
+    bar.full = Math.round((data[i].full * 10000) / sumOfAll) / 100;
+    bar.partial = Math.round((data[i].partial * 10000) / sumOfAll) / 100;
+    bar.zero = Math.round((data[i].zero * 10000) / sumOfAll) / 100;
     res.push(bar);
   }
   return res;
@@ -73,20 +57,17 @@ const SimpleBarChart = () => {
       height={300}
       data={dataToPercents(data)}
       margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5, // can be changed if you wish
+        top: 5, right: 30, left: 20, bottom: 5, // can be changed if you wish
       }}
     >
       <CartesianGrid strokeDasharray="1 1" />
-      <XAxis dataKey="name" />
+      <XAxis dataKey="lang" />
       <YAxis unit="%" />
       <Tooltip formatter={(value) => `${value}%`} />
       <Legend />
-      <Bar dataKey="correct" fill="#82ca9d" name="Correct" />
-      <Bar dataKey="partialAnswer" fill="#edcf5f" name="Not a full answer" />
-      <Bar dataKey="incorrect" fill="#db504a" name="Incorrect" />
+      <Bar dataKey="full" fill="#82ca9d" name="Correct" />
+      <Bar dataKey="partial" fill="#edcf5f" name="Not a full answer" />
+      <Bar dataKey="zero" fill="#db504a" name="Incorrect" />
     </BarChart>
   );
 };
