@@ -67,7 +67,7 @@ async def collect_task_data(conn: Connection) -> List[dict]:
             JOIN coreschema.results
             ON coreschema.results.submission_id =
                 coreschema.task_bests.submission_id
-            GROUP BY lang, task_bests.task_id
+            GROUP BY lang, task_bests.task_id, task_bests.user_id
             ORDER BY task_id;
             """)
 
