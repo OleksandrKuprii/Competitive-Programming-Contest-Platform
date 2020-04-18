@@ -3,8 +3,8 @@ import Injections from '../injections';
 
 export interface TaskRating {
   correct: number;
-  partiallyCorrect: number;
-  zeroPointAnswer: number;
+  partial: number;
+  zero: number;
 }
 
 export interface TaskExample {

@@ -78,6 +78,11 @@ const taskModel: TaskModel = {
           name: task.name,
           category: task.category.alias,
           difficulty: task.difficulty,
+          rating: {
+            correct: task.statistics.full,
+            partial: task.statistics.partial,
+            zero: task.statistics.zero,
+          },
         } as Task,
         category: {
           id: task.category.alias,
