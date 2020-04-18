@@ -1,0 +1,6 @@
+.task-description-section {
+  border-left: 8px map_get($theme-colors, 'primary') solid;
+  padding: 15px;
+  font-size: 18px;
+  background-color: map_get($theme-colors, 'secondary');
+}

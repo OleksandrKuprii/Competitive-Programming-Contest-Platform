@@ -1,0 +1,23 @@
+@use "sass:map";
+
+$base-color: #1b262c;
+
+$theme-colors: (
+  primary: darken($base-color, 2),
+  secondary: darken($base-color, 6),
+  dark: darken($base-color, 16),
+  info: lighten($base-color, 40),
+);
+
+$body-color: #eee;
+$body-bg: darken(map_get($theme-colors, 'primary'), 6);
+
+$table-head-bg: #444;
+$table-dark-bg: map_get($theme-colors, 'secondary');
+$table-accent-bg: map_get($theme-colors, 'primary');
+
+$jumbotron-bg: map_get($theme-colors, 'secondary');
+
+$input-bg: map_get($theme-colors, 'primary');
+$input-border-color: map_get($theme-colors, 'secondary');
+$input-color: #eee;

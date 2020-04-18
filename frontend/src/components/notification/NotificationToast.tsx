@@ -17,7 +17,7 @@ const SubmittingNotification: React.FunctionComponent<{ taskId: string }> = ({ t
 
   return (
     <div
-      className="notificationToast"
+      className="notification-toast"
       onClick={goToTask}
       onKeyDown={goToTask}
       role="button"
@@ -38,7 +38,7 @@ const SubmittedNotification: React.FunctionComponent<{ submissionId: number }> =
 
   return (
     <div
-      className="notificationToast"
+      className="notification-toast"
       onClick={goToSubmission}
       onKeyDown={goToSubmission}
       role="button"
@@ -60,7 +60,13 @@ const ReceivedResultsNotification: React.FunctionComponent<{
   };
 
   return (
-    <div className="notificationToast" onClick={goToSubmission} onKeyDown={goToSubmission} role="button" aria-hidden="true">
+    <div
+      className="notification-toast"
+      onClick={goToSubmission}
+      onKeyDown={goToSubmission}
+      role="button"
+      aria-hidden="true"
+    >
       <Result points={points} status={status} />
     </div>
   );
