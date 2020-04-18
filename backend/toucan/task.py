@@ -197,8 +197,12 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
                 task_index_to_delete.append(i)
         except KeyError:
             # If the KeyError appears means that we function does not have to
-            # filter by result and it just goes ahead
-            pass
+            # filter by result and it just appends best submission information
+            result = await submission.get_result(submission_id, user_id, conn)
+            tasks[i]['best_submission'] = {
+                'result': result,
+                'id': submission_id
+            }
 
     # A final list to store tasks, that will be pushed with values from
     # previous list but except indexes that must be deleted
