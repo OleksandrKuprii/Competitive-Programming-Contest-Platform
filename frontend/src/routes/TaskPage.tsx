@@ -72,13 +72,15 @@ const TaskPage = () => {
             <GreatestResult taskAlias={taskAlias} />{' '}
           </p>
 
-          {sections.map((section) => (
-            <TaskDescriptionSection
-              key={section.id}
-              text={section.text || ''}
-              header={section.header || ''}
-            />
-          ))}
+          <div className="task-description">
+            {sections.map((section) => (
+              <TaskDescriptionSection
+                key={section.id}
+                text={section.text || ''}
+                header={section.header || ''}
+              />
+            ))}
+          </div>
 
           {task.examples === undefined ? null : (
             <CustomTable
