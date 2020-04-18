@@ -1,11 +1,10 @@
+@import './variables';
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
 @import './font';
+@import './lib/lds';
 @import './general';
 @import './nav';
 @import './notification';
 @import './scrollbar';
 @import './table';
-
-@import './lib/lds';
-
-@import './variables';
-@import '../../node_modules/bootstrap/scss/bootstrap';
