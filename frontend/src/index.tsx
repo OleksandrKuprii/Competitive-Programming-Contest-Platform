@@ -4,9 +4,8 @@ import { I18nextProvider } from 'react-i18next';
 import { createStore, StoreProvider } from 'easy-peasy';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import App from './App';
-import './bootstrap.scss';
+import './styles/index.scss';
 import i18n from './i18n';
-import './index.css';
 import * as serviceWorker from './serviceWorker';
 import storeModel from './models/store';
 

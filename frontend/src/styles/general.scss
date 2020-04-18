@@ -1,0 +1,14 @@
+@import 'variables';
+
+html {
+  scroll-behavior: smooth;
+}
+
+a {
+  outline: none;
+  color: $body-color;
+
+  &:hover {
+    color: $body-color;
+  }
+}

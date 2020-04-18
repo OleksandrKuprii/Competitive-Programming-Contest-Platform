@@ -1,0 +1,47 @@
+@import 'variables';
+
+.notification {
+  background-color: map_get($theme-colors, 'secondary');
+  padding: 20px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.notification-enter {
+  opacity: 0;
+  transform: translateX(50%) scale(0);
+}
+
+.notification-enter-active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  transition: all 0.3s;
+}
+
+.notification-exit {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.notification-exit-active {
+  opacity: 0;
+  transform: translateX(50%) scale(0);
+  transition: all 0.3s;
+}
+
+.notification-toast {
+  background-color: map_get($theme-colors, 'primary');
+  padding: 15px;
+
+  transition: 0.3s background-color ease-in-out;
+
+  font-size: 15px;
+
+  &:hover {
+    background-color: lighten(map_get($theme-colors, 'primary'), 10);
+  }
+
+  *:hover {
+    text-decoration: none;
+  }
+}
