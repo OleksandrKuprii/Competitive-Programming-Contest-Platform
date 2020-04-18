@@ -1,11 +1,11 @@
 import * as React from 'react';
 import CustomTable, { CustomTableRow } from '../CustomTable';
 import TaskDifficulty from './TaskDifficulty';
-import TaskRatingHistogram from './TaskRatingHistogram';
 import TaskLinkByTask from './TaskLinkByTask';
 import GreatestResult from '../result/GreatestResult';
 import CategoryName from '../category/CategoryName';
 import { Task } from '../../models/interfaces';
+import TaskRatingHistogram from './rating/TaskRatingHistogram';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
   const rows = tasks.map(
