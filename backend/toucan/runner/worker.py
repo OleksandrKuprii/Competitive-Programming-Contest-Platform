@@ -11,11 +11,15 @@ import checker
 import database
 import runner.parse_time
 import storage
-from dataclass import ResultToChecker, SubmissionToRunner, TestResult
+from dataclass import ResultToChecker, SubmissionToRunner, TestResult, \
+    RunnerConfig
 
 client = docker.from_env()
 
-lang_to_image = {'python3': 'python:3.8-slim'}
+runner_configs = {
+    'python3': RunnerConfig('python:3.8-slim', 'python3'),
+    'python2': RunnerConfig('python:2.7-slim', 'python2')
+}
 
 LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
 
@@ -57,7 +61,8 @@ def process_submission_to_runner(
     loop.run_until_complete(execute(submission_to_runner))
 
 
-async def execute_test(image: str, submission_code_abspath: str,
+async def execute_test(runner_config: RunnerConfig,
+                       submission_code_abspath: str,
                        submission_code_path_basename: str, input_abspath: str,
                        memory_limit: int, wall_time_limit: int,
                        cpu_time_limit: int) \
@@ -66,8 +71,8 @@ async def execute_test(image: str, submission_code_abspath: str,
 
     Parameters
     ----------
-    image: str
-        Docker image name
+    runner_config: RunnerConfig
+        The configuration of runner
     submission_code_abspath: str
         Submission code absolute path
     submission_code_path_basename: str
@@ -91,7 +96,7 @@ async def execute_test(image: str, submission_code_abspath: str,
         dir=LOCAL_STORAGE_ROOT + '/temp')
 
     container = client.containers.run(
-        image,
+        runner_config.image,
         f'bash -c "cd /usr/app;'  # Use bash and change directory
         f'time '  # Say to bash we want record execution time
         f'timeout {wall_time_limit / 1000} '  # Kill program
@@ -102,7 +107,8 @@ async def execute_test(image: str, submission_code_abspath: str,
         #   we parse execution time
         # But also it doesn't care about number of threads or processes,
         # creation of which is illegal on other platforms
-        f'python3 ./{submission_code_path_basename} > /dev/null"',
+        f'{runner_config.command} ./{submission_code_path_basename} > '
+        f'/dev/null"',
         network_disabled=True,  # Polite way of saying network=None
         detach=True,  # Do not wait for container to finish
         volumes={
@@ -187,8 +193,8 @@ async def execute_tests(
 ) -> Optional[list]:
     """Execute all test for submission."""
     try:
-        # Get docker image from language
-        container_image = lang_to_image[submission_to_runner.lang]
+        # Get runner configuration from language
+        runner_config = runner_configs[submission_to_runner.lang]
     except IndexError:
         print(f'{submission_to_runner.lang} isn\'t supported!')
         return
@@ -205,14 +211,12 @@ async def execute_tests(
     # Submission code absolute path
     submission_code_path = os.path.abspath(submission_code_path)
 
-    print(submission_code_path_basename)
-
     execute_result = list()
     for test_id, input_path in zip(
             submission_to_runner.test_ids,
             await storage.download_inputs(submission_to_runner.test_ids)):
         execute_result.append(
-            (await execute_test(container_image,
+            (await execute_test(runner_config,
                                 submission_code_path,
                                 submission_code_path_basename,
                                 os.path.abspath(input_path),
