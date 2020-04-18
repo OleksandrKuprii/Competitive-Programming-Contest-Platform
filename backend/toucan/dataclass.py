@@ -75,3 +75,11 @@ class UserSubmission:
     timestamp: datetime
     lang: str
     code: str
+
+
+@dataclass
+class RunnerConfig:
+    """Configuration for runner."""
+
+    image: str
+    command: str
