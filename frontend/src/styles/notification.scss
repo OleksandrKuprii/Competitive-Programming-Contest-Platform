@@ -30,12 +30,16 @@
 }
 
 .notification-toast {
+  height: 50px;
+  line-height: 50px;
+
   background-color: map_get($theme-colors, 'primary');
-  padding: 15px;
 
   transition: 0.3s background-color ease-in-out;
 
-  font-size: 15px;
+  font-size: 16px;
+
+  text-align: center;
 
   &:hover {
     background-color: lighten(map_get($theme-colors, 'primary'), 10);

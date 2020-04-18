@@ -7,7 +7,6 @@ import CustomTable, { CustomTableRow } from '../components/CustomTable';
 import PrettyDate from '../components/PrettyDate';
 import Result from '../components/result/Result';
 import { useStoreState, useStoreActions } from '../hooks/store';
-import getGeneralLanguageName from '../utils/getGeneralLanguageName';
 import Loading from '../components/Loading';
 import TaskLinkByAlias from '../components/task/TaskLinkByAlias';
 
@@ -90,12 +89,12 @@ const SubmissionPage = () => {
           id: i,
           row: (
             <>
-              <td>{i}</td>
+              <td>{i + 1}</td>
               <td>
                 <Result points={points} status={[status]} />
               </td>
-              <td>{cpuTime === undefined ? '' : `${cpuTime}ms`}</td>
-              <td>{realtime === undefined ? '' : `${realtime}ms`}</td>
+              <td>{!cpuTime ? '-' : `${cpuTime}ms`}</td>
+              <td>{!realtime ? '-' : `${realtime}ms`}</td>
             </>
           ),
         }));
@@ -130,10 +129,7 @@ const SubmissionPage = () => {
           <b>{submission?.language}</b>
         </p>
         {submission?.code === undefined ? null : (
-          <SubmissionCodeViewer
-            code={submission?.code}
-            language={getGeneralLanguageName(submission.language)}
-          />
+          <SubmissionCodeViewer code={submission?.code} language={submission.language || ''} />
         )}
       </Col>
     </Row>

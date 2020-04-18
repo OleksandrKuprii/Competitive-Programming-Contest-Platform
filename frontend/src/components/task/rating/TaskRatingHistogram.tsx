@@ -5,10 +5,15 @@ import TaskRatingHistogramBar from './TaskRatingHistogramBar';
 
 const TaskRatingHistogram = ({ id, rating }: { id: any; rating: TaskRating }) => {
   const { correct, partial, zero } = rating;
+
+  if (correct === 0 && correct === partial && correct === zero) {
+    return <></>;
+  }
+
   const { correctPercentage, partialPercentage, zeroPercentage } = getRatingPercentage(rating);
 
   return (
-    <div style={{ height: 25, padding: 3 }}>
+    <div style={{ height: 20, width: '10vw', padding: 3 }}>
       {[
         {
           number: correct,
@@ -25,15 +30,17 @@ const TaskRatingHistogram = ({ id, rating }: { id: any; rating: TaskRating }) =>
           percentage: zeroPercentage,
           color: 'danger',
         },
-      ].map(({ percentage, number, color }) => (
-        <TaskRatingHistogramBar
-          key={`${id}${color}`}
-          id={id}
-          percentage={percentage}
-          number={number}
-          color={color}
-        />
-      ))}
+      ]
+        .filter(({ number }) => number !== 0)
+        .map(({ percentage, number, color }) => (
+          <TaskRatingHistogramBar
+            key={`${id}${color}`}
+            id={id}
+            percentage={percentage}
+            number={number}
+            color={color}
+          />
+        ))}
     </div>
   );
 };
