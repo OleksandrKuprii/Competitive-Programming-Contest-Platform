@@ -38,6 +38,10 @@ logging.basicConfig(filename='api.log',
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
+json_url = urlopen('https://' + AUTH0_DOMAIN +
+                   "/.well-known/jwks.json")
+jwks = json.loads(json_url.read())
+
 pool: Pool
 
 
@@ -96,9 +100,6 @@ def requires_auth(f):
         request = args[0]
 
         token = get_token_auth_header(request)
-        json_url = urlopen('https://' + AUTH0_DOMAIN +
-                           "/.well-known/jwks.json")
-        jwks = json.loads(json_url.read())
 
         try:
             unverified_header = jwt.get_unverified_header(token)
