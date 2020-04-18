@@ -1,11 +1,13 @@
 """Task module."""
 from typing import Iterable, List
+from asyncpg.connection import Connection
 
 import database
 import submission
+from statistic import statistic
 
 
-async def get_task_info(alias: str, conn) -> dict:
+async def get_task_info(alias: str, conn: Connection) -> dict:
     """Get task details from database.
 
     Parameters
@@ -18,8 +20,15 @@ async def get_task_info(alias: str, conn) -> dict:
     _: dict
         Dictionary contains all task description, examples and limits
     """
-    # Getting task info from database
-    return await database.get_task(alias, conn)
+    task_id = await get_task_id_from_alias(alias, conn)
+
+    stat = await statistic.get_data_task_with_lang(task_id, conn)
+
+    task_info = await database.get_task(alias, conn)
+
+    task_info['statistic'] = stat
+
+    return task_info
 
 
 async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
@@ -202,6 +211,12 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
 
             # Add task to the <final_tasks>
             final_tasks.append(tasks[i])
+
+            task_alias = tasks[i]['alias']
+            task_id = await get_task_id_from_alias(task_alias, conn)
+
+            stat = await statistic.get_data_task(task_id, conn)
+            final_tasks[-1]['statistics'] = stat
 
     try:
         final_tasks.sort(key=lambda x: x['best_submission']['result']['points']
