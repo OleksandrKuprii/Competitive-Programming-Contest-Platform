@@ -1,13 +1,14 @@
 """Statistics entry point."""
 import asyncio
-from gather_statistics import database
-from gather_statistics import task_statistic
+
+from backend.toucan.gather_statistics import task_statistic
+from backend.toucan.database import establish_connection_from_env
 
 
 async def main():
     """Start all processes to gather statistic."""
     # Creating pool to the database
-    pool = await database.establish_connection_from_env()
+    pool = await establish_connection_from_env()
 
     async with pool.acquire() as conn:
 
