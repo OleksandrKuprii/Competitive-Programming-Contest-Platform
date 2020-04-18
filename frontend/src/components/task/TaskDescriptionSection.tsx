@@ -8,14 +8,12 @@ export interface TaskDescriptionSectionArgs {
 
 const TaskDescriptionSection = ({ header, text }: TaskDescriptionSectionArgs) => {
   const htmlToReactParser = new HtmlToReactParser();
-
   const parsed = htmlToReactParser.parse(text);
 
   return (
     <>
-      <p className="h5 font-weight-bold">{header}</p>
-
-      <blockquote>{parsed}</blockquote>
+      {header ? <p className="h6 font-weight-bold m-0">{header}</p> : undefined}
+      <div className="task-description-section">{parsed}</div>
     </>
   );
 };
