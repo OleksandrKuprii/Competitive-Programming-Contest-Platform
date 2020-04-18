@@ -66,6 +66,17 @@ create table if not exists coreschema.categories (
     name varchar
 );
 
+create table coreschema.task_statistic
+(
+	id serial,
+	task_id int references coreschema.tasks(id),
+	lang varchar,
+	"full" int,
+	partial int,
+	zero int
+);
+
+
 CREATE OR REPLACE FUNCTION coreschema.modify_task_best(integer)
 RETURNS integer
 AS
