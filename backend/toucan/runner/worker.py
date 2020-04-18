@@ -40,12 +40,12 @@ async def execute(submission_to_runner: SubmissionToRunner):
 
         test_results = list(
             await execute_tests(submission_to_runner))
-        print(1)
+
         result_to_checker = ResultToChecker(submission_to_runner.submission_id,
                                             test_results)
 
         await checker.process_result_to_checker(result_to_checker, conn)
-    print(2)
+
     # Closing the database pool
     await pool.close()
 
@@ -86,7 +86,6 @@ async def execute_test(image: str, submission_code_abspath: str,
     _: Callable[[int], TestResult]
         Anonymous TestResult - without id
     """
-    print(submission_code_path_basename)
     # Create temporary file for output.txt
     temporary_file_descriptor, temporary_file_path = tempfile.mkstemp(
         dir=LOCAL_STORAGE_ROOT + '/temp')
