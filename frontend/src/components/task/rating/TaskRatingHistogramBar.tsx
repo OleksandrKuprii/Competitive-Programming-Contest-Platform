@@ -17,11 +17,9 @@ const TaskRatingHistogramBar: React.FunctionComponent<TaskRatingHistogramBarArgs
   return (
     <OverlayTrigger placement="bottom" overlay={<Tooltip id={`${id}${color}`}>{number}</Tooltip>}>
       <div
-        className={`bg-${color}`}
+        className={`bg-${color} task-rating-histogram-bar`}
         style={{
-          height: '100%',
           width: `${percentage}%`,
-          display: 'inline-block',
         }}
       />
     </OverlayTrigger>

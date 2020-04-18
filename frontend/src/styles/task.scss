@@ -1,5 +1,10 @@
 @import 'variables';
 
+.task-rating-histogram-bar {
+  height: 100%;
+  display: inline-block;
+}
+
 .task-description {
   background-color: map_get($theme-colors, 'secondary');
   padding: 2px 10px;
