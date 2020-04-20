@@ -9,6 +9,7 @@ import Result from '../components/result/Result';
 import { useStoreState, useStoreActions } from '../hooks/store';
 import Loading from '../components/Loading';
 import TaskLinkByAlias from '../components/task/TaskLinkByAlias';
+import LanguageIdentifier from '../components/LanguageIdentifier';
 
 const SubmissionPage = () => {
   const { id: idStr } = useParams();
@@ -110,9 +111,17 @@ const SubmissionPage = () => {
   return (
     <Row>
       <Col md={5}>
-        <p className="h3">Submission #{submission?.id}</p>
+        <Row>
+          <Col>
+            <p className="h3">Submission #{submission?.id}</p>
 
-        <p className="description">Overall results</p>
+            <p className="description">Overall results</p>
+          </Col>
+
+          <Col className="text-right">
+            <LanguageIdentifier language={submission?.language || ''} size="lg" />
+          </Col>
+        </Row>
 
         {infoTable}
 
@@ -125,9 +134,6 @@ const SubmissionPage = () => {
         ) : null}
       </Col>
       <Col>
-        <p>
-          <b>{submission?.language}</b>
-        </p>
         {submission?.code === undefined ? null : (
           <SubmissionCodeViewer code={submission?.code} language={submission.language || ''} />
         )}
