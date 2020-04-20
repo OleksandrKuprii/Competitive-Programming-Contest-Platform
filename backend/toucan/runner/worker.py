@@ -12,19 +12,33 @@ import database
 import runner.parse_time
 import storage
 from dataclass import ResultToChecker, SubmissionToRunner, TestResult, \
-    RunnerConfig
+    CompilerConfig, RunnerConfig
 
 client = docker.from_env()
 
+compiler_configs = {
+    'python3': CompilerConfig(is_compilable=False),
+    'python2': CompilerConfig(is_compilable=False),
+    'c': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='gcc',
+                        args='-o compiled/compiled.out'),
+    'c++': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='g++',
+                          args='-o compiled/compiled.out')
+}
+
 runner_configs = {
-    'python3': RunnerConfig('python:3.8-slim', 'python3'),
-    'python2': RunnerConfig('python:2.7-slim', 'python2')
+    'python3': RunnerConfig(image='python:3.8-slim', command='python',
+                            is_compilable=False),
+    'python2': RunnerConfig(image='python:2.7-slim', command='python',
+                            is_compilable=False),
+    'c': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
+                      file_path='compiled/compiled.out'),
+    'c++': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
+                        file_path='compiled/compiled.out')
 }
 
 LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
 
 assert LOCAL_STORAGE_ROOT is not None
-
 
 logging.basicConfig(filename='runner.log',
                     filemode='w',
@@ -61,9 +75,7 @@ def process_submission_to_runner(
     loop.run_until_complete(execute(submission_to_runner))
 
 
-async def execute_test(runner_config: RunnerConfig,
-                       submission_code_abspath: str,
-                       submission_code_path_basename: str, input_abspath: str,
+async def execute_test(runner_config: RunnerConfig, input_abspath: str,
                        memory_limit: int, wall_time_limit: int,
                        cpu_time_limit: int) \
         -> Callable[[int], TestResult]:
@@ -95,6 +107,28 @@ async def execute_test(runner_config: RunnerConfig,
     temporary_file_descriptor, temporary_file_path = tempfile.mkstemp(
         dir=LOCAL_STORAGE_ROOT + '/temp')
 
+    container_volumes = {
+        input_abspath: {
+            'bind': f'/usr/app/input.txt',
+            'ro': True  # read-only
+        },
+        temporary_file_path: {
+            'bind': f'/usr/app/output.txt',
+            'ro': False  # read-only
+        }
+    }
+
+    if runner_config.is_compilable:
+        container_volumes[runner_config.volume_name] = {
+            'bind': f'/usr/app/{runner_config.store_volume}',
+            'ro': True  # read-only
+        }
+    else:
+        container_volumes[runner_config.abs_file_path] = {
+            'bind': f'/usr/app/{runner_config.file_path}',
+            'ro': True  # read-only
+        }
+
     container = client.containers.run(
         runner_config.image,
         f'bash -c "cd /usr/app;'  # Use bash and change directory
@@ -107,24 +141,11 @@ async def execute_test(runner_config: RunnerConfig,
         #   we parse execution time
         # But also it doesn't care about number of threads or processes,
         # creation of which is illegal on other platforms
-        f'{runner_config.command} ./{submission_code_path_basename} > '
+        f'{runner_config.command} ./{runner_config.file_path} > '
         f'/dev/null"',
         network_disabled=True,  # Polite way of saying network=None
         detach=True,  # Do not wait for container to finish
-        volumes={
-            submission_code_abspath: {
-                'bind': f'/usr/app/{submission_code_path_basename}',
-                'ro': True  # read-only
-            },
-            input_abspath: {
-                'bind': f'/usr/app/input.txt',
-                'ro': True  # read-only
-            },
-            temporary_file_path: {
-                'bind': f'/usr/app/output.txt',
-                'ro': False  # read-only
-            }
-        },
+        volumes=container_volumes,
         mem_limit=f'{memory_limit}M')
 
     try:
@@ -211,14 +232,23 @@ async def execute_tests(
     # Submission code absolute path
     submission_code_path = os.path.abspath(submission_code_path)
 
+    compiler_config = compiler_configs[submission_to_runner.lang]
+
+    volume = client.volumes.create()
+
+    compiler_config.file_path = submission_code_path_basename
+    compiler_config.abs_filepath = submission_code_path
+    compiler_config.volume_name = volume.name
+
+    runner_config = await compile_code(submission_to_runner.lang,
+                                       compiler_config)
+
     execute_result = list()
     for test_id, input_path in zip(
             submission_to_runner.test_ids,
             await storage.download_inputs(submission_to_runner.test_ids)):
         execute_result.append(
             (await execute_test(runner_config,
-                                submission_code_path,
-                                submission_code_path_basename,
                                 os.path.abspath(input_path),
                                 submission_to_runner.memory_limit,
                                 submission_to_runner.wall_time_limit,
@@ -228,3 +258,40 @@ async def execute_tests(
     logging.info(f'#{submission_to_runner.submission_id} Executed tests')
 
     return execute_result
+
+
+async def compile_code(lang: str, compiler_config: CompilerConfig):
+    """Compile code."""
+    if not compiler_config.is_compilable:
+        runner_config = runner_configs[lang]
+
+        runner_config.file_path = compiler_config.file_path
+        runner_config.abs_file_path = compiler_config.abs_filepath
+
+    else:
+
+        container = client.containers.run(
+            compiler_config.image,
+            f'bash -c "cd /usr/app;'
+            f'{compiler_config.command} {compiler_config.file_path} '
+            f'{compiler_config.args}"',
+            network_disabled=True,  # Polite way of saying network=None
+            detach=True,  # Do not wait for container to finish
+            volumes={
+                compiler_config.abs_filepath: {
+                    'bind': f'/usr/app/{compiler_config.file_path}',
+                    'ro': True  # read-only
+                },
+                compiler_config.volume_name: {
+                    'bind': f'/usr/app/compiled',
+                    'ro': False  # read-only
+                }
+            })
+
+        container.wait()
+        container.remove()
+
+        runner_config = runner_configs[lang]
+        runner_config.volume_name = compiler_config.volume_name
+
+    return runner_config

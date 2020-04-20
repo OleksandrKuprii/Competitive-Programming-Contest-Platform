@@ -83,6 +83,10 @@ async def get_extension_by_lang(lang: str) -> str:
 
     if lang in ('python3', 'python2'):
         ext = 'py'
+    elif lang == 'c':
+        ext = 'c'
+    elif lang == 'c++':
+        ext = 'c++'
 
     assert ext is not None
 
