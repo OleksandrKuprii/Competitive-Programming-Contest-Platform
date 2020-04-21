@@ -53,10 +53,30 @@ const taskModel: TaskModel = {
     dataRangeFetcher: async (range, args) => {
       const { token } = args;
 
+      const numberOffsetOptions = [`offset=${range.offset}`, `number=${range.number}`];
+
+      const sortOptions = range.sortBy
+        ? range.sortBy.map(({ desc, name }) => `${name}_sort=${desc ? 'DESC' : 'ASC'}`)
+        : [];
+
+      const filterOptions = range.filterBy
+        ? Array.from(range.filterBy, ([name, value]) => {
+            if (Array.isArray(value)) {
+              return `${name}=${value.join(',')}`;
+            }
+
+            if (typeof value === 'object') {
+              return `${name}=${value.from}-${value.to}`;
+            }
+
+            return `${name}=${value}`;
+          })
+        : [];
+
+      const options = numberOffsetOptions.concat(sortOptions).concat(filterOptions);
+
       const response = await fetch(
-        `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?offset=${range.offset}&number=${
-          range.number
-        }`,
+        `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?${options.join('&')}`,
         {
           headers: !token
             ? {}

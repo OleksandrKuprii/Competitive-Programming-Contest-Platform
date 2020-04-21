@@ -14,14 +14,13 @@ const SubmissionsPage = () => {
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
   const signIn = useStoreActions((state) => state.auth0.signIn);
 
-  const nSubmissions = useStoreState((state) => state.submission.nItems);
+  const nSubmissions = useStoreState((state) => state.submission.nItemsById);
   const submissionsLoading = useStoreState((state) => state.submission.loading.flag);
 
   const fetchSubmissions = useStoreActions((actions) => actions.submission.fetchRange);
 
   const submissions = nSubmissions(n);
 
-  // TODO: pagination
   const loadMoreCallback = useCallback(() => {
     setN(n + 5);
   }, [n]);
@@ -30,7 +29,8 @@ const SubmissionsPage = () => {
 
   const fetchSubmissionsPagination = useCallback(() => {
     if (needFetch) {
-      fetchSubmissions({ offset: 0, number: n });
+      // TODO: Fix number increasing issue
+      fetchSubmissions({ offset: submissions.length, number: n });
     }
   }, [n, fetchSubmissions, needFetch]);
 

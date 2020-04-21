@@ -8,15 +8,18 @@ import Loading from '../components/Loading';
 const TasksPage = () => {
   const { t } = useTranslation();
 
-  const nTasks = useStoreState((state) => state.task.nItems);
+  const allTasks = useStoreState((state) =>
+    state.task.nItemsByCustomKey((item) => item.difficulty),
+  );
+
   const tasksLoading = useStoreState((state) => state.task.loading.flag);
 
   const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
 
-  const tasks = nTasks(50);
+  const tasks = allTasks.slice(0, 50);
 
   useEffect(() => {
-    fetchTasks({ offset: 0, number: 50 });
+    fetchTasks({ offset: 0, number: 50, sortBy: [{ name: 'difficulty' }] });
   }, [fetchTasks]);
 
   if (tasksLoading) {

@@ -11,6 +11,16 @@
   }
 }
 
-td {
-  animation: fade-in 0.5s ease-in-out;
+tr {
+  .sort-control {
+    transition: 0.2s all ease-in-out;
+
+    &:hover {
+      transform: scale(1.5);
+    }
+  }
+
+  td {
+    animation: fade-in 0.5s ease-in-out;
+  }
 }

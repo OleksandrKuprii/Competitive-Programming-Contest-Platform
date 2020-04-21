@@ -20,7 +20,6 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     updateObjectWithProperty(state.items, 'id', item.id, item);
   }),
 
-  // TODO: fetch one more time data after delay on server error
   fetchOne: thunk(async (actions, id, { injections }) => {
     const loadingItem: any = {
       id,
@@ -37,15 +36,11 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
       token = undefined;
     }
 
-    // noinspection UnnecessaryLocalVariableJS
-    const item = await dataItemFetcher(id, {
+    return dataItemFetcher(id, {
       token,
     });
-
-    return item;
   }),
 
-  // TODO: fetch one more time data after delay on server error
   fetchRange: thunk(async (actions, range, { injections }) => {
     actions.loading.loading();
 
@@ -70,6 +65,10 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     (actions) => actions.fetchOne,
     (actions, target) => {
       if (!target.result) {
+        setTimeout(() => {
+          actions.fetchOne(target.payload as any);
+        }, 5000);
+
         return;
       }
 
@@ -81,6 +80,10 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     (actions) => actions.fetchRange,
     (actions, target) => {
       if (!target.result) {
+        setTimeout(() => {
+          actions.fetchRange(target.payload as any);
+        }, 5000);
+
         return;
       }
 
@@ -114,9 +117,21 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
   byId: computed((state) => (id) => state.items.find((item) => item.id === id)),
 
-  nItems: computed((state) => (number) =>
+  nItemsById: computed((state) => (number) =>
     state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
   ),
+
+  nItemsByCustomKey: computed((state) => (key, desc) => {
+    const aGreater = desc ? -1 : 1;
+    const bGreater = -aGreater;
+
+    return (
+      state.items
+        .filter((item) => key(item) !== undefined)
+        // @ts-ignore
+        .sort((a, b) => (key(a) > key(b) ? aGreater : bGreater))
+    );
+  }),
 });
 
 export default dataModel;
