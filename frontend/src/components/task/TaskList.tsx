@@ -36,6 +36,7 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
     <CustomTable
       tableName="taskList"
       headers={['name', 'category', 'difficulty', 'rating', 'result']}
+      enableSortOptionIn={['difficulty']}
       rows={rows}
     />
   );

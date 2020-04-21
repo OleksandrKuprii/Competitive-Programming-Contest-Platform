@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Table from 'react-bootstrap/Table';
 import { ReactNode } from 'react';
+import SortControl from './SortControl';
 
 export type CustomTableRowIdentifier = number | string;
 export type CustomTableRow = {
@@ -14,9 +15,16 @@ export interface CustomTableArgs {
   rows: CustomTableRow[];
   padding?: number;
   tableName: string;
+  enableSortOptionIn?: string[];
 }
 
-const CustomTable = ({ headers, rows, padding, tableName }: CustomTableArgs) => {
+const CustomTable = ({
+  headers,
+  rows,
+  padding,
+  tableName,
+  enableSortOptionIn,
+}: CustomTableArgs) => {
   const { t } = useTranslation();
 
   return (
@@ -25,7 +33,12 @@ const CustomTable = ({ headers, rows, padding, tableName }: CustomTableArgs) => 
         <tr>
           {headers.map((header) => (
             <th key={`table-${tableName}-header-${header}`} style={{ paddingLeft: padding }}>
-              {t(`headers.${header}`)}
+              <div className="d-flex justify-content-start">
+                {t(`headers.${header}`)}
+                {enableSortOptionIn && enableSortOptionIn.includes(header) ? (
+                  <SortControl />
+                ) : undefined}
+              </div>
             </th>
           ))}
         </tr>

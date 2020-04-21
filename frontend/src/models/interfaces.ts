@@ -18,7 +18,12 @@ export interface TaskLimits {
   memory: number;
 }
 
-export type DataItemRangeIdentifier = { offset: number; number: number };
+export type DataItemRangeIdentifier = {
+  offset: number;
+  number: number;
+  sortBy?: { desc?: boolean; name: string }[];
+  filterBy?: Map<string, string | number | (number | string)[] | { from: number; to: number }>;
+};
 
 interface StringIndexSignature {
   [key: string]: any;
@@ -117,7 +122,11 @@ export interface DataModel<Identifier, DataItem extends ObjectWithId<Identifier>
   onChangedMany: ThunkOn<DataModel<Identifier, DataItem>, Injections, StoreModel>;
 
   byId: Computed<DataModel<Identifier, DataItem>, (id: Identifier) => DataItem | undefined>;
-  nItems: Computed<DataModel<Identifier, DataItem>, (number: number) => DataItem[]>;
+  nItemsById: Computed<DataModel<Identifier, DataItem>, (number: number) => DataItem[]>;
+  nItemsByCustomKey: Computed<
+    DataModel<Identifier, DataItem>,
+    (key: (item: DataItem) => string | number | undefined, desc?: boolean) => DataItem[]
+  >;
 }
 
 export interface DataFetcherArgs {
