@@ -243,17 +243,29 @@ async def execute_tests(
     runner_config = await compile_code(submission_to_runner.lang,
                                        compiler_config)
 
+    # A list to store results of executing each test
     execute_result = list()
-    for test_id, input_path in zip(
-            submission_to_runner.test_ids,
-            await storage.download_inputs(submission_to_runner.test_ids)):
-        execute_result.append(
-            (await execute_test(runner_config,
-                                os.path.abspath(input_path),
-                                submission_to_runner.memory_limit,
-                                submission_to_runner.wall_time_limit,
-                                submission_to_runner.cpu_time_limit))
-            (test_id))
+
+    # If compiler returned None it means that it is compilation error and
+    # there is no need in running tests, so set CompilationError TestResult
+    # for each test
+    if runner_config is None:
+        for test_id in submission_to_runner.test_ids:
+            execute_result.append(TestResult(test_id, 'CompilationError',
+                                             None, None, None))
+    else:
+
+        # Compilation was successful or skipped6 so running the tests
+        for test_id, input_path in zip(
+                submission_to_runner.test_ids,
+                await storage.download_inputs(submission_to_runner.test_ids)):
+            execute_result.append(
+                (await execute_test(runner_config,
+                                    os.path.abspath(input_path),
+                                    submission_to_runner.memory_limit,
+                                    submission_to_runner.wall_time_limit,
+                                    submission_to_runner.cpu_time_limit))
+                (test_id))
 
     logging.info(f'#{submission_to_runner.submission_id} Executed tests')
 
@@ -288,8 +300,16 @@ async def compile_code(lang: str, compiler_config: CompilerConfig):
                 }
             })
 
-        container.wait()
+        # Get the result of running container
+        result = container.wait()
+
+        # Delete container after executing
         container.remove()
+
+        # It checks status code of result and returns None, if it is not 0 -
+        # this means compilation error
+        if result['StatusCode'] != 0:
+            return None
 
         runner_config = runner_configs[lang]
         runner_config.volume_name = compiler_config.volume_name
