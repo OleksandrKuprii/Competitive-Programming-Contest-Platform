@@ -46,6 +46,8 @@ logging.basicConfig(filename='runner.log',
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
+client: docker.DockerClient
+
 
 async def execute(submission_to_runner: SubmissionToRunner):
     """Execute."""
@@ -69,8 +71,13 @@ async def execute(submission_to_runner: SubmissionToRunner):
 
 
 def process_submission_to_runner(
-        submission_to_runner: SubmissionToRunner) -> ResultToChecker:
+        submission_to_runner: SubmissionToRunner, docker_client) -> \
+        ResultToChecker:
     """Run SubmissionToRunner and return ResultToChecker."""
+    # Set the global docker client
+    global client
+    client = docker_client
+
     loop = asyncio.new_event_loop()
     loop.run_until_complete(execute(submission_to_runner))
 
