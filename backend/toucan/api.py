@@ -163,7 +163,7 @@ def parse_task_params(params):
             return
 
     sort_params = ['name_sort', 'category_sort', 'difficulty_sort',
-                   'result_sort']
+                   'result_sort', 'date_sort']
 
     for param in sort_params:
         try:

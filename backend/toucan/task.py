@@ -56,7 +56,8 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
     column_map = {
         'name_sort': 'tasks.name',
         'category_sort': 'tasks.category',
-        'difficulty_sort': 'tasks.difficulty'
+        'difficulty_sort': 'tasks.difficulty',
+        'date_sort': 'tasks.created'
     }
 
     def iterable_to_str(iterable: Iterable, quotes=False) -> str:
