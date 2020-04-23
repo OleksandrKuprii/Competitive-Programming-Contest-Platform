@@ -245,6 +245,14 @@ async def post_submission(request, **kwargs):
     except TypeError:
         return Response(status=400)
 
+    submission_code = submission_data.code
+
+    if len(submission_code.encode('utf-8')) > 64000:
+        return json_response({'code': 'too_big_file',
+                              'description': 'The submitted file is bigger '
+                                             'than 64 KB.'},
+                             status=413)
+
     async with pool.acquire() as conn:
         submission_id = await submission.add_submission(submission_data, conn)
 
