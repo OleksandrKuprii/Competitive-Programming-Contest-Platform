@@ -8,13 +8,16 @@ const taskModel: TaskModel = {
     dataItemFetcher: async (id, args) => {
       const { token } = args;
 
-      const response = await fetch(`${baseURL}/${token ? 'task/auth' : 'task'}/${id}`, {
-        headers: !token
-          ? {}
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      });
+      const response = await fetch(
+        `${baseURL}/${token ? 'task/auth' : 'task'}/${id}`,
+        {
+          headers: !token
+            ? {}
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        },
+      );
 
       if (!response.ok) {
         return undefined;
@@ -47,33 +50,14 @@ const taskModel: TaskModel = {
                 data: entry[1],
               }))
             : [],
+          publishedAt: data.created,
         } as Task,
       };
     },
     dataRangeFetcher: async (range, args) => {
       const { token } = args;
 
-      const numberOffsetOptions = [`offset=${range.offset}`, `number=${range.number}`];
-
-      const sortOptions = range.sortBy
-        ? range.sortBy.map(({ desc, name }) => `${name}_sort=${desc ? 'DESC' : 'ASC'}`)
-        : [];
-
-      const filterOptions = range.filterBy
-        ? Array.from(range.filterBy, ([name, value]) => {
-            if (Array.isArray(value)) {
-              return `${name}=${value.join(',')}`;
-            }
-
-            if (typeof value === 'object') {
-              return `${name}=${value.from}-${value.to}`;
-            }
-
-            return `${name}=${value}`;
-          })
-        : [];
-
-      const options = numberOffsetOptions.concat(sortOptions).concat(filterOptions);
+      const options = [`offset=${range.offset}`, `number=${range.number}`];
 
       const response = await fetch(
         `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?${options.join('&')}`,
@@ -103,6 +87,7 @@ const taskModel: TaskModel = {
             partial: task.statistics.partial,
             zero: task.statistics.zero,
           },
+          publishedAt: task.created,
         } as Task,
         category: {
           id: task.category.alias,
@@ -119,8 +104,12 @@ const taskModel: TaskModel = {
       }));
     },
 
-    onChangedManyTargets: (state, storeActions) => [storeActions.submission.fetchRange],
-    onChangedOneTargets: (state, storeActions) => [storeActions.submission.fetchOne],
+    onChangedManyTargets: (state, storeActions) => [
+      storeActions.submission.fetchRange,
+    ],
+    onChangedOneTargets: (state, storeActions) => [
+      storeActions.submission.fetchOne,
+    ],
 
     dataModelIdentifier: 'task',
   }),

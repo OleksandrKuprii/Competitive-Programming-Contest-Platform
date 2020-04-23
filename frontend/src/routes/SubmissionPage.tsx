@@ -3,27 +3,31 @@ import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import SubmissionCodeViewer from '../components/submission/SubmissionCodeViewer';
-import CustomTable, { CustomTableRow } from '../components/CustomTable';
-import PrettyDate from '../components/PrettyDate';
+import CustomTable, { CustomTableRow } from '../components/table/CustomTable';
+import PrettyDate from '../components/formatters/PrettyDate';
 import Result from '../components/result/Result';
 import { useStoreState, useStoreActions } from '../hooks/store';
-import Loading from '../components/Loading';
+import Loading from '../components/layout/Loading';
 import TaskLinkByAlias from '../components/task/TaskLinkByAlias';
-import LanguageIdentifier from '../components/LanguageIdentifier';
+import LanguageIdentifier from '../components/formatters/LanguageIdentifier';
 
 const SubmissionPage = () => {
   const { id: idStr } = useParams();
 
   const id = idStr ? parseInt(idStr, 10) : undefined;
 
-  const submission = useStoreState((state) => (id ? state.submission.byId(id) : undefined));
+  const submission = useStoreState((state) =>
+    id ? state.submission.byId(id) : undefined,
+  );
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
   const isHunting = useStoreState((state) =>
     id ? state.submissionHunter.isHunting(id) : undefined,
   );
 
-  const fetchSubmission = useStoreActions((actions) => actions.submission.fetchOne);
+  const fetchSubmission = useStoreActions(
+    (actions) => actions.submission.fetchOne,
+  );
   const signIn = useStoreActions((actions) => actions.auth0.signIn);
 
   useEffect(() => {
@@ -80,7 +84,11 @@ const SubmissionPage = () => {
   };
 
   const infoTable = (
-    <CustomTable tableName="info" headers={['task', 'submitted', 'result']} rows={[infoTableRow]} />
+    <CustomTable
+      tableName="info"
+      headers={['task', 'submitted', 'result']}
+      rows={[infoTableRow]}
+    />
   );
 
   const testsTableRows: CustomTableRow[] =
@@ -119,7 +127,10 @@ const SubmissionPage = () => {
           </Col>
 
           <Col className="text-right">
-            <LanguageIdentifier language={submission?.language || ''} size="lg" />
+            <LanguageIdentifier
+              language={submission?.language || ''}
+              size="lg"
+            />
           </Col>
         </Row>
 
@@ -135,7 +146,10 @@ const SubmissionPage = () => {
       </Col>
       <Col>
         {submission?.code === undefined ? null : (
-          <SubmissionCodeViewer code={submission?.code} language={submission.language || ''} />
+          <SubmissionCodeViewer
+            code={submission?.code}
+            language={submission.language || ''}
+          />
         )}
       </Col>
     </Row>

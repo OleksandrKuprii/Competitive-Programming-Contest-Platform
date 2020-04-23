@@ -1,11 +1,11 @@
 import * as React from 'react';
-import CustomTable, { CustomTableRow } from '../CustomTable';
+import CustomTable, { CustomTableRow } from '../table/CustomTable';
 import SubmissionLink from './SubmissionLink';
-import PrettyDate from '../PrettyDate';
+import PrettyDate from '../formatters/PrettyDate';
 import Result from '../result/Result';
 import TaskLinkByAlias from '../task/TaskLinkByAlias';
 import { Submission } from '../../models/interfaces';
-import LanguageIdentifier from '../LanguageIdentifier';
+import LanguageIdentifier from '../formatters/LanguageIdentifier';
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const rows = submissions.map(

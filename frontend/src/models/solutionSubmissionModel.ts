@@ -22,9 +22,7 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     code,
     filename,
     language: state.language,
-    loading: {
-      flag: state.loading.flag,
-    },
+    loading: state.loading,
     fileUploaded: true,
   })),
 

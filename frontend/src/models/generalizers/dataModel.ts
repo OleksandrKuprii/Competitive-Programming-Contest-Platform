@@ -1,4 +1,5 @@
 import { action, computed, thunk, thunkOn } from 'easy-peasy';
+import shallowEqual from 'shallowequal';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
 import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
@@ -18,6 +19,12 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
   updated: action((state, item) => {
     updateObjectWithProperty(state.items, 'id', item.id, item);
+  }),
+
+  updatedMany: action((state, items) => {
+    items.forEach((item) => {
+      updateObjectWithProperty(state.items, 'id', item.id, item);
+    });
   }),
 
   fetchOne: thunk(async (actions, id, { injections }) => {
@@ -87,9 +94,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
         return;
       }
 
-      target.result.forEach((item: any) => {
-        actions.updated(item.item);
-      });
+      actions.updatedMany(target.result.map((a: any) => a.item));
     },
   ),
 
@@ -121,15 +126,42 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
   ),
 
-  nItemsByCustomKey: computed((state) => (key, desc) => {
-    const aGreater = desc ? -1 : 1;
-    const bGreater = -aGreater;
+  nItemsByCustomKeys: computed((state) => (keys, filters) => {
+    const aGreater = (desc?: boolean) => (desc ? -1 : 1);
+    const bGreater = (desc?: boolean) => (desc ? 1 : -1);
 
-    return (
-      state.items
-        .filter((item) => key(item) !== undefined)
-        // @ts-ignore
-        .sort((a, b) => (key(a) > key(b) ? aGreater : bGreater))
+    const items = state.items.concat().sort((a, b) => {
+      for (let i = 0; i < keys.length; i += 1) {
+        const { key, option } = keys[i];
+        const aValue = key(a);
+        const bValue = key(b);
+
+        if (aValue && bValue) {
+          if (aValue > bValue) {
+            return aGreater(option === 'desc');
+          }
+
+          if (bValue > aValue) {
+            return bGreater(option === 'desc');
+          }
+        }
+      }
+
+      return 0;
+    });
+
+    if (!filters) {
+      return items;
+    }
+
+    return items.filter((item) =>
+      filters.every(({ name, option }) => {
+        if (typeof option === 'number' || typeof option === 'string') {
+          return shallowEqual(item[name], option);
+        }
+
+        return item[name] >= option.from && item[name] <= option.to;
+      }),
     );
   }),
 });

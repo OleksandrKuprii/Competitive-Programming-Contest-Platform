@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useStoreActions, useStoreState } from '../hooks/store';
-import CustomTable from '../components/CustomTable';
+import CustomTable from '../components/table/CustomTable';
 import TaskSolutionDropZone from '../components/task/TaskSolutionDropZone';
-import Loading from '../components/Loading';
+import Loading from '../components/layout/Loading';
 import ErrorPage from './ErrorPage';
 import GreatestResult from '../components/result/GreatestResult';
 import TaskSolutionSubmissionForm from '../components/task/TaskSolutionSubmissionForm';
@@ -17,7 +17,9 @@ const TaskPage = () => {
 
   const { taskAlias } = useParams();
 
-  const task = useStoreState((state) => (taskAlias ? state.task.byId(taskAlias) : undefined));
+  const task = useStoreState((state) =>
+    taskAlias ? state.task.byId(taskAlias) : undefined,
+  );
 
   const fetchTask = useStoreActions((actions) => actions.task.fetchOne);
 
@@ -87,15 +89,17 @@ const TaskPage = () => {
               tableName="taskExamples"
               headers={['input', 'output']}
               padding={10}
-              rows={task.examples.map(({ input, output }: { input: string; output: string }) => ({
-                id: `${input}-${output}`,
-                row: (
-                  <>
-                    <td>{input}</td>
-                    <td>{output}</td>
-                  </>
-                ),
-              }))}
+              rows={task.examples.map(
+                ({ input, output }: { input: string; output: string }) => ({
+                  id: `${input}-${output}`,
+                  row: (
+                    <>
+                      <td>{input}</td>
+                      <td>{output}</td>
+                    </>
+                  ),
+                }),
+              )}
             />
           )}
         </Col>
@@ -108,9 +112,21 @@ const TaskPage = () => {
                 id: `${task.limits?.cpuTime}-${task.limits?.wallTime}-${task.limits?.memory}`,
                 row: (
                   <>
-                    <td>{task.limits?.cpuTime === undefined ? '' : task.limits.cpuTime}</td>
-                    <td>{task.limits?.wallTime === undefined ? '' : task.limits.wallTime}</td>
-                    <td>{task.limits?.memory === undefined ? '' : task.limits.memory}</td>
+                    <td>
+                      {task.limits?.cpuTime === undefined
+                        ? ''
+                        : task.limits.cpuTime}
+                    </td>
+                    <td>
+                      {task.limits?.wallTime === undefined
+                        ? ''
+                        : task.limits.wallTime}
+                    </td>
+                    <td>
+                      {task.limits?.memory === undefined
+                        ? ''
+                        : task.limits.memory}
+                    </td>
                   </>
                 ),
               },

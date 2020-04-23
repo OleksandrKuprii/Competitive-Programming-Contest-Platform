@@ -2,8 +2,13 @@ import * as React from 'react';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { GiPaperPlane, FaHome, GiArcheryTarget, GiBrutalHelm } from 'react-icons/all';
-import ProfileStatus from './user/ProfileStatus';
+import {
+  GiPaperPlane,
+  FaHome,
+  GiArcheryTarget,
+  GiBrutalHelm,
+} from 'react-icons/all';
+import ProfileStatus from '../user/ProfileStatus';
 
 const ToucanNavbar = () => {
   const { t } = useTranslation();
