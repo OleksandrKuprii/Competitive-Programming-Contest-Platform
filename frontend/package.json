@@ -16,6 +16,7 @@
     "@types/react-syntax-highlighter": "^11.0.4",
     "@types/react-transition-group": "^4.2.4",
     "@types/recharts": "^1.8.9",
+    "@types/shallowequal": "^1.1.1",
     "@types/uuid": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "eslint-config-airbnb-typescript": "^7.2.0",
