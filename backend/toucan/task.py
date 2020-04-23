@@ -154,12 +154,6 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
         submission_id = await database.get_submission_id_from_bests(
             user_id, task_id, conn)
 
-        if submission_id is not None:
-            # Getting result for specific task and user if its exists
-            result = await submission.get_result(submission_id, user_id, conn)
-        else:
-            result = None
-
         # Set best submission None default. It will be changed if better
         # submission is present in database
         tasks[i]['best_submission'] = {
