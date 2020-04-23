@@ -7,8 +7,8 @@ import shallowEqual from 'shallowequal';
 import { useCallback } from 'react';
 import { useStoreState, useStoreActions } from '../hooks/store';
 import TaskList from '../components/task/TaskList';
-import Loading from '../components/Loading';
-import TableShowOptions from '../components/TableShowOptions';
+import Loading from '../components/layout/Loading';
+import TableShowOptions from '../components/table/TableShowOptions';
 import zip from '../utils/zip';
 import { AscDescOrNone } from '../models/interfaces';
 

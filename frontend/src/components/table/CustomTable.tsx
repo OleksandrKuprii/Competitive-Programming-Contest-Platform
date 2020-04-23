@@ -4,7 +4,7 @@ import Table from 'react-bootstrap/Table';
 import { ReactNode } from 'react';
 import shallowEqual from 'shallowequal';
 import SortControl from './SortControl';
-import { useStoreState, useStoreActions } from '../hooks/store';
+import { useStoreState, useStoreActions } from '../../hooks/store';
 
 export type CustomTableRowIdentifier = number | string;
 export type CustomTableRow = {

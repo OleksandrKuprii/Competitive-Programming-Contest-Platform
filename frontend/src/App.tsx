@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/layout/Navbar';
 import HomePage from './routes/HomePage';
 import TasksPage from './routes/TasksPage';
 import TournamentsPage from './routes/TournamentsPage';

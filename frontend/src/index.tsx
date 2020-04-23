@@ -18,7 +18,10 @@ const main = async () => {
     audience: 'toucan-api',
   });
 
-  if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+  if (
+    window.location.search.includes('code=') &&
+    window.location.search.includes('state=')
+  ) {
     await auth0.handleRedirectCallback();
     window.history.replaceState(
       {},

@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import shallowEqual from 'shallowequal';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import SubmissionList from '../components/submission/SubmissionList';
-import Loading from '../components/Loading';
+import Loading from '../components/layout/Loading';
 
 const SubmissionsPage = () => {
   const { t } = useTranslation();

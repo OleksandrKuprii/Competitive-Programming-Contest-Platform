@@ -18,10 +18,10 @@ function iconSelector(language: Language) {
   return false;
 }
 
-const LanguageIdentifier: React.FunctionComponent<{ language: Language; size: 'lg' | 'sm' }> = ({
-  language,
-  size,
-}) => {
+const LanguageIdentifier: React.FunctionComponent<{
+  language: Language;
+  size: 'lg' | 'sm';
+}> = ({ language, size }) => {
   const icon = iconSelector(language);
 
   const light = ['c', 'c++'].includes(language);

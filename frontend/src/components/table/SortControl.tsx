@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
-import { AscDescOrNone } from '../models/interfaces';
+import { AscDescOrNone } from '../../models/interfaces';
 
 interface SortControlArgs {
   onDesc?: () => void;

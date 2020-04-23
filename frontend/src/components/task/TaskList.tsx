@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CustomTable, { CustomTableRow } from '../CustomTable';
+import CustomTable, { CustomTableRow } from '../table/CustomTable';
 import TaskDifficulty from './TaskDifficulty';
 import TaskLinkByTask from './TaskLinkByTask';
 import GreatestResult from '../result/GreatestResult';
