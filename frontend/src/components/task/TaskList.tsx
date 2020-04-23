@@ -16,7 +16,7 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
         id,
         row: (
           <>
-            <td>
+            <td style={{ maxWidth: 200, overflow: 'hidden' }}>
               <TaskLinkByTask taskName={name} id={id} />
             </td>
             <td>

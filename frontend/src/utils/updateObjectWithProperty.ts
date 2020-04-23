@@ -1,3 +1,5 @@
+import shallowEqual from 'shallowequal';
+
 interface StringIndexSignature {
   [key: string]: any;
 }
@@ -7,12 +9,18 @@ function updateObjectWithProperty(
   key: string,
   value: any,
   newObj: any,
+  prepend?: boolean,
 ) {
-  const objWithProperty = arr.find((obj) => value === obj[key]);
+  const objWithProperty = arr.find((obj) => shallowEqual(value, obj[key]));
 
   let changed = false;
 
   if (objWithProperty === undefined) {
+    if (prepend) {
+      arr.unshift(newObj);
+      return changed;
+    }
+
     arr.push(newObj);
     return changed;
   }

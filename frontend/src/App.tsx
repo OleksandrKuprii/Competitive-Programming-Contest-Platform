@@ -10,42 +10,58 @@ import SubmissionsPage from './routes/SubmissionsPage';
 import SubmissionPage from './routes/SubmissionPage';
 import ErrorPage from './routes/ErrorPage';
 import Notifications from './components/notification/Notifications';
+import { useStoreActions, useStoreState } from './hooks/store';
 
-const App = () => (
-  <HashRouter>
-    <Notifications />
+const App = () => {
+  const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
+  const fetchSubmissions = useStoreActions(
+    (actions) => actions.submission.fetchRange,
+  );
 
-    <Navbar />
+  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
-    <Container style={{ padding: 0, marginTop: 20 }}>
-      <Switch>
-        <Route path="/tournaments">
-          <TournamentsPage />
-        </Route>
+  fetchTasks({ offset: 0, number: 100 });
 
-        <Route path="/task/view/:taskAlias">
-          <TaskPage />
-        </Route>
+  if (isAuthenticated) {
+    fetchSubmissions({ offset: 0, number: 100 });
+  }
 
-        <Route path="/tasks">
-          <TasksPage />
-        </Route>
-        <Route path="/submissions">
-          <SubmissionsPage />
-        </Route>
-        <Route path="/submission/view/:id">
-          <SubmissionPage />
-        </Route>
-        <Route path="/" exact>
-          <HomePage />
-        </Route>
+  return (
+    <HashRouter>
+      <Notifications />
 
-        <Route path="/">
-          <ErrorPage code="notFound" />
-        </Route>
-      </Switch>
-    </Container>
-  </HashRouter>
-);
+      <Navbar />
+
+      <Container style={{ padding: 0, marginTop: 20 }}>
+        <Switch>
+          <Route path="/tournaments">
+            <TournamentsPage />
+          </Route>
+
+          <Route path="/task/view/:taskAlias">
+            <TaskPage />
+          </Route>
+
+          <Route path="/tasks">
+            <TasksPage />
+          </Route>
+          <Route path="/submissions">
+            <SubmissionsPage />
+          </Route>
+          <Route path="/submission/view/:id">
+            <SubmissionPage />
+          </Route>
+          <Route path="/" exact>
+            <HomePage />
+          </Route>
+
+          <Route path="/">
+            <ErrorPage code="notFound" />
+          </Route>
+        </Switch>
+      </Container>
+    </HashRouter>
+  );
+};
 
 export default App;

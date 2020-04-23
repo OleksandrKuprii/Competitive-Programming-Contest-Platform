@@ -84,7 +84,7 @@ export type Notification = {
       };
 };
 
-export interface Category extends DataModelItem<String> {
+export interface Category extends DataModelItem<string> {
   name?: string;
 }
 
@@ -140,12 +140,6 @@ export interface DataModel<
     StoreModel
   >;
   onChangedMany: ThunkOn<
-    DataModel<Identifier, DataItem>,
-    Injections,
-    StoreModel
-  >;
-
-  onSortOption: ThunkOn<
     DataModel<Identifier, DataItem>,
     Injections,
     StoreModel
@@ -224,7 +218,7 @@ export interface Auth0Model extends Auth0ModelInitialState {
   signOut: Thunk<Auth0Model, undefined, Injections>;
 }
 
-export interface CategoryModel extends DataModel<String, Category> {}
+export interface CategoryModel extends DataModel<string, Category> {}
 
 export interface SolutionSubmissionModel {
   code?: string;
@@ -266,7 +260,7 @@ export interface NotificationModel {
 export type AscDescOrNone = 'asc' | 'desc' | undefined;
 
 export interface SortModel {
-  options: Map<string, AscDescOrNone>;
+  options: Array<{ key: string; option: AscDescOrNone }>;
 
   toggleOption: Action<
     SortModel,
@@ -276,6 +270,15 @@ export interface SortModel {
   getOption: Computed<
     SortModel,
     (tableName: string, header: string) => AscDescOrNone
+  >;
+
+  getKeys: Computed<
+    SortModel,
+    (
+      tableName: string,
+      sortOptions: string[],
+      defaultOption: { key: string; option: AscDescOrNone },
+    ) => { key: (item: any) => any; option: AscDescOrNone }[]
   >;
 }
 

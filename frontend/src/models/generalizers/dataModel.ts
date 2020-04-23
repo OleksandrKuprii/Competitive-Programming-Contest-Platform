@@ -1,12 +1,7 @@
 import { action, computed, thunk, thunkOn } from 'easy-peasy';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
-import {
-  AscDescOrNone,
-  DataModel,
-  DataModelFactoryArgs,
-  DataModelItem,
-} from '../interfaces';
+import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
 
 const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
   args: DataModelFactoryArgs<Identifier, Item>,
@@ -123,31 +118,6 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
       }
     });
   }),
-
-  onSortOption: thunkOn(
-    (actions, storeActions) => storeActions.sort.toggleOption,
-    (actions, target, { getStoreState }) => {
-      if (target.payload.tableName !== dataModelIdentifier) {
-        return;
-      }
-
-      const { options } = getStoreState().sort;
-
-      const sortBy = Array.from(options as Map<string, AscDescOrNone>).map(
-        ([key, option]: [string, AscDescOrNone]) => {
-          const name = key.split('.')[1];
-
-          return { name, option };
-        },
-      );
-
-      actions.fetchRange({
-        offset: 0,
-        number: 5,
-        sortBy,
-      });
-    },
-  ),
 
   byId: computed((state) => (id) => state.items.find((item) => item.id === id)),
 
