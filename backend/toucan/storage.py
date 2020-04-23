@@ -87,6 +87,8 @@ async def get_extension_by_lang(lang: str) -> str:
         ext = 'c'
     elif lang == 'c++':
         ext = 'c++'
+    elif lang == 'pascal':
+        ext = 'pas'
 
     assert ext is not None
 
