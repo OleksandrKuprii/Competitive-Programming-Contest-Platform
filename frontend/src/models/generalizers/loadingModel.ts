@@ -4,16 +4,12 @@ import { LoadingModel } from '../interfaces';
 const loadingModel: () => LoadingModel = () => ({
   flag: false,
 
-  hasMore: true,
-
   loading: action(() => ({
     flag: true,
-    hasMore: false,
   })),
 
-  loaded: action((state, hasMore) => ({
+  loaded: action(() => ({
     flag: false,
-    hasMore,
   })),
 });
 

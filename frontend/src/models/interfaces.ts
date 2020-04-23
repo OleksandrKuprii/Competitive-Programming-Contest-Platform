@@ -1,117 +1,97 @@
 import { Action, Computed, TargetResolver, Thunk, ThunkOn } from 'easy-peasy';
 import Injections from '../injections';
 
-export interface TaskRating {
-  correct: number;
-  partial: number;
-  zero: number;
-}
-
-export interface TaskExample {
-  input: string;
-  output: string;
-}
-
-export interface TaskLimits {
-  cpuTime: number;
-  wallTime: number;
-  memory: number;
-}
-
-export type DataItemRangeIdentifier = {
-  offset: number;
-  number: number;
-  sortBy?: { option?: AscDescOrNone; name: string }[];
-  filterBy?: Map<
-    string,
-    string | number | (number | string)[] | { from: number; to: number }
-  >;
-};
-
-interface StringIndexSignature {
-  [key: string]: any;
-}
+/* <editor-fold desc="General"> */
 
 export interface ObjectWithId<Identifier> extends StringIndexSignature {
   id: Identifier;
 }
 
-export interface ObjectWithLoadingStatus {
-  loading: boolean;
+export interface StringIndexSignature {
+  [key: string]: any;
 }
+
+export interface ObjectWithLoadingStatus {
+  loading?: boolean;
+}
+
+/* </editor-fold> */
+
+/* <editor-fold desc="StoreModel"> */
+
+export interface StoreModel {
+  auth0: Auth0Model;
+  task: TaskModel;
+  category: CategoryModel;
+  submission: SubmissionModel;
+  solutionSubmission: SolutionSubmissionModel;
+  notification: NotificationModel;
+  submissionHunter: SubmissionHunterModel;
+  sort: SortModel;
+  filter: FilterModel;
+}
+
+/* </editor-fold> */
+
+/* <editor-fold desc="Auth0"> */
+export interface Auth0ModelInitialState {
+  isAuthenticated: boolean;
+  user: any;
+  username: string;
+  avatar: string;
+}
+
+export interface Auth0Model extends Auth0ModelInitialState {
+  signIn: Thunk<Auth0Model, undefined, Injections>;
+  signOut: Thunk<Auth0Model, undefined, Injections>;
+}
+/* </editor-fold> */
+
+/* <editor-fold desc="Models"> */
+
+/* <editor-fold desc="LoadingModel"> */
+
+export interface LoadingModel {
+  flag: boolean;
+  loading: Action<LoadingModel>;
+  loaded: Action<LoadingModel>;
+}
+
+/* </editor-fold> */
+
+/* <editor-fold desc="DataModel"> */
 
 export interface DataModelItem<T>
   extends ObjectWithId<T>,
     ObjectWithLoadingStatus {}
 
-export interface TaskCustomSection {
-  name: string;
-  data: string;
+export interface DataFetcherArgs {
+  token?: string;
 }
 
-export interface Task extends DataModelItem<string> {
-  name?: string;
-  category?: string;
-  difficulty?: number;
-  rating: TaskRating;
-  description?: {
-    main?: string;
-    inputFormat?: string;
-    outputFormat?: string;
-  };
-  examples?: TaskExample[];
-  limits?: TaskLimits;
-  customSections?: TaskCustomSection[];
-  publishedAt?: Date;
+export interface DataModelFactoryArgs<
+  Identifier,
+  Item extends DataModelItem<any>
+> {
+  dataItemFetcher: (
+    id: Identifier,
+    args: DataFetcherArgs,
+  ) => Promise<{ item: Item } | undefined>;
+  dataRangeFetcher: (
+    range: DataItemRangeIdentifier,
+    args: DataFetcherArgs,
+  ) => Promise<Array<{ item: Item }>>;
+
+  onChangedOneTargets: TargetResolver<DataModel<Identifier, Item>, StoreModel>;
+  onChangedManyTargets: TargetResolver<DataModel<Identifier, Item>, StoreModel>;
+
+  dataModelIdentifier: string;
 }
 
-export type Notification = {
-  id: number;
-  payload:
-    | {
-        type: 'submitting';
-        taskId: string;
-      }
-    | {
-        type: 'submitted';
-        submissionId: number;
-      }
-    | {
-        type: 'receivedResults';
-        submissionId: number;
-        points: number;
-        status: string[];
-      };
+export type DataItemRangeIdentifier = {
+  offset: number;
+  number: number;
 };
-
-export interface Category extends DataModelItem<string> {
-  name?: string;
-}
-
-export interface SubmissionTest {
-  status: string;
-  points: number;
-  cpuTime: number;
-  realtime: number;
-}
-
-export interface Submission extends DataModelItem<number> {
-  taskAlias?: string;
-  language?: string;
-  status?: string[];
-  points?: number;
-  submitted?: Date;
-  tests?: SubmissionTest[];
-  code?: string;
-}
-
-export interface LoadingModel {
-  flag: boolean;
-  hasMore?: boolean;
-
-  loading: Action<LoadingModel>;
-  loaded: Action<LoadingModel, boolean | undefined>;
-}
 
 export interface DataModel<
   Identifier,
@@ -160,34 +140,81 @@ export interface DataModel<
         key: (item: DataItem) => string | number | undefined;
         option: AscDescOrNone;
       }[],
+      filters?: { option: FilterOption; name: string }[],
     ) => DataItem[]
   >;
 }
 
-export interface DataFetcherArgs {
-  token?: string;
+/* </editor-fold> */
+
+/* <editor-fold desc="TaskModel"> */
+
+export interface TaskCustomSection {
+  name: string;
+  data: string;
 }
 
-export interface DataModelFactoryArgs<
-  Identifier,
-  Item extends DataModelItem<any>
-> {
-  dataItemFetcher: (
-    id: Identifier,
-    args: DataFetcherArgs,
-  ) => Promise<{ item: Item } | undefined>;
-  dataRangeFetcher: (
-    range: DataItemRangeIdentifier,
-    args: DataFetcherArgs,
-  ) => Promise<Array<{ item: Item }>>;
+export interface Task extends DataModelItem<string> {
+  name?: string;
+  category?: string;
+  difficulty?: number;
+  rating: TaskRating;
+  description?: {
+    main?: string;
+    inputFormat?: string;
+    outputFormat?: string;
+  };
+  examples?: TaskExample[];
+  limits?: TaskLimits;
+  customSections?: TaskCustomSection[];
+  publishedAt?: Date;
+}
 
-  onChangedOneTargets: TargetResolver<DataModel<Identifier, Item>, StoreModel>;
-  onChangedManyTargets: TargetResolver<DataModel<Identifier, Item>, StoreModel>;
+export interface TaskRating {
+  correct: number;
+  partial: number;
+  zero: number;
+}
 
-  dataModelIdentifier: string;
+export interface TaskExample {
+  input: string;
+  output: string;
+}
+
+export interface TaskLimits {
+  cpuTime: number;
+  wallTime: number;
+  memory: number;
+}
+
+export interface TaskModel extends DataModel<string, Task> {}
+
+/* </editor-fold> */
+
+/* <editor-fold desc="SubmissionModel"> */
+
+export interface SubmissionTest {
+  status: string;
+  points: number;
+  cpuTime: number;
+  realtime: number;
+}
+
+export interface Submission extends DataModelItem<number> {
+  taskAlias?: string;
+  language?: string;
+  status?: string[];
+  points?: number;
+  submitted?: Date;
+  tests?: SubmissionTest[];
+  code?: string;
 }
 
 export interface SubmissionModel extends DataModel<number, Submission> {}
+
+/* </editor-fold> */
+
+/* <editor-fold desc="SubmissionHunter"> */
 
 export interface SubmissionHunterModel {
   nowHunting: Set<number>;
@@ -204,21 +231,9 @@ export interface SubmissionHunterModel {
   onSubmit: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
 }
 
-export interface TaskModel extends DataModel<string, Task> {}
+/* </editor-fold> */
 
-export interface Auth0ModelInitialState {
-  isAuthenticated: boolean;
-  user: any;
-  username: string;
-  avatar: string;
-}
-
-export interface Auth0Model extends Auth0ModelInitialState {
-  signIn: Thunk<Auth0Model, undefined, Injections>;
-  signOut: Thunk<Auth0Model, undefined, Injections>;
-}
-
-export interface CategoryModel extends DataModel<string, Category> {}
+/* <editor-fold desc="SolutionSubmissionModel"> */
 
 export interface SolutionSubmissionModel {
   code?: string;
@@ -241,6 +256,29 @@ export interface SolutionSubmissionModel {
   submit: Thunk<SolutionSubmissionModel, string, Injections>;
 }
 
+/* </editor-fold> */
+
+/* <editor-fold desc="NotificationModel"> */
+
+export type Notification = {
+  id: number;
+  payload:
+    | {
+        type: 'submitting';
+        taskId: string;
+      }
+    | {
+        type: 'submitted';
+        submissionId: number;
+      }
+    | {
+        type: 'receivedResults';
+        submissionId: number;
+        points: number;
+        status: string[];
+      };
+};
+
 export interface NotificationModel {
   list: Array<Notification>;
 
@@ -257,8 +295,21 @@ export interface NotificationModel {
   onReceivedResults: ThunkOn<NotificationModel, Injections, StoreModel>;
 }
 
-export type AscDescOrNone = 'asc' | 'desc' | undefined;
+/* </editor-fold> */
 
+/* <editor-fold desc="CategoryModel"> */
+
+export interface Category extends DataModelItem<string> {
+  name?: string;
+}
+
+export interface CategoryModel extends DataModel<string, Category> {}
+
+/* </editor-fold> */
+
+/* <editor-fold desc="SortModel"> */
+
+export type AscDescOrNone = 'asc' | 'desc' | undefined;
 export interface SortModel {
   options: Array<{ key: string; option: AscDescOrNone }>;
 
@@ -282,13 +333,28 @@ export interface SortModel {
   >;
 }
 
-export interface StoreModel {
-  auth0: Auth0Model;
-  task: TaskModel;
-  category: CategoryModel;
-  submission: SubmissionModel;
-  solutionSubmission: SolutionSubmissionModel;
-  notification: NotificationModel;
-  submissionHunter: SubmissionHunterModel;
-  sort: SortModel;
+/* </editor-fold> */
+
+/* <editor-fold desc="FilterModel"> */
+
+export type FilterOption = string | number | { from: number; to: number };
+
+export interface FilterModel {
+  options: Map<string, FilterOption>;
+
+  changedOption: Action<
+    FilterModel,
+    { tableName: string; name: string; value: FilterOption }
+  >;
+
+  deletedOption: Action<FilterModel, { tableName: string; name: string }>;
+
+  getOptions: Computed<
+    FilterModel,
+    (tableName: string) => { option: FilterOption; name: string }[]
+  >;
 }
+
+/* </editor-fold> */
+
+/* </editor-fold> */

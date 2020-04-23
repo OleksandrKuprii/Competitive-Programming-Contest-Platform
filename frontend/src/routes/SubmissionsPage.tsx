@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import shallowEqual from 'shallowequal';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import SubmissionList from '../components/submission/SubmissionList';
+import Loading from '../components/layout/Loading';
 
 const SubmissionsPage = () => {
   const { t } = useTranslation();
@@ -18,9 +19,17 @@ const SubmissionsPage = () => {
     shallowEqual,
   );
 
+  const submissionLoading = useStoreState(
+    (state) => state.submission.loading.flag,
+  );
+
   if (!isAuthenticated) {
     signIn();
     return <></>;
+  }
+
+  if (submissionLoading) {
+    return <Loading variant="loading" />;
   }
 
   return (

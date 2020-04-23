@@ -46,7 +46,7 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
 
     actions.uploadedFile({ code, filename });
 
-    actions.loading.loaded(false);
+    actions.loading.loaded();
   }),
 
   submit: thunk(async (actions, taskAlias, { injections, getState }) => {

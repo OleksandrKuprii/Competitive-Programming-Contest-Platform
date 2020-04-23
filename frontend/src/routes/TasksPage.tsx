@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import shallowEqual from 'shallowequal';
-import { useStoreState } from '../hooks/store';
+import { useStoreState, useStoreActions } from '../hooks/store';
 import TaskList from '../components/task/TaskList';
 import CategoryFilter from '../components/table/filters/CategoryFilter';
 import IntRangeFilter from '../components/table/filters/IntRangeFilter';
+import Loading from '../components/layout/Loading';
 
 const TasksPage = () => {
   const { t } = useTranslation();
@@ -14,6 +15,10 @@ const TasksPage = () => {
   const sortOptions = ['name', 'category', 'difficulty', 'result'];
 
   const getKeys = useStoreState((store) => store.sort.getKeys);
+  const options = useStoreState(
+    (store) => store.filter.getOptions('task'),
+    shallowEqual,
+  );
 
   const keys = getKeys('task', sortOptions, {
     key: 'publishedAt',
@@ -21,15 +26,25 @@ const TasksPage = () => {
   });
 
   const tasks = useStoreState(
-    (state) => state.task.nItemsByCustomKeys(keys),
+    (state) => state.task.nItemsByCustomKeys(keys, options),
     shallowEqual,
   );
+
+  const tasksLoading = useStoreState((state) => state.task.loading.flag);
+
+  const changedOption = useStoreActions(
+    (actions) => actions.filter.changedOption,
+  );
+
+  if (tasksLoading) {
+    return <Loading variant="loading" />;
+  }
 
   return (
     <>
       <Row>
         <Col>
-          <p className="h3 m-0 d-inline">{t('pageName.tasks')}</p>{' '}
+          <p className="h3 m-0 d-inline">{t('pageName.tasks')}</p>
         </Col>
       </Row>
 
@@ -40,7 +55,21 @@ const TasksPage = () => {
           <CategoryFilter />
         </Col>
         <Col md="auto">
-          <IntRangeFilter header="Difficulty" from={0} to={10} />
+          <IntRangeFilter
+            header="Difficulty"
+            from={1}
+            to={10}
+            onFinalChange={(values) => {
+              changedOption({
+                tableName: 'task',
+                name: 'difficulty',
+                value: {
+                  from: values[0],
+                  to: values[1],
+                },
+              });
+            }}
+          />
         </Col>
         <Col md="auto" />
       </Row>

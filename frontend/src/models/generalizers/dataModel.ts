@@ -1,4 +1,5 @@
 import { action, computed, thunk, thunkOn } from 'easy-peasy';
+import shallowEqual from 'shallowequal';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
 import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
@@ -62,7 +63,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
       token,
     });
 
-    actions.loading.loaded(items.length > 0);
+    actions.loading.loaded();
 
     return items;
   }),
@@ -125,11 +126,11 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
   ),
 
-  nItemsByCustomKeys: computed((state) => (keys) => {
+  nItemsByCustomKeys: computed((state) => (keys, filters) => {
     const aGreater = (desc?: boolean) => (desc ? -1 : 1);
     const bGreater = (desc?: boolean) => (desc ? 1 : -1);
 
-    return state.items.concat().sort((a, b) => {
+    const items = state.items.concat().sort((a, b) => {
       for (let i = 0; i < keys.length; i += 1) {
         const { key, option } = keys[i];
         const aValue = key(a);
@@ -148,6 +149,20 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
       return 0;
     });
+
+    if (!filters) {
+      return items;
+    }
+
+    return items.filter((item) =>
+      filters.every(({ name, option }) => {
+        if (typeof option === 'number' || typeof option === 'string') {
+          return shallowEqual(item[name], option);
+        }
+
+        return item[name] >= option.from && item[name] <= option.to;
+      }),
+    );
   }),
 });
 

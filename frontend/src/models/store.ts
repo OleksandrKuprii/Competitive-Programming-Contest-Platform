@@ -7,6 +7,7 @@ import notificationModel from './notificationModel';
 import submissionHunterModel from './submissionHunterModel';
 import { Auth0ModelInitialState, StoreModel } from './interfaces';
 import sortModel from './sortModel';
+import filterModel from './filterModel';
 
 const storeModel: (
   auth0ModelInitialState: Auth0ModelInitialState,
@@ -19,6 +20,7 @@ const storeModel: (
   notification: notificationModel,
   submissionHunter: submissionHunterModel,
   sort: sortModel,
+  filter: filterModel,
 });
 
 export default storeModel;

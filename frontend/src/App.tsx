@@ -20,7 +20,7 @@ const App = () => {
 
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
-  fetchTasks({ offset: 0, number: 100 });
+  fetchTasks({ offset: 0, number: 300 });
 
   if (isAuthenticated) {
     fetchSubmissions({ offset: 0, number: 100 });

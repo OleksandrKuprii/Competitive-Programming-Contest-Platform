@@ -6,11 +6,11 @@ interface GeneralFilterArgs {
 }
 
 const GeneralFilter = ({ header, children }: GeneralFilterArgs) => (
-  <div>
-    <p className="m-0 p-1">{header}</p>
+  <>
+    <p className="m-0">{header}</p>
 
-    {children}
-  </div>
+    <div>{children}</div>
+  </>
 );
 
 export default GeneralFilter;
