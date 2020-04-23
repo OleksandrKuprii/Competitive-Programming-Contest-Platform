@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'react-bootstrap';
+import InfiniteScroll from 'react-infinite-scroller';
+import shallowEqual from 'shallowequal';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import SubmissionList from '../components/submission/SubmissionList';
 import Loading from '../components/Loading';
@@ -9,42 +9,28 @@ import Loading from '../components/Loading';
 const SubmissionsPage = () => {
   const { t } = useTranslation();
 
-  const [n, setN] = useState(5);
-
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
   const signIn = useStoreActions((state) => state.auth0.signIn);
 
-  const nSubmissions = useStoreState((state) => state.submission.nItemsById);
-  const submissionsLoading = useStoreState((state) => state.submission.loading.flag);
+  const submissions = useStoreState(
+    (state) =>
+      state.submission.nItemsByCustomKeys([
+        { key: (item) => item.id, option: 'desc' },
+      ]),
+    shallowEqual,
+  );
 
-  const fetchSubmissions = useStoreActions((actions) => actions.submission.fetchRange);
+  const hasMoreSubmissions = useStoreState(
+    (state) => state.submission.loading.hasMore,
+  );
 
-  const submissions = nSubmissions(n);
-
-  const loadMoreCallback = useCallback(() => {
-    setN(n + 5);
-  }, [n]);
-
-  const needFetch = isAuthenticated && submissions.length < n;
-
-  const fetchSubmissionsPagination = useCallback(() => {
-    if (needFetch) {
-      // TODO: Fix number increasing issue
-      fetchSubmissions({ offset: submissions.length, number: n });
-    }
-  }, [n, fetchSubmissions, needFetch]);
-
-  useEffect(() => {
-    fetchSubmissionsPagination();
-  }, [fetchSubmissionsPagination]);
+  const fetchSubmissions = useStoreActions(
+    (actions) => actions.submission.fetchRange,
+  );
 
   if (!isAuthenticated) {
     signIn();
     return <></>;
-  }
-
-  if (submissionsLoading) {
-    return <Loading variant="loading" />;
   }
 
   return (
@@ -52,10 +38,16 @@ const SubmissionsPage = () => {
       <p className="h3 m-0">{t('pageName.submissions')}</p>
 
       <p className="description">{t('submissionPage.description')}</p>
-
-      <SubmissionList submissions={submissions} />
-
-      <Button onClick={loadMoreCallback}>Load more</Button>
+      <InfiniteScroll
+        pageStart={-1}
+        loadMore={(page) => {
+          fetchSubmissions({ offset: page * 50, number: 50 });
+        }}
+        hasMore={hasMoreSubmissions}
+        loader={<Loading variant="loading" />}
+      >
+        <SubmissionList submissions={submissions} />
+      </InfiniteScroll>
     </>
   );
 };

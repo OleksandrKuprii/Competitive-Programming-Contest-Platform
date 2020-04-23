@@ -1,7 +1,12 @@
 import { action, computed, thunk, thunkOn } from 'easy-peasy';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
-import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
+import {
+  AscDescOrNone,
+  DataModel,
+  DataModelFactoryArgs,
+  DataModelItem,
+} from '../interfaces';
 
 const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
   args: DataModelFactoryArgs<Identifier, Item>,
@@ -18,6 +23,12 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
   updated: action((state, item) => {
     updateObjectWithProperty(state.items, 'id', item.id, item);
+  }),
+
+  updatedMany: action((state, items) => {
+    items.forEach((item) => {
+      updateObjectWithProperty(state.items, 'id', item.id, item);
+    });
   }),
 
   fetchOne: thunk(async (actions, id, { injections }) => {
@@ -56,7 +67,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
       token,
     });
 
-    actions.loading.loaded();
+    actions.loading.loaded(items.length > 0);
 
     return items;
   }),
@@ -87,9 +98,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
         return;
       }
 
-      target.result.forEach((item: any) => {
-        actions.updated(item.item);
-      });
+      actions.updatedMany(target.result.map((a: any) => a.item));
     },
   ),
 
@@ -115,22 +124,60 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     });
   }),
 
+  onSortOption: thunkOn(
+    (actions, storeActions) => storeActions.sort.toggleOption,
+    (actions, target, { getStoreState }) => {
+      if (target.payload.tableName !== dataModelIdentifier) {
+        return;
+      }
+
+      const { options } = getStoreState().sort;
+
+      const sortBy = Array.from(options as Map<string, AscDescOrNone>).map(
+        ([key, option]: [string, AscDescOrNone]) => {
+          const name = key.split('.')[1];
+
+          return { name, option };
+        },
+      );
+
+      actions.fetchRange({
+        offset: 0,
+        number: 5,
+        sortBy,
+      });
+    },
+  ),
+
   byId: computed((state) => (id) => state.items.find((item) => item.id === id)),
 
   nItemsById: computed((state) => (number) =>
     state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
   ),
 
-  nItemsByCustomKey: computed((state) => (key, desc) => {
-    const aGreater = desc ? -1 : 1;
-    const bGreater = -aGreater;
+  nItemsByCustomKeys: computed((state) => (keys) => {
+    const aGreater = (desc?: boolean) => (desc ? -1 : 1);
+    const bGreater = (desc?: boolean) => (desc ? 1 : -1);
 
-    return (
-      state.items
-        .filter((item) => key(item) !== undefined)
-        // @ts-ignore
-        .sort((a, b) => (key(a) > key(b) ? aGreater : bGreater))
-    );
+    return state.items.concat().sort((a, b) => {
+      for (let i = 0; i < keys.length; i += 1) {
+        const { key, option } = keys[i];
+        const aValue = key(a);
+        const bValue = key(b);
+
+        if (aValue && bValue) {
+          if (aValue > bValue) {
+            return aGreater(option === 'desc');
+          }
+
+          if (bValue > aValue) {
+            return bGreater(option === 'desc');
+          }
+        }
+      }
+
+      return 0;
+    });
   }),
 });
 

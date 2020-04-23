@@ -8,6 +8,8 @@ import { Task } from '../../models/interfaces';
 import TaskRatingHistogram from './rating/TaskRatingHistogram';
 
 const TaskList = ({ tasks }: { tasks: Task[] }) => {
+  const sortOptions = ['name', 'category', 'difficulty', 'result'];
+
   const rows = tasks.map(
     ({ id, name, difficulty, rating, category }) =>
       ({
@@ -21,9 +23,19 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
               <CategoryName id={category} />
             </td>
             <td>
-              {difficulty === undefined ? '' : <TaskDifficulty id={id} difficulty={difficulty} />}
+              {difficulty === undefined ? (
+                ''
+              ) : (
+                <TaskDifficulty id={id} difficulty={difficulty} />
+              )}
             </td>
-            <td>{rating === undefined ? '' : <TaskRatingHistogram id={id} rating={rating} />}</td>
+            <td>
+              {rating === undefined ? (
+                ''
+              ) : (
+                <TaskRatingHistogram id={id} rating={rating} />
+              )}
+            </td>
             <td>
               <GreatestResult taskAlias={id} />
             </td>
@@ -34,9 +46,9 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
 
   return (
     <CustomTable
-      tableName="taskList"
+      tableName="task"
       headers={['name', 'category', 'difficulty', 'rating', 'result']}
-      enableSortOptionIn={['difficulty']}
+      enableSortOptionIn={sortOptions}
       rows={rows}
     />
   );

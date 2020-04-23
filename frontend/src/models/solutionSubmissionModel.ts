@@ -22,9 +22,7 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
     code,
     filename,
     language: state.language,
-    loading: {
-      flag: state.loading.flag,
-    },
+    loading: state.loading,
     fileUploaded: true,
   })),
 
@@ -48,7 +46,7 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
 
     actions.uploadedFile({ code, filename });
 
-    actions.loading.loaded();
+    actions.loading.loaded(false);
   }),
 
   submit: thunk(async (actions, taskAlias, { injections, getState }) => {

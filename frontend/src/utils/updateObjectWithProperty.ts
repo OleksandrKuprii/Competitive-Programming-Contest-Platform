@@ -8,7 +8,7 @@ function updateObjectWithProperty(
   value: any,
   newObj: any,
 ) {
-  const objWithProperty = arr.find((obj) => value.toString() === obj[key].toString());
+  const objWithProperty = arr.find((obj) => value === obj[key]);
 
   let changed = false;
 

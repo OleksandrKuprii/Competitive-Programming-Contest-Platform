@@ -6,7 +6,9 @@ const categoryModel: CategoryModel = {
     dataItemFetcher: async (id) => ({ item: { id, loading: false } }),
     dataRangeFetcher: async () => [],
 
-    onChangedManyTargets: (state, storeActions) => [storeActions.task.fetchRange],
+    onChangedManyTargets: (state, storeActions) => [
+      storeActions.task.fetchRange,
+    ],
     onChangedOneTargets: () => [],
 
     dataModelIdentifier: 'category',
