@@ -22,7 +22,9 @@ compiler_configs = {
     'c': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='gcc',
                         args='-o compiled/compiled.out'),
     'c++': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='g++',
-                          args='-o compiled/compiled.out')
+                          args='-o compiled/compiled.out'),
+    'pascal': CompilerConfig(is_compilable=True, image='fpc',
+                             command='fpc', args="-o'compiled/compiled.out'")
 }
 
 runner_configs = {
@@ -33,7 +35,10 @@ runner_configs = {
     'c': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
                       file_path='compiled/compiled.out'),
     'c++': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
-                        file_path='compiled/compiled.out')
+                        file_path='compiled/compiled.out'),
+    'pascal': RunnerConfig(image='fpc', command='',
+                           is_compilable=True,
+                           file_path='compiled/compiled.out')
 }
 
 LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
@@ -162,7 +167,7 @@ async def execute_test(runner_config: RunnerConfig, input_abspath: str,
         status_code = result['StatusCode']
 
         logs = container.logs().decode()
-
+        print(logs)
         # Real(wall) time, user(cpu) time, sys(kernel) time
         real, user, _sys = runner.parse_time.parse(logs)
 
@@ -220,10 +225,7 @@ async def execute_tests(
         submission_to_runner: SubmissionToRunner
 ) -> Optional[list]:
     """Execute all test for submission."""
-    try:
-        # Get runner configuration from language
-        runner_config = runner_configs[submission_to_runner.lang]
-    except IndexError:
+    if submission_to_runner.lang not in runner_configs:
         print(f'{submission_to_runner.lang} isn\'t supported!')
         return
 

@@ -91,7 +91,8 @@ async def pull_images(client: docker.DockerClient) -> None:
         The client for docker
     """
     # All necessary images
-    images = ['python:3.8-slim', 'python:2.7-slim', 'gcc:9.3.0']
+    images = ['python:3.8-slim', 'python:2.7-slim', 'gcc:9.3.0',
+              'frolvlad/alpine-fpc']
 
     for image in images:
         # Pull image
