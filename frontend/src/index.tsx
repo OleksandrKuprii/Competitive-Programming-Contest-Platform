@@ -5,9 +5,11 @@ import { createStore, StoreProvider } from 'easy-peasy';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import App from './App';
 import './styles/index.scss';
-import i18n from './i18n';
+import i18n from './locales/i18n';
 import * as serviceWorker from './serviceWorker';
 import storeModel from './models/store';
+// eslint-disable-next-line import/extensions
+import './types/index.d.ts';
 
 const main = async () => {
   const auth0 = await createAuth0Client({
@@ -16,7 +18,10 @@ const main = async () => {
     audience: 'toucan-api',
   });
 
-  if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+  if (
+    window.location.search.includes('code=') &&
+    window.location.search.includes('state=')
+  ) {
     await auth0.handleRedirectCallback();
     window.history.replaceState(
       {},

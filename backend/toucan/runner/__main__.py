@@ -6,6 +6,7 @@ import logging
 import os
 
 import aioboto3
+import docker
 
 from dataclass import SubmissionToRunner
 from runner import worker
@@ -19,6 +20,9 @@ logging.basicConfig(filename='runner.log',
                     level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
+
+# Set up docker client
+client = docker.from_env()
 
 
 async def main():
@@ -69,11 +73,45 @@ async def main():
 
                 loop = asyncio.get_event_loop()
 
-                [loop.run_in_executor(executor,
-                 worker.process_submission_to_runner, i) for i in
-                 submission_to_runner]
+                for submission in submission_to_runner:
+                    loop.run_in_executor(
+                        executor, worker.process_submission_to_runner,
+                        submission, client)
+                # [loop.run_in_executor(executor,
+                #  worker.process_submission_to_runner, i) for i in
+                #  submission_to_runner]
+
+
+async def pull_images(client: docker.DockerClient) -> None:
+    """Pull all docker images before start of the runner.
+
+    Parameters
+    ----------
+    client: docker.DockerClient
+        The client for docker
+    """
+    # All necessary images
+    images = ['python:3.8-slim', 'python:2.7-slim', 'gcc:9.3.0',
+              'frolvlad/alpine-fpc']
+
+    for image in images:
+        # Pull image
+        client.images.pull(image)
+
+        print(f'Pulled {image}')
 
 
 if __name__ == '__main__':
-    print('Runner is starting!')
+    print('Runner is starting...')
+    print('------------------')
+    print('Pulling images...')
+
+    # Pull all docker images before start
+    asyncio.run(pull_images(client))
+
+    print('----------------------')
+    print("All images were pulled")
+    print("======== Runner started! ========")
+
+    # Start runner
     asyncio.run(main())

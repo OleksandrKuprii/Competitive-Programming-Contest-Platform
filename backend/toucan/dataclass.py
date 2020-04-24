@@ -75,3 +75,29 @@ class UserSubmission:
     timestamp: datetime
     lang: str
     code: str
+
+
+@dataclass
+class CompilerConfig:
+    """Configuration for compiler."""
+
+    is_compilable: bool
+    image: str = None
+    command: str = None
+    args: str = None
+    file_path: str = None
+    abs_filepath: str = None
+    volume_name: str = None
+
+
+@dataclass
+class RunnerConfig:
+    """Configuration for runner."""
+
+    image: str
+    command: str
+    is_compilable: bool
+    file_path: str = None
+    volume_name: str = None
+    abs_file_path: str = None
+    store_volume: str = 'compiled/'

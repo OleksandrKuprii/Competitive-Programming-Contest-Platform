@@ -8,13 +8,16 @@ const taskModel: TaskModel = {
     dataItemFetcher: async (id, args) => {
       const { token } = args;
 
-      const response = await fetch(`${baseURL}/${token ? 'task/auth' : 'task'}/${id}`, {
-        headers: !token
-          ? {}
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      });
+      const response = await fetch(
+        `${baseURL}/${token ? 'task/auth' : 'task'}/${id}`,
+        {
+          headers: !token
+            ? {}
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        },
+      );
 
       if (!response.ok) {
         return undefined;
@@ -47,16 +50,17 @@ const taskModel: TaskModel = {
                 data: entry[1],
               }))
             : [],
+          publishedAt: data.created,
         } as Task,
       };
     },
     dataRangeFetcher: async (range, args) => {
       const { token } = args;
 
+      const options = [`offset=${range.offset}`, `number=${range.number}`];
+
       const response = await fetch(
-        `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?offset=${range.offset}&number=${
-          range.number
-        }`,
+        `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?${options.join('&')}`,
         {
           headers: !token
             ? {}
@@ -78,6 +82,12 @@ const taskModel: TaskModel = {
           name: task.name,
           category: task.category.alias,
           difficulty: task.difficulty,
+          rating: {
+            correct: task.statistics.full,
+            partial: task.statistics.partial,
+            zero: task.statistics.zero,
+          },
+          publishedAt: task.created,
         } as Task,
         category: {
           id: task.category.alias,
@@ -94,8 +104,12 @@ const taskModel: TaskModel = {
       }));
     },
 
-    onChangedManyTargets: (state, storeActions) => [storeActions.submission.fetchRange],
-    onChangedOneTargets: (state, storeActions) => [storeActions.submission.fetchOne],
+    onChangedManyTargets: (state, storeActions) => [
+      storeActions.submission.fetchRange,
+    ],
+    onChangedOneTargets: (state, storeActions) => [
+      storeActions.submission.fetchOne,
+    ],
 
     dataModelIdentifier: 'task',
   }),

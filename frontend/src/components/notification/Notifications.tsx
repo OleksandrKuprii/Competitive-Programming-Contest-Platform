@@ -14,7 +14,7 @@ const Notifications = () => {
         right: 0,
         zIndex: 9999,
         padding: 40,
-        width: 300,
+        width: 275,
       }}
     >
       <TransitionGroup className="notifications">

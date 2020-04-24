@@ -11,22 +11,47 @@ import checker
 import database
 import runner.parse_time
 import storage
-from dataclass import ResultToChecker, SubmissionToRunner, TestResult
+from dataclass import ResultToChecker, SubmissionToRunner, TestResult, \
+    CompilerConfig, RunnerConfig
 
 client = docker.from_env()
 
-lang_to_image = {'python3': 'python:3.8-slim'}
+compiler_configs = {
+    'python3': CompilerConfig(is_compilable=False),
+    'python2': CompilerConfig(is_compilable=False),
+    'c': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='gcc',
+                        args='-o compiled/compiled.out'),
+    'c++': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='g++',
+                          args='-o compiled/compiled.out'),
+    'pascal': CompilerConfig(is_compilable=True, image='fpc',
+                             command='fpc', args="-o'compiled/compiled.out'")
+}
+
+runner_configs = {
+    'python3': RunnerConfig(image='python:3.8-slim', command='python',
+                            is_compilable=False),
+    'python2': RunnerConfig(image='python:2.7-slim', command='python',
+                            is_compilable=False),
+    'c': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
+                      file_path='compiled/compiled.out'),
+    'c++': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
+                        file_path='compiled/compiled.out'),
+    'pascal': RunnerConfig(image='fpc', command='',
+                           is_compilable=True,
+                           file_path='compiled/compiled.out')
+}
 
 LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
 
 assert LOCAL_STORAGE_ROOT is not None
-
 
 logging.basicConfig(filename='runner.log',
                     filemode='w',
                     level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
+
+client: docker.DockerClient
 
 
 async def execute(submission_to_runner: SubmissionToRunner):
@@ -40,25 +65,29 @@ async def execute(submission_to_runner: SubmissionToRunner):
 
         test_results = list(
             await execute_tests(submission_to_runner))
-        print(1)
+
         result_to_checker = ResultToChecker(submission_to_runner.submission_id,
                                             test_results)
 
         await checker.process_result_to_checker(result_to_checker, conn)
-    print(2)
+
     # Closing the database pool
     await pool.close()
 
 
 def process_submission_to_runner(
-        submission_to_runner: SubmissionToRunner) -> ResultToChecker:
+        submission_to_runner: SubmissionToRunner, docker_client) -> \
+        ResultToChecker:
     """Run SubmissionToRunner and return ResultToChecker."""
+    # Set the global docker client
+    global client
+    client = docker_client
+
     loop = asyncio.new_event_loop()
     loop.run_until_complete(execute(submission_to_runner))
 
 
-async def execute_test(image: str, submission_code_abspath: str,
-                       submission_code_path_basename: str, input_abspath: str,
+async def execute_test(runner_config: RunnerConfig, input_abspath: str,
                        memory_limit: int, wall_time_limit: int,
                        cpu_time_limit: int) \
         -> Callable[[int], TestResult]:
@@ -66,8 +95,8 @@ async def execute_test(image: str, submission_code_abspath: str,
 
     Parameters
     ----------
-    image: str
-        Docker image name
+    runner_config: RunnerConfig
+        The configuration of runner
     submission_code_abspath: str
         Submission code absolute path
     submission_code_path_basename: str
@@ -86,13 +115,34 @@ async def execute_test(image: str, submission_code_abspath: str,
     _: Callable[[int], TestResult]
         Anonymous TestResult - without id
     """
-    print(submission_code_path_basename)
     # Create temporary file for output.txt
     temporary_file_descriptor, temporary_file_path = tempfile.mkstemp(
         dir=LOCAL_STORAGE_ROOT + '/temp')
 
+    container_volumes = {
+        input_abspath: {
+            'bind': f'/usr/app/input.txt',
+            'ro': True  # read-only
+        },
+        temporary_file_path: {
+            'bind': f'/usr/app/output.txt',
+            'ro': False  # read-only
+        }
+    }
+
+    if runner_config.is_compilable:
+        container_volumes[runner_config.volume_name] = {
+            'bind': f'/usr/app/{runner_config.store_volume}',
+            'ro': True  # read-only
+        }
+    else:
+        container_volumes[runner_config.abs_file_path] = {
+            'bind': f'/usr/app/{runner_config.file_path}',
+            'ro': True  # read-only
+        }
+
     container = client.containers.run(
-        image,
+        runner_config.image,
         f'bash -c "cd /usr/app;'  # Use bash and change directory
         f'time '  # Say to bash we want record execution time
         f'timeout {wall_time_limit / 1000} '  # Kill program
@@ -103,23 +153,11 @@ async def execute_test(image: str, submission_code_abspath: str,
         #   we parse execution time
         # But also it doesn't care about number of threads or processes,
         # creation of which is illegal on other platforms
-        f'python3 ./{submission_code_path_basename} > /dev/null"',
+        f'{runner_config.command} ./{runner_config.file_path} > '
+        f'/dev/null"',
         network_disabled=True,  # Polite way of saying network=None
         detach=True,  # Do not wait for container to finish
-        volumes={
-            submission_code_abspath: {
-                'bind': f'/usr/app/{submission_code_path_basename}',
-                'ro': True  # read-only
-            },
-            input_abspath: {
-                'bind': f'/usr/app/input.txt',
-                'ro': True  # read-only
-            },
-            temporary_file_path: {
-                'bind': f'/usr/app/output.txt',
-                'ro': False  # read-only
-            }
-        },
+        volumes=container_volumes,
         mem_limit=f'{memory_limit}M')
 
     try:
@@ -129,7 +167,7 @@ async def execute_test(image: str, submission_code_abspath: str,
         status_code = result['StatusCode']
 
         logs = container.logs().decode()
-
+        print(logs)
         # Real(wall) time, user(cpu) time, sys(kernel) time
         real, user, _sys = runner.parse_time.parse(logs)
 
@@ -187,10 +225,7 @@ async def execute_tests(
         submission_to_runner: SubmissionToRunner
 ) -> Optional[list]:
     """Execute all test for submission."""
-    try:
-        # Get docker image from language
-        container_image = lang_to_image[submission_to_runner.lang]
-    except IndexError:
+    if submission_to_runner.lang not in runner_configs:
         print(f'{submission_to_runner.lang} isn\'t supported!')
         return
 
@@ -206,22 +241,86 @@ async def execute_tests(
     # Submission code absolute path
     submission_code_path = os.path.abspath(submission_code_path)
 
-    print(submission_code_path_basename)
+    compiler_config = compiler_configs[submission_to_runner.lang]
 
+    volume = client.volumes.create()
+
+    compiler_config.file_path = submission_code_path_basename
+    compiler_config.abs_filepath = submission_code_path
+    compiler_config.volume_name = volume.name
+
+    runner_config = await compile_code(submission_to_runner.lang,
+                                       compiler_config)
+
+    # A list to store results of executing each test
     execute_result = list()
-    for test_id, input_path in zip(
-            submission_to_runner.test_ids,
-            await storage.download_inputs(submission_to_runner.test_ids)):
-        execute_result.append(
-            (await execute_test(container_image,
-                                submission_code_path,
-                                submission_code_path_basename,
-                                os.path.abspath(input_path),
-                                submission_to_runner.memory_limit,
-                                submission_to_runner.wall_time_limit,
-                                submission_to_runner.cpu_time_limit))
-            (test_id))
+
+    # If compiler returned None it means that it is compilation error and
+    # there is no need in running tests, so set CompilationError TestResult
+    # for each test
+    if runner_config is None:
+        for test_id in submission_to_runner.test_ids:
+            execute_result.append(TestResult(test_id, 'CompilationError',
+                                             None, None, None))
+    else:
+
+        # Compilation was successful or skipped6 so running the tests
+        for test_id, input_path in zip(
+                submission_to_runner.test_ids,
+                await storage.download_inputs(submission_to_runner.test_ids)):
+            execute_result.append(
+                (await execute_test(runner_config,
+                                    os.path.abspath(input_path),
+                                    submission_to_runner.memory_limit,
+                                    submission_to_runner.wall_time_limit,
+                                    submission_to_runner.cpu_time_limit))
+                (test_id))
 
     logging.info(f'#{submission_to_runner.submission_id} Executed tests')
 
     return execute_result
+
+
+async def compile_code(lang: str, compiler_config: CompilerConfig):
+    """Compile code."""
+    if not compiler_config.is_compilable:
+        runner_config = runner_configs[lang]
+
+        runner_config.file_path = compiler_config.file_path
+        runner_config.abs_file_path = compiler_config.abs_filepath
+
+    else:
+
+        container = client.containers.run(
+            compiler_config.image,
+            f'bash -c "cd /usr/app;'
+            f'{compiler_config.command} {compiler_config.file_path} '
+            f'{compiler_config.args}"',
+            network_disabled=True,  # Polite way of saying network=None
+            detach=True,  # Do not wait for container to finish
+            volumes={
+                compiler_config.abs_filepath: {
+                    'bind': f'/usr/app/{compiler_config.file_path}',
+                    'ro': True  # read-only
+                },
+                compiler_config.volume_name: {
+                    'bind': f'/usr/app/compiled',
+                    'ro': False  # read-only
+                }
+            })
+
+        # Get the result of running container
+        result = container.wait()
+
+        # Delete container after executing
+        container.remove()
+
+        # It checks status code of result and returns None, if it is not 0 -
+        # this means compilation error
+        if result['StatusCode'] != 0:
+            return None
+
+        runner_config = runner_configs[lang]
+        runner_config.volume_name = compiler_config.volume_name
+
+    return runner_config

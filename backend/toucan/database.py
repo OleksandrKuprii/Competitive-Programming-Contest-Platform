@@ -283,7 +283,7 @@ async def get_tasks(additional_sql: str, conn: Connection) \
         # Getting information from tasks table
         fetch = await conn.fetch(f'''
                 SELECT tasks.id, tasks.alias, tasks.name as task_name,
-                category, categories.name as category_name, difficulty
+                category, categories.name as category_name, difficulty, created
                 FROM coreschema.tasks
                 JOIN coreschema.categories
                 ON category = categories.alias
@@ -309,6 +309,9 @@ async def get_tasks(additional_sql: str, conn: Connection) \
         # putting in task dictionary with key 'category'
         temp_dict['category'] = {'alias': temp_dict.pop('category'),
                                  'name': temp_dict.pop('category_name')}
+
+        # Converting datetime object to ISO-format
+        temp_dict['created'] = temp_dict['created'].isoformat()
 
         data.append(temp_dict)
 
@@ -494,7 +497,7 @@ async def get_submission(submission_id: int, user_id: str, conn: Connection) \
     # Converting fetch to dictionary
     submission = {k: v for k, v in fetch.items()}
 
-    # Converting datetime to isoformat
+    # Converting datetime to ISO-format
     submission['timestamp'] = submission['timestamp'].isoformat()
 
     return submission

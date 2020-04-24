@@ -1,11 +1,13 @@
 """Task module."""
 from typing import Iterable, List
+from asyncpg.connection import Connection
 
 import database
 import submission
+from statistic import statistic
 
 
-async def get_task_info(alias: str, conn) -> dict:
+async def get_task_info(alias: str, conn: Connection) -> dict:
     """Get task details from database.
 
     Parameters
@@ -18,8 +20,15 @@ async def get_task_info(alias: str, conn) -> dict:
     _: dict
         Dictionary contains all task description, examples and limits
     """
-    # Getting task info from database
-    return await database.get_task(alias, conn)
+    task_id = await get_task_id_from_alias(alias, conn)
+
+    stat = await statistic.get_data_task_with_lang(task_id, conn)
+
+    task_info = await database.get_task(alias, conn)
+
+    task_info['statistic'] = stat
+
+    return task_info
 
 
 async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
@@ -47,7 +56,8 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
     column_map = {
         'name_sort': 'tasks.name',
         'category_sort': 'tasks.category',
-        'difficulty_sort': 'tasks.difficulty'
+        'difficulty_sort': 'tasks.difficulty',
+        'date_sort': 'tasks.created'
     }
 
     def iterable_to_str(iterable: Iterable, quotes=False) -> str:
@@ -144,12 +154,6 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
         submission_id = await database.get_submission_id_from_bests(
             user_id, task_id, conn)
 
-        if submission_id is not None:
-            # Getting result for specific task and user if its exists
-            result = await submission.get_result(submission_id, user_id, conn)
-        else:
-            result = None
-
         # Set best submission None default. It will be changed if better
         # submission is present in database
         tasks[i]['best_submission'] = {
@@ -188,8 +192,12 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
                 task_index_to_delete.append(i)
         except KeyError:
             # If the KeyError appears means that we function does not have to
-            # filter by result and it just goes ahead
-            pass
+            # filter by result and it just appends best submission information
+            result = await submission.get_result(submission_id, user_id, conn)
+            tasks[i]['best_submission'] = {
+                'result': result,
+                'id': submission_id
+            }
 
     # A final list to store tasks, that will be pushed with values from
     # previous list but except indexes that must be deleted
@@ -202,6 +210,12 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
 
             # Add task to the <final_tasks>
             final_tasks.append(tasks[i])
+
+            task_alias = tasks[i]['alias']
+            task_id = await get_task_id_from_alias(task_alias, conn)
+
+            stat = await statistic.get_data_task(task_id, conn)
+            final_tasks[-1]['statistics'] = stat
 
     try:
         final_tasks.sort(key=lambda x: x['best_submission']['result']['points']

@@ -15,6 +15,7 @@
     "@types/react-syntax-highlighter": "^11.0.4",
     "@types/react-transition-group": "^4.2.4",
     "@types/recharts": "^1.8.9",
+    "@types/shallowequal": "^1.1.1",
     "@types/uuid": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "eslint-config-airbnb-typescript": "^7.2.0",
@@ -45,11 +46,13 @@
     "react-dropzone": "^10.2.1",
     "react-i18next": "^11.3.4",
     "react-icons": "^3.9.0",
+    "react-range": "^1.6.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-syntax-highlighter": "^12.2.1",
     "react-transition-group": "^4.3.0",
-    "recharts": "^1.8.5"
+    "recharts": "^1.8.5",
+    "shallowequal": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

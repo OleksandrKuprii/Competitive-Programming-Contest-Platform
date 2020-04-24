@@ -3,6 +3,10 @@ export default function (name?: string): string {
     return 'unknown';
   }
 
+  if (['c++', 'c', 'pascal'].includes(name)) {
+    return name;
+  }
+
   if (name === 'python3' || name === 'python2') {
     return 'python';
   }

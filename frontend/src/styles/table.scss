@@ -11,6 +11,21 @@
   }
 }
 
-td {
-  animation: fade-in 0.5s ease-in-out;
+tr {
+  .sort-control {
+    transition: 0.1s all ease-in-out;
+
+    &:hover,
+    &.sort-control-active {
+      transform: scale(1.5);
+    }
+
+    &.sort-control-active {
+      color: map_get($theme-colors, 'info');
+    }
+  }
+
+  td {
+    animation: fade-in 0.5s ease-in-out;
+  }
 }

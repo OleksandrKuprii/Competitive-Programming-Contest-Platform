@@ -1,4 +1,5 @@
 import { action, computed, thunk, thunkOn } from 'easy-peasy';
+import shallowEqual from 'shallowequal';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
 import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
@@ -20,7 +21,12 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     updateObjectWithProperty(state.items, 'id', item.id, item);
   }),
 
-  // TODO: fetch one more time data after delay on server error
+  updatedMany: action((state, items) => {
+    items.forEach((item) => {
+      updateObjectWithProperty(state.items, 'id', item.id, item);
+    });
+  }),
+
   fetchOne: thunk(async (actions, id, { injections }) => {
     const loadingItem: any = {
       id,
@@ -37,15 +43,11 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
       token = undefined;
     }
 
-    // noinspection UnnecessaryLocalVariableJS
-    const item = await dataItemFetcher(id, {
+    return dataItemFetcher(id, {
       token,
     });
-
-    return item;
   }),
 
-  // TODO: fetch one more time data after delay on server error
   fetchRange: thunk(async (actions, range, { injections }) => {
     actions.loading.loading();
 
@@ -70,6 +72,10 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     (actions) => actions.fetchOne,
     (actions, target) => {
       if (!target.result) {
+        setTimeout(() => {
+          actions.fetchOne(target.payload as any);
+        }, 5000);
+
         return;
       }
 
@@ -81,12 +87,14 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     (actions) => actions.fetchRange,
     (actions, target) => {
       if (!target.result) {
+        setTimeout(() => {
+          actions.fetchRange(target.payload as any);
+        }, 5000);
+
         return;
       }
 
-      target.result.forEach((item: any) => {
-        actions.updated(item.item);
-      });
+      actions.updatedMany(target.result.map((a: any) => a.item));
     },
   ),
 
@@ -114,9 +122,54 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
   byId: computed((state) => (id) => state.items.find((item) => item.id === id)),
 
-  nItems: computed((state) => (number) =>
+  nItemsById: computed((state) => (number) =>
     state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
   ),
+
+  nItemsByCustomKeys: computed((state) => (keys, filters, joinWith) => {
+    const aGreater = (desc?: boolean) => (desc ? -1 : 1);
+    const bGreater = (desc?: boolean) => -aGreater(desc);
+
+    const items = state.items
+      .concat()
+      .map((item) => ({ ...item, ...(joinWith ? joinWith(item) : {}) }))
+      .sort((a, b) => {
+        for (let i = 0; i < keys.length; i += 1) {
+          const { key, option } = keys[i];
+
+          const desc = option === 'desc';
+
+          const aValue = key(a);
+          const bValue = key(b);
+
+          if (aValue !== undefined && bValue !== undefined) {
+            if (aValue > bValue) {
+              return aGreater(desc);
+            }
+
+            if (bValue > aValue) {
+              return bGreater(desc);
+            }
+          }
+        }
+
+        return 0;
+      });
+
+    if (!filters) {
+      return items;
+    }
+
+    return items.filter((item) =>
+      filters.every(({ name, option }) => {
+        if (typeof option === 'number' || typeof option === 'string') {
+          return shallowEqual(item[name], option);
+        }
+
+        return item[name] >= option.from && item[name] <= option.to;
+      }),
+    );
+  }),
 });
 
 export default dataModel;

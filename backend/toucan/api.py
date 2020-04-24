@@ -38,6 +38,10 @@ logging.basicConfig(filename='api.log',
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
+json_url = urlopen('https://' + AUTH0_DOMAIN +
+                   "/.well-known/jwks.json")
+jwks = json.loads(json_url.read())
+
 pool: Pool
 
 
@@ -96,9 +100,6 @@ def requires_auth(f):
         request = args[0]
 
         token = get_token_auth_header(request)
-        json_url = urlopen('https://' + AUTH0_DOMAIN +
-                           "/.well-known/jwks.json")
-        jwks = json.loads(json_url.read())
 
         try:
             unverified_header = jwt.get_unverified_header(token)
@@ -162,7 +163,7 @@ def parse_task_params(params):
             return
 
     sort_params = ['name_sort', 'category_sort', 'difficulty_sort',
-                   'result_sort']
+                   'result_sort', 'date_sort']
 
     for param in sort_params:
         try:
@@ -243,6 +244,14 @@ async def post_submission(request, **kwargs):
                                          user_id=user_id)
     except TypeError:
         return Response(status=400)
+
+    submission_code = submission_data.code
+
+    if len(submission_code.encode('utf-8')) > 64000:
+        return json_response({'code': 'too_big_file',
+                              'description': 'The submitted file is bigger '
+                                             'than 64 KB.'},
+                             status=413)
 
     async with pool.acquire() as conn:
         submission_id = await submission.add_submission(submission_data, conn)

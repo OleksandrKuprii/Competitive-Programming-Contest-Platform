@@ -1,10 +1,11 @@
 import * as React from 'react';
-import CustomTable, { CustomTableRow } from '../CustomTable';
+import CustomTable, { CustomTableRow } from '../table/CustomTable';
 import SubmissionLink from './SubmissionLink';
-import PrettyDate from '../PrettyDate';
+import PrettyDate from '../formatters/PrettyDate';
 import Result from '../result/Result';
 import TaskLinkByAlias from '../task/TaskLinkByAlias';
 import { Submission } from '../../models/interfaces';
+import LanguageIdentifier from '../formatters/LanguageIdentifier';
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const rows = submissions.map(
@@ -19,7 +20,9 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
             <td>
               <TaskLinkByAlias id={taskAlias} />
             </td>
-            <td>{language || ''}</td>
+            <td>
+              <LanguageIdentifier language={language || ''} size="sm" />
+            </td>
             <td>
               <Result points={points} status={status} />
             </td>

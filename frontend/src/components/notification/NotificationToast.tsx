@@ -104,12 +104,14 @@ const NotificationToast = ({ notification }: { notification: Notification }) => 
   }
 
   return (
-    <Row style={{ marginTop: 5 }}>
-      <Col className="p-0">{notificationBody}</Col>
-      <Button variant="danger" style={{ borderRadius: 0 }} onClick={onClose}>
-        <FaAngleDoubleRight />
-      </Button>
-    </Row>
+    <div style={{ height: 50, marginTop: 5 }}>
+      <Row style={{ height: '100%' }}>
+        <Col className="p-0">{notificationBody}</Col>
+        <Button variant="danger" style={{ borderRadius: 0, width: 50 }} onClick={onClose}>
+          <FaAngleDoubleRight />
+        </Button>
+      </Row>
+    </div>
   );
 };
 
