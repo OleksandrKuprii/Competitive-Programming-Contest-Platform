@@ -3,6 +3,15 @@
   "learnMore": "Learn more",
   "submission": "Submission",
   "goHome": "Go home",
+  "filters": {
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "showSolved": "Correct",
+    "showPartiallySolved": "Partial",
+    "showZeroSolved": "Zero",
+    "showNotStarted": "Not started",
+    "result": "Result"
+  },
   "preloader": {
     "running": "Running",
     "loading": "Loading",

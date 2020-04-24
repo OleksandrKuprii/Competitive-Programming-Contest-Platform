@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import shallowEqual from 'shallowequal';
@@ -8,10 +7,9 @@ import TaskList from '../components/task/TaskList';
 import CategoryFilter from '../components/table/filters/CategoryFilter';
 import IntRangeFilter from '../components/table/filters/IntRangeFilter';
 import Loading from '../components/layout/Loading';
+import CheckboxFilter from '../components/table/filters/CheckboxFilter';
 
 const TasksPage = () => {
-  const { t } = useTranslation();
-
   const keys = useStoreState(
     (store) =>
       store.sort.getKeys('task', {
@@ -59,9 +57,17 @@ const TasksPage = () => {
 
   const tasks = useStoreState(
     (state) =>
-      state.task.nItemsByCustomKeys(keys, options, (item) => ({
-        result: pointsPerTask.get(item.id),
-      })),
+      state.task.nItemsByCustomKeys(keys, options, (item) => {
+        const points = pointsPerTask.get(item.id);
+
+        return {
+          result: points,
+          zero: points === 0,
+          partial: points !== undefined ? points > 0 && points < 100 : false,
+          correct: points === 100,
+          notStarted: points === undefined,
+        };
+      }),
     shallowEqual,
   );
 
@@ -70,6 +76,16 @@ const TasksPage = () => {
   const changedOption = useStoreActions(
     (actions) => actions.filter.changedOption,
   );
+  const deletedOption = useStoreActions(
+    (actions) => actions.filter.deletedOption,
+  );
+
+  const getOption = useStoreState((state) => state.filter.getOption);
+
+  const difficulty = getOption('task', 'difficulty') as {
+    from: number;
+    to: number;
+  };
 
   if (tasksLoading) {
     return <Loading variant="loading" />;
@@ -78,22 +94,15 @@ const TasksPage = () => {
   return (
     <>
       <Row>
-        <Col>
-          <p className="h3 m-0 d-inline">{t('pageName.tasks')}</p>
-        </Col>
-      </Row>
-
-      <div style={{ padding: '10px 0' }} />
-
-      <Row>
-        <Col md="auto">
+        <Col md="3">
           <CategoryFilter />
         </Col>
-        <Col md="auto">
+        <Col md="3">
           <IntRangeFilter
-            header="Difficulty"
+            header="difficulty"
             from={1}
             to={10}
+            initialValues={[difficulty?.from || 1, difficulty?.to || 10]}
             onFinalChange={(values) => {
               changedOption({
                 tableName: 'task',
@@ -106,7 +115,60 @@ const TasksPage = () => {
             }}
           />
         </Col>
-        <Col md="auto" />
+        <Col md="6">
+          <CheckboxFilter
+            header="result"
+            labelClassNames={[
+              'text-success',
+              'text-warning',
+              'text-danger',
+              'text-disabled',
+            ]}
+            onClick={(values) => {
+              const names = ['correct', 'partial', 'zero', 'notStarted'];
+
+              for (let i = 0; i < 4; i += 1) {
+                if (values[i]) {
+                  deletedOption({
+                    tableName: 'task',
+                    name: names[i],
+                  });
+                } else {
+                  changedOption({
+                    tableName: 'task',
+                    name: names[i],
+                    value: false,
+                  });
+                }
+              }
+            }}
+            checked={['correct', 'partial', 'zero', 'notStarted'].map(
+              (name) => {
+                const option = getOption('task', name) as boolean;
+
+                if (option === undefined) {
+                  return true;
+                }
+
+                return option;
+              },
+            )}
+            options={[
+              {
+                header: 'showSolved',
+              },
+              {
+                header: 'showPartiallySolved',
+              },
+              {
+                header: 'showZeroSolved',
+              },
+              {
+                header: 'showNotStarted',
+              },
+            ]}
+          />
+        </Col>
       </Row>
 
       <div style={{ padding: '10px 0' }} />

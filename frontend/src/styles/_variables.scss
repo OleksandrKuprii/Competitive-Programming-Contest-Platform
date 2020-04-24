@@ -21,3 +21,5 @@ $jumbotron-bg: map_get($theme-colors, 'secondary');
 $input-bg: map_get($theme-colors, 'primary');
 $input-border-color: map_get($theme-colors, 'secondary');
 $input-color: #eee;
+
+$custom-checkbox-indicator-indeterminate-bg: white;
