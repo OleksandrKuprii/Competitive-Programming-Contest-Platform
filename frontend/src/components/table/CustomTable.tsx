@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import Table from 'react-bootstrap/Table';
 import { ReactNode } from 'react';
 import shallowEqual from 'shallowequal';
-import LazyLoad from 'react-lazyload';
 import SortControl from './SortControl';
 import { useStoreState, useStoreActions } from '../../hooks/store';
 
@@ -82,11 +81,7 @@ const CustomTable = ({
 
       <tbody>
         {rows.map(({ row, id }) => {
-          return (
-            <LazyLoad height={32}>
-              <tr key={`table-${tableName}-row-${id}`}>{row}</tr>
-            </LazyLoad>
-          );
+          return <tr key={`table-${tableName}-row-${id}`}>{row}</tr>;
         })}
       </tbody>
     </Table>

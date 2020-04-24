@@ -12,21 +12,56 @@ import Loading from '../components/layout/Loading';
 const TasksPage = () => {
   const { t } = useTranslation();
 
-  const sortOptions = ['name', 'category', 'difficulty', 'result'];
+  const keys = useStoreState(
+    (store) =>
+      store.sort.getKeys('task', {
+        key: 'publishedAt',
+        option: 'desc',
+      }),
+    shallowEqual,
+  );
 
-  const getKeys = useStoreState((store) => store.sort.getKeys);
   const options = useStoreState(
     (store) => store.filter.getOptions('task'),
     shallowEqual,
   );
 
-  const keys = getKeys('task', sortOptions, {
-    key: 'publishedAt',
-    option: 'desc',
+  const allTasks = useStoreState((state) => state.task.items, shallowEqual);
+
+  const taskIds = allTasks.map((task) => task.id);
+
+  const submissions = useStoreState(
+    (state) =>
+      state.submission.items
+        .filter(({ taskAlias }) =>
+          taskAlias ? taskIds.includes(taskAlias) : false,
+        )
+        .map((submission) => ({
+          taskId: submission.taskAlias,
+          points: submission.points,
+        })),
+    shallowEqual,
+  );
+
+  const pointsPerTask = new Map<string, number>();
+
+  submissions.forEach(({ taskId, points }) => {
+    if (taskId === undefined || points === undefined) return;
+
+    if (
+      !pointsPerTask.has(taskId) ||
+      // @ts-ignore
+      pointsPerTask.get(taskId) < points
+    ) {
+      pointsPerTask.set(taskId, points);
+    }
   });
 
   const tasks = useStoreState(
-    (state) => state.task.nItemsByCustomKeys(keys, options),
+    (state) =>
+      state.task.nItemsByCustomKeys(keys, options, (item) => ({
+        result: pointsPerTask.get(item.id),
+      })),
     shallowEqual,
   );
 

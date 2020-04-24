@@ -13,8 +13,12 @@ const TaskSolutionSubmissionForm = () => {
   const language = useStoreState((state) => state.solutionSubmission.language);
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
-  const canceled = useStoreActions((actions) => actions.solutionSubmission.canceled);
-  const submit = useStoreActions((actions) => actions.solutionSubmission.submit);
+  const canceled = useStoreActions(
+    (actions) => actions.solutionSubmission.canceled,
+  );
+  const submit = useStoreActions(
+    (actions) => actions.solutionSubmission.submit,
+  );
   const selectedLanguage = useStoreActions(
     (actions) => actions.solutionSubmission.selectedLanguage,
   );
@@ -31,7 +35,7 @@ const TaskSolutionSubmissionForm = () => {
     submit(taskAlias);
   }, [submit, taskAlias]);
 
-  const languages = ['python3', 'python2', 'c++', 'c'];
+  const languages = ['python3', 'python2', 'c++', 'c', 'pascal'];
 
   return (
     <div className="bg-secondary p-4 rounded">
@@ -40,7 +44,11 @@ const TaskSolutionSubmissionForm = () => {
           <SubmissionCodeViewer code={code || ''} language="python3" />
         </Form.Row>
 
-        {!isAuthenticated ? <Alert variant="danger">Sign in to submit solution!</Alert> : <></>}
+        {!isAuthenticated ? (
+          <Alert variant="danger">Sign in to submit solution!</Alert>
+        ) : (
+          <></>
+        )}
 
         <Form.Row>
           <Form.Control
@@ -55,7 +63,11 @@ const TaskSolutionSubmissionForm = () => {
           </Form.Control>
           <div style={{ paddingLeft: 10 }} />
           <ButtonGroup>
-            <Button variant="primary" disabled={!isAuthenticated} onClick={submitCallback}>
+            <Button
+              variant="primary"
+              disabled={!isAuthenticated}
+              onClick={submitCallback}
+            >
               Submit
             </Button>
             <Button variant="outline-danger" onClick={cancelCallback}>
