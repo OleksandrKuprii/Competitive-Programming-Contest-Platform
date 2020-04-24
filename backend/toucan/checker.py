@@ -1,6 +1,6 @@
 """Checks user submission program output."""
 import logging
-from typing import Callable, Iterable, List
+from typing import Iterable, List
 
 import database
 import storage
@@ -37,10 +37,9 @@ async def process_result_to_checker(result_to_checker: ResultToChecker, conn
     points = await database.get_points_for_tests(test_ids, conn)
 
     # Checking results
-    results_to_db = (
-        result_to_db_without_submission_id(submission_id)
-        for result_to_db_without_submission_id in await check_test_results(
-            result_to_checker.test_results, correct_results, points))
+    results_to_db = await check_test_results(result_to_checker.test_results,
+                                             correct_results, points,
+                                             submission_id)
 
     logging.info(f'#{submission_id} Checked results')
 
@@ -59,8 +58,9 @@ async def process_result_to_checker(result_to_checker: ResultToChecker, conn
 async def check_test_results(
         test_results: List[TestResult],
         correct_results: Iterable[str],
-        points_list: List[int]
-) -> List[Callable[[int], ResultToDB]]:
+        points_list: List[int],
+        submission_id: int
+) -> List[ResultToDB]:
     """Compare correct results with given, calculate points.
 
     Returns anonymous ResultToDB instances -
@@ -73,15 +73,21 @@ async def check_test_results(
 
         test_points = 0  # points for current test
 
-        # Checks only successfully executed tests
-        if status == 'Success':
-            if test_result.result.strip() == correct.decode().strip():
-                status = 'Correct'
-                test_points = points  # gives points for correct output
-            else:
-                status = 'WrongAnswer'
+        try:
+            test_string = test_result.result.strip().replace('\r\n', '\n')
+            correct_string = correct.decode().strip().replace('\r\n', '\n')
 
-        results.append(lambda submission_id: ResultToDB(
+            # Checks only successfully executed tests
+            if status == 'Success':
+                if test_string == correct_string:
+                    status = 'Correct'
+                    test_points = points  # gives points for correct output
+                else:
+                    status = 'WrongAnswer'
+        except AttributeError:
+            status = 'WrongAnswer'
+
+        results.append(ResultToDB(
             submission_id, test_result.test_id, status, test_points,
             test_result.wall_time, test_result.cpu_time))
 
