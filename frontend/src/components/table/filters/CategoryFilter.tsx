@@ -10,7 +10,10 @@ const CategoryFilter = () => {
   );
 
   const selected = useStoreState(
-    (state) => state.filter.options.get('task.category') as string,
+    (state) =>
+      state.filter.options.find(
+        (o) => o.tableName === 'task' && o.name === 'category',
+      )?.option as string,
   );
 
   const category = categories.find((c) => c.id === selected);
@@ -20,7 +23,7 @@ const CategoryFilter = () => {
 
   return (
     <SelectableFilter
-      header="Category"
+      header="category"
       value={category?.name || ''}
       onChange={(e) => {
         const { value } = e.target as HTMLInputElement;

@@ -7,6 +7,7 @@ interface IntRangeFilterArgs {
   header: string;
   from: number;
   to: number;
+  initialValues: number[];
   onFinalChange: (values: number[]) => void;
 }
 
@@ -14,12 +15,13 @@ const IntRangeFilter: React.FunctionComponent<IntRangeFilterArgs> = ({
   header,
   from,
   to,
+  initialValues,
   onFinalChange,
 }) => {
-  const [values, setValues] = useState([from, to]);
+  const [values, setValues] = useState(initialValues);
 
   return (
-    <GeneralFilter header={`${header} ${values[0]}-${values[1]}`}>
+    <GeneralFilter header={header} additionalText={`${values[0]}-${values[1]}`}>
       <div
         className="bg-primary rounded"
         style={{ padding: '0 25px', height: 38 }}
@@ -66,7 +68,7 @@ const IntRangeFilter: React.FunctionComponent<IntRangeFilterArgs> = ({
                 ...props.style,
                 height: '36px',
                 display: 'flex',
-                width: '200px',
+                width: '100%',
               }}
             >
               <div

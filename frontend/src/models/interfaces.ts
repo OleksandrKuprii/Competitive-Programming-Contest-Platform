@@ -343,10 +343,14 @@ export interface SortModel {
 
 /* <editor-fold desc="FilterModel"> */
 
-export type FilterOption = string | number | { from: number; to: number };
+export type FilterOption =
+  | string
+  | number
+  | boolean
+  | { from: number; to: number };
 
 export interface FilterModel {
-  options: Map<string, FilterOption>;
+  options: Array<{ tableName: string; name: string; option: FilterOption }>;
 
   changedOption: Action<
     FilterModel,
@@ -354,6 +358,11 @@ export interface FilterModel {
   >;
 
   deletedOption: Action<FilterModel, { tableName: string; name: string }>;
+
+  getOption: Computed<
+    FilterModel,
+    (tableName: string, name: string) => FilterOption | undefined
+  >;
 
   getOptions: Computed<
     FilterModel,

@@ -142,6 +142,14 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
           const aValue = key(a);
           const bValue = key(b);
 
+          if (aValue !== undefined && bValue === undefined) {
+            return aGreater(true);
+          }
+
+          if (aValue === undefined && bValue !== undefined) {
+            return bGreater(true);
+          }
+
           if (aValue !== undefined && bValue !== undefined) {
             if (aValue > bValue) {
               return aGreater(desc);
@@ -162,7 +170,11 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
     return items.filter((item) =>
       filters.every(({ name, option }) => {
-        if (typeof option === 'number' || typeof option === 'string') {
+        if (
+          typeof option === 'number' ||
+          typeof option === 'boolean' ||
+          typeof option === 'string'
+        ) {
           return shallowEqual(item[name], option);
         }
 
