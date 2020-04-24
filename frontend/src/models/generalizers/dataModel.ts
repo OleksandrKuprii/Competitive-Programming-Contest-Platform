@@ -128,7 +128,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
   nItemsByCustomKeys: computed((state) => (keys, filters, joinWith) => {
     const aGreater = (desc?: boolean) => (desc ? -1 : 1);
-    const bGreater = (desc?: boolean) => (desc ? 1 : -1);
+    const bGreater = (desc?: boolean) => -aGreater(desc);
 
     const items = state.items
       .concat()
@@ -136,16 +136,19 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
       .sort((a, b) => {
         for (let i = 0; i < keys.length; i += 1) {
           const { key, option } = keys[i];
+
+          const desc = option === 'desc';
+
           const aValue = key(a);
           const bValue = key(b);
 
           if (aValue !== undefined && bValue !== undefined) {
             if (aValue > bValue) {
-              return aGreater(option === 'desc');
+              return aGreater(desc);
             }
 
             if (bValue > aValue) {
-              return bGreater(option === 'desc');
+              return bGreater(desc);
             }
           }
         }

@@ -10,31 +10,21 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
 
   fileUploaded: computed((state) => state.code !== undefined),
 
-  selectedLanguage: action((state, language) => ({
-    code: state.code,
-    filename: state.filename,
-    language,
-    loading: state.loading,
-    fileUploaded: state.fileUploaded,
-  })),
+  selectedLanguage: action((state, language) => {
+    state.language = language;
+  }),
 
-  uploadedFile: action((state, { code, filename }) => ({
-    code,
-    filename,
-    language: state.language,
-    loading: state.loading,
-    fileUploaded: true,
-  })),
+  uploadedFile: action((state, { code, filename }) => {
+    state.code = code;
+    state.filename = filename;
+    state.fileUploaded = true;
+  }),
 
-  canceled: action(() => ({
-    code: undefined,
-    filename: undefined,
-    language: 'python3',
-    loading: {
-      flag: false,
-    },
-    fileUploaded: false,
-  })),
+  canceled: action((state) => {
+    state.code = undefined;
+    state.filename = undefined;
+    state.fileUploaded = false;
+  }),
 
   onSubmitRequested: action(() => {}),
 

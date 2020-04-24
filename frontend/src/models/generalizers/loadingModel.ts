@@ -4,13 +4,13 @@ import { LoadingModel } from '../interfaces';
 const loadingModel: () => LoadingModel = () => ({
   flag: false,
 
-  loading: action(() => ({
-    flag: true,
-  })),
+  loading: action((state) => {
+    state.flag = true;
+  }),
 
-  loaded: action(() => ({
-    flag: false,
-  })),
+  loaded: action((state) => {
+    state.flag = false;
+  }),
 });
 
 export default loadingModel;
