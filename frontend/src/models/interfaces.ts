@@ -141,6 +141,7 @@ export interface DataModel<
         option: AscDescOrNone;
       }[],
       filters?: { option: FilterOption; name: string }[],
+      joinWith?: (item: DataItem) => object,
     ) => DataItem[]
   >;
 }
@@ -310,8 +311,14 @@ export interface CategoryModel extends DataModel<string, Category> {}
 /* <editor-fold desc="SortModel"> */
 
 export type AscDescOrNone = 'asc' | 'desc' | undefined;
+
 export interface SortModel {
-  options: Array<{ key: string; option: AscDescOrNone }>;
+  options: Array<{
+    tableName: string;
+    name: string;
+    option: AscDescOrNone;
+    customGetter?: () => {};
+  }>;
 
   toggleOption: Action<
     SortModel,
@@ -327,7 +334,6 @@ export interface SortModel {
     SortModel,
     (
       tableName: string,
-      sortOptions: string[],
       defaultOption: { key: string; option: AscDescOrNone },
     ) => { key: (item: any) => any; option: AscDescOrNone }[]
   >;

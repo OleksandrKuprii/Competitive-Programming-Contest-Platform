@@ -126,29 +126,32 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
     state.items.sort((a, b) => (a.id > b.id ? -1 : 1)).slice(0, number),
   ),
 
-  nItemsByCustomKeys: computed((state) => (keys, filters) => {
+  nItemsByCustomKeys: computed((state) => (keys, filters, joinWith) => {
     const aGreater = (desc?: boolean) => (desc ? -1 : 1);
     const bGreater = (desc?: boolean) => (desc ? 1 : -1);
 
-    const items = state.items.concat().sort((a, b) => {
-      for (let i = 0; i < keys.length; i += 1) {
-        const { key, option } = keys[i];
-        const aValue = key(a);
-        const bValue = key(b);
+    const items = state.items
+      .concat()
+      .map((item) => ({ ...item, ...(joinWith ? joinWith(item) : {}) }))
+      .sort((a, b) => {
+        for (let i = 0; i < keys.length; i += 1) {
+          const { key, option } = keys[i];
+          const aValue = key(a);
+          const bValue = key(b);
 
-        if (aValue && bValue) {
-          if (aValue > bValue) {
-            return aGreater(option === 'desc');
-          }
+          if (aValue !== undefined && bValue !== undefined) {
+            if (aValue > bValue) {
+              return aGreater(option === 'desc');
+            }
 
-          if (bValue > aValue) {
-            return bGreater(option === 'desc');
+            if (bValue > aValue) {
+              return bGreater(option === 'desc');
+            }
           }
         }
-      }
 
-      return 0;
-    });
+        return 0;
+      });
 
     if (!filters) {
       return items;
