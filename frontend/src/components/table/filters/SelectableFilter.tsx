@@ -23,4 +23,4 @@ const SelectableFilter = ({
   </GeneralFilter>
 );
 
-export default SelectableFilter;
+export default React.memo(SelectableFilter);

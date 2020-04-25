@@ -18,7 +18,9 @@ const CategoryFilter = () => {
 
   const category = categories.find((c) => c.id === selected);
 
-  const changedOption = useStoreActions((state) => state.filter.changedOption);
+  const changedOptions = useStoreActions(
+    (state) => state.filter.changedOptions,
+  );
   const deletedOption = useStoreActions((state) => state.filter.deletedOption);
 
   return (
@@ -37,11 +39,13 @@ const CategoryFilter = () => {
           const newCategory = categories.find((c) => c.name === value);
 
           if (newCategory !== undefined) {
-            changedOption({
-              tableName: 'task',
-              name: 'category',
-              value: newCategory.id,
-            });
+            changedOptions([
+              {
+                tableName: 'task',
+                name: 'category',
+                value: newCategory.id,
+              },
+            ]);
           }
         }
       }}

@@ -1,6 +1,6 @@
 import { action, computed, thunkOn } from 'easy-peasy';
 import sleep from '../utils/sleep';
-import { SubmissionHunterModel } from './interfaces';
+import { Submission, SubmissionHunterModel } from './interfaces';
 
 const submissionHunterModel: SubmissionHunterModel = {
   nowHunting: new Set(),
@@ -17,17 +17,25 @@ const submissionHunterModel: SubmissionHunterModel = {
 
   onSubmit: thunkOn(
     (actions, storeActions) => storeActions.solutionSubmission.submit,
-    async (actions, target, { getStoreActions }) => {
+    (actions, target) => {
       const { id } = target.result.submission;
 
       actions.startedHunting(id);
+    },
+  ),
+
+  onStartedHunting: thunkOn(
+    (actions) => actions.startedHunting,
+    async (actions, target, { getStoreActions }) => {
+      const id = target.payload;
 
       const fetchSubmission = getStoreActions().submission.fetchOne;
 
       let submission;
 
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
+      const MAX_RETRIES = 10;
+
+      for (let i = 0; i < MAX_RETRIES; i += 1) {
         // eslint-disable-next-line no-await-in-loop
         await sleep(5000);
 
@@ -41,7 +49,24 @@ const submissionHunterModel: SubmissionHunterModel = {
         }
       }
 
+      submission.status = ['Unknown error'];
+
       actions.receivedResults(submission);
+    },
+  ),
+
+  onFetchedSubmissions: thunkOn(
+    (actions, storeActions) => storeActions.submission.fetchRange,
+    async (actions, target) => {
+      const toHunt = (target.result.map((x: any) => x.item) as Array<
+        Submission
+      >).filter(({ status }) =>
+        status ? status[0] === 'Running' || status[0] === 'Received' : true,
+      );
+
+      toHunt.forEach(({ id }) => {
+        actions.startedHunting(id);
+      });
     },
   ),
 };

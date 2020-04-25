@@ -7,7 +7,9 @@ import { useStoreActions, useStoreState } from '../../hooks/store';
 import { Notification } from '../../models/interfaces';
 import Result from '../result/Result';
 
-const SubmittingNotification: React.FunctionComponent<{ taskId: string }> = ({ taskId }) => {
+const SubmittingNotification: React.FunctionComponent<{ taskId: string }> = ({
+  taskId,
+}) => {
   const taskName = useStoreState((state) => state.task.byId(taskId)?.name);
   const history = useHistory();
 
@@ -28,9 +30,9 @@ const SubmittingNotification: React.FunctionComponent<{ taskId: string }> = ({ t
   );
 };
 
-const SubmittedNotification: React.FunctionComponent<{ submissionId: number }> = ({
-  submissionId,
-}) => {
+const SubmittedNotification: React.FunctionComponent<{
+  submissionId: number;
+}> = ({ submissionId }) => {
   const history = useHistory();
   const goToSubmission = () => {
     history.push(`/submission/view/${submissionId}`);
@@ -72,7 +74,11 @@ const ReceivedResultsNotification: React.FunctionComponent<{
   );
 };
 
-const NotificationToast = ({ notification }: { notification: Notification }) => {
+const NotificationToast = ({
+  notification,
+}: {
+  notification: Notification;
+}) => {
   const dismissedNotification = useStoreActions(
     (actions) => actions.notification.dismissedNotification,
   );
@@ -85,10 +91,16 @@ const NotificationToast = ({ notification }: { notification: Notification }) => 
 
   switch (notification.payload.type) {
     case 'submitting':
-      notificationBody = <SubmittingNotification taskId={notification.payload.taskId} />;
+      notificationBody = (
+        <SubmittingNotification taskId={notification.payload.taskId} />
+      );
       break;
     case 'submitted':
-      notificationBody = <SubmittedNotification submissionId={notification.payload.submissionId} />;
+      notificationBody = (
+        <SubmittedNotification
+          submissionId={notification.payload.submissionId}
+        />
+      );
       break;
     case 'receivedResults':
       notificationBody = (
@@ -107,7 +119,11 @@ const NotificationToast = ({ notification }: { notification: Notification }) => 
     <div style={{ height: 50, marginTop: 5 }}>
       <Row style={{ height: '100%' }}>
         <Col className="p-0">{notificationBody}</Col>
-        <Button variant="danger" style={{ borderRadius: 0, width: 50 }} onClick={onClose}>
+        <Button
+          variant="danger"
+          style={{ borderRadius: 0, width: 50 }}
+          onClick={onClose}
+        >
           <FaAngleDoubleRight />
         </Button>
       </Row>
@@ -115,4 +131,4 @@ const NotificationToast = ({ notification }: { notification: Notification }) => 
   );
 };
 
-export default NotificationToast;
+export default React.memo(NotificationToast);

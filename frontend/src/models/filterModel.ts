@@ -4,21 +4,31 @@ import { FilterModel } from './interfaces';
 const filterModel: FilterModel = {
   options: [],
 
-  changedOption: action((state, { tableName, name, value }) => {
-    const item = state.options.find(
-      (o) => o.tableName === tableName && o.name === name,
-    );
+  changedOptions: action((state, options) => {
+    options.forEach(({ tableName, name, value, remove }) => {
+      if (remove) {
+        state.options = state.options.filter(
+          (o) => !(o.tableName === tableName && o.name === name),
+        );
 
-    if (item) {
-      state.options = state.options.map((o) =>
-        o.tableName === tableName && o.name === name
-          ? { tableName, name, option: value }
-          : o,
+        return;
+      }
+
+      const item = state.options.find(
+        (o) => o.tableName === tableName && o.name === name,
       );
-      return;
-    }
 
-    state.options.push({ tableName, name, option: value });
+      if (item) {
+        state.options = state.options.map((o) =>
+          o.tableName === tableName && o.name === name
+            ? { tableName, name, option: value }
+            : o,
+        );
+        return;
+      }
+
+      state.options.push({ tableName, name, option: value });
+    });
   }),
 
   deletedOption: action((state, { tableName, name }) => {

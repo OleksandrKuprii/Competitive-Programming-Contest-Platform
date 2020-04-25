@@ -6,8 +6,12 @@ export interface TaskDescriptionSectionArgs {
   header: string;
 }
 
-const TaskDescriptionSection = ({ header, text }: TaskDescriptionSectionArgs) => {
-  const htmlToReactParser = new HtmlToReactParser();
+const htmlToReactParser = new HtmlToReactParser();
+
+const TaskDescriptionSection = ({
+  header,
+  text,
+}: TaskDescriptionSectionArgs) => {
   const parsed = htmlToReactParser.parse(text);
 
   return (
@@ -18,4 +22,4 @@ const TaskDescriptionSection = ({ header, text }: TaskDescriptionSectionArgs) =>
   );
 };
 
-export default TaskDescriptionSection;
+export default React.memo(TaskDescriptionSection);

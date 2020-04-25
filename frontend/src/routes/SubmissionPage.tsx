@@ -144,7 +144,7 @@ const SubmissionPage = () => {
           </>
         ) : null}
       </Col>
-      <Col>
+      <Col md={7}>
         {submission?.code === undefined ? null : (
           <SubmissionCodeViewer
             code={submission?.code}

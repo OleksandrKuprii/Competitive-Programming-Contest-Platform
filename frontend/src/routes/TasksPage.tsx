@@ -2,12 +2,58 @@ import * as React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import shallowEqual from 'shallowequal';
-import { useStoreState, useStoreActions } from '../hooks/store';
+import memoize from 'memoizee';
+import { useStoreState } from '../hooks/store';
 import TaskList from '../components/task/TaskList';
-import CategoryFilter from '../components/table/filters/CategoryFilter';
-import IntRangeFilter from '../components/table/filters/IntRangeFilter';
 import Loading from '../components/layout/Loading';
-import CheckboxFilter from '../components/table/filters/CheckboxFilter';
+import TaskListFilterOptions from '../components/task/TaskListFilterOptions';
+import { JoinedTask } from '../models/interfaces';
+
+const joiner = memoize(
+  (points?: number, id?: number, status?: string[]) => {
+    return {
+      result: points,
+      zero: points === 0,
+      partial: points !== undefined ? points > 0 && points < 100 : false,
+      correct: points === 100,
+      notStarted: points === undefined,
+      submissionId: id,
+      status,
+    };
+  },
+  { primitive: true },
+);
+
+const getPointsPerTask = memoize(
+  (
+    submissions: {
+      taskId?: string;
+      points?: number;
+      id: number;
+      status?: string[];
+    }[],
+  ) => {
+    const pointsPerTask = new Map<
+      string,
+      { id: number; points: number; status: string[] }
+    >();
+
+    submissions.forEach(({ taskId, points, id, status }) => {
+      if (taskId === undefined || points === undefined) return;
+
+      if (
+        pointsPerTask.get(taskId) === undefined ||
+        // @ts-ignore
+        pointsPerTask.get(taskId).points < points
+      ) {
+        pointsPerTask.set(taskId, { id, points, status: status || [] });
+      }
+    });
+
+    return pointsPerTask;
+  },
+  { primitive: true },
+);
 
 const TasksPage = () => {
   const keys = useStoreState(
@@ -24,9 +70,10 @@ const TasksPage = () => {
     shallowEqual,
   );
 
-  const allTasks = useStoreState((state) => state.task.items, shallowEqual);
-
-  const taskIds = allTasks.map((task) => task.id);
+  const taskIds = useStoreState(
+    (state) => state.task.items.map((item) => item.id),
+    shallowEqual,
+  );
 
   const submissions = useStoreState(
     (state) =>
@@ -37,55 +84,28 @@ const TasksPage = () => {
         .map((submission) => ({
           taskId: submission.taskAlias,
           points: submission.points,
+          id: submission.id,
+          status: submission.status,
         })),
     shallowEqual,
   );
 
-  const pointsPerTask = new Map<string, number>();
-
-  submissions.forEach(({ taskId, points }) => {
-    if (taskId === undefined || points === undefined) return;
-
-    if (
-      !pointsPerTask.has(taskId) ||
-      // @ts-ignore
-      pointsPerTask.get(taskId) < points
-    ) {
-      pointsPerTask.set(taskId, points);
-    }
-  });
-
-  const tasks = useStoreState(
-    (state) =>
-      state.task.nItemsByCustomKeys(keys, options, (item) => {
-        const points = pointsPerTask.get(item.id);
-
-        return {
-          result: points,
-          zero: points === 0,
-          partial: points !== undefined ? points > 0 && points < 100 : false,
-          correct: points === 100,
-          notStarted: points === undefined,
-        };
-      }),
+  const tasksLoading = useStoreState(
+    (state) => state.task.loading.flag,
     shallowEqual,
   );
 
-  const tasksLoading = useStoreState((state) => state.task.loading.flag);
+  const pointsPerTask = getPointsPerTask(submissions);
 
-  const changedOption = useStoreActions(
-    (actions) => actions.filter.changedOption,
-  );
-  const deletedOption = useStoreActions(
-    (actions) => actions.filter.deletedOption,
-  );
+  const tasks = useStoreState(
+    (state) =>
+      state.task.nItemsByCustomKeys(keys, options, ({ id }) => {
+        const item = pointsPerTask.get(id);
 
-  const getOption = useStoreState((state) => state.filter.getOption);
-
-  const difficulty = getOption('task', 'difficulty') as {
-    from: number;
-    to: number;
-  };
+        return joiner(item?.points, item?.id, item?.status);
+      }),
+    shallowEqual,
+  ) as JoinedTask[];
 
   if (tasksLoading) {
     return <Loading variant="loading" />;
@@ -94,81 +114,7 @@ const TasksPage = () => {
   return (
     <>
       <Row>
-        <Col md="3">
-          <CategoryFilter />
-        </Col>
-        <Col md="3">
-          <IntRangeFilter
-            header="difficulty"
-            from={1}
-            to={10}
-            initialValues={[difficulty?.from || 1, difficulty?.to || 10]}
-            onFinalChange={(values) => {
-              changedOption({
-                tableName: 'task',
-                name: 'difficulty',
-                value: {
-                  from: values[0],
-                  to: values[1],
-                },
-              });
-            }}
-          />
-        </Col>
-        <Col md="6">
-          <CheckboxFilter
-            header="result"
-            labelClassNames={[
-              'text-success',
-              'text-warning',
-              'text-danger',
-              'text-disabled',
-            ]}
-            onClick={(values) => {
-              const names = ['correct', 'partial', 'zero', 'notStarted'];
-
-              for (let i = 0; i < 4; i += 1) {
-                if (values[i]) {
-                  deletedOption({
-                    tableName: 'task',
-                    name: names[i],
-                  });
-                } else {
-                  changedOption({
-                    tableName: 'task',
-                    name: names[i],
-                    value: false,
-                  });
-                }
-              }
-            }}
-            checked={['correct', 'partial', 'zero', 'notStarted'].map(
-              (name) => {
-                const option = getOption('task', name) as boolean;
-
-                if (option === undefined) {
-                  return true;
-                }
-
-                return option;
-              },
-            )}
-            options={[
-              {
-                header: 'showSolved',
-              },
-              {
-                header: 'showPartiallySolved',
-              },
-              {
-                header: 'showZeroSolved',
-              },
-              {
-                header: 'showNotStarted',
-              },
-            ]}
-          />
-        </Col>
+        <TaskListFilterOptions />
       </Row>
 
       <div style={{ padding: '10px 0' }} />

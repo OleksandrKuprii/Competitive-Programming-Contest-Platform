@@ -8,7 +8,9 @@ export interface SubmissionLinkArgs {
 }
 
 const SubmissionLink = ({ id, children }: SubmissionLinkArgs) => (
-  <Link to={`/submission/view/${id}`}>{children === undefined ? id : children}</Link>
+  <Link to={`/submission/view/${id}`}>
+    {children === undefined ? id : children}
+  </Link>
 );
 
-export default SubmissionLink;
+export default React.memo(SubmissionLink);
