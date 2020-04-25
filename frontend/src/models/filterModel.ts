@@ -1,7 +1,7 @@
-import { action, computed } from 'easy-peasy';
+import { action, computed, persist } from 'easy-peasy';
 import { FilterModel } from './interfaces';
 
-const filterModel: FilterModel = {
+const filterModel: FilterModel = persist({
   options: [],
 
   changedOptions: action((state, options) => {
@@ -52,6 +52,6 @@ const filterModel: FilterModel = {
         return { option, name };
       });
   }),
-};
+});
 
 export default filterModel;

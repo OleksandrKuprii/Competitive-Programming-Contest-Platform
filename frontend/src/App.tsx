@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
@@ -18,13 +18,21 @@ const App = () => {
     (actions) => actions.submission.fetchRange,
   );
 
+  const checkSubmissions = useStoreActions(
+    (actions) => actions.submissionHunter.checkSubmissions,
+  );
+
   const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
 
-  fetchTasks({ offset: 0, number: 300 });
+  checkSubmissions();
 
-  if (isAuthenticated) {
-    fetchSubmissions({ offset: 0, number: 100 });
-  }
+  useEffect(() => {
+    fetchTasks({ offset: 0, number: 300 });
+
+    if (isAuthenticated) {
+      fetchSubmissions({ offset: 0, number: 100 });
+    }
+  }, []);
 
   return (
     <HashRouter>
@@ -45,12 +53,15 @@ const App = () => {
           <Route path="/tasks">
             <TasksPage />
           </Route>
+
           <Route path="/submissions">
             <SubmissionsPage />
           </Route>
+
           <Route path="/submission/view/:id">
             <SubmissionPage />
           </Route>
+
           <Route path="/" exact>
             <HomePage />
           </Route>
