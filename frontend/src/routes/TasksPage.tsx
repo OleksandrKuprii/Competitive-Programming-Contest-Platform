@@ -3,7 +3,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import shallowEqual from 'shallowequal';
 import memoize from 'memoizee';
-import { useStoreState } from '../hooks/store';
+import { useEffect } from 'react';
+import { useStoreActions, useStoreState } from '../hooks/store';
 import TaskList from '../components/task/TaskList';
 import Loading from '../components/layout/Loading';
 import TaskListFilterOptions from '../components/task/TaskListFilterOptions';
@@ -56,6 +57,12 @@ const getPointsPerTask = memoize(
 );
 
 const TasksPage = () => {
+  const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
+
+  useEffect(() => {
+    fetchTasks({ offset: 0, number: 300 });
+  }, []);
+
   const keys = useStoreState(
     (store) =>
       store.sort.getKeys('task', {

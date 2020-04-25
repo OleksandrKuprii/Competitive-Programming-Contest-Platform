@@ -101,6 +101,10 @@ export interface DataModel<
 
   items: Array<DataItem>;
 
+  lastFetchedRange?: Date;
+
+  fetchedRange: Action<DataModel<Identifier, DataItem>>;
+
   updated: Action<DataModel<Identifier, DataItem>, DataItem>;
   updatedMany: Action<DataModel<Identifier, DataItem>, DataItem[]>;
 
@@ -235,9 +239,12 @@ export interface SubmissionHunterModel {
   startedHunting: Action<SubmissionHunterModel, number>;
   receivedResults: Action<SubmissionHunterModel, Submission>;
 
+  checkSubmissions: Action<SubmissionHunterModel>;
+
   onStartedHunting: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
   onSubmit: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
   onFetchedSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
+  onCheckSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
 }
 
 /* </editor-fold> */

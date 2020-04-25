@@ -2,6 +2,16 @@ import { action, computed, thunkOn } from 'easy-peasy';
 import sleep from '../utils/sleep';
 import { Submission, SubmissionHunterModel } from './interfaces';
 
+const checkSubmissions = (
+  submissions: Submission[],
+  alreadyHunting: Set<number>,
+) =>
+  submissions
+    .filter(({ status }) =>
+      status ? status[0] === 'Running' || status[0] === 'Received' : true,
+    )
+    .filter(({ id }) => !alreadyHunting.has(id));
+
 const submissionHunterModel: SubmissionHunterModel = {
   nowHunting: new Set(),
 
@@ -14,6 +24,8 @@ const submissionHunterModel: SubmissionHunterModel = {
   receivedResults: action((state, submission) => {
     state.nowHunting.delete(submission.id);
   }),
+
+  checkSubmissions: action(() => {}),
 
   onSubmit: thunkOn(
     (actions, storeActions) => storeActions.solutionSubmission.submit,
@@ -57,12 +69,27 @@ const submissionHunterModel: SubmissionHunterModel = {
 
   onFetchedSubmissions: thunkOn(
     (actions, storeActions) => storeActions.submission.fetchRange,
-    async (actions, target) => {
-      const toHunt = (target.result.map((x: any) => x.item) as Array<
-        Submission
-      >).filter(({ status }) =>
-        status ? status[0] === 'Running' || status[0] === 'Received' : true,
+    async (actions, target, { getState }) => {
+      const alreadyHunting = getState().nowHunting as Set<number>;
+
+      const toHunt = checkSubmissions(
+        target.result.map((item: any) => item.item),
+        alreadyHunting,
       );
+
+      toHunt.forEach(({ id }) => {
+        actions.startedHunting(id);
+      });
+    },
+  ),
+
+  onCheckSubmissions: thunkOn(
+    (actions) => actions.checkSubmissions,
+    async (actions, target, { getStoreState, getState }) => {
+      const alreadyHunting = getState().nowHunting as Set<number>;
+      const submissions = getStoreState().submission.items;
+
+      const toHunt = checkSubmissions(submissions, alreadyHunting);
 
       toHunt.forEach(({ id }) => {
         actions.startedHunting(id);

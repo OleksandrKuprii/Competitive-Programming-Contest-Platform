@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import shallowEqual from 'shallowequal';
+import { useEffect } from 'react';
 import { useStoreActions, useStoreState } from '../hooks/store';
 import SubmissionList from '../components/submission/SubmissionList';
 import Loading from '../components/layout/Loading';
@@ -22,6 +23,16 @@ const SubmissionsPage = () => {
   const submissionLoading = useStoreState(
     (state) => state.submission.loading.flag,
   );
+
+  const fetchSubmissions = useStoreActions(
+    (actions) => actions.submission.fetchRange,
+  );
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSubmissions({ offset: 0, number: 100 });
+    }
+  }, []);
 
   if (!isAuthenticated) {
     signIn();
