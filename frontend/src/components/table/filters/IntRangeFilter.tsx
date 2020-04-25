@@ -96,4 +96,4 @@ const IntRangeFilter: React.FunctionComponent<IntRangeFilterArgs> = ({
   );
 };
 
-export default IntRangeFilter;
+export default React.memo(IntRangeFilter);

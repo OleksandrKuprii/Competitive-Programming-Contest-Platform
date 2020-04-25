@@ -55,4 +55,4 @@ const PrettyDate = ({ timestamp }: { timestamp?: Date }) => {
   );
 };
 
-export default PrettyDate;
+export default React.memo(PrettyDate);

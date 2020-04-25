@@ -29,7 +29,10 @@ const CheckboxFilter = ({
         unselectable="on"
       >
         {options.map(({ header: h }, i) => (
-          <div className="custom-control custom-control-inline custom-checkbox">
+          <div
+            key={h}
+            className="custom-control custom-control-inline custom-checkbox"
+          >
             <input
               type="checkbox"
               checked={checked[i]}

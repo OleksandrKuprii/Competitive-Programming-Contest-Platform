@@ -15,3 +15,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: lighten(map_get($theme-colors, 'secondary'), 20);
 }
+
+::-webkit-scrollbar-corner {
+  background: map_get($theme-colors, 'primary');
+}

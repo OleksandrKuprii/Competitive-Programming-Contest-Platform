@@ -41,4 +41,4 @@ const SortControl: React.FunctionComponent<SortControlArgs> = ({
   );
 };
 
-export default SortControl;
+export default React.memo(SortControl);

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Table from 'react-bootstrap/Table';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import shallowEqual from 'shallowequal';
 import SortControl from './SortControl';
 import { useStoreState, useStoreActions } from '../../hooks/store';
 
 export type CustomTableRowIdentifier = number | string;
+
 export type CustomTableRow = {
   id: CustomTableRowIdentifier;
   row: ReactNode;
@@ -43,34 +44,41 @@ const CustomTable = ({
     shallowEqual,
   );
 
+  const toggleAsc = useCallback(
+    (header) => {
+      toggleSortOption({
+        tableName,
+        header,
+        option: 'asc',
+      });
+    },
+    [toggleSortOption],
+  );
+
+  const toggleDesc = useCallback(
+    (header) => {
+      toggleSortOption({
+        tableName,
+        header,
+        option: 'desc',
+      });
+    },
+    [toggleSortOption],
+  );
+
   return (
     <Table hover variant="dark" borderless size="sm" striped>
       <thead className="thead-dark">
         <tr>
           {headers.map((header) => (
-            <th
-              key={`table-${tableName}-header-${header}`}
-              style={{ paddingLeft: padding }}
-            >
+            <th key={header} style={{ paddingLeft: padding }}>
               <div className="d-flex justify-content-start">
                 {t(`headers.${header}`)}
                 {enableSortOptionIn && enableSortOptionIn.includes(header) ? (
                   <SortControl
                     active={options[enableSortOptionIn.indexOf(header)]}
-                    onAsc={() => {
-                      toggleSortOption({
-                        tableName,
-                        header,
-                        option: 'asc',
-                      });
-                    }}
-                    onDesc={() => {
-                      toggleSortOption({
-                        tableName,
-                        header,
-                        option: 'desc',
-                      });
-                    }}
+                    onAsc={() => toggleAsc(header)}
+                    onDesc={() => toggleDesc(header)}
                   />
                 ) : undefined}
               </div>
@@ -81,7 +89,7 @@ const CustomTable = ({
 
       <tbody>
         {rows.map(({ row, id }) => {
-          return <tr key={`table-${tableName}-row-${id}`}>{row}</tr>;
+          return <tr key={id}>{row}</tr>;
         })}
       </tbody>
     </Table>

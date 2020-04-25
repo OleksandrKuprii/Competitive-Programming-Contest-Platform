@@ -190,6 +190,12 @@ export interface TaskLimits {
 
 export interface TaskModel extends DataModel<string, Task> {}
 
+export interface JoinedTask extends Task {
+  result: number;
+  submissionId?: number;
+  status?: string[];
+}
+
 /* </editor-fold> */
 
 /* <editor-fold desc="SubmissionModel"> */
@@ -229,7 +235,9 @@ export interface SubmissionHunterModel {
   startedHunting: Action<SubmissionHunterModel, number>;
   receivedResults: Action<SubmissionHunterModel, Submission>;
 
+  onStartedHunting: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
   onSubmit: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
+  onFetchedSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
 }
 
 /* </editor-fold> */
@@ -352,9 +360,9 @@ export type FilterOption =
 export interface FilterModel {
   options: Array<{ tableName: string; name: string; option: FilterOption }>;
 
-  changedOption: Action<
+  changedOptions: Action<
     FilterModel,
-    { tableName: string; name: string; value: FilterOption }
+    { tableName: string; name: string; value: FilterOption; remove?: boolean }[]
   >;
 
   deletedOption: Action<FilterModel, { tableName: string; name: string }>;

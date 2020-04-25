@@ -29,4 +29,4 @@ const GeneralFilter = ({
   );
 };
 
-export default GeneralFilter;
+export default React.memo(GeneralFilter);
