@@ -5,8 +5,7 @@ from typing import Optional
 from user import database
 
 
-async def get_user_info(nickname: str, conn: Connection) -> \
-        Optional[dict, None]:
+async def get_user_info(nickname: str, conn: Connection) -> Optional[dict]:
     """Get user info by nickname.
 
     Parameters
@@ -18,7 +17,7 @@ async def get_user_info(nickname: str, conn: Connection) -> \
 
     Returns
     -------
-    user_info: Optional[dict, None]
+    user_info: Optional[dict]
         Information about user if exists, else - None
     """
     # Get user info from database
