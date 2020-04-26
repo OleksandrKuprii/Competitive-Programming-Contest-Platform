@@ -495,7 +495,7 @@ async def get_submission(submission_id: int, user_id: str, conn: Connection) \
                                     submission_id, user_id)
 
     # Converting fetch to dictionary
-    submission = {k: v for k, v in fetch.items()}
+    submission = dict(fetch)
 
     # Converting datetime to ISO-format
     submission['timestamp'] = submission['timestamp'].isoformat()

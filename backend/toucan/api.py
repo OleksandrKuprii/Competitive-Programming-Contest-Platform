@@ -12,18 +12,18 @@ from aiohttp.web import Application, Response, _run_app, json_response
 
 import aiohttp_cors
 
-
 from asyncpg.pool import Pool
 
 import jose
 from jose import jwt
 
-from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import urlopen, Request
 
 import database
 import submission
 import task
 from dataclass import UserSubmission
+from user import user
 
 
 routes = web.RouteTableDef()
@@ -414,6 +414,59 @@ async def get_test_results(request, **kwargs):
         tests = await submission.get_test_results(submission_id, user_id, conn)
 
     return json_response(tests)
+
+
+@routes.get(r'/profile/{nickname:.{3,}}')
+@requires_auth
+async def get_profile(request, **kwargs):
+    """Get profile."""
+    nickname = request.match_info['nickname']
+
+    async with pool.acquire() as conn:
+        user_info = await user.get_user_info(nickname, conn)
+
+    if user_info is None:
+        return json_response({})
+    return json_response(user_info)
+
+
+@routes.get('/profile/my')
+@requires_auth
+async def get_my_profile(request, **kwargs):
+    """Get my profile."""
+    token = request.headers['Authorization']
+
+    req = Request('https://' + AUTH0_DOMAIN + '/userinfo')
+    req.add_header('Authorization', token)
+    resp = urlopen(req)
+
+    auth0_user_info = json.loads(resp.read())
+
+    need_keys = ('sub', 'nickname', 'name', 'email', 'picture')
+    auth0_user_info = {k: v for k, v in auth0_user_info.items() if k in
+                       need_keys}
+
+    async with pool.acquire() as conn:
+        user_info = await user.get_my_info(auth0_user_info['sub'], conn)
+
+        if not user_info:
+            await user.register_user(auth0_user_info, conn)
+            return auth0_user_info
+
+        return json_response(user_info)
+
+
+@routes.post('/profile/my')
+@requires_auth
+async def update_profile(request, **kwargs):
+    """Update my profile."""
+    user_id = kwargs['user_info']['sub']
+    body = await request.json()
+
+    async with pool.acquire() as conn:
+        await user.update_profile(user_id, body, conn)
+
+    return Response(status=200)
 
 
 app = Application()
