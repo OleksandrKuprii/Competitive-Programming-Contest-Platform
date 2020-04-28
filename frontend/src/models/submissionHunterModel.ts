@@ -72,6 +72,10 @@ const submissionHunterModel: SubmissionHunterModel = {
     async (actions, target, { getState }) => {
       const alreadyHunting = getState().nowHunting as Set<number>;
 
+      if (target.result === undefined) {
+        return;
+      }
+
       const toHunt = checkSubmissions(
         target.result.map((item: any) => item.item),
         alreadyHunting,
