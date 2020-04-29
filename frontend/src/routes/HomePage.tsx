@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Badge, Jumbotron } from 'react-bootstrap';
+import { Badge, Jumbotron, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import { GiChessKnight, GiStarsStack } from 'react-icons/all';
+
+const brandIcon = require('../assets/brandIcon.png');
 
 const Homepage = () => {
   const { t } = useTranslation();
@@ -11,6 +13,8 @@ const Homepage = () => {
   return (
     <>
       <Jumbotron className="text-center">
+        <Image src={brandIcon} className="rounded" />
+
         <div style={{ paddingTop: 50 }} />
 
         <p className="h1">{t('homepage.welcome')}</p>
