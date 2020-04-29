@@ -47,7 +47,9 @@ const submissionHunterModel: SubmissionHunterModel = {
 
       const MAX_RETRIES = 10;
 
-      for (let i = 0; i < MAX_RETRIES; i += 1) {
+      let i = 0;
+
+      for (; i < MAX_RETRIES; i += 1) {
         // eslint-disable-next-line no-await-in-loop
         await sleep(5000);
 
@@ -61,7 +63,9 @@ const submissionHunterModel: SubmissionHunterModel = {
         }
       }
 
-      submission.status = ['Unknown error'];
+      if (i === MAX_RETRIES) {
+        submission.status = ['Unknown error'];
+      }
 
       actions.receivedResults(submission);
     },
