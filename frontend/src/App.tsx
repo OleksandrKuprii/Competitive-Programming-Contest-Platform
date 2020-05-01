@@ -11,6 +11,7 @@ import SubmissionPage from './routes/SubmissionPage';
 import ErrorPage from './routes/ErrorPage';
 import Notifications from './components/notification/Notifications';
 import { useStoreActions, useStoreState } from './hooks/store';
+import MyProfile from './routes/MyProfile';
 
 const App = () => {
   const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
@@ -60,6 +61,10 @@ const App = () => {
 
           <Route path="/submission/view/:id">
             <SubmissionPage />
+          </Route>
+
+          <Route path="/profile/my">
+            <MyProfile />
           </Route>
 
           <Route path="/" exact>

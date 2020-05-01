@@ -39,10 +39,13 @@
     "html-to-react": "^1.4.2",
     "i18next": "^19.3.3",
     "i18next-browser-languagedetector": "^4.0.2",
+    "localforage": "^1.7.3",
     "memoizee": "^0.4.14",
     "node-sass": "^4.13.1",
     "prettier": "^2.0.4",
     "react": "^16.13.1",
+    "react-app-rewire-workbox": "^2.0.1",
+    "react-app-rewired": "^2.1.5",
     "react-bootstrap": "^1.0.0-beta.17",
     "react-dom": "^16.13.1",
     "react-dropzone": "^10.2.1",
@@ -57,14 +60,27 @@
     "shallowequal": "^1.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
-    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src config-overrides.js",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src config-overrides.js"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "airbnb-typescript",
+      "prettier",
+      "prettier/@typescript-eslint",
+      "prettier/react",
+      "prettier/standard"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "react/prop-types": "off",
+      "no-param-reassign": "off"
+    }
   },
   "browserslist": {
     "production": [
