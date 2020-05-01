@@ -14,18 +14,21 @@ const notificationModel: NotificationModel = {
     state.list = state.list.filter((notification) => notification.id !== id);
   }),
 
-  addNotificationAndRemoveAfterDelay: thunk(async (actions, { notification, delay }) => {
-    const { id } = notification;
-    actions.receivedNotification(notification);
+  addNotificationAndRemoveAfterDelay: thunk(
+    async (actions, { notification, delay }) => {
+      const { id } = notification;
+      actions.receivedNotification(notification);
 
-    await sleep(delay || 10 * 1000);
+      await sleep(delay || 10 * 1000);
 
-    actions.dismissedNotification(id);
-  }),
+      actions.dismissedNotification(id);
+    },
+  ),
 
   onSubmitRequested: thunkOn(
-    (actions, storeActions) => storeActions.solutionSubmission.onSubmitRequested,
-    (actions, target) => {
+    (actions, storeActions) =>
+      storeActions.solutionSubmission.onSubmitRequested,
+    async (actions, target) => {
       actions.addNotificationAndRemoveAfterDelay({
         notification: {
           id: +new Date(),
@@ -41,7 +44,7 @@ const notificationModel: NotificationModel = {
 
   onSubmitted: thunkOn(
     (actions, storeActions) => storeActions.solutionSubmission.submit,
-    (actions, target) => {
+    async (actions, target) => {
       actions.addNotificationAndRemoveAfterDelay({
         notification: {
           id: +new Date(),
@@ -56,7 +59,7 @@ const notificationModel: NotificationModel = {
 
   onReceivedResults: thunkOn(
     (actions, storeActions) => storeActions.submissionHunter.receivedResults,
-    (actions, target) => {
+    async (actions, target) => {
       const submission = target.payload;
 
       actions.addNotificationAndRemoveAfterDelay({

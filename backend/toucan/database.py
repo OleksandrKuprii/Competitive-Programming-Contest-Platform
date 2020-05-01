@@ -44,51 +44,49 @@ async def establish_connection_params(**kwargs: object) -> Pool:
     return await asyncpg.create_pool(**kwargs)
 
 
-async def get_points_for_tests(test_ids: List[int], conn: Connection) \
-        -> List[int]:
+async def get_points_for_test(test_id: int, conn: Connection) -> int:
     """Get value of points for each test by test ids.
 
     Parameters
     ----------
-    test_ids : List[int]
+    test_id : int
         The list of test ids
     conn: Connection
         A connection to the database
 
     Returns
     -------
-    _ : List[int]
+    _ : int
         The list of points for each test sorted as ids
     """
     async with conn.transaction():
-        points = await conn.fetch(
+        row = await conn.fetchrow(
             'SELECT points FROM coreschema.tests '
-            'WHERE id = ANY($1::int[])',
-            test_ids)
+            'WHERE id = $1',
+            test_id)
 
-    return [x['points'] for x in points]
+    return row['points']
 
 
-async def add_results_to_db(results: List[ResultToDB], conn: Connection) \
-        -> None:
+async def add_result_to_db(result: ResultToDB, conn: Connection) -> None:
     """Add results of checking to the database.
 
     Parameters
     ----------
-    results : List[ResultToDB]
+    result : ResultToDB
         The list of ResultToDB objects
     conn: Connection
         A connection to the database
     """
     # Presenting list of ResultToDB object to list of tuples
-    data_to_query = [(result.status, result.points, result.submission_id,
-                      result.test_id, result.wall_time, result.cpu_time)
-                     for result in results]
+    data_to_query = (result.status, result.points, result.submission_id,
+                     result.test_id, result.wall_time, result.cpu_time)
+
     async with conn.transaction():
-        await conn.executemany(
+        await conn.execute(
             'INSERT INTO coreschema.results (status, points,'
             ' submission_id, test_id, wall_time, cpu_time) '
-            'VALUES ($1, $2, $3, $4, $5, $6)', data_to_query)
+            'VALUES ($1, $2, $3, $4, $5, $6)', *data_to_query)
 
 
 async def change_submission_status(submission_id: int, status: str,
@@ -337,7 +335,6 @@ async def get_submission_id_from_bests(user_id: str, task_id: int,
         Submission id if it exists, else - None
     """
     async with conn.transaction():
-
         # Getting submission id from task_bests table
         fetch = await conn.fetchrow('''
             SELECT submission_id
@@ -370,7 +367,6 @@ async def get_result(submission_id: int, user_id: str, conn: Connection) \
         Points and statuses for submission
     """
     async with conn.transaction():
-
         # Getting submission status for result from database
         status = await conn.fetch(
             '''SELECT get_submission_status_for_result as status

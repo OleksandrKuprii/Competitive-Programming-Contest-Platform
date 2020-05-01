@@ -25,9 +25,5 @@ table {
         color: map_get($theme-colors, 'info');
       }
     }
-
-    td {
-      animation: fade-in 0.5s ease-in-out;
-    }
   }
 }

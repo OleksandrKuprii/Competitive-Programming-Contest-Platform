@@ -1,5 +1,6 @@
 import { action, computed, persist, thunk, thunkOn } from 'easy-peasy';
 import shallowEqual from 'shallowequal';
+import localforage from 'localforage';
 import loadingModel from './loadingModel';
 import updateObjectWithProperty from '../../utils/updateObjectWithProperty';
 import { DataModel, DataModelFactoryArgs, DataModelItem } from '../interfaces';
@@ -88,7 +89,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
       onFetchedOne: thunkOn(
         (actions) => actions.fetchOne,
-        (actions, target) => {
+        async (actions, target) => {
           if (!target.result) {
             setTimeout(() => {
               actions.fetchOne(target.payload as any);
@@ -103,7 +104,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
 
       onFetchedRange: thunkOn(
         (actions) => actions.fetchRange,
-        (actions, target) => {
+        async (actions, target) => {
           if (!target.result) {
             setTimeout(() => {
               actions.fetchRange(target.payload as any);
@@ -118,7 +119,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
         },
       ),
 
-      onChangedOne: thunkOn(onChangedOneTargets, (actions, target) => {
+      onChangedOne: thunkOn(onChangedOneTargets, async (actions, target) => {
         if (!target.result) {
           return;
         }
@@ -128,7 +129,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
         }
       }),
 
-      onChangedMany: thunkOn(onChangedManyTargets, (actions, target) => {
+      onChangedMany: thunkOn(onChangedManyTargets, async (actions, target) => {
         if (!target.result) {
           return;
         }
@@ -205,7 +206,7 @@ const dataModel: <Identifier, Item extends DataModelItem<Identifier>>(
         );
       }),
     },
-    { storage: 'localStorage' },
+    { storage: localforage },
   );
 
 export default dataModel;

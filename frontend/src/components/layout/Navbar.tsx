@@ -1,22 +1,19 @@
 import * as React from 'react';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Container, Nav, Navbar, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import {
   GiPaperPlane,
-  FaHome,
   GiArcheryTarget,
   GiBrutalHelm,
+  FiUser,
 } from 'react-icons/all';
 import memoize from 'memoizee';
 import ProfileStatus from '../user/ProfileStatus';
 
+const brandIcon = require('../../assets/brandIcon.png');
+
 const navigationEntries = [
-  {
-    link: '/',
-    pageName: 'home',
-    icon: <FaHome />,
-  },
   {
     link: '/tournaments',
     pageName: 'tournaments',
@@ -31,6 +28,11 @@ const navigationEntries = [
     link: '/submissions',
     pageName: 'submissions',
     icon: <GiPaperPlane />,
+  },
+  {
+    link: '/profile/my',
+    pageName: 'profile',
+    icon: <FiUser />,
   },
 ];
 
@@ -61,6 +63,11 @@ const ToucanNavbar = () => {
   return (
     <Navbar expand="lg" bg="primary" variant="dark" sticky="top">
       <Container style={{ padding: 0 }}>
+        <Navbar.Brand href="#/">
+          <Image src={brandIcon} height={30} className="d-inline-block" />{' '}
+          Toucan
+        </Navbar.Brand>
+
         {navigation}
         <Nav className="mr-auto" />
         <Nav.Item>
