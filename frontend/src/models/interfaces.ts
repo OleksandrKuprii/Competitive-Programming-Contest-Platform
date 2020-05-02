@@ -101,10 +101,6 @@ export interface DataModel<
 
   items: Array<DataItem>;
 
-  lastFetchedRange?: Date;
-
-  fetchedRange: Action<DataModel<Identifier, DataItem>>;
-
   updated: Action<DataModel<Identifier, DataItem>, DataItem>;
   updatedMany: Action<DataModel<Identifier, DataItem>, DataItem[]>;
 
