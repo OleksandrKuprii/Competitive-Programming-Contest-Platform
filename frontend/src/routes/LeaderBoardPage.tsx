@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 
 import { Container, Row, Col } from 'react-bootstrap';
 import ActivityStatistics from '../components/leaderboard/activityStatistics';
-import CustomTable from '../components/CustomTable';
+import CustomTable from '../components/table/CustomTable';
 
 const data = [
   {
