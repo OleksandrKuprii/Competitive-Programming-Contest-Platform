@@ -1,5 +1,7 @@
 """Runner enter point."""
 import asyncio
+import logging
+
 import aioboto3
 import os
 import json
@@ -7,14 +9,21 @@ from queue import Queue
 from threading import Thread
 from dataclass import SubmissionToRunner, TestToWorker
 import storage
-from runner.worker import worker
+from runner.worker import worker, pull_all
 
+logging.basicConfig(filename='runner.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
 
 completed_tests = {}
 
 
 async def main():
     """Start runner."""
+    pull_all(['fpc'])
+
     queue = Queue()
 
     for _ in range(5):
