@@ -483,7 +483,7 @@ async def get_submission(submission_id: int, user_id: str, conn: Connection) \
     async with conn.transaction():
         # Getting submission information from submissions and tasks tables
         fetch = await conn.fetchrow('''
-            SELECT name, alias, lang, published_at as timestamp, 
+            SELECT name, alias, lang, published_at as timestamp,
             count(tests.id) as tests_count
             FROM coreschema.submissions
             LEFT JOIN coreschema.tasks
