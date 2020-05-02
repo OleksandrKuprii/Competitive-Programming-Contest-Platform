@@ -80,8 +80,12 @@ const submissionModel: SubmissionModel = {
       }));
     },
 
-    onChangedManyTargets: (state, storeActions) => [storeActions.task.fetchRange],
-    onChangedOneTargets: (state, storeActions) => [storeActions.solutionSubmission.submit],
+    onChangedManyTargets: (state, storeActions) => [
+      storeActions.task.fetchRange,
+    ],
+    onChangedOneTargets: (state, storeActions) => [
+      storeActions.solutionSubmission.submit,
+    ],
 
     dataModelIdentifier: 'submission',
   }),

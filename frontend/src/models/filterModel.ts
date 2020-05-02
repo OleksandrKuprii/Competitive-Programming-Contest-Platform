@@ -1,27 +1,57 @@
-import { action, computed } from 'easy-peasy';
-import { FilterModel, FilterOption } from './interfaces';
+import { action, computed, persist } from 'easy-peasy';
+import { FilterModel } from './interfaces';
 
-const filterModel: FilterModel = {
-  options: new Map(),
+const filterModel: FilterModel = persist({
+  options: [],
 
-  changedOption: action((state, { tableName, name, value }) => {
-    state.options.set(`${tableName}.${name}`, value);
+  changedOptions: action((state, options) => {
+    options.forEach(({ tableName, name, value, remove }) => {
+      if (remove) {
+        state.options = state.options.filter(
+          (o) => !(o.tableName === tableName && o.name === name),
+        );
+
+        return;
+      }
+
+      const item = state.options.find(
+        (o) => o.tableName === tableName && o.name === name,
+      );
+
+      if (item) {
+        state.options = state.options.map((o) =>
+          o.tableName === tableName && o.name === name
+            ? { tableName, name, option: value }
+            : o,
+        );
+        return;
+      }
+
+      state.options.push({ tableName, name, option: value });
+    });
   }),
 
   deletedOption: action((state, { tableName, name }) => {
-    state.options.delete(`${tableName}.${name}`);
+    state.options = state.options.filter(
+      (o) => !(o.tableName === tableName && o.name === name),
+    );
+  }),
+
+  getOption: computed((state) => (tableName, name) => {
+    return state.options.find(
+      (o) => o.tableName === tableName && o.name === name,
+    )?.option;
   }),
 
   getOptions: computed((state) => (tableName) => {
-    return Array.from(state.options as Map<string, FilterOption>)
-      .filter(([key]) => {
-        return key.split('.')[0] === tableName;
+    return state.options
+      .filter((option) => {
+        return option.tableName === tableName;
       })
-
-      .map(([key, option]) => {
-        return { option, name: key.split('.')[1] };
+      .map(({ option, name }) => {
+        return { option, name };
       });
   }),
-};
+});
 
 export default filterModel;

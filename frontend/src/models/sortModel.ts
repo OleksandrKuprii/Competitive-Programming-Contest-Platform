@@ -1,7 +1,7 @@
-import { action, computed } from 'easy-peasy';
+import { action, computed, persist } from 'easy-peasy';
 import { AscDescOrNone, SortModel } from './interfaces';
 
-const sortModel: SortModel = {
+const sortModel: SortModel = persist({
   options: [],
 
   toggleOption: action((state, { tableName, option, header }) => {
@@ -60,6 +60,6 @@ const sortModel: SortModel = {
       ]
     );
   }),
-};
+});
 
 export default sortModel;

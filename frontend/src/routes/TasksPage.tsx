@@ -1,16 +1,67 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import shallowEqual from 'shallowequal';
-import { useStoreState, useStoreActions } from '../hooks/store';
+import memoize from 'memoizee';
+import { useEffect } from 'react';
+import { useStoreActions, useStoreState } from '../hooks/store';
 import TaskList from '../components/task/TaskList';
-import CategoryFilter from '../components/table/filters/CategoryFilter';
-import IntRangeFilter from '../components/table/filters/IntRangeFilter';
 import Loading from '../components/layout/Loading';
+import TaskListFilterOptions from '../components/task/TaskListFilterOptions';
+import { JoinedTask } from '../models/interfaces';
+
+const joiner = memoize(
+  (points?: number, id?: number, status?: string[]) => {
+    return {
+      result: points,
+      zero: points === 0,
+      partial: points !== undefined ? points > 0 && points < 100 : false,
+      correct: points === 100,
+      notStarted: points === undefined,
+      submissionId: id,
+      status,
+    };
+  },
+  { primitive: true },
+);
+
+const getPointsPerTask = memoize(
+  (
+    submissions: {
+      taskId?: string;
+      points?: number;
+      id: number;
+      status?: string[];
+    }[],
+  ) => {
+    const pointsPerTask = new Map<
+      string,
+      { id: number; points: number; status: string[] }
+    >();
+
+    submissions.forEach(({ taskId, points, id, status }) => {
+      if (taskId === undefined || points === undefined) return;
+
+      if (
+        pointsPerTask.get(taskId) === undefined ||
+        // @ts-ignore
+        pointsPerTask.get(taskId).points < points
+      ) {
+        pointsPerTask.set(taskId, { id, points, status: status || [] });
+      }
+    });
+
+    return pointsPerTask;
+  },
+  { primitive: true },
+);
 
 const TasksPage = () => {
-  const { t } = useTranslation();
+  const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
+
+  useEffect(() => {
+    fetchTasks({ offset: 0, number: 300 });
+  }, []);
 
   const keys = useStoreState(
     (store) =>
@@ -26,9 +77,10 @@ const TasksPage = () => {
     shallowEqual,
   );
 
-  const allTasks = useStoreState((state) => state.task.items, shallowEqual);
-
-  const taskIds = allTasks.map((task) => task.id);
+  const taskIds = useStoreState(
+    (state) => state.task.items.map((item) => item.id),
+    shallowEqual,
+  );
 
   const submissions = useStoreState(
     (state) =>
@@ -39,37 +91,28 @@ const TasksPage = () => {
         .map((submission) => ({
           taskId: submission.taskAlias,
           points: submission.points,
+          id: submission.id,
+          status: submission.status,
         })),
     shallowEqual,
   );
 
-  const pointsPerTask = new Map<string, number>();
-
-  submissions.forEach(({ taskId, points }) => {
-    if (taskId === undefined || points === undefined) return;
-
-    if (
-      !pointsPerTask.has(taskId) ||
-      // @ts-ignore
-      pointsPerTask.get(taskId) < points
-    ) {
-      pointsPerTask.set(taskId, points);
-    }
-  });
-
-  const tasks = useStoreState(
-    (state) =>
-      state.task.nItemsByCustomKeys(keys, options, (item) => ({
-        result: pointsPerTask.get(item.id),
-      })),
+  const tasksLoading = useStoreState(
+    (state) => state.task.loading.flag,
     shallowEqual,
   );
 
-  const tasksLoading = useStoreState((state) => state.task.loading.flag);
+  const pointsPerTask = getPointsPerTask(submissions);
 
-  const changedOption = useStoreActions(
-    (actions) => actions.filter.changedOption,
-  );
+  const tasks = useStoreState(
+    (state) =>
+      state.task.nItemsByCustomKeys(keys, options, ({ id }) => {
+        const item = pointsPerTask.get(id);
+
+        return joiner(item?.points, item?.id, item?.status);
+      }),
+    shallowEqual,
+  ) as JoinedTask[];
 
   if (tasksLoading) {
     return <Loading variant="loading" />;
@@ -78,35 +121,7 @@ const TasksPage = () => {
   return (
     <>
       <Row>
-        <Col>
-          <p className="h3 m-0 d-inline">{t('pageName.tasks')}</p>
-        </Col>
-      </Row>
-
-      <div style={{ padding: '10px 0' }} />
-
-      <Row>
-        <Col md="auto">
-          <CategoryFilter />
-        </Col>
-        <Col md="auto">
-          <IntRangeFilter
-            header="Difficulty"
-            from={1}
-            to={10}
-            onFinalChange={(values) => {
-              changedOption({
-                tableName: 'task',
-                name: 'difficulty',
-                value: {
-                  from: values[0],
-                  to: values[1],
-                },
-              });
-            }}
-          />
-        </Col>
-        <Col md="auto" />
+        <TaskListFilterOptions />
       </Row>
 
       <div style={{ padding: '10px 0' }} />

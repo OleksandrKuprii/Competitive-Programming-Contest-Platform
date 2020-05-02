@@ -2,16 +2,26 @@ import * as React from 'react';
 import CustomTable, { CustomTableRow } from '../table/CustomTable';
 import TaskDifficulty from './TaskDifficulty';
 import TaskLinkByTask from './TaskLinkByTask';
-import GreatestResult from '../result/GreatestResult';
 import CategoryName from '../category/CategoryName';
-import { Task } from '../../models/interfaces';
+import { JoinedTask } from '../../models/interfaces';
 import TaskRatingHistogram from './rating/TaskRatingHistogram';
+import Result from '../result/Result';
+import SubmissionLink from '../submission/SubmissionLink';
 
-const TaskList = ({ tasks }: { tasks: Task[] }) => {
+const TaskList = ({ tasks }: { tasks: JoinedTask[] }) => {
   const sortOptions = ['name', 'category', 'difficulty', 'result'];
 
   const rows = tasks.map(
-    ({ id, name, difficulty, rating, category }) =>
+    ({
+      id,
+      name,
+      difficulty,
+      rating,
+      category,
+      status,
+      result,
+      submissionId,
+    }) =>
       ({
         id,
         row: (
@@ -26,7 +36,7 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
               {difficulty === undefined ? (
                 ''
               ) : (
-                <TaskDifficulty id={id} difficulty={difficulty} />
+                <TaskDifficulty difficulty={difficulty} />
               )}
             </td>
             <td>
@@ -37,7 +47,11 @@ const TaskList = ({ tasks }: { tasks: Task[] }) => {
               )}
             </td>
             <td>
-              <GreatestResult taskAlias={id} />
+              {submissionId !== undefined ? (
+                <SubmissionLink id={submissionId}>
+                  <Result status={status} points={result} />
+                </SubmissionLink>
+              ) : undefined}
             </td>
           </>
         ),

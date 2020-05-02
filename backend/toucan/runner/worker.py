@@ -1,18 +1,19 @@
 """Worker logic."""
 import asyncio
-import logging
 import os
 import tempfile
-from typing import Callable, Optional
+from queue import Queue
+from typing import Optional, Any
 
 import docker
+from asyncpg.pool import Pool
+from docker.models.volumes import Volume
 
 import checker
 import database
-import runner.parse_time
 import storage
-from dataclass import ResultToChecker, SubmissionToRunner, TestResult, \
-    CompilerConfig, RunnerConfig
+from dataclass import TestToWorker, CompilerConfig, RunnerConfig, TestResult
+from runner import parse_time
 
 client = docker.from_env()
 
@@ -41,83 +42,94 @@ runner_configs = {
                            file_path='compiled/compiled.out')
 }
 
-LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
 
-assert LOCAL_STORAGE_ROOT is not None
-
-logging.basicConfig(filename='runner.log',
-                    filemode='w',
-                    level=logging.INFO,
-                    format='%(asctime)s %(message)s',
-                    datefmt='%d/%m/%Y %H:%M:%S')
-
-client: docker.DockerClient
-
-
-async def execute(submission_to_runner: SubmissionToRunner):
-    """Execute."""
-    # Creating a database pool
-    pool = await database.establish_connection_from_env()
-
-    async with pool.acquire() as conn:
-        await database.change_submission_status(
-            submission_to_runner.submission_id, 'Running', conn)
-
-        test_results = list(
-            await execute_tests(submission_to_runner))
-
-        result_to_checker = ResultToChecker(submission_to_runner.submission_id,
-                                            test_results)
-
-        await checker.process_result_to_checker(result_to_checker, conn)
-
-    # Closing the database pool
-    await pool.close()
-
-
-def process_submission_to_runner(
-        submission_to_runner: SubmissionToRunner, docker_client) -> \
-        ResultToChecker:
-    """Run SubmissionToRunner and return ResultToChecker."""
-    # Set the global docker client
-    global client
-    client = docker_client
-
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(execute(submission_to_runner))
-
-
-async def execute_test(runner_config: RunnerConfig, input_abspath: str,
-                       memory_limit: int, wall_time_limit: int,
-                       cpu_time_limit: int) \
-        -> Callable[[int], TestResult]:
-    """Execute test of submission.
+def process_container_result(test_id: int, result: Any, logs, cpu_time_limit: int,
+                             wall_time_limit: int, temporary_file_descriptor: int):
+    """Convert container result into TestResult.
 
     Parameters
     ----------
-    runner_config: RunnerConfig
-        The configuration of runner
-    submission_code_abspath: str
-        Submission code absolute path
-    submission_code_path_basename: str
-        Submission code path basename(filename + extension)
-    input_abspath: str
-        Input file absolute path
-    memory_limit: int
-        Memory limit in megabytes
-    wall_time_limit: int
-        Wall(real) time limit in milliseconds
+    test_id: int
+    result: Any
+        Container result
+    logs: str
     cpu_time_limit: int
-        CPU(user) time limit in milliseconds
-
-    Returns
-    -------
-    _: Callable[[int], TestResult]
-        Anonymous TestResult - without id
+    wall_time_limit: int
+    temporary_file_descriptor: int
     """
-    # Create temporary file for output.txt
+    status_code = result['StatusCode']
+
+    # Real(wall) time, user(cpu) time, sys(kernel) time
+    real, user, _sys = parse_time.parse(logs)
+
+    # Logs contain error stream
+    # (time command output + optional error of program)
+    # So we check if it matches the time command output regex
+    if status_code in (0, 124):
+        if not parse_time.check(logs):
+            # Someone hacked the universe
+            if status_code == 0:
+                return TestResult(test_id, 'UnknownError',
+                                  None, None, None)
+            else:
+                # Normal case
+                return TestResult(test_id, 'RuntimeError',
+                                  None, None, None)
+
+    # Program exited properly
+    # But it doesn't mean program haven't violated CPU time limit
+    # as CPU time < real time
+    if status_code == 0:
+        if user > cpu_time_limit:
+            return TestResult(test_id, 'TimeLimit',
+                              None, None, None)
+
+        # Read output.txt
+        with os.fdopen(temporary_file_descriptor) as temporary_file:
+            result = temporary_file.read()
+
+        return TestResult(test_id, 'Success', result, real,
+                          user)
+    elif status_code == 137:
+        # Program was killed
+        # Check if it was wall time limit
+        if real > wall_time_limit:
+            return TestResult(test_id, 'TimeLimit',
+                              None, None, None)
+
+        # Otherwise program was killed by container cgroup OOM killer
+        # e.g. memory limit
+        return TestResult(test_id, 'OutOfMemory', None,
+                          None, None)
+    elif status_code == 124:
+        return TestResult(test_id, 'TimeLimit',
+                          None, None, None)
+    # In all other cases it is an RuntimeError
+    return TestResult(test_id, 'RuntimeError', None,
+                      None, None)
+
+
+async def execute_test(test_to_worker: TestToWorker, pool: Pool, volume: Volume = None):
+    """Execute test.
+
+    Parameters
+    ----------
+    test_to_worker: TestToWorker
+    pool: Pool
+        asyncpg connection pool
+    volume: Volume = None
+        docker volume
+        is none when language isn't compilable
+    """
     temporary_file_descriptor, temporary_file_path = tempfile.mkstemp(
-        dir=LOCAL_STORAGE_ROOT + '/temp')
+        dir=os.getenv('LOCAL_STORAGE_ROOT') + '/temp')
+
+    test_id = test_to_worker.test_id
+
+    config = runner_configs[test_to_worker.lang]
+
+    input_path = await storage.download_input(test_to_worker.test_id)
+    input_abspath = os.path.abspath(input_path)
 
     container_volumes = {
         input_abspath: {
@@ -130,22 +142,22 @@ async def execute_test(runner_config: RunnerConfig, input_abspath: str,
         }
     }
 
-    if runner_config.is_compilable:
-        container_volumes[runner_config.volume_name] = {
-            'bind': f'/usr/app/{runner_config.store_volume}',
+    if config.is_compilable:
+        container_volumes[volume.name] = {
+            'bind': f'/usr/app/{config.store_volume}',
             'ro': True  # read-only
         }
     else:
-        container_volumes[runner_config.abs_file_path] = {
-            'bind': f'/usr/app/{runner_config.file_path}',
+        container_volumes[os.path.abspath(test_to_worker.submission_code_path)] = {
+            'bind': f'/usr/app/{config.file_path}',
             'ro': True  # read-only
         }
 
     container = client.containers.run(
-        runner_config.image,
+        config.image,
         f'bash -c "cd /usr/app;'  # Use bash and change directory
         f'time '  # Say to bash we want record execution time
-        f'timeout {wall_time_limit / 1000} '  # Kill program
+        f'timeout {test_to_worker.wall_time_limit / 1000} '  # Kill program
         # if it violates wall time limit
         #   CAPTION:
         #   it doesn't take care of CPU time limit,
@@ -153,174 +165,129 @@ async def execute_test(runner_config: RunnerConfig, input_abspath: str,
         #   we parse execution time
         # But also it doesn't care about number of threads or processes,
         # creation of which is illegal on other platforms
-        f'{runner_config.command} ./{runner_config.file_path} > '
+        f'{config.command} ./{config.file_path} > '
         f'/dev/null"',
         network_disabled=True,  # Polite way of saying network=None
         detach=True,  # Do not wait for container to finish
         volumes=container_volumes,
-        mem_limit=f'{memory_limit}M')
+        mem_limit=f'{test_to_worker.memory_limit}M')
 
     try:
         # Wait for container to finish and get a result
         result = container.wait()
 
-        status_code = result['StatusCode']
-
         logs = container.logs().decode()
-        print(logs)
-        # Real(wall) time, user(cpu) time, sys(kernel) time
-        real, user, _sys = runner.parse_time.parse(logs)
 
-        # Logs contain error stream
-        # (time command output + optional error of program)
-        # So we check if it matches the time command output regex
-        if status_code in (0, 124):
-            if not runner.parse_time.check(logs):
-                # Someone hacked the universe
-                if status_code == 0:
-                    return lambda test_id: TestResult(test_id, 'UnknownError',
-                                                      None, None, None)
-                else:
-                    # Normal case
-                    return lambda test_id: TestResult(test_id, 'RuntimeError',
-                                                      None, None, None)
+        result = process_container_result(test_id, result, logs, test_to_worker.cpu_time_limit,
+                                          test_to_worker.wall_time_limit, temporary_file_descriptor)
 
-        # Program exited properly
-        # But it doesn't mean program haven't violated CPU time limit
-        # as CPU time < real time
-        if status_code == 0:
-            if user > cpu_time_limit:
-                return lambda test_id: TestResult(test_id, 'TimeLimit',
-                                                  None, None, None)
-
-            # Read output.txt
-            with os.fdopen(temporary_file_descriptor) as temporary_file:
-                result = temporary_file.read()
-
-            return lambda test_id: TestResult(test_id, 'Success', result, real,
-                                              user)
-        elif status_code == 137:
-            # Program was killed
-            # Check if it was wall time limit
-            if real > wall_time_limit:
-                return lambda test_id: TestResult(test_id, 'TimeLimit',
-                                                  None, None, None)
-
-            # Otherwise program was killed by container cgroup OOM killer
-            # e.g. memory limit
-            return lambda test_id: TestResult(test_id, 'OutOfMemory', None,
-                                              None, None)
-        elif status_code == 124:
-            return lambda test_id: TestResult(test_id, 'TimeLimit',
-                                              None, None, None)
-        # In all other cases it is an RuntimeError
-        return lambda test_id: TestResult(test_id, 'RuntimeError', None,
-                                          None, None)
+        async with pool.acquire() as conn:
+            await checker.process_test_result(result, test_to_worker.submission_id, conn)
     finally:
-        # Always take trash after yourself
         container.remove()
 
+        if config.is_compilable:
+            volume.remove()
 
-async def execute_tests(
-        submission_to_runner: SubmissionToRunner
-) -> Optional[list]:
-    """Execute all test for submission."""
-    if submission_to_runner.lang not in runner_configs:
-        print(f'{submission_to_runner.lang} isn\'t supported!')
-        return
 
-    # Download submission code and get path to it
-    submission_code_path = await storage.download_submission_code(
-        submission_to_runner.submission_id, submission_to_runner.lang)
+def compile(submission_code_path: str, config: CompilerConfig) -> Optional[Volume]:
+    """Compile code.
 
-    logging.info(f'#{submission_to_runner.submission_id} Downloaded code')
-
-    # Submission code basename
-    submission_code_path_basename = os.path.basename(submission_code_path)
-
-    # Submission code absolute path
-    submission_code_path = os.path.abspath(submission_code_path)
-
-    compiler_config = compiler_configs[submission_to_runner.lang]
-
+    submission_code_path: str
+    config: CompilerConfig
+    """
     volume = client.volumes.create()
 
-    compiler_config.file_path = submission_code_path_basename
-    compiler_config.abs_filepath = submission_code_path
-    compiler_config.volume_name = volume.name
+    submission_code_basename = os.path.basename(submission_code_path)
 
-    runner_config = await compile_code(submission_to_runner.lang,
-                                       compiler_config)
+    container = client.containers.run(
+        config.image,
+        f'bash -c "cd /usr/app;'
+        f'{config.command} {submission_code_basename} '
+        f'{config.args}"',
+        network_disabled=True,  # Polite way of saying network=None
+        detach=True,  # Do not wait for container to finish
+        volumes={
+            os.path.abspath(submission_code_path): {
+                'bind': f'/usr/app/{submission_code_basename}',
+                'ro': True  # read-only
+            },
+            volume.name: {
+                'bind': f'/usr/app/compiled',
+                'ro': False  # read-only
+            }
+        })
 
-    # A list to store results of executing each test
-    execute_result = list()
-
-    # If compiler returned None it means that it is compilation error and
-    # there is no need in running tests, so set CompilationError TestResult
-    # for each test
-    if runner_config is None:
-        for test_id in submission_to_runner.test_ids:
-            execute_result.append(TestResult(test_id, 'CompilationError',
-                                             None, None, None))
-    else:
-
-        # Compilation was successful or skipped6 so running the tests
-        for test_id, input_path in zip(
-                submission_to_runner.test_ids,
-                await storage.download_inputs(submission_to_runner.test_ids)):
-            execute_result.append(
-                (await execute_test(runner_config,
-                                    os.path.abspath(input_path),
-                                    submission_to_runner.memory_limit,
-                                    submission_to_runner.wall_time_limit,
-                                    submission_to_runner.cpu_time_limit))
-                (test_id))
-
-    logging.info(f'#{submission_to_runner.submission_id} Executed tests')
-
-    return execute_result
-
-
-async def compile_code(lang: str, compiler_config: CompilerConfig):
-    """Compile code."""
-    if not compiler_config.is_compilable:
-        runner_config = runner_configs[lang]
-
-        runner_config.file_path = compiler_config.file_path
-        runner_config.abs_file_path = compiler_config.abs_filepath
-
-    else:
-
-        container = client.containers.run(
-            compiler_config.image,
-            f'bash -c "cd /usr/app;'
-            f'{compiler_config.command} {compiler_config.file_path} '
-            f'{compiler_config.args}"',
-            network_disabled=True,  # Polite way of saying network=None
-            detach=True,  # Do not wait for container to finish
-            volumes={
-                compiler_config.abs_filepath: {
-                    'bind': f'/usr/app/{compiler_config.file_path}',
-                    'ro': True  # read-only
-                },
-                compiler_config.volume_name: {
-                    'bind': f'/usr/app/compiled',
-                    'ro': False  # read-only
-                }
-            })
-
-        # Get the result of running container
+    try:
         result = container.wait()
 
-        # Delete container after executing
-        container.remove()
+        status_code = result['StatusCode']
 
-        # It checks status code of result and returns None, if it is not 0 -
-        # this means compilation error
-        if result['StatusCode'] != 0:
+        if status_code != 0:
             return None
 
-        runner_config = runner_configs[lang]
-        runner_config.volume_name = compiler_config.volume_name
+        return volume
+    finally:
+        container.remove()
 
-    return runner_config
+
+async def update_task_bests(submission_id: int, pool: Pool):
+    """Call update_task_bests from checker module.
+
+    Parameters
+    ----------
+    submission_id: int
+    pool: Pool
+        Connection pool
+    """
+    async with pool.acquire() as conn:
+        await checker.update_task_bests(submission_id, conn)
+
+
+async def compilation_error(submission_id: int, pool: Pool):
+    """Change submission status to CompilationError.
+
+    Parameters
+    ----------
+    submission_id: int
+    pool: Pool
+        Connection pool
+    """
+    async with pool.acquire() as conn:
+        await database.change_submission_status(submission_id, 'CompilationError', conn)
+
+
+def worker(queue: Queue, completed_tests: dict):
+    """Run worker.
+
+    queue: Queue
+        tests to execute queue
+    completed_tests: dict
+        Used to know when all tests for submission were executed.
+    """
+    loop = asyncio.new_event_loop()
+
+    pool = loop.run_until_complete(database.establish_connection_from_env())
+
+    while True:
+        test_to_worker: TestToWorker = queue.get()
+
+        submission_id = test_to_worker.submission_id
+
+        compiler_config = compiler_configs[test_to_worker.lang]
+
+        if compiler_config.is_compilable:
+            result = compile(test_to_worker.submission_code_path, compiler_config)
+
+            if result is None:
+                compilation_error(submission_id, pool)
+                return
+
+            loop.run_until_complete(execute_test(test_to_worker, pool, result))
+        else:
+            loop.run_until_complete(execute_test(test_to_worker, pool))
+
+        completed_tests[submission_id] -= 1
+
+        if completed_tests[submission_id] == 0:
+            loop.run_until_complete(update_task_bests(submission_id, pool))

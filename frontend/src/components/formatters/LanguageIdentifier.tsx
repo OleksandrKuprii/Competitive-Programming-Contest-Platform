@@ -72,4 +72,4 @@ const LanguageIdentifier: React.FunctionComponent<{
   return <></>;
 };
 
-export default LanguageIdentifier;
+export default React.memo(LanguageIdentifier);

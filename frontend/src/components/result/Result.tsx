@@ -2,7 +2,13 @@ import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-const Result = ({ points, status }: { points: number | undefined; status?: string[] }) => {
+const Result = ({
+  points,
+  status,
+}: {
+  points: number | undefined;
+  status?: string[];
+}) => {
   const { t } = useTranslation();
 
   if (!status || status.length === 0) {
@@ -41,4 +47,4 @@ const Result = ({ points, status }: { points: number | undefined; status?: strin
   return <>{status.join(', ')}</>;
 };
 
-export default Result;
+export default React.memo(Result);

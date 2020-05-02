@@ -10,17 +10,22 @@ const CategoryFilter = () => {
   );
 
   const selected = useStoreState(
-    (state) => state.filter.options.get('task.category') as string,
+    (state) =>
+      state.filter.options.find(
+        (o) => o.tableName === 'task' && o.name === 'category',
+      )?.option as string,
   );
 
   const category = categories.find((c) => c.id === selected);
 
-  const changedOption = useStoreActions((state) => state.filter.changedOption);
+  const changedOptions = useStoreActions(
+    (state) => state.filter.changedOptions,
+  );
   const deletedOption = useStoreActions((state) => state.filter.deletedOption);
 
   return (
     <SelectableFilter
-      header="Category"
+      header="category"
       value={category?.name || ''}
       onChange={(e) => {
         const { value } = e.target as HTMLInputElement;
@@ -34,11 +39,13 @@ const CategoryFilter = () => {
           const newCategory = categories.find((c) => c.name === value);
 
           if (newCategory !== undefined) {
-            changedOption({
-              tableName: 'task',
-              name: 'category',
-              value: newCategory.id,
-            });
+            changedOptions([
+              {
+                tableName: 'task',
+                name: 'category',
+                value: newCategory.id,
+              },
+            ]);
           }
         }
       }}

@@ -101,6 +101,10 @@ export interface DataModel<
 
   items: Array<DataItem>;
 
+  lastFetchedRange?: Date;
+
+  fetchedRange: Action<DataModel<Identifier, DataItem>>;
+
   updated: Action<DataModel<Identifier, DataItem>, DataItem>;
   updatedMany: Action<DataModel<Identifier, DataItem>, DataItem[]>;
 
@@ -190,6 +194,12 @@ export interface TaskLimits {
 
 export interface TaskModel extends DataModel<string, Task> {}
 
+export interface JoinedTask extends Task {
+  result: number;
+  submissionId?: number;
+  status?: string[];
+}
+
 /* </editor-fold> */
 
 /* <editor-fold desc="SubmissionModel"> */
@@ -229,7 +239,12 @@ export interface SubmissionHunterModel {
   startedHunting: Action<SubmissionHunterModel, number>;
   receivedResults: Action<SubmissionHunterModel, Submission>;
 
+  checkSubmissions: Action<SubmissionHunterModel>;
+
+  onStartedHunting: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
   onSubmit: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
+  onFetchedSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
+  onCheckSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
 }
 
 /* </editor-fold> */
@@ -343,17 +358,26 @@ export interface SortModel {
 
 /* <editor-fold desc="FilterModel"> */
 
-export type FilterOption = string | number | { from: number; to: number };
+export type FilterOption =
+  | string
+  | number
+  | boolean
+  | { from: number; to: number };
 
 export interface FilterModel {
-  options: Map<string, FilterOption>;
+  options: Array<{ tableName: string; name: string; option: FilterOption }>;
 
-  changedOption: Action<
+  changedOptions: Action<
     FilterModel,
-    { tableName: string; name: string; value: FilterOption }
+    { tableName: string; name: string; value: FilterOption; remove?: boolean }[]
   >;
 
   deletedOption: Action<FilterModel, { tableName: string; name: string }>;
+
+  getOption: Computed<
+    FilterModel,
+    (tableName: string, name: string) => FilterOption | undefined
+  >;
 
   getOptions: Computed<
     FilterModel,

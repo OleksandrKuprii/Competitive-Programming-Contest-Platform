@@ -40,6 +40,19 @@ class SubmissionToRunner:
 
 
 @dataclass
+class TestToWorker:
+    """Test to worker."""
+
+    submission_id: int
+    submission_code_path: str
+    test_id: int
+    lang: str
+    wall_time_limit: int
+    cpu_time_limit: int
+    memory_limit: int
+
+
+@dataclass
 class SubmissionToStorage:
     """Submission that storage can accept."""
 
@@ -56,14 +69,6 @@ class TestResult:
     result: Optional[str]  # Submission program output
     wall_time: Optional[int]
     cpu_time: Optional[int]
-
-
-@dataclass
-class ResultToChecker:
-    """Result of user's submission program that checker accepts."""
-
-    submission_id: int
-    test_results: List[TestResult]
 
 
 @dataclass
@@ -85,9 +90,6 @@ class CompilerConfig:
     image: str = None
     command: str = None
     args: str = None
-    file_path: str = None
-    abs_filepath: str = None
-    volume_name: str = None
 
 
 @dataclass

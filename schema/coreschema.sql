@@ -66,7 +66,7 @@ create table if not exists coreschema.categories (
     name varchar
 );
 
-create table coreschema.task_statistic
+create table if not exists coreschema.task_statistic
 (
 	id serial,
 	task_id int references coreschema.tasks(id),
@@ -74,6 +74,21 @@ create table coreschema.task_statistic
 	"full" int,
 	partial int,
 	zero int
+);
+
+create table if not exists coreschema.users
+(
+    id varchar unique primary key,
+    nickname varchar unique,
+    name varchar,
+    birthday date,
+    country varchar,
+    bio text,
+    city varchar,
+    school varchar,
+    email varchar,
+    picture varchar,
+    registered timestamp with time zone
 );
 
 
