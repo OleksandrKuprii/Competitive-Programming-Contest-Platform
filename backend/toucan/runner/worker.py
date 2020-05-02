@@ -2,8 +2,9 @@
 import asyncio
 import os
 import tempfile
+from concurrent.futures.thread import ThreadPoolExecutor
 from queue import Queue
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 import docker
 from asyncpg.pool import Pool
@@ -12,35 +13,11 @@ from docker.models.volumes import Volume
 import checker
 import database
 import storage
-from dataclass import TestToWorker, CompilerConfig, RunnerConfig, TestResult
+from dataclass import TestToWorker, CompilerConfig, TestResult
 from runner import parse_time
+from runner.configs import compiler_configs, runner_configs
 
 client = docker.from_env()
-
-compiler_configs = {
-    'python3': CompilerConfig(is_compilable=False),
-    'python2': CompilerConfig(is_compilable=False),
-    'c': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='gcc',
-                        args='-o compiled/compiled.out'),
-    'c++': CompilerConfig(is_compilable=True, image='gcc:9.3.0', command='g++',
-                          args='-o compiled/compiled.out'),
-    'pascal': CompilerConfig(is_compilable=True, image='fpc',
-                             command='fpc', args="-o'compiled/compiled.out'")
-}
-
-runner_configs = {
-    'python3': RunnerConfig(image='python:3.8-slim', command='python',
-                            is_compilable=False),
-    'python2': RunnerConfig(image='python:2.7-slim', command='python',
-                            is_compilable=False),
-    'c': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
-                      file_path='compiled/compiled.out'),
-    'c++': RunnerConfig(image='gcc:9.3.0', command='', is_compilable=True,
-                        file_path='compiled/compiled.out'),
-    'pascal': RunnerConfig(image='fpc', command='',
-                           is_compilable=True,
-                           file_path='compiled/compiled.out')
-}
 
 
 def process_container_result(test_id: int, result: Any, logs, cpu_time_limit: int,
@@ -291,3 +268,29 @@ def worker(queue: Queue, completed_tests: dict):
 
         if completed_tests[submission_id] == 0:
             loop.run_until_complete(update_task_bests(submission_id, pool))
+
+
+def pull_all(ignore: List[str]):
+    """Pull all images specified in runner and compiler configs except listed in ignore.
+
+    ignore: List[str]
+        Ignore list
+    """
+    compiler_images = [compiler_configs[key].image
+                       for key in compiler_configs
+                       if compiler_configs[key].image is not None]
+
+    runner_images = [runner_configs[key].image
+                     for key in runner_configs
+                     if runner_configs[key].image is not None]
+
+    to_pull = filter(lambda x: x not in ignore, set(compiler_images + runner_images))
+
+    def pull_one(image: str):
+        print(f"Pulling {image}")
+        client.containers.pull(image)
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        executor.map(pull_one, to_pull)
+
+    print('Pulled all')
