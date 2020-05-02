@@ -1,10 +1,16 @@
 create schema if not exists coreschema;
 
+create table if not exists coreschema.categories (
+    id serial primary key,
+    alias varchar(50) unique,
+    name varchar
+);
+
 create table if not exists coreschema.tasks (
     id serial primary key,
     alias varchar(128) unique,
     name varchar(128) unique,
-    category varchar(50),
+    category varchar(50) references coreschema.categories(alias),
     difficulty int,
     wall_time_limit int,
     cpu_time_limit int,
@@ -12,9 +18,24 @@ create table if not exists coreschema.tasks (
     created timestamp
 );
 
+create table if not exists coreschema.users
+(
+    id varchar unique primary key,
+    nickname varchar unique,
+    name varchar,
+    birthday date,
+    country varchar,
+    bio text,
+    city varchar,
+    school varchar,
+    email varchar,
+    picture varchar,
+    registered timestamp with time zone
+);
+
 create table if not exists coreschema.task_descriptions (
     task_id int references coreschema.tasks(id),
-    alias varchar(50),
+    alias varchar(50) references coreschema.tasks(alias),
     main text,
     input_format text,
     output_format text,
@@ -23,7 +44,7 @@ create table if not exists coreschema.task_descriptions (
 
 create table if not exists coreschema.task_examples (
     task_id int references coreschema.tasks(id),
-    alias varchar(50),
+    alias varchar(50) references coreschema.tasks(alias),
     input_data text,
     output_data text
 );
@@ -31,7 +52,7 @@ create table if not exists coreschema.task_examples (
 create table if not exists coreschema.submissions (
     id serial primary key,
     published_at timestamp with time zone,
-    user_id varchar(50),
+    user_id varchar(50) references coreschema.users(id),
     lang varchar(50),
     task_id int references coreschema.tasks(id),
     status varchar(50)
@@ -55,15 +76,9 @@ create table if not exists coreschema.results (
 
 create table if not exists coreschema.task_bests (
     id serial primary key,
-    user_id varchar(50),
+    user_id varchar(50) references coreschema.users(id),
     task_id int references coreschema.tasks(id),
     submission_id int references coreschema.submissions(id)
-);
-
-create table if not exists coreschema.categories (
-    id serial primary key,
-    alias varchar(50),
-    name varchar
 );
 
 create table if not exists coreschema.task_statistic
@@ -74,21 +89,6 @@ create table if not exists coreschema.task_statistic
 	"full" int,
 	partial int,
 	zero int
-);
-
-create table if not exists coreschema.users
-(
-    id varchar unique primary key,
-    nickname varchar unique,
-    name varchar,
-    birthday date,
-    country varchar,
-    bio text,
-    city varchar,
-    school varchar,
-    email varchar,
-    picture varchar,
-    registered timestamp with time zone
 );
 
 
