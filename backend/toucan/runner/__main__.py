@@ -7,9 +7,13 @@ import os
 import json
 from queue import Queue
 from threading import Thread
+
 from dataclass import SubmissionToRunner, TestToWorker
 import storage
-from runner.worker import worker, pull_all
+from runner.worker import worker
+from runner.configs import compiler_configs
+from runner.compiler import compile, compilation_error
+
 
 logging.basicConfig(filename='runner.log',
                     filemode='w',
@@ -22,7 +26,7 @@ completed_tests = {}
 
 async def main():
     """Start runner."""
-    pull_all(['fpc'])
+    # pull_all(['fpc'])
 
     queue = Queue()
 
@@ -46,6 +50,20 @@ async def main():
 
                     completed_tests[id] = len(submission_to_runner.test_ids)
 
+                    compiler_config = compiler_configs[lang]
+
+                    volume = None
+
+                    if compiler_config.is_compilable:
+                        volume = await compile(submission_code_path, compiler_config)
+
+                        logging.info(f'#{id} Compiled')
+
+                        if volume is None:
+                            await compilation_error(id, submission_to_runner.test_ids)
+                            logging.info(f'#{id} Compilation error')
+                            continue
+
                     for test_id in submission_to_runner.test_ids:
                         queue.put(TestToWorker(
                             submission_id=id,
@@ -55,6 +73,7 @@ async def main():
                             wall_time_limit=submission_to_runner.wall_time_limit,
                             cpu_time_limit=submission_to_runner.cpu_time_limit,
                             memory_limit=submission_to_runner.memory_limit,
+                            volume=volume
                         ))
 
                 for message in messages:

@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
+from docker.models.volumes import Volume
 
 
 @dataclass
@@ -50,6 +51,7 @@ class TestToWorker:
     wall_time_limit: int
     cpu_time_limit: int
     memory_limit: int
+    volume: Volume = None
 
 
 @dataclass
