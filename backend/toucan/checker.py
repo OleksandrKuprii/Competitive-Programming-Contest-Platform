@@ -29,8 +29,6 @@ async def update_task_bests(submission_id: int, conn: Connection):
     # Changing submission status in database to 'Completed'
     await database.change_submission_status(submission_id, 'Completed', conn)
 
-    logging.info(f'#{submission_id} Finished everything')
-
 
 async def process_test_result(test_result: TestResult, submission_id: int, conn) -> None:
     """Check result_to_checker and update corresponding rows in database.
@@ -45,15 +43,13 @@ async def process_test_result(test_result: TestResult, submission_id: int, conn)
     # Getting correct result from storage
     correct_result = await storage.get_correct_result(test_id)
 
-    logging.info(f'#{submission_id} Checker got correct results')
-
     # Getting points for each test from database
     points = await database.get_points_for_test(test_id, conn)
 
     # Checking results
     result_to_db = await check_test_result(test_result, correct_result, points, submission_id)
 
-    logging.info(f'#{submission_id} Checked results')
+    logging.info(f'#{submission_id} Checked {test_id}')
 
     # Adding results to database
     await database.add_result_to_db(result_to_db, conn)

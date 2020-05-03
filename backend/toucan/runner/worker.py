@@ -1,10 +1,11 @@
 """Worker logic."""
 import asyncio
+import logging
 import os
 import tempfile
 from concurrent.futures.thread import ThreadPoolExecutor
 from queue import Queue
-from typing import Optional, Any, List
+from typing import Any, List
 
 import docker
 from asyncpg.pool import Pool
@@ -13,11 +14,17 @@ from docker.models.volumes import Volume
 import checker
 import database
 import storage
-from dataclass import TestToWorker, CompilerConfig, TestResult
+from dataclass import TestToWorker, TestResult
 from runner import parse_time
 from runner.configs import compiler_configs, runner_configs
 
 client = docker.from_env()
+
+logging.basicConfig(filename='runner.log',
+                    filemode='w',
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d/%m/%Y %H:%M:%S')
 
 
 def process_container_result(test_id: int, result: Any, logs, cpu_time_limit: int,
@@ -158,52 +165,10 @@ async def execute_test(test_to_worker: TestToWorker, pool: Pool, volume: Volume 
         result = process_container_result(test_id, result, logs, test_to_worker.cpu_time_limit,
                                           test_to_worker.wall_time_limit, temporary_file_descriptor)
 
+        logging.info(f'#{test_to_worker.submission_id} Executed {test_to_worker.test_id}')
+
         async with pool.acquire() as conn:
             await checker.process_test_result(result, test_to_worker.submission_id, conn)
-    finally:
-        container.remove()
-
-        if config.is_compilable:
-            volume.remove()
-
-
-def compile(submission_code_path: str, config: CompilerConfig) -> Optional[Volume]:
-    """Compile code.
-
-    submission_code_path: str
-    config: CompilerConfig
-    """
-    volume = client.volumes.create()
-
-    submission_code_basename = os.path.basename(submission_code_path)
-
-    container = client.containers.run(
-        config.image,
-        f'bash -c "cd /usr/app;'
-        f'{config.command} {submission_code_basename} '
-        f'{config.args}"',
-        network_disabled=True,  # Polite way of saying network=None
-        detach=True,  # Do not wait for container to finish
-        volumes={
-            os.path.abspath(submission_code_path): {
-                'bind': f'/usr/app/{submission_code_basename}',
-                'ro': True  # read-only
-            },
-            volume.name: {
-                'bind': f'/usr/app/compiled',
-                'ro': False  # read-only
-            }
-        })
-
-    try:
-        result = container.wait()
-
-        status_code = result['StatusCode']
-
-        if status_code != 0:
-            return None
-
-        return volume
     finally:
         container.remove()
 
@@ -219,19 +184,6 @@ async def update_task_bests(submission_id: int, pool: Pool):
     """
     async with pool.acquire() as conn:
         await checker.update_task_bests(submission_id, conn)
-
-
-async def compilation_error(submission_id: int, pool: Pool):
-    """Change submission status to CompilationError.
-
-    Parameters
-    ----------
-    submission_id: int
-    pool: Pool
-        Connection pool
-    """
-    async with pool.acquire() as conn:
-        await database.change_submission_status(submission_id, 'CompilationError', conn)
 
 
 def worker(queue: Queue, completed_tests: dict):
@@ -251,23 +203,16 @@ def worker(queue: Queue, completed_tests: dict):
 
         submission_id = test_to_worker.submission_id
 
-        compiler_config = compiler_configs[test_to_worker.lang]
-
-        if compiler_config.is_compilable:
-            result = compile(test_to_worker.submission_code_path, compiler_config)
-
-            if result is None:
-                compilation_error(submission_id, pool)
-                return
-
-            loop.run_until_complete(execute_test(test_to_worker, pool, result))
-        else:
-            loop.run_until_complete(execute_test(test_to_worker, pool))
+        loop.run_until_complete(execute_test(test_to_worker, pool, test_to_worker.volume))
 
         completed_tests[submission_id] -= 1
 
         if completed_tests[submission_id] == 0:
             loop.run_until_complete(update_task_bests(submission_id, pool))
+
+            test_to_worker.volume.remove()
+
+            logging.info(f'#{submission_id} Finished')
 
 
 def pull_all(ignore: List[str]):
