@@ -17,6 +17,7 @@ import storage
 from dataclass import TestToWorker, TestResult
 from runner import parse_time
 from runner.configs import compiler_configs, runner_configs
+from statistic import statistic
 
 client = docker.from_env()
 
@@ -183,6 +184,7 @@ async def update_task_bests(submission_id: int, pool: Pool):
         Connection pool
     """
     async with pool.acquire() as conn:
+        await statistic.update_public_task_rating(submission_id, conn)
         await checker.update_task_bests(submission_id, conn)
 
 
@@ -210,7 +212,8 @@ def worker(queue: Queue, completed_tests: dict):
         if completed_tests[submission_id] == 0:
             loop.run_until_complete(update_task_bests(submission_id, pool))
 
-            test_to_worker.volume.remove()
+            if test_to_worker.volume is not None:
+                test_to_worker.volume.remove()
 
             logging.info(f'#{submission_id} Finished')
 
