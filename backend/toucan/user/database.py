@@ -22,8 +22,11 @@ async def get_user_info(nickname: str, conn: Connection) -> Optional[dict]:
     """
     async with conn.transaction():
         fetch = await conn.fetchrow("""
-            SELECT *
+            SELECT nickname, name, birthday, country, bio, city, school, email, picture,
+                registered, public_task_rating
             FROM coreschema.users
+            JOIN coreschema.rating
+            ON users.id = rating.user_id
             WHERE nickname = $1
         """, nickname)
 
@@ -31,9 +34,6 @@ async def get_user_info(nickname: str, conn: Connection) -> Optional[dict]:
         return None
 
     user_info = dict(fetch)
-
-    # Delete user id column
-    del user_info['id']
 
     return user_info
 
@@ -85,6 +85,10 @@ async def register_user(user_info: dict, conn: Connection) -> None:
             VALUES ($1, $2, $3, $4, $5, $6)
         """, user_info['sub'], user_info['nickname'], user_info['name'],
             user_info['picture'], user_info['email'], timestamp)
+
+        await conn.execute("""
+            INSERT INTO coreschema.rating (user_id, public_task_rating) VALUES ($1, 0)
+        """, user_info['sub'])
 
 
 async def update_profile(user_id: str, sql: str, conn: Connection) -> None:
