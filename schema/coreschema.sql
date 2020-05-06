@@ -33,6 +33,13 @@ create table if not exists coreschema.users
     registered timestamp with time zone
 );
 
+create table if not exists coreschema.rating
+(
+    id serial,
+    user_id varchar references coreschema.users(id),
+    public_task_rating int
+);
+
 create table if not exists coreschema.task_descriptions (
     task_id int references coreschema.tasks(id),
     alias varchar(50) references coreschema.tasks(alias),
