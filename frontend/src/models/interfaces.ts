@@ -1,39 +1,16 @@
-import { Action, Computed, TargetResolver, Thunk, ThunkOn } from 'easy-peasy';
+import { Action, ActionOn, Computed, Thunk, ThunkOn } from 'easy-peasy';
 import Injections from '../injections';
-
-/* <editor-fold desc="General"> */
-
-export interface ObjectWithId<Identifier> extends StringIndexSignature {
-  id: Identifier;
-}
-
-export interface StringIndexSignature {
-  [key: string]: any;
-}
-
-export interface ObjectWithLoadingStatus {
-  loading?: boolean;
-}
-
-/* </editor-fold> */
-
-/* <editor-fold desc="StoreModel"> */
 
 export interface StoreModel {
   auth0: Auth0Model;
   task: TaskModel;
-  category: CategoryModel;
   submission: SubmissionModel;
   solutionSubmission: SolutionSubmissionModel;
   notification: NotificationModel;
   submissionHunter: SubmissionHunterModel;
-  sort: SortModel;
-  filter: FilterModel;
+  user: UserModel;
 }
 
-/* </editor-fold> */
-
-/* <editor-fold desc="Auth0"> */
 export interface Auth0ModelInitialState {
   isAuthenticated: boolean;
   user: any;
@@ -45,121 +22,23 @@ export interface Auth0Model extends Auth0ModelInitialState {
   signIn: Thunk<Auth0Model, undefined, Injections>;
   signOut: Thunk<Auth0Model, undefined, Injections>;
 }
-/* </editor-fold> */
-
-/* <editor-fold desc="Models"> */
-
-/* <editor-fold desc="LoadingModel"> */
 
 export interface LoadingModel {
-  flag: boolean;
+  loadingStatus: boolean;
   loading: Action<LoadingModel>;
   loaded: Action<LoadingModel>;
 }
 
-/* </editor-fold> */
-
-/* <editor-fold desc="DataModel"> */
-
-export interface DataModelItem<T>
-  extends ObjectWithId<T>,
-    ObjectWithLoadingStatus {}
-
-export interface DataFetcherArgs {
-  token?: string;
-}
-
-export interface DataModelFactoryArgs<
-  Identifier,
-  Item extends DataModelItem<any>
-> {
-  dataItemFetcher: (
-    id: Identifier,
-    args: DataFetcherArgs,
-  ) => Promise<{ item: Item } | undefined>;
-  dataRangeFetcher: (
-    range: DataItemRangeIdentifier,
-    args: DataFetcherArgs,
-  ) => Promise<Array<{ item: Item }>>;
-
-  onChangedOneTargets: TargetResolver<DataModel<Identifier, Item>, StoreModel>;
-  onChangedManyTargets: TargetResolver<DataModel<Identifier, Item>, StoreModel>;
-
-  dataModelIdentifier: string;
-}
-
-export type DataItemRangeIdentifier = {
-  offset: number;
-  number: number;
-};
-
-export interface DataModel<
-  Identifier,
-  DataItem extends ObjectWithId<Identifier>
-> {
-  loading: LoadingModel;
-
-  items: Array<DataItem>;
-
-  updated: Action<DataModel<Identifier, DataItem>, DataItem>;
-  updatedMany: Action<DataModel<Identifier, DataItem>, DataItem[]>;
-
-  fetchOne: Thunk<DataModel<Identifier, DataItem>, Identifier, Injections>;
-  fetchRange: Thunk<
-    DataModel<Identifier, DataItem>,
-    DataItemRangeIdentifier,
-    Injections
-  >;
-
-  onFetchedOne: ThunkOn<DataModel<Identifier, DataItem>>;
-  onFetchedRange: ThunkOn<DataModel<Identifier, DataItem>>;
-
-  onChangedOne: ThunkOn<
-    DataModel<Identifier, DataItem>,
-    Injections,
-    StoreModel
-  >;
-  onChangedMany: ThunkOn<
-    DataModel<Identifier, DataItem>,
-    Injections,
-    StoreModel
-  >;
-
-  byId: Computed<
-    DataModel<Identifier, DataItem>,
-    (id: Identifier) => DataItem | undefined
-  >;
-  nItemsById: Computed<
-    DataModel<Identifier, DataItem>,
-    (number: number) => DataItem[]
-  >;
-  nItemsByCustomKeys: Computed<
-    DataModel<Identifier, DataItem>,
-    (
-      keys: {
-        key: (item: DataItem) => string | number | undefined;
-        option: AscDescOrNone;
-      }[],
-      filters?: { option: FilterOption; name: string }[],
-      joinWith?: (item: DataItem) => object,
-    ) => DataItem[]
-  >;
-}
-
-/* </editor-fold> */
-
-/* <editor-fold desc="TaskModel"> */
-
-export interface TaskCustomSection {
-  name: string;
-  data: string;
-}
-
-export interface Task extends DataModelItem<string> {
+export interface Task {
+  id: string;
   name?: string;
-  category?: string;
+  categoryId?: string;
+  categoryName?: string;
   difficulty?: number;
-  rating: TaskRating;
+  points?: number;
+  status?: string[];
+  submissionId?: number;
+  rating?: TaskRating;
   description?: {
     main?: string;
     inputFormat?: string;
@@ -169,6 +48,11 @@ export interface Task extends DataModelItem<string> {
   limits?: TaskLimits;
   customSections?: TaskCustomSection[];
   publishedAt?: Date;
+}
+
+export interface TaskCustomSection {
+  name: string;
+  data: string;
 }
 
 export interface TaskRating {
@@ -188,40 +72,74 @@ export interface TaskLimits {
   memory: number;
 }
 
-export interface TaskModel extends DataModel<string, Task> {}
+export interface TaskModel extends LoadingModel {
+  tasks: Task[];
 
-export interface JoinedTask extends Task {
-  result: number;
-  submissionId?: number;
-  status?: string[];
+  fetch: Thunk<
+    TaskModel,
+    { id: string },
+    Injections,
+    StoreModel,
+    Promise<Task>
+  >;
+
+  fetchAll: Thunk<
+    TaskModel,
+    undefined,
+    Injections,
+    StoreModel,
+    Promise<Task[]>
+  >;
+
+  onFetched: ActionOn<TaskModel, StoreModel>;
+  onFetchedAll: ActionOn<TaskModel, StoreModel>;
+
+  categories: Computed<TaskModel, Category[], StoreModel>;
 }
 
-/* </editor-fold> */
-
-/* <editor-fold desc="SubmissionModel"> */
-
 export interface SubmissionTest {
+  id: number;
   status: string;
   points: number;
   cpuTime: number;
-  realtime: number;
+  realTime: number;
 }
 
-export interface Submission extends DataModelItem<number> {
-  taskAlias?: string;
-  language?: string;
-  status?: string[];
-  points?: number;
-  submitted?: Date;
-  tests?: SubmissionTest[];
+export interface Submission {
+  id: number;
   code?: string;
+  language?: string;
+  points?: number;
+  status?: string[];
+  submitted?: Date;
+  taskId?: string;
+  taskName?: string;
+  tests?: SubmissionTest[];
+  testCount?: number;
 }
 
-export interface SubmissionModel extends DataModel<number, Submission> {}
+export interface SubmissionModel extends LoadingModel {
+  submissions: Submission[];
 
-/* </editor-fold> */
+  fetch: Thunk<
+    SubmissionModel,
+    { id: number },
+    Injections,
+    StoreModel,
+    Promise<Submission | { error: boolean }>
+  >;
+  fetchAll: Thunk<
+    SubmissionModel,
+    undefined,
+    Injections,
+    StoreModel,
+    Promise<Submission[] | { error: boolean }>
+  >;
 
-/* <editor-fold desc="SubmissionHunter"> */
+  onFetched: ActionOn<SubmissionModel, StoreModel>;
+  onFetchedAll: ActionOn<SubmissionModel, StoreModel>;
+  onSubmitted: ActionOn<SubmissionModel, StoreModel>;
+}
 
 export interface SubmissionHunterModel {
   nowHunting: Set<number>;
@@ -239,13 +157,9 @@ export interface SubmissionHunterModel {
 
   onStartedHunting: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
   onSubmit: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
-  onFetchedSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
+
   onCheckSubmissions: ThunkOn<SubmissionHunterModel, Injections, StoreModel>;
 }
-
-/* </editor-fold> */
-
-/* <editor-fold desc="SolutionSubmissionModel"> */
 
 export interface SolutionSubmissionModel {
   code?: string;
@@ -262,15 +176,10 @@ export interface SolutionSubmissionModel {
     { code: string; filename: string }
   >;
   canceled: Action<SolutionSubmissionModel>;
-  onSubmitRequested: Action<SolutionSubmissionModel, string>;
 
   uploadFile: Thunk<SolutionSubmissionModel, File>;
-  submit: Thunk<SolutionSubmissionModel, string, Injections>;
+  submit: Thunk<SolutionSubmissionModel, string, Injections, StoreModel>;
 }
-
-/* </editor-fold> */
-
-/* <editor-fold desc="NotificationModel"> */
 
 export type Notification = {
   id: number;
@@ -278,6 +187,7 @@ export type Notification = {
     | {
         type: 'submitting';
         taskId: string;
+        taskName: string;
       }
     | {
         type: 'submitted';
@@ -307,80 +217,34 @@ export interface NotificationModel {
   onReceivedResults: ThunkOn<NotificationModel, Injections, StoreModel>;
 }
 
-/* </editor-fold> */
-
-/* <editor-fold desc="CategoryModel"> */
-
-export interface Category extends DataModelItem<string> {
-  name?: string;
+export interface Category {
+  id: string;
+  name: string;
 }
 
-export interface CategoryModel extends DataModel<string, Category> {}
-
-/* </editor-fold> */
-
-/* <editor-fold desc="SortModel"> */
-
-export type AscDescOrNone = 'asc' | 'desc' | undefined;
-
-export interface SortModel {
-  options: Array<{
-    tableName: string;
-    name: string;
-    option: AscDescOrNone;
-    customGetter?: () => {};
-  }>;
-
-  toggleOption: Action<
-    SortModel,
-    { tableName: string; header: string; option: AscDescOrNone }
-  >;
-
-  getOption: Computed<
-    SortModel,
-    (tableName: string, header: string) => AscDescOrNone
-  >;
-
-  getKeys: Computed<
-    SortModel,
-    (
-      tableName: string,
-      defaultOption: { key: string; option: AscDescOrNone },
-    ) => { key: (item: any) => any; option: AscDescOrNone }[]
-  >;
+export interface User {
+  username: string;
+  bio?: string;
+  birthday?: Date;
+  city?: string;
+  country?: string;
+  email?: string;
+  fullname: string;
+  picture?: string;
+  school?: string;
+  signupDate: Date;
 }
 
-/* </editor-fold> */
+export interface UserModel {
+  myProfile?: User;
 
-/* <editor-fold desc="FilterModel"> */
-
-export type FilterOption =
-  | string
-  | number
-  | boolean
-  | { from: number; to: number };
-
-export interface FilterModel {
-  options: Array<{ tableName: string; name: string; option: FilterOption }>;
-
-  changedOptions: Action<
-    FilterModel,
-    { tableName: string; name: string; value: FilterOption; remove?: boolean }[]
+  fetchMyProfile: Thunk<
+    UserModel,
+    undefined,
+    Injections,
+    StoreModel,
+    Promise<User | { error: boolean }>
   >;
 
-  deletedOption: Action<FilterModel, { tableName: string; name: string }>;
-
-  getOption: Computed<
-    FilterModel,
-    (tableName: string, name: string) => FilterOption | undefined
-  >;
-
-  getOptions: Computed<
-    FilterModel,
-    (tableName: string) => { option: FilterOption; name: string }[]
-  >;
+  fetchedMyProfile: ActionOn<UserModel, StoreModel>;
 }
-
-/* </editor-fold> */
-
-/* </editor-fold> */

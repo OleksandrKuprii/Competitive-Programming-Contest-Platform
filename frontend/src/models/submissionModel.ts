@@ -1,94 +1,127 @@
-import dataModel from './generalizers/dataModel';
+import { actionOn, thunk } from 'easy-peasy';
 import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-import { Submission, SubmissionModel, Task } from './interfaces';
+import { Submission, SubmissionModel } from './interfaces';
+import loadingModel from './loadingModel';
+import updateObjectWithProperty from '../utils/updateObjectWithProperty';
 
 const submissionModel: SubmissionModel = {
-  ...dataModel<number, Submission>({
-    dataItemFetcher: async (id, args) => {
-      const { token } = args;
+  ...loadingModel(),
 
-      if (!token) {
-        return { item: { id, loading: false } };
-      }
+  submissions: [],
+
+  fetch: thunk(async (actions, { id }, { injections }) => {
+    try {
+      const token = await injections.auth0.getTokenSilently();
 
       const response = await fetch(`${baseURL}/submission/${id}`, {
-        headers: !token
-          ? {}
-          : {
-              Authorization: `Bearer ${token}`,
-            },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const body = await response.json();
 
-      return {
-        item: {
-          id,
-          loading: false,
-          submitted: new Date(body.timestamp),
-          taskAlias: body.alias,
-          language: body.lang,
-          ...resultToPointsAndStatus(body.result),
-          tests: body.tests.map((test: any) => ({
-            status: test.status,
-            points: test.points,
-            cpuTime: test.cpu_time,
-            realtime: test.wall_time,
-          })),
-          code: body.code,
-        } as Submission,
-        task: {
-          id: body.alias,
-          name: body.name,
-        } as Task,
+      const submission: Submission = {
+        id,
+        taskId: body.alias,
+        taskName: body.name,
+        language: body.lang,
+        ...resultToPointsAndStatus(body.result),
+        code: body.code,
+        tests: body.tests.map((test: any) => ({
+          status: test.status,
+          points: test.points,
+          cpuTime: test.cpu_time,
+          realTime: test.wall_time,
+        })),
+        testCount: body.tests_count,
       };
-    },
-    dataRangeFetcher: async (range, args) => {
-      const { token } = args;
 
-      if (!token) {
-        return [];
-      }
+      return submission;
+    } catch (e) {
+      return { error: true };
+    }
+  }),
+
+  fetchAll: thunk(async (actions, _, { injections }) => {
+    actions.loading();
+
+    try {
+      const token = await injections.auth0.getTokenSilently();
 
       const response = await fetch(
-        `${baseURL}/submissions?offset=${range.offset}&number=${range.number}`,
+        `${baseURL}/submissions?offset=0&number=300`,
         {
-          headers: !token
-            ? {}
-            : {
-                Authorization: `Bearer ${token}`,
-              },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 
       const body = await response.json();
 
-      return body.map((item: any) => ({
-        item: {
-          id: item.id,
-          taskAlias: item.alias,
-          loading: false,
-          submitted: new Date(item.published_at),
-          language: item.lang,
-          ...resultToPointsAndStatus(item.result),
-        } as Submission,
-        task: {
-          id: item.alias,
-          name: item.name,
-        } as Task,
+      const submissions: Submission[] = body.map((item: any) => ({
+        id: item.id,
+        taskId: item.alias,
+        taskName: item.name,
+        submitted: new Date(item.published_at),
+        language: item.lang,
+        ...resultToPointsAndStatus(item.result),
+        testCount: item.tests_count,
       }));
-    },
 
-    onChangedManyTargets: (state, storeActions) => [
-      storeActions.task.fetchRange,
-    ],
-    onChangedOneTargets: (state, storeActions) => [
-      storeActions.solutionSubmission.submit,
-    ],
-
-    dataModelIdentifier: 'submission',
+      return submissions;
+    } catch (e) {
+      return { error: true };
+    }
   }),
+
+  onFetched: actionOn(
+    (actions) => actions.fetch.successType,
+    (state, target) => {
+      const submission = target.result;
+
+      updateObjectWithProperty(
+        state.submissions,
+        'id',
+        submission.id,
+        submission,
+      );
+    },
+  ),
+
+  onFetchedAll: actionOn(
+    (actions) => actions.fetchAll.successType,
+    (state, target) => {
+      const submissions = target.result;
+
+      if (Array.isArray(submissions)) {
+        submissions.forEach((submission) => {
+          updateObjectWithProperty(
+            state.submissions,
+            'id',
+            submission.id,
+            submission,
+          );
+        });
+      }
+
+      state.loadingStatus = false;
+    },
+  ),
+
+  onSubmitted: actionOn(
+    (actions, storeActions) =>
+      storeActions.solutionSubmission.submit.successType,
+    (state, target) => {
+      const submission = target.result;
+
+      if (submission) {
+        state.submissions.unshift(submission);
+      }
+    },
+  ),
 };
 
 export default submissionModel;

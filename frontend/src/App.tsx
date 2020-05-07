@@ -1,81 +1,226 @@
-import React, { useEffect } from 'react';
-import { Container } from 'react-bootstrap';
-import { HashRouter, Route, Switch } from 'react-router-dom';
-import Navbar from './components/layout/Navbar';
-import HomePage from './routes/HomePage';
-import TasksPage from './routes/TasksPage';
-import TournamentsPage from './routes/TournamentsPage';
-import TaskPage from './routes/TaskPage';
-import SubmissionsPage from './routes/SubmissionsPage';
-import SubmissionPage from './routes/SubmissionPage';
-import ErrorPage from './routes/ErrorPage';
-import Notifications from './components/notification/Notifications';
+import React, { useCallback, useEffect, useState } from 'react';
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
+import shallowEqual from 'shallowequal';
+import HomePage from './pages/HomePage';
+import TasksPage from './pages/TasksPage';
+import TournamentsPage from './pages/TournamentsPage';
+import TaskPage from './pages/TaskPage';
+import SubmissionsPage from './pages/SubmissionsPage';
+import SubmissionPage from './pages/SubmissionPage';
 import { useStoreActions, useStoreState } from './hooks/store';
-import MyProfile from './routes/MyProfile';
+import WithNotifications from './components/templates/withNotifications';
+import WithStickyNavbar from './components/templates/withStickyNavbar';
+import TaskFromURL from './components/dataProviders/taskFromURL';
+import SubmissionFromURL from './components/dataProviders/submissionFromUrl';
+import MyProfileFromAPI from './components/dataProviders/myProfileFromAPI';
+import ProfilePage from './pages/ProfilePage';
 
 const App = () => {
-  const fetchTasks = useStoreActions((actions) => actions.task.fetchRange);
-  const fetchSubmissions = useStoreActions(
-    (actions) => actions.submission.fetchRange,
+  const {
+    fetchTasks,
+    fetchTask,
+    fetchSubmissions,
+    fetchSubmission,
+    signIn,
+    signOut,
+    uploadFile,
+    cancelled,
+    submit,
+    selectedLanguage,
+    fetchMyProfile,
+  } = useStoreActions((actions) => ({
+    fetchTask: actions.task.fetch,
+    fetchTasks: actions.task.fetchAll,
+    fetchSubmission: actions.submission.fetch,
+    fetchSubmissions: actions.submission.fetchAll,
+    signIn: actions.auth0.signIn,
+    signOut: actions.auth0.signOut,
+    uploadFile: actions.solutionSubmission.uploadFile,
+    cancelled: actions.solutionSubmission.canceled,
+    submit: actions.solutionSubmission.submit,
+    selectedLanguage: actions.solutionSubmission.selectedLanguage,
+    fetchMyProfile: actions.user.fetchMyProfile,
+  }));
+
+  /* <editor-fold desc="Callbacks"> */
+
+  const fetchTaskCallback = useCallback((id: string) => {
+    fetchTask({ id });
+  }, []);
+
+  const fetchSubmissionCallback = useCallback((id: number) => {
+    fetchSubmission({ id });
+  }, []);
+
+  const signInCallback = useCallback(() => {
+    signIn();
+  }, []);
+
+  const singOutCallback = useCallback(() => {
+    signOut();
+  }, []);
+
+  const onDropAcceptedCallback = useCallback(async (file: File) => {
+    await uploadFile(file);
+
+    document.body.scrollIntoView(false);
+  }, []);
+
+  const cancelledCallback = useCallback(() => {
+    cancelled();
+  }, []);
+
+  const submitCallback = useCallback((taskId) => {
+    submit(taskId);
+  }, []);
+
+  const selectedLanguageCallback = useCallback((language: string) => {
+    selectedLanguage(language);
+  }, []);
+
+  const fetchMyProfileCallback = useCallback(() => {
+    fetchMyProfile();
+  }, []);
+
+  /* </editor-fold> */
+
+  const languages = ['python3', 'python2', 'c++', 'c', 'pascal'];
+
+  const {
+    isAuthenticated,
+    tasks,
+    tasksLoading,
+    submissionsLoading,
+    submissions,
+    language,
+    code,
+    fileUploaded,
+    myProfile,
+    categories,
+  } = useStoreState(
+    (state) => ({
+      isAuthenticated: state.auth0.isAuthenticated,
+      tasks: state.task.tasks,
+      tasksLoading: state.task.loadingStatus,
+      submissions: state.submission.submissions,
+      submissionsLoading: state.submission.loadingStatus,
+      language: state.solutionSubmission.language,
+      code: state.solutionSubmission.code,
+      fileUploaded: state.solutionSubmission.fileUploaded,
+      myProfile: state.user.myProfile,
+      categories: state.task.categories,
+    }),
+    shallowEqual,
   );
-
-  const checkSubmissions = useStoreActions(
-    (actions) => actions.submissionHunter.checkSubmissions,
-  );
-
-  const isAuthenticated = useStoreState((state) => state.auth0.isAuthenticated);
-
-  checkSubmissions();
 
   useEffect(() => {
-    fetchTasks({ offset: 0, number: 300 });
+    fetchTasks();
 
     if (isAuthenticated) {
-      fetchSubmissions({ offset: 0, number: 100 });
+      fetchMyProfile();
+      fetchSubmissions();
     }
-  }, []);
+  }, [fetchTasks, fetchSubmissions]);
+
+  const [selectedCategories, setSelectedCategories] = useState(
+    new Set<string>(),
+  );
+
+  const toggleCategory = useCallback(
+    (category: string) => {
+      setSelectedCategories((state) => {
+        if (state.has(category)) {
+          return new Set(Array.from(state).filter((c) => c !== category));
+        }
+
+        return new Set([...Array.from(state), category]);
+      });
+    },
+    [selectedCategories],
+  );
 
   return (
     <HashRouter>
-      <Notifications />
+      <WithNotifications>
+        <WithStickyNavbar
+          isAuthenticated={isAuthenticated}
+          onSignIn={signInCallback}
+          onSingOut={singOutCallback}
+        >
+          <Switch>
+            <Route path="/tournaments">
+              <TournamentsPage />
+            </Route>
 
-      <Navbar />
+            <Route path="/task/view/:id">
+              <TaskFromURL tasks={tasks} fetchTask={fetchTaskCallback}>
+                {(task) => (
+                  <TaskPage
+                    task={task}
+                    language={language}
+                    languages={languages}
+                    onDropAccepted={onDropAcceptedCallback}
+                    code={code}
+                    fileUploaded={fileUploaded}
+                    cancelled={cancelledCallback}
+                    submit={submitCallback}
+                    selectedLanguage={selectedLanguageCallback}
+                  />
+                )}
+              </TaskFromURL>
+            </Route>
 
-      <Container style={{ padding: 0, marginTop: 20 }}>
-        <Switch>
-          <Route path="/tournaments">
-            <TournamentsPage />
-          </Route>
+            <Route path="/tasks">
+              <TasksPage
+                tasks={tasks}
+                tasksLoading={tasksLoading}
+                selectedCategories={selectedCategories}
+                categories={categories}
+                toggleCategory={toggleCategory}
+              />
+            </Route>
 
-          <Route path="/task/view/:taskAlias">
-            <TaskPage />
-          </Route>
+            <Route path="/submissions">
+              <SubmissionsPage
+                submissions={submissions}
+                submissionsLoading={submissionsLoading}
+              />
+            </Route>
 
-          <Route path="/tasks">
-            <TasksPage />
-          </Route>
+            <Route path="/submission/view/:id">
+              <SubmissionFromURL
+                submissions={submissions}
+                fetchSubmission={fetchSubmissionCallback}
+              >
+                {(submission) => <SubmissionPage submission={submission} />}
+              </SubmissionFromURL>
+            </Route>
 
-          <Route path="/submissions">
-            <SubmissionsPage />
-          </Route>
+            <Route path="/profile/my">
+              <MyProfileFromAPI
+                fetchMyProfile={fetchMyProfileCallback}
+                myProfile={myProfile}
+              >
+                {({ username, fullname, picture }) => (
+                  <ProfilePage
+                    username={username}
+                    fullname={fullname}
+                    picture={picture}
+                  />
+                )}
+              </MyProfileFromAPI>
+            </Route>
 
-          <Route path="/submission/view/:id">
-            <SubmissionPage />
-          </Route>
+            <Route path="/" exact>
+              <HomePage />
+            </Route>
 
-          <Route path="/profile/my">
-            <MyProfile />
-          </Route>
-
-          <Route path="/" exact>
-            <HomePage />
-          </Route>
-
-          <Route path="/">
-            <ErrorPage code="notFound" />
-          </Route>
-        </Switch>
-      </Container>
+            <Route path="/">
+              <Redirect to="/" />
+            </Route>
+          </Switch>
+        </WithStickyNavbar>
+      </WithNotifications>
     </HashRouter>
   );
 };

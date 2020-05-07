@@ -1,117 +1,155 @@
-import dataModel from './generalizers/dataModel';
+import { actionOn, computed, thunk } from 'easy-peasy';
 import baseURL from './apiBaseURL';
 import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-import { Category, Submission, Task, TaskModel } from './interfaces';
+import { Category, TaskModel } from './interfaces';
+import loadingModel from './loadingModel';
+import updateObjectWithProperty from '../utils/updateObjectWithProperty';
 
 const taskModel: TaskModel = {
-  ...dataModel<string, Task>({
-    dataItemFetcher: async (id, args) => {
-      const { token } = args;
+  ...loadingModel(),
 
-      const response = await fetch(
-        `${baseURL}/${token ? 'task/auth' : 'task'}/${id}`,
-        {
-          headers: !token
-            ? {}
-            : {
-                Authorization: `Bearer ${token}`,
-              },
-        },
-      );
+  tasks: [],
 
-      if (!response.ok) {
-        return undefined;
+  fetch: thunk(async (actions, { id }, { injections }) => {
+    const endpoint = async () => {
+      try {
+        const token = await injections.auth0.getTokenSilently();
+
+        return fetch(`${baseURL}/task/auth/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (e) {
+        return fetch(`${baseURL}/task/${id}`);
+      }
+    };
+
+    const response = await endpoint();
+
+    const body = await response.json();
+
+    return {
+      id,
+      name: body.name,
+      description: {
+        main: body.main,
+        inputFormat: body.input_format,
+        outputFormat: body.output_format,
+      },
+      limits: {
+        cpuTime: body.cpu_time_limit,
+        wallTime: body.wall_time_limit,
+        memory: body.memory_limit,
+      },
+      examples: body.examples.map((item: any) => ({
+        input: item.input_data,
+        output: item.output_data,
+      })),
+      customSections: body.custom_sections
+        ? Object.entries(body.custom_sections).map((entry: any) => ({
+            name: entry[0],
+            data: entry[1],
+          }))
+        : [],
+      publishedAt: body.created,
+    };
+  }),
+
+  fetchAll: thunk(async (actions, _, { injections }) => {
+    actions.loading();
+
+    const endpoint = async () => {
+      try {
+        const token = await injections.auth0.getTokenSilently();
+
+        return fetch(`${baseURL}/tasks/auth?offset=0&number=300`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (e) {
+        return fetch(`${baseURL}/tasks`);
+      }
+    };
+
+    const response = await endpoint();
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const body = await response.json();
+
+    return body.map((task: any) => ({
+      id: task.alias,
+      name: task.name,
+      category: task.category.alias,
+      difficulty: task.difficulty,
+      rating: {
+        correct: task.statistics.full,
+        partial: task.statistics.partial,
+        zero: task.statistics.zero,
+      },
+      publishedAt: task.created,
+      categoryId: task.category.alias,
+      categoryName: task.category.name,
+      submissionId: task.best_submission.id,
+      ...resultToPointsAndStatus(task.best_submission.result),
+    }));
+  }),
+
+  onFetched: actionOn(
+    (actions) => actions.fetch.successType,
+    (state, target) => {
+      const task = target.result;
+
+      updateObjectWithProperty(state.tasks, 'id', task.id, task);
+    },
+  ),
+
+  onFetchedAll: actionOn(
+    (actions) => actions.fetchAll.successType,
+    (state, target) => {
+      const tasks = target.result;
+
+      if (Array.isArray(tasks)) {
+        tasks.forEach((task) => {
+          updateObjectWithProperty(state.tasks, 'id', task.id, task);
+        });
       }
 
-      const data = await response.json();
-
-      return {
-        item: {
-          id,
-          name: data.name,
-          loading: false,
-          description: {
-            main: data.main,
-            inputFormat: data.input_format,
-            outputFormat: data.output_format,
-          },
-          limits: {
-            cpuTime: data.cpu_time_limit,
-            wallTime: data.wall_time_limit,
-            memory: data.memory_limit,
-          },
-          examples: data.examples.map((item: any) => ({
-            input: item.input_data,
-            output: item.output_data,
-          })),
-          customSections: data.custom_sections
-            ? Object.entries(data.custom_sections).map((entry: any) => ({
-                name: entry[0],
-                data: entry[1],
-              }))
-            : [],
-          publishedAt: data.created,
-        } as Task,
-      };
+      state.loadingStatus = false;
     },
-    dataRangeFetcher: async (range, args) => {
-      const { token } = args;
+  ),
 
-      const options = [`offset=${range.offset}`, `number=${range.number}`];
-
-      const response = await fetch(
-        `${baseURL}/${token ? 'tasks/auth' : 'tasks'}?${options.join('&')}`,
-        {
-          headers: !token
-            ? {}
-            : {
-                Authorization: `Bearer ${token}`,
-              },
-        },
+  categories: computed((state) => {
+    const categories = state.tasks
+      .filter(
+        (task) =>
+          task.categoryName !== undefined && task.categoryId !== undefined,
+      )
+      .map(
+        (task): Category => ({
+          id: task.categoryId as string,
+          name: task.categoryName as string,
+        }),
       );
 
-      if (!response.ok) {
-        return [];
+    const hasId = new Set<string>();
+
+    const uniqueCategories: Category[] = [];
+
+    categories.forEach(({ id, name }) => {
+      if (hasId.has(id)) {
+        return;
       }
 
-      const tasks = await response.json();
+      hasId.add(id);
+      uniqueCategories.push({ id, name });
+    });
 
-      return tasks.map((task: any) => ({
-        item: {
-          id: task.alias,
-          name: task.name,
-          category: task.category.alias,
-          difficulty: task.difficulty,
-          rating: {
-            correct: task.statistics.full,
-            partial: task.statistics.partial,
-            zero: task.statistics.zero,
-          },
-          publishedAt: task.created,
-        } as Task,
-        category: {
-          id: task.category.alias,
-          name: task.category.name,
-        } as Category,
-        submission:
-          task.best_submission.id === null
-            ? undefined
-            : ({
-                id: task.best_submission.id,
-                taskAlias: task.alias,
-                ...resultToPointsAndStatus(task.best_submission.result),
-              } as Submission),
-      }));
-    },
-
-    onChangedManyTargets: (state, storeActions) => [
-      storeActions.submission.fetchRange,
-    ],
-    onChangedOneTargets: (state, storeActions) => [
-      storeActions.submission.fetchOne,
-    ],
-
-    dataModelIdentifier: 'task',
+    return uniqueCategories;
   }),
 };
 

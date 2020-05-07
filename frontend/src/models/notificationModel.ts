@@ -10,7 +10,6 @@ const notificationModel: NotificationModel = {
   }),
 
   dismissedNotification: action((state, id) => {
-    // eslint-disable-next-line no-param-reassign
     state.list = state.list.filter((notification) => notification.id !== id);
   }),
 
@@ -26,15 +25,15 @@ const notificationModel: NotificationModel = {
   ),
 
   onSubmitRequested: thunkOn(
-    (actions, storeActions) =>
-      storeActions.solutionSubmission.onSubmitRequested,
+    (actions, storeActions) => storeActions.solutionSubmission.submit,
     async (actions, target) => {
       actions.addNotificationAndRemoveAfterDelay({
         notification: {
           id: +new Date(),
           payload: {
             type: 'submitting',
-            taskId: target.payload,
+            taskId: target.result.taskId,
+            taskName: target.result.taskName,
           },
         },
         delay: 1000,
@@ -50,7 +49,7 @@ const notificationModel: NotificationModel = {
           id: +new Date(),
           payload: {
             type: 'submitted',
-            submissionId: target.result.submission.id,
+            submissionId: target.result.id,
           },
         },
       });
