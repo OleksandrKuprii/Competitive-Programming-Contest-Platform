@@ -34,9 +34,11 @@ const TaskPage: FC<TaskPageProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const { id } = task;
+
   const submittedCallback = useCallback(() => {
-    submit(task.id);
-  }, [task.id]);
+    submit(id);
+  }, [submit, id]);
 
   const sections = [
     { id: 1, text: task.description?.main },

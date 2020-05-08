@@ -44,43 +44,58 @@ const App = () => {
 
   /* <editor-fold desc="Callbacks"> */
 
-  const fetchTaskCallback = useCallback((id: string) => {
-    fetchTask({ id });
-  }, []);
+  const fetchTaskCallback = useCallback(
+    (id: string) => {
+      fetchTask({ id });
+    },
+    [fetchTask],
+  );
 
-  const fetchSubmissionCallback = useCallback((id: number) => {
-    fetchSubmission({ id });
-  }, []);
+  const fetchSubmissionCallback = useCallback(
+    (id: number) => {
+      fetchSubmission({ id });
+    },
+    [fetchSubmission],
+  );
 
   const signInCallback = useCallback(() => {
     signIn();
-  }, []);
+  }, [signIn]);
 
   const singOutCallback = useCallback(() => {
     signOut();
-  }, []);
+  }, [signOut]);
 
-  const onDropAcceptedCallback = useCallback(async (file: File) => {
-    await uploadFile(file);
+  const onDropAcceptedCallback = useCallback(
+    async (file: File) => {
+      await uploadFile(file);
 
-    document.body.scrollIntoView(false);
-  }, []);
+      document.body.scrollIntoView(false);
+    },
+    [uploadFile],
+  );
 
   const cancelledCallback = useCallback(() => {
     cancelled();
-  }, []);
+  }, [cancelled]);
 
-  const submitCallback = useCallback((taskId) => {
-    submit(taskId);
-  }, []);
+  const submitCallback = useCallback(
+    (taskId) => {
+      submit(taskId);
+    },
+    [submit],
+  );
 
-  const selectedLanguageCallback = useCallback((language: string) => {
-    selectedLanguage(language);
-  }, []);
+  const selectedLanguageCallback = useCallback(
+    (language: string) => {
+      selectedLanguage(language);
+    },
+    [selectedLanguage],
+  );
 
   const fetchMyProfileCallback = useCallback(() => {
     fetchMyProfile();
-  }, []);
+  }, [fetchMyProfile]);
 
   /* </editor-fold> */
 
@@ -120,7 +135,7 @@ const App = () => {
       fetchMyProfile();
       fetchSubmissions();
     }
-  }, [fetchTasks, fetchSubmissions]);
+  }, [fetchTasks, fetchSubmissions, fetchMyProfile, isAuthenticated]);
 
   const [selectedCategories, setSelectedCategories] = useState(
     new Set<string>(),
@@ -136,7 +151,7 @@ const App = () => {
         return new Set([...Array.from(state), category]);
       });
     },
-    [selectedCategories],
+    [setSelectedCategories],
   );
 
   return (

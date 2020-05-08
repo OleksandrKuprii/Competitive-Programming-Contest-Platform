@@ -29,7 +29,7 @@ const SubmissionFromURL: FC<SubmissionFromURLProps> = ({
     if (!id) return;
 
     fetchSubmission(id);
-  }, []);
+  }, [id, fetchSubmission]);
 
   if (!submission) {
     return <ErrorPage code="notFound" />;

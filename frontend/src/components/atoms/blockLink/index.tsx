@@ -29,7 +29,7 @@ const BlockLink: FC<BlockLinkProps> = ({
     }
 
     onClick();
-  }, [onClick, disabled]);
+  }, [onClick, disabled, history]);
 
   return (
     <div

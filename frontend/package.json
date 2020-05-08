@@ -77,9 +77,13 @@
     "parserOptions": {
       "project": "./tsconfig.json"
     },
+    "plugins": [
+      "react-hooks"
+    ],
     "rules": {
       "react/prop-types": "off",
-      "no-param-reassign": "off"
+      "no-param-reassign": "off",
+      "react-hooks/exhaustive-deps": "warn"
     }
   },
   "browserslist": {

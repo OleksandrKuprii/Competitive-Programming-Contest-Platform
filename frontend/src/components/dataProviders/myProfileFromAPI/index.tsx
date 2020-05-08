@@ -16,7 +16,7 @@ const MyProfileFromAPI: FC<MyProfileFromAPI> = ({
 }) => {
   useEffect(() => {
     fetchMyProfile();
-  }, []);
+  }, [fetchMyProfile]);
 
   return (
     <Defined value={myProfile}>
