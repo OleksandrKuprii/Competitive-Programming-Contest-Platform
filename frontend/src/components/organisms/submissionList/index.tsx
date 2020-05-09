@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Submission } from '../../../models/interfaces';
 import PrettyDate from '../../atoms/prettyDate';
 import Result from '../../atoms/result';
-import Defined from '../../atoms/defined';
-import BlockLink from '../../atoms/blockLink';
-import StyledTable from '../../atoms/styledTable';
+import Defined from '../../helpers/defined';
+import Link from '../../atoms/link';
+import StyledTable from '../../molecules/table';
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();
@@ -27,12 +27,10 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
           ({ id, taskId, taskName, language, points, status, submitted }) => (
             <tr key={id}>
               <td>
-                <BlockLink onClick={`/submission/view/${id}`}>{id}</BlockLink>
+                <Link href={`#/submission/view/${id}`}>{id}</Link>
               </td>
               <td>
-                <BlockLink onClick={`/task/view/${taskId}`}>
-                  {taskName}
-                </BlockLink>
+                <Link href={`#/task/view/${taskId}`}>{taskName}</Link>
               </td>
               <td>{language}</td>
               <td>

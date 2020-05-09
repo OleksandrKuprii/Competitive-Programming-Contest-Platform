@@ -94,6 +94,8 @@ export interface TaskModel extends LoadingModel {
   onFetched: ActionOn<TaskModel, StoreModel>;
   onFetchedAll: ActionOn<TaskModel, StoreModel>;
 
+  onReceivedResults: ActionOn<TaskModel, StoreModel>;
+
   categories: Computed<TaskModel, Category[], StoreModel>;
 }
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
-import { Row } from 'react-bootstrap';
+import { Row } from '../../atoms/grid';
 
 export interface WithFilterBarProps {
   children: ReactNode;
@@ -10,7 +10,8 @@ export interface WithFilterBarProps {
 const WithFilterBar: FC<WithFilterBarProps> = ({ filters, children }) => {
   return (
     <div>
-      <Row style={{ paddingBottom: 20 }}>{filters}</Row>
+      {filters}
+      <div style={{ paddingBottom: 20 }} />
       <Row>{children}</Row>
     </div>
   );

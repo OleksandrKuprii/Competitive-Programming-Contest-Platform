@@ -1,9 +1,11 @@
 import * as React from 'react';
-import Form from 'react-bootstrap/Form';
-import { Button, ButtonGroup } from 'react-bootstrap';
 import { FC } from 'react';
 import CodeViewer from '../../atoms/codeViewer';
-import Defined from '../../atoms/defined';
+import Defined from '../../helpers/defined';
+import Button from '../../atoms/button';
+import { Grid, Row } from '../../atoms/grid';
+import { HorizontalSpacer, Spacer } from '../../atoms/spacers';
+import StyledSelect from '../../atoms/styledSelect';
 
 interface SolutionSubmissionFormProps {
   code?: string;
@@ -23,39 +25,43 @@ const SolutionSubmissionForm: FC<SolutionSubmissionFormProps> = ({
   cancelled,
 }) => {
   return (
-    <div className="bg-secondary p-4 rounded">
-      <Form>
-        <Form.Row>
-          <Defined value={code}>
-            {(definedCode) => (
-              <CodeViewer language={language}>{definedCode}</CodeViewer>
-            )}
-          </Defined>
-        </Form.Row>
+    <Grid>
+      <Row>
+        <Defined value={code}>
+          {(definedCode) => (
+            <CodeViewer language={language}>{definedCode}</CodeViewer>
+          )}
+        </Defined>
+      </Row>
 
-        <Form.Row>
-          <Form.Control
-            style={{ maxWidth: 200 }}
-            as="select"
-            value={language}
-            onChange={(e) => selectedLanguage((e.target as any).value)}
-          >
-            {languages.map((lang) => (
-              <option key={lang}>{lang}</option>
-            ))}
-          </Form.Control>
-          <div style={{ paddingLeft: 10 }} />
-          <ButtonGroup>
-            <Button variant="primary" onClick={submitted}>
-              Submit
-            </Button>
-            <Button variant="outline-danger" onClick={cancelled}>
-              Cancel
-            </Button>
-          </ButtonGroup>
-        </Form.Row>
-      </Form>
-    </div>
+      <Spacer size={20} />
+
+      <Row>
+        <div style={{ width: 200 }}>
+          <StyledSelect
+            value={{ value: language, label: language }}
+            options={languages.map((lang) => ({ value: lang, label: lang }))}
+            onChange={(option) => {
+              if (option === null || option === undefined) {
+                selectedLanguage('python3');
+                return;
+              }
+
+              // @ts-ignore
+              selectedLanguage(option.value);
+            }}
+          />
+        </div>
+
+        <HorizontalSpacer size={10} />
+
+        <Button onClick={submitted}>Submit</Button>
+
+        <Button variant="danger" onClick={cancelled}>
+          Cancel
+        </Button>
+      </Row>
+    </Grid>
   );
 };
 

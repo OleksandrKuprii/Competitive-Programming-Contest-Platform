@@ -1,19 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import shallowEqual from 'shallowequal';
-import HomePage from './pages/HomePage';
-import TasksPage from './pages/TasksPage';
-import TournamentsPage from './pages/TournamentsPage';
-import TaskPage from './pages/TaskPage';
+import { ThemeProvider } from 'styled-components';
 import SubmissionsPage from './pages/SubmissionsPage';
-import SubmissionPage from './pages/SubmissionPage';
-import { useStoreActions, useStoreState } from './hooks/store';
-import WithNotifications from './components/templates/withNotifications';
-import WithStickyNavbar from './components/templates/withStickyNavbar';
 import TaskFromURL from './components/dataProviders/taskFromURL';
-import SubmissionFromURL from './components/dataProviders/submissionFromUrl';
-import MyProfileFromAPI from './components/dataProviders/myProfileFromAPI';
+import SubmissionPage from './pages/SubmissionPage';
 import ProfilePage from './pages/ProfilePage';
+import WithNotifications from './components/templates/withNotifications';
+import TournamentsPage from './pages/TournamentsPage';
+import WithStickyNavbar from './components/templates/withStickyNavbar';
+import MyProfileFromAPI from './components/dataProviders/myProfileFromAPI';
+import { useStoreActions, useStoreState } from './hooks/store';
+import TaskPage from './pages/TaskPage';
+import SubmissionFromURL from './components/dataProviders/submissionFromUrl';
+import TasksPage from './pages/TasksPage';
+import HomePage from './pages/HomePage';
+import GlobalStyle from './theme/GlobalStyle';
 
 const App = () => {
   const {
@@ -28,6 +30,7 @@ const App = () => {
     submit,
     selectedLanguage,
     fetchMyProfile,
+    checkSubmissions,
   } = useStoreActions((actions) => ({
     fetchTask: actions.task.fetch,
     fetchTasks: actions.task.fetchAll,
@@ -40,6 +43,7 @@ const App = () => {
     submit: actions.solutionSubmission.submit,
     selectedLanguage: actions.solutionSubmission.selectedLanguage,
     fetchMyProfile: actions.user.fetchMyProfile,
+    checkSubmissions: actions.submissionHunter.checkSubmissions,
   }));
 
   /* <editor-fold desc="Callbacks"> */
@@ -133,110 +137,118 @@ const App = () => {
 
     if (isAuthenticated) {
       fetchMyProfile();
-      fetchSubmissions();
-    }
-  }, [fetchTasks, fetchSubmissions, fetchMyProfile, isAuthenticated]);
-
-  const [selectedCategories, setSelectedCategories] = useState(
-    new Set<string>(),
-  );
-
-  const toggleCategory = useCallback(
-    (category: string) => {
-      setSelectedCategories((state) => {
-        if (state.has(category)) {
-          return new Set(Array.from(state).filter((c) => c !== category));
-        }
-
-        return new Set([...Array.from(state), category]);
+      fetchSubmissions().then(() => {
+        checkSubmissions();
       });
-    },
-    [setSelectedCategories],
-  );
+    }
+  }, [
+    fetchTasks,
+    fetchSubmissions,
+    fetchMyProfile,
+    isAuthenticated,
+    checkSubmissions,
+  ]);
+
+  const [selectedCategories, setSelectedCategories] = useState([] as string[]);
+
+  const [selectedResults, setSelectedResults] = useState([] as string[]);
+
+  const [difficultyRange, setDifficultyRange] = useState([1, 10]);
+
+  const [sortBy, setSortBy] = useState({ id: 'publishedAt', order: -1 });
 
   return (
-    <HashRouter>
-      <WithNotifications>
-        <WithStickyNavbar
-          isAuthenticated={isAuthenticated}
-          onSignIn={signInCallback}
-          onSingOut={singOutCallback}
-        >
-          <Switch>
-            <Route path="/tournaments">
-              <TournamentsPage />
-            </Route>
+    <ThemeProvider theme={{ mode: 'dark' }}>
+      <GlobalStyle />
+      <HashRouter>
+        <WithNotifications>
+          <WithStickyNavbar
+            isAuthenticated={isAuthenticated}
+            onSignIn={signInCallback}
+            onSingOut={singOutCallback}
+          >
+            <Switch>
+              <Route path="/tournaments">
+                <TournamentsPage />
+              </Route>
 
-            <Route path="/task/view/:id">
-              <TaskFromURL tasks={tasks} fetchTask={fetchTaskCallback}>
-                {(task) => (
-                  <TaskPage
-                    task={task}
-                    language={language}
-                    languages={languages}
-                    onDropAccepted={onDropAcceptedCallback}
-                    code={code}
-                    fileUploaded={fileUploaded}
-                    cancelled={cancelledCallback}
-                    submit={submitCallback}
-                    selectedLanguage={selectedLanguageCallback}
-                  />
-                )}
-              </TaskFromURL>
-            </Route>
+              <Route path="/task/view/:id">
+                <TaskFromURL tasks={tasks} fetchTask={fetchTaskCallback}>
+                  {(task) => (
+                    <TaskPage
+                      task={task}
+                      language={language}
+                      languages={languages}
+                      onDropAccepted={onDropAcceptedCallback}
+                      code={code}
+                      fileUploaded={fileUploaded}
+                      cancelled={cancelledCallback}
+                      submit={submitCallback}
+                      selectedLanguage={selectedLanguageCallback}
+                    />
+                  )}
+                </TaskFromURL>
+              </Route>
 
-            <Route path="/tasks">
-              <TasksPage
-                tasks={tasks}
-                tasksLoading={tasksLoading}
-                selectedCategories={selectedCategories}
-                categories={categories}
-                toggleCategory={toggleCategory}
-              />
-            </Route>
+              <Route path="/tasks">
+                <TasksPage
+                  tasks={tasks}
+                  tasksLoading={tasksLoading}
+                  selectedCategories={selectedCategories}
+                  categories={categories}
+                  setSelectedCategories={setSelectedCategories}
+                  selectedResults={selectedResults}
+                  setSelectedResults={setSelectedResults}
+                  difficultyRange={difficultyRange}
+                  setDifficultyRange={setDifficultyRange}
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                />
+              </Route>
 
-            <Route path="/submissions">
-              <SubmissionsPage
-                submissions={submissions}
-                submissionsLoading={submissionsLoading}
-              />
-            </Route>
+              <Route path="/submissions">
+                <SubmissionsPage
+                  submissions={submissions}
+                  submissionsLoading={submissionsLoading}
+                />
+              </Route>
 
-            <Route path="/submission/view/:id">
-              <SubmissionFromURL
-                submissions={submissions}
-                fetchSubmission={fetchSubmissionCallback}
-              >
-                {(submission) => <SubmissionPage submission={submission} />}
-              </SubmissionFromURL>
-            </Route>
+              <Route path="/submission/view/:id">
+                <SubmissionFromURL
+                  submissions={submissions}
+                  fetchSubmission={fetchSubmissionCallback}
+                >
+                  {(submission) => <SubmissionPage submission={submission} />}
+                </SubmissionFromURL>
+              </Route>
 
-            <Route path="/profile/my">
-              <MyProfileFromAPI
-                fetchMyProfile={fetchMyProfileCallback}
-                myProfile={myProfile}
-              >
-                {({ username, fullname, picture }) => (
-                  <ProfilePage
-                    username={username}
-                    fullname={fullname}
-                    picture={picture}
-                  />
-                )}
-              </MyProfileFromAPI>
-            </Route>
+              <Route path="/profile/my">
+                <MyProfileFromAPI
+                  fetchMyProfile={fetchMyProfileCallback}
+                  myProfile={myProfile}
+                >
+                  {({ username, fullname, picture }) => (
+                    <ProfilePage
+                      username={username}
+                      fullname={fullname}
+                      picture={picture}
+                    />
+                  )}
+                </MyProfileFromAPI>
+              </Route>
 
-            <Route path="/" exact>
-              <HomePage />
-            </Route>
+              <Route path="/" exact>
+                <HomePage />
+              </Route>
 
-            <Route path="/">
-              <Redirect to="/" />
-            </Route>
-          </Switch>
-        </WithStickyNavbar>
-      </WithNotifications>
-    </HashRouter>
+              <Route path="/">
+                <Redirect to="/" />
+              </Route>
+            </Switch>
+          </WithStickyNavbar>
+        </WithNotifications>
+      </HashRouter>
+    </ThemeProvider>
   );
 };
 

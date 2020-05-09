@@ -1,60 +1,18 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { memo } from 'react';
+import { FC, memo } from 'react';
+import { CircleLoader, SyncLoader } from 'react-spinners';
 
 interface LoadingProps {
-  variant: 'running' | 'processing' | 'loading';
+  variant?: 'running' | 'loading';
+  size?: any;
 }
 
-const LoadingSpinner = () => (
-  <div className="lds-facebook">
-    <div />
-    <div />
-    <div />
-  </div>
-);
+const Loading: FC<LoadingProps> = ({ variant, size }) => {
+  if (variant === undefined || variant === 'loading') {
+    return <CircleLoader color="white" size={size} />;
+  }
 
-const ProcessingSpinner = () => (
-  <div className="lds-grid">
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-  </div>
-);
-
-const RunningSpinner = () => (
-  <div className="lds-ring">
-    <div />
-    <div />
-    <div />
-    <div />
-  </div>
-);
-
-const spinners = {
-  running: <RunningSpinner />,
-  processing: <ProcessingSpinner />,
-  loading: <LoadingSpinner />,
-};
-
-const Loading = ({ variant }: LoadingProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <div className="text-center">
-      {spinners[variant]}
-      <p className="p-0 font-weight-bold big">
-        {t(`preloader.${variant}`)}
-        ...
-      </p>
-    </div>
-  );
+  return <SyncLoader color="white" size={size} />;
 };
 
 export default memo(Loading);

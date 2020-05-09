@@ -3,7 +3,7 @@ import { FC } from 'react';
 import SubmissionList from '../components/organisms/submissionList';
 import WithLoading from '../components/templates/withLoading';
 import { Submission } from '../models/interfaces';
-import Loading from '../components/atoms/loading';
+import LoadingPage from './LoadingPage';
 
 interface SubmissionsPageProps {
   submissions: Submission[];
@@ -14,10 +14,7 @@ const SubmissionsPage: FC<SubmissionsPageProps> = ({
   submissions,
   submissionsLoading,
 }) => (
-  <WithLoading
-    loading={submissionsLoading}
-    loadingNode={<Loading variant="loading" />}
-  >
+  <WithLoading loading={submissionsLoading} loadingNode={<LoadingPage />}>
     <SubmissionList submissions={submissions} />
   </WithLoading>
 );

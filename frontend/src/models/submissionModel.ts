@@ -105,9 +105,9 @@ const submissionModel: SubmissionModel = {
             submission,
           );
         });
-      }
 
-      state.loadingStatus = false;
+        state.loadingStatus = false;
+      }
     },
   ),
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
 import { FC } from 'react';
+import Button from '../../atoms/button';
 
 interface ProfileStatusProps {
   isAuthenticated: boolean;
@@ -15,13 +15,9 @@ const ProfileStatus: FC<ProfileStatusProps> = ({
 }) => (
   <>
     {isAuthenticated ? (
-      <Button variant="outline-danger" onClick={() => signOut()}>
-        Sign out
-      </Button>
+      <Button onClick={() => signOut()}>Sign out</Button>
     ) : (
-      <Button variant="outline-info" onClick={() => signIn()}>
-        Sign in
-      </Button>
+      <Button onClick={() => signIn()}>Sign in</Button>
     )}
   </>
 );

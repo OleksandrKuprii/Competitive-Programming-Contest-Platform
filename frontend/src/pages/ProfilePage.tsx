@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Jumbotron, Image, Row, Col } from 'react-bootstrap';
 import { FC, memo } from 'react';
-import Defined from '../components/atoms/defined';
+import { Col, Row } from '../components/atoms/grid';
+import Defined from '../components/helpers/defined';
 
 interface ProfilePageArgs {
   fullname: string;
@@ -11,7 +11,7 @@ interface ProfilePageArgs {
 
 const ProfilePage: FC<ProfilePageArgs> = ({ fullname, username, picture }) => {
   return (
-    <Jumbotron>
+    <div>
       <Row>
         <Col>
           <p className="h1">{fullname}</p>
@@ -20,13 +20,18 @@ const ProfilePage: FC<ProfilePageArgs> = ({ fullname, username, picture }) => {
 
         <Defined value={picture}>
           {(definedPicture) => (
-            <Col md="auto">
-              <Image src={definedPicture} width={100} height={100} />
+            <Col>
+              <img
+                alt="Profile"
+                src={definedPicture}
+                width={100}
+                height={100}
+              />
             </Col>
           )}
         </Defined>
       </Row>
-    </Jumbotron>
+    </div>
   );
 };
 

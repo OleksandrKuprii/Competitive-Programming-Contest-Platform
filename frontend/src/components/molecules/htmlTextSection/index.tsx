@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 import { FC } from 'react';
+import { Paragraph, Subtitle } from '../../atoms/typography';
 
 export interface HtmlTextSectionProps {
   text: string;
@@ -14,8 +15,8 @@ const HtmlTextSection: FC<HtmlTextSectionProps> = ({ header, text }) => {
 
   return (
     <>
-      {header ? <p className="h6 font-weight-bold m-0">{header}</p> : undefined}
-      <div className="task-description-section">{parsed}</div>
+      {header && <Subtitle>{header}</Subtitle>}
+      <Paragraph>{parsed}</Paragraph>
     </>
   );
 };

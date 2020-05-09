@@ -1,23 +1,11 @@
 import * as React from 'react';
-import {
-  Container,
-  Nav,
-  Navbar as BaseNavbar,
-  Image,
-  NavbarBrand,
-  NavItem,
-} from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
-import {
-  GiPaperPlane,
-  GiArcheryTarget,
-  GiBrutalHelm,
-  FiUser,
-} from 'react-icons/all';
 import { FC, memo } from 'react';
-import './style.scss';
+import styled from 'styled-components';
 import ProfileStatus from '../../molecules/profileStatus';
+import { Container, Row } from '../../atoms/grid';
+import Link from '../../atoms/link';
+import { HorizontalSpacer } from '../../atoms/spacers';
 
 const brandIcon = require('../../../assets/brandIcon.png');
 
@@ -27,66 +15,52 @@ interface NavbarProps {
   onSignOut: () => any;
 }
 
+const StyledNavbar = styled.nav`
+  background: ${(props) => props.theme.background};
+  font-size: 16px;
+  box-shadow: 1px 1px 2px 2px #000;
+`;
+
+const Brand = styled(Link)`
+  display: block;
+`;
+
+const NavLink = styled(Link)`
+  padding: 15px;
+  transition: all 0.2s ease-in-out;
+`;
+
 const Navbar: FC<NavbarProps> = ({ isAuthenticated, onSignIn, onSignOut }) => {
   const { t } = useTranslation();
 
   return (
-    <BaseNavbar expand="lg" bg="primary" variant="dark" sticky="top">
-      <Container style={{ padding: 0 }}>
-        <NavbarBrand href="#/">
-          <Image src={brandIcon} height={30} className="d-inline-block" />{' '}
-          Toucan
-        </NavbarBrand>
+    <StyledNavbar>
+      <Container>
+        <Row style={{ padding: '10px 0' }}>
+          <Brand href="#/">
+            <img src={brandIcon} height={45} alt="Brand logo" />
+          </Brand>
 
-        <NavItem>
-          <NavLink
-            to="/tournaments"
-            className="nav-link"
-            activeClassName="active"
-          >
-            <GiBrutalHelm />
-            {t('pageName.tournaments')}
-          </NavLink>
-        </NavItem>
+          <div style={{ marginRight: 'auto' }} />
 
-        <NavItem>
-          <NavLink to="/tasks" className="nav-link" activeClassName="active">
-            <GiArcheryTarget />
-            {t('pageName.tasks')}
-          </NavLink>
-        </NavItem>
+          <NavLink href="#/tournaments">{t('pageName.tournaments')}</NavLink>
 
-        <NavItem>
-          <NavLink
-            to="/submissions"
-            className="nav-link"
-            activeClassName="active"
-          >
-            <GiPaperPlane />
-            {t('pageName.submissions')}
-          </NavLink>
-        </NavItem>
+          <NavLink href="#/tasks">{t('pageName.tasks')}</NavLink>
 
-        <NavItem>
-          <NavLink
-            to="/profile/my"
-            className="nav-link"
-            activeClassName="active"
-          >
-            <FiUser />
-            {t('pageName.profile')}
-          </NavLink>
-        </NavItem>
-        <Nav className="mr-auto" />
-        <Nav.Item>
+          <NavLink href="#/submissions">{t('pageName.submissions')}</NavLink>
+
+          <NavLink href="#/profile/my">{t('pageName.profile')}</NavLink>
+
+          <HorizontalSpacer size={10} />
+
           <ProfileStatus
             isAuthenticated={isAuthenticated}
             signIn={onSignIn}
             signOut={onSignOut}
           />
-        </Nav.Item>
+        </Row>
       </Container>
-    </BaseNavbar>
+    </StyledNavbar>
   );
 };
 
