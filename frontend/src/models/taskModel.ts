@@ -117,9 +117,24 @@ const taskModel: TaskModel = {
         tasks.forEach((task) => {
           updateObjectWithProperty(state.tasks, 'id', task.id, task);
         });
-      }
 
-      state.loadingStatus = false;
+        state.loadingStatus = false;
+      }
+    },
+  ),
+
+  onReceivedResults: actionOn(
+    (actions, storeActions) => storeActions.submissionHunter.receivedResults,
+    (state, target) => {
+      const { points, status, id, taskId } = target.payload;
+
+      const update = {
+        submissionId: id,
+        points,
+        status,
+      };
+
+      updateObjectWithProperty(state.tasks, 'id', taskId, update);
     },
   ),
 

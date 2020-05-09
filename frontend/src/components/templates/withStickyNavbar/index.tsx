@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
-import { Container } from 'react-bootstrap';
+import { Container } from '../../atoms/grid';
 import Navbar from '../../organisms/navbar';
 
 interface WithStickyNavbarProps {

@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Col, Row } from 'react-bootstrap';
-import { Task } from '../models/interfaces';
-import HtmlTextSection from '../components/atoms/htmlTextSection';
-import Defined from '../components/atoms/defined';
-import StyledTable from '../components/atoms/styledTable';
-import SolutionDropZone from '../components/organisms/solutionDropZone';
+import { Col, Row } from '../components/atoms/grid';
 import SolutionSubmissionForm from '../components/organisms/solutionSubmissionForm';
+import { Task } from '../models/interfaces';
+import Table from '../components/molecules/table';
+import HtmlTextSection from '../components/molecules/htmlTextSection';
+import Defined from '../components/helpers/defined';
+import SolutionDropZone from '../components/organisms/solutionDropZone';
+import { Spacer } from '../components/atoms/spacers';
+import { TextPaper, Title } from '../components/atoms/typography';
 
 interface TaskPageProps {
   task: Task;
@@ -34,9 +36,11 @@ const TaskPage: FC<TaskPageProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const { id } = task;
+
   const submittedCallback = useCallback(() => {
-    submit(task.id);
-  }, [task.id]);
+    submit(id);
+  }, [submit, id]);
 
   const sections = [
     { id: 1, text: task.description?.main },
@@ -64,14 +68,10 @@ const TaskPage: FC<TaskPageProps> = ({
 
   return (
     <>
+      <Title>{task.name}</Title>
       <Row>
-        <Col>
-          <h1 style={{ marginBottom: 5 }}>{task.name}</h1>
-          <p className="h6">
-            {t('taskPage.personalResult')}
-            {': '}
-          </p>
-          <div className="task-description">
+        <Col size={3}>
+          <TextPaper>
             {sections.map((section) => (
               <HtmlTextSection
                 key={section.id}
@@ -79,11 +79,13 @@ const TaskPage: FC<TaskPageProps> = ({
                 header={section.header || ''}
               />
             ))}
-          </div>
+          </TextPaper>
+
+          <Spacer size={20} />
 
           <Defined value={task.examples}>
             {(definedExamples) => (
-              <StyledTable>
+              <Table>
                 <thead>
                   <tr>
                     <th>{t('headers.input')}</th>
@@ -98,12 +100,12 @@ const TaskPage: FC<TaskPageProps> = ({
                     </tr>
                   ))}
                 </tbody>
-              </StyledTable>
+              </Table>
             )}
           </Defined>
         </Col>
-        <Col md="4">
-          <StyledTable>
+        <Col>
+          <Table>
             <thead>
               <tr>
                 <th>{t('headers.cpuTime')}</th>
@@ -130,9 +132,11 @@ const TaskPage: FC<TaskPageProps> = ({
                 </td>
               </tr>
             </tbody>
-          </StyledTable>
+          </Table>
 
-          <StyledTable>
+          <Spacer size={10} />
+
+          <Table>
             <thead>
               <tr>
                 <th>{t('headers.input')}</th>
@@ -145,7 +149,7 @@ const TaskPage: FC<TaskPageProps> = ({
                 <td>output.txt</td>
               </tr>
             </tbody>
-          </StyledTable>
+          </Table>
         </Col>
       </Row>
 
@@ -171,7 +175,7 @@ const TaskPage: FC<TaskPageProps> = ({
         </Col>
       </Row>
 
-      <div className="p-3" />
+      <Spacer />
     </>
   );
 };

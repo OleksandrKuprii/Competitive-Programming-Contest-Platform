@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FC } from 'react';
+import Loading from '../loading';
+import Colored from '../typography/Colored';
 
 interface ResultProps {
   points: number;
@@ -17,11 +18,9 @@ const Result: FC<ResultProps> = ({ points, status }) => {
 
   if (status[0] === 'Running') {
     return (
-      <>
-        <span className="disabled">
-          {t('running')} <Spinner animation="border" size="sm" />
-        </span>
-      </>
+      <span>
+        {t('running')} <Loading />
+      </span>
     );
   }
 
@@ -38,9 +37,9 @@ const Result: FC<ResultProps> = ({ points, status }) => {
     }
 
     return (
-      <span className={`text-${color}`}>
-        {points.toString()} {status.join(', ')}
-      </span>
+      <Colored variant={color}>
+        {points} {status.join(', ')}
+      </Colored>
     );
   }
 

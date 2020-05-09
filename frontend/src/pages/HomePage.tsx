@@ -1,46 +1,49 @@
 import * as React from 'react';
-import { Badge, Jumbotron, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import { GiChessKnight, GiStarsStack } from 'react-icons/all';
-
-const brandIcon = require('../assets/brandIcon.png');
+import { Col, Grid, Row } from '../components/atoms/grid';
+import { BigTitle, Paragraph, Subtitle } from '../components/atoms/typography';
+import { Spacer } from '../components/atoms/spacers';
 
 const Homepage = () => {
   const { t } = useTranslation();
 
   return (
     <>
-      <Jumbotron className="text-center">
-        <Image src={brandIcon} className="rounded" />
+      <Row>
+        <Col size={2}>
+          <Spacer />
+          <BigTitle>{t('homepage.welcome')}</BigTitle>
+          <Subtitle>{t('homepage.description')}</Subtitle>
+          <Spacer />
+        </Col>
 
-        <div style={{ paddingTop: 50 }} />
+        <Col>
+          <Grid justifyContent="center">
+            <Row justifyContent="center">
+              <BigTitle>
+                <GiChessKnight />
+              </BigTitle>
+            </Row>
+            <Row justifyContent="center">
+              <Paragraph>Play in tournaments</Paragraph>
+            </Row>
+          </Grid>
+        </Col>
 
-        <p className="h1">{t('homepage.welcome')}</p>
-        <p className="subtitle">{t('homepage.description')}</p>
-
-        <div style={{ paddingTop: 50 }} />
-
-        <Row>
-          <Col className="bg-dark rounded m-4 p-5">
-            <p className="display-1">
-              <GiChessKnight />
-            </p>
-
-            <p className="h4">Play in tournaments</p>
-            <Badge variant="danger">Coming soon</Badge>
-          </Col>
-
-          <Col className="bg-dark rounded m-4 p-5">
-            <p className="display-1">
-              <GiStarsStack />
-            </p>
-
-            <p className="h4">Practice solving public tasks</p>
-          </Col>
-        </Row>
-      </Jumbotron>
+        <Col>
+          <Grid justifyContent="center">
+            <Row justifyContent="center">
+              <BigTitle>
+                <GiStarsStack />
+              </BigTitle>
+            </Row>
+            <Row justifyContent="center">
+              <Paragraph>Practice solving public tasks</Paragraph>
+            </Row>
+          </Grid>
+        </Col>
+      </Row>
     </>
   );
 };

@@ -17,7 +17,7 @@ const TaskFromURL: FC<TaskFromURLProps> = ({ children, tasks, fetchTask }) => {
     if (!id) return;
 
     fetchTask(id);
-  }, []);
+  }, [id, fetchTask]);
 
   if (!id) {
     return <ErrorPage code="notFound" />;

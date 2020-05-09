@@ -1,8 +1,13 @@
 import * as React from 'react';
 import moment from 'moment';
+import { FC } from 'react';
 
-const PrettyDate = ({ timestamp }: { timestamp?: Date }) => {
-  return <span>{moment(timestamp).fromNow()}</span>;
+interface PrettyDateProps {
+  timestamp?: Date;
+}
+
+const PrettyDate: FC<PrettyDateProps> = ({ timestamp }) => {
+  return <>{moment(timestamp).fromNow()}</>;
 };
 
 export default React.memo(PrettyDate);

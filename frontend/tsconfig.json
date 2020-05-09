@@ -15,5 +15,5 @@
     "noEmit": true,
     "jsx": "react"
   },
-  "include": ["src", "config-overrides.js"]
+  "include": ["config-overrides.js", "src"]
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, ReactNode, useEffect } from 'react';
 import { User } from '../../../models/interfaces';
-import Defined from '../../atoms/defined';
+import Defined from '../../helpers/defined';
 
 interface MyProfileFromAPI {
   fetchMyProfile: () => any;
@@ -16,7 +16,7 @@ const MyProfileFromAPI: FC<MyProfileFromAPI> = ({
 }) => {
   useEffect(() => {
     fetchMyProfile();
-  }, []);
+  }, [fetchMyProfile]);
 
   return (
     <Defined value={myProfile}>

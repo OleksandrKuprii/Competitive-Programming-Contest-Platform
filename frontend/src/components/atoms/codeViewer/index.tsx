@@ -29,6 +29,8 @@ const CodeViewer: FC<CodeViewerProps> = ({
       customStyle={{
         maxHeight: maxHeight || 500,
         width: '100%',
+        boxShadow: '2px 2px 2px 2px #000',
+        margin: 0,
       }}
     >
       {children}

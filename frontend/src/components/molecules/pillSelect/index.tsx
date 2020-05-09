@@ -1,41 +1,49 @@
 import * as React from 'react';
 import { FC } from 'react';
-import { Badge } from 'react-bootstrap';
+import styled from 'styled-components';
+import { color, hoverColor } from '../../../theme';
 
 interface PillSelectProps {
   options: { id: string; name: string }[];
-  active: Set<string>;
-  onToggle: (id: string) => any;
+  active: string[];
+  onChange: (newState: string[]) => any;
 }
 
-const PillSelect: FC<PillSelectProps> = ({ options, active, onToggle }) => (
+const Pill = styled.div<{ variant: string }>`
+  border-radius: 10px;
+  padding: 10px;
+  margin: 0 2px;
+  transition: all 0.2s ease-in-out;
+
+  background: ${color};
+
+  &:hover {
+    background: ${hoverColor};
+  }
+`;
+
+const PillSelect: FC<PillSelectProps> = ({ options, active, onChange }) => (
   <>
-    {options
-      .sort((a, b) => {
-        const hasA = active.has(a.id);
-        const hasB = active.has(b.id);
+    {options.map(({ name, id }) => (
+      <Pill
+        variant={active.includes(id) ? 'primary' : 'dark'}
+        key={id}
+        onClick={() => {
+          const newState = [...active];
 
-        if (hasA && !hasB) {
-          return -1;
-        }
+          if (newState.includes(id)) {
+            onChange(newState.filter((i) => i !== id));
+            return;
+          }
 
-        if (hasB && !hasA) {
-          return 1;
-        }
-
-        return 0;
-      })
-      .map(({ name, id }) => (
-        <Badge
-          pill
-          key={id}
-          variant={active.has(id) ? 'light' : 'dark'}
-          onClick={() => onToggle(id)}
-          style={{ cursor: 'pointer', userSelect: 'none' }}
-        >
-          {name}
-        </Badge>
-      ))}
+          newState.push(id);
+          onChange(newState);
+        }}
+        style={{ cursor: 'pointer', userSelect: 'none' }}
+      >
+        {name}
+      </Pill>
+    ))}
   </>
 );
 

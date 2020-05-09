@@ -3,6 +3,8 @@ import Dropzone from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { ReactNode } from 'react';
 import { FaFileUpload } from 'react-icons/fa';
+import { BigTitle, Paragraph } from '../../atoms/typography';
+import { Box } from '../../atoms/box';
 
 export interface SolutionDropZoneProps {
   children: ReactNode;
@@ -35,17 +37,15 @@ const SolutionDropZone = ({
             {fileUploaded ? (
               children
             ) : (
-              <div className="badge-secondary p-5">
-                <div className="display-2 text-center">
+              <Box padding={100}>
+                <BigTitle align="center">
                   <FaFileUpload />
-                </div>
-                <p
-                  className="text-center big p-2"
-                  style={{ cursor: 'default' }}
-                >
+                </BigTitle>
+
+                <Paragraph style={{ cursor: 'default' }} align="center">
                   {t('taskPage.dropFileHere')}
-                </p>
-              </div>
+                </Paragraph>
+              </Box>
             )}
           </div>
         </>
