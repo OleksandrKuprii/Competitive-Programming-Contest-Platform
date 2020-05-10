@@ -32,7 +32,7 @@ const StyledSelect: FC<Props> = (props) => (
           primary25: '#222',
           primary50: '#222',
           primary75: '#222',
-          primary: '#aaa',
+          primary: '#222',
           dangerLight: '#f94144',
         },
       })}
