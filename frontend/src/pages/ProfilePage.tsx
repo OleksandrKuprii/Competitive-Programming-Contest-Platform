@@ -1,37 +1,35 @@
 import * as React from 'react';
 import { FC, memo } from 'react';
-import { Col, Row } from '@/atoms/grid';
-import Defined from '@/helpers/defined';
+import ProfileInfo from '@/molecules/profileInfo';
+import { Col, Grid, Row } from '@/atoms/grid';
+import Box from '@/atoms/box';
+import PrettyDate from '@/atoms/prettyDate';
+import { Spacer } from '@/atoms/spacers';
+import { Subtitle } from '@/atoms/typography';
+import { User } from '~/models/interfaces';
 
 interface ProfilePageArgs {
-  fullname: string;
-  username: string;
-  picture?: string;
+  user: User;
 }
 
-const ProfilePage: FC<ProfilePageArgs> = ({ fullname, username, picture }) => {
+const ProfilePage: FC<ProfilePageArgs> = ({ user }) => {
   return (
-    <div>
+    <Grid>
       <Row>
         <Col>
-          <p className="h1">{fullname}</p>
-          <p className="description">@{username}</p>
+          <ProfileInfo user={user} />
         </Col>
-
-        <Defined value={picture}>
-          {(definedPicture) => (
-            <Col>
-              <img
-                alt="Profile"
-                src={definedPicture}
-                width={100}
-                height={100}
-              />
-            </Col>
-          )}
-        </Defined>
       </Row>
-    </div>
+      <Spacer />
+      <Subtitle>Additional info</Subtitle>
+      <Row>
+        <Col>
+          <Box padding={20}>
+            <b>Signed up:</b> <PrettyDate timestamp={user.signupDate} />
+          </Box>
+        </Col>
+      </Row>
+    </Grid>
   );
 };
 

@@ -227,13 +227,7 @@ const App = () => {
                   fetchMyProfile={fetchMyProfileCallback}
                   myProfile={myProfile}
                 >
-                  {({ username, fullname, picture }) => (
-                    <ProfilePage
-                      username={username}
-                      fullname={fullname}
-                      picture={picture}
-                    />
-                  )}
+                  {(user) => <ProfilePage user={user} />}
                 </MyProfileFromAPI>
               </Route>
 
