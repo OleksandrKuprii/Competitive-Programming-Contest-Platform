@@ -32,12 +32,3 @@ export const Subtitle = styled(baseParagraph)`
   font-size: 1.3em;
   padding: 20px 0;
 `;
-
-export const TextPaper = styled.div`
-  padding: 30px;
-  box-shadow: 2px 2px 2px 2px #000;
-  background-color: #111;
-  * {
-    font-family: 'Open Sans', sans-serif;
-  }
-`;

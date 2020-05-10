@@ -8,7 +8,8 @@ import HtmlTextSection from '@/molecules/htmlTextSection';
 import Defined from '@/helpers/defined';
 import SolutionDropZone from '@/organisms/solutionDropZone';
 import { Spacer } from '@/atoms/spacers';
-import { TextPaper, Title } from '@/atoms/typography';
+import { Title } from '@/atoms/typography';
+import Paper from '@/atoms/paper';
 import { Task } from '~/models/interfaces';
 
 interface TaskPageProps {
@@ -71,7 +72,7 @@ const TaskPage: FC<TaskPageProps> = ({
       <Title>{task.name}</Title>
       <Row>
         <Col size={3}>
-          <TextPaper>
+          <Paper>
             {sections.map((section) => (
               <HtmlTextSection
                 key={section.id}
@@ -79,7 +80,7 @@ const TaskPage: FC<TaskPageProps> = ({
                 header={section.header || ''}
               />
             ))}
-          </TextPaper>
+          </Paper>
 
           <Spacer size={20} />
 
