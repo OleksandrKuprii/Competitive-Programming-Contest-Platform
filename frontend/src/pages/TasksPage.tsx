@@ -348,7 +348,7 @@ const TasksPage: FC<TasksPageProps> = ({
                   <td>
                     <Defined value={rating}>
                       {(definedRating) => (
-                        <SmallRatingChart id={id} rating={definedRating} />
+                        <SmallRatingChart rating={definedRating} />
                       )}
                     </Defined>
                   </td>
