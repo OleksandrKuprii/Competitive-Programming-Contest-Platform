@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Transition } from 'react-transition-group';
 import { FC, ReactNode } from 'react';
+import { Transition } from 'react-transition-group';
 import styled, { keyframes } from 'styled-components';
 
 const duration = 300;

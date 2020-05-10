@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FC } from 'react';
-import Loading from '../loading';
-import Colored from '../typography/Colored';
+import { useTranslation } from 'react-i18next';
+import Loading from '@/atoms/loading';
+import Colored from '@/atoms/typography/Colored';
 
 interface ResultProps {
   points: number;

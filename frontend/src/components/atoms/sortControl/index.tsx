@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import { useCallback } from 'react';
+import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import styled, { css } from 'styled-components';
-import { Grid, Row } from '../grid';
-import { HorizontalSpacer } from '../spacers';
-import { color } from '../../../theme';
+import { Grid, Row } from '@/atoms/grid';
+import { HorizontalSpacer } from '@/atoms/spacers';
+import { color } from '~/theme';
 
 interface SortControlArgs {
   onChange: (order: number) => any;

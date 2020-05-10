@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { color } from '../../../theme';
-import { baseParapgraph } from './index';
+import { baseParagraph } from '@/atoms/typography';
+import { color } from '~/theme';
 
-const Colored = styled(baseParapgraph)<{ variant?: string }>`
+const Colored = styled(baseParagraph)<{ variant?: string }>`
   color: ${color};
 `;
 

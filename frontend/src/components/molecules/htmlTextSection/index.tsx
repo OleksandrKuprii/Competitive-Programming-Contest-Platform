@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Parser as HtmlToReactParser } from 'html-to-react';
 import { FC } from 'react';
-import { Paragraph, Subtitle } from '../../atoms/typography';
+import { Parser as HtmlToReactParser } from 'html-to-react';
+import { Paragraph, Subtitle } from '@/atoms/typography';
 
 export interface HtmlTextSectionProps {
   text: string;

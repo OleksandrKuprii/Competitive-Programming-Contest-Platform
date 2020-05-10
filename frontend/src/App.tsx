@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
 import shallowEqual from 'shallowequal';
 import { ThemeProvider } from 'styled-components';
-import SubmissionsPage from './pages/SubmissionsPage';
-import TaskFromURL from './components/dataProviders/taskFromURL';
-import SubmissionPage from './pages/SubmissionPage';
-import ProfilePage from './pages/ProfilePage';
-import WithNotifications from './components/templates/withNotifications';
-import TournamentsPage from './pages/TournamentsPage';
-import WithStickyNavbar from './components/templates/withStickyNavbar';
-import MyProfileFromAPI from './components/dataProviders/myProfileFromAPI';
-import { useStoreActions, useStoreState } from './hooks/store';
-import TaskPage from './pages/TaskPage';
-import SubmissionFromURL from './components/dataProviders/submissionFromUrl';
-import TasksPage from './pages/TasksPage';
-import HomePage from './pages/HomePage';
-import GlobalStyle from './theme/GlobalStyle';
+import TaskFromURL from '@/dataProviders/taskFromURL';
+import WithNotifications from '@/templates/withNotifications';
+import WithNavbar from '@/templates/withNavbar';
+import MyProfileFromAPI from '@/dataProviders/myProfileFromAPI';
+import SubmissionFromURL from '@/dataProviders/submissionFromUrl';
+import SubmissionsPage from '~/pages/SubmissionsPage';
+import SubmissionPage from '~/pages/SubmissionPage';
+import ProfilePage from '~/pages/ProfilePage';
+import TournamentsPage from '~/pages/TournamentsPage';
+import { useStoreActions, useStoreState } from '~/hooks/store';
+import TaskPage from '~/pages/TaskPage';
+import TasksPage from '~/pages/TasksPage';
+import HomePage from '~/pages/HomePage';
+import GlobalStyle from '~/theme/GlobalStyle';
 
 const App = () => {
   const {
@@ -162,7 +162,7 @@ const App = () => {
       <GlobalStyle />
       <HashRouter>
         <WithNotifications>
-          <WithStickyNavbar
+          <WithNavbar
             isAuthenticated={isAuthenticated}
             onSignIn={signInCallback}
             onSingOut={singOutCallback}
@@ -245,7 +245,7 @@ const App = () => {
                 <Redirect to="/" />
               </Route>
             </Switch>
-          </WithStickyNavbar>
+          </WithNavbar>
         </WithNotifications>
       </HashRouter>
     </ThemeProvider>

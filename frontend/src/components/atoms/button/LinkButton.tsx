@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import BaseButton from './BaseButton';
-import { color } from '../../../theme';
+import BaseButton from '@/atoms/button/BaseButton';
+import { color } from '~/theme';
 
 const LinkButton = styled(BaseButton)<{ variant?: string }>`
   &:hover {

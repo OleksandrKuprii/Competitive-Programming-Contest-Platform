@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { FC } from 'react';
-import CodeViewer from '../../atoms/codeViewer';
-import Defined from '../../helpers/defined';
-import Button from '../../atoms/button';
-import { Grid, Row } from '../../atoms/grid';
-import { HorizontalSpacer, Spacer } from '../../atoms/spacers';
-import StyledSelect from '../../atoms/styledSelect';
+import CodeViewer from '@/atoms/codeViewer';
+import Defined from '@/helpers/defined';
+import Button from '@/atoms/button';
+import { Grid, Row } from '@/atoms/grid';
+import { HorizontalSpacer, Spacer } from '@/atoms/spacers';
+import StyledSelect from '@/atoms/styledSelect';
 
 interface SolutionSubmissionFormProps {
   code?: string;

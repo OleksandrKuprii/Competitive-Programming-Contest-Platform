@@ -1,4 +1,4 @@
-import { TaskRating } from '../models/interfaces';
+import { TaskRating } from '~/models/interfaces';
 
 const getRatingPercentage = (rating: TaskRating) => {
   const sum = rating.zero + rating.partial + rating.correct;

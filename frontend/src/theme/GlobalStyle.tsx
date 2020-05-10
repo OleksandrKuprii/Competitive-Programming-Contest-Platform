@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import { background, foreground } from './index';
+import { background, foreground } from '~/theme';
 
 const GlobalStyle = createGlobalStyle`
   * {

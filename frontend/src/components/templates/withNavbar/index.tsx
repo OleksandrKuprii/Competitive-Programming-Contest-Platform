@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
-import { Container } from '../../atoms/grid';
-import Navbar from '../../organisms/navbar';
+import { Container } from '@/atoms/grid';
+import Navbar from '@/organisms/navbar';
 
-interface WithStickyNavbarProps {
+interface WithNavbarProps {
   children: ReactNode;
   isAuthenticated: boolean;
   onSignIn: () => any;
   onSingOut: () => any;
 }
 
-const WithStickyNavbar: FC<WithStickyNavbarProps> = ({
+const WithNavbar: FC<WithNavbarProps> = ({
   children,
   isAuthenticated,
   onSignIn,
@@ -27,4 +27,4 @@ const WithStickyNavbar: FC<WithStickyNavbarProps> = ({
   </>
 );
 
-export default WithStickyNavbar;
+export default WithNavbar;

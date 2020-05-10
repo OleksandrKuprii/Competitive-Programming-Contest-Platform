@@ -1,11 +1,11 @@
-import auth0Model from './auth0Model';
-import taskModel from './taskModel';
-import submissionModel from './submissionModel';
-import solutionSubmissionModel from './solutionSubmissionModel';
-import notificationModel from './notificationModel';
-import submissionHunterModel from './submissionHunterModel';
-import { Auth0ModelInitialState, StoreModel } from './interfaces';
-import userModel from './userModel';
+import auth0Model from '~/models/auth0Model';
+import taskModel from '~/models/taskModel';
+import submissionModel from '~/models/submissionModel';
+import solutionSubmissionModel from '~/models/solutionSubmissionModel';
+import notificationModel from '~/models/notificationModel';
+import submissionHunterModel from '~/models/submissionHunterModel';
+import { Auth0ModelInitialState, StoreModel } from '~/models/interfaces';
+import userModel from '~/models/userModel';
 
 const storeModel: (
   auth0ModelInitialState: Auth0ModelInitialState,

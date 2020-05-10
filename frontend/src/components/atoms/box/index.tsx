@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { color } from '../../../theme';
+import { color } from '~/theme';
 
 export const Box = styled.div<{ padding?: number }>`
   ${(props) =>

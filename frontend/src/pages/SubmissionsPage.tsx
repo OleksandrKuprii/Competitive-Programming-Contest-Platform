@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { FC } from 'react';
-import SubmissionList from '../components/organisms/submissionList';
-import WithLoading from '../components/templates/withLoading';
-import { Submission } from '../models/interfaces';
-import LoadingPage from './LoadingPage';
+import SubmissionList from '@/organisms/submissionList';
+import WithLoading from '@/templates/withLoading';
+import { Submission } from '~/models/interfaces';
+import LoadingPage from '~/pages/LoadingPage';
 
 interface SubmissionsPageProps {
   submissions: Submission[];

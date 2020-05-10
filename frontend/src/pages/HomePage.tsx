@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { GiChessKnight, GiStarsStack } from 'react-icons/all';
-import { Col, Grid, Row } from '../components/atoms/grid';
-import { BigTitle, Paragraph, Subtitle } from '../components/atoms/typography';
-import { Spacer } from '../components/atoms/spacers';
+import { Col, Grid, Row } from '@/atoms/grid';
+import { BigTitle, Paragraph, Subtitle } from '@/atoms/typography';
+import { Spacer } from '@/atoms/spacers';
 
 const Homepage = () => {
   const { t } = useTranslation();

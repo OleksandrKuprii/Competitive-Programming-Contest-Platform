@@ -1,6 +1,6 @@
 import { action, thunk, thunkOn } from 'easy-peasy';
-import sleep from '../utils/sleep';
-import { NotificationModel } from './interfaces';
+import sleep from '~/utils/sleep';
+import { NotificationModel } from '~/models/interfaces';
 
 const notificationModel: NotificationModel = {
   list: [],

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-export const baseParapgraph = styled.p<{ align?: string; bold?: boolean }>`
+export const baseParagraph = styled.p<{ align?: string; bold?: boolean }>`
   margin: 0;
   padding: 0;
   ${(props) =>
@@ -15,20 +15,20 @@ export const baseParapgraph = styled.p<{ align?: string; bold?: boolean }>`
     `}
 `;
 
-export const Paragraph = styled(baseParapgraph)`
+export const Paragraph = styled(baseParagraph)`
   font-size: 1em;
 `;
 
-export const Title = styled(baseParapgraph)`
+export const Title = styled(baseParagraph)`
   font-size: 2em;
   padding-bottom: 20px;
 `;
 
-export const BigTitle = styled(baseParapgraph)`
+export const BigTitle = styled(baseParagraph)`
   font-size: 3em;
 `;
 
-export const Subtitle = styled(baseParapgraph)`
+export const Subtitle = styled(baseParagraph)`
   font-size: 1.3em;
   padding: 20px 0;
 `;

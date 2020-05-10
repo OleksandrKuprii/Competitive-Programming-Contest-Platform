@@ -1,5 +1,5 @@
 import { Action, ActionOn, Computed, Thunk, ThunkOn } from 'easy-peasy';
-import Injections from '../injections';
+import Injections from '~/injections';
 
 export interface StoreModel {
   auth0: Auth0Model;

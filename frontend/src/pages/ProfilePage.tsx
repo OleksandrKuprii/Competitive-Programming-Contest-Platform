@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, memo } from 'react';
-import { Col, Row } from '../components/atoms/grid';
-import Defined from '../components/helpers/defined';
+import { Col, Row } from '@/atoms/grid';
+import Defined from '@/helpers/defined';
 
 interface ProfilePageArgs {
   fullname: string;

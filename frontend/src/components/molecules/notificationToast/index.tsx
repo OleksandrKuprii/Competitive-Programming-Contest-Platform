@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { ColoredBox } from '../../atoms/box';
-import { Notification } from '../../../models/interfaces';
-import BlockLink from '../../atoms/link/BlockLink';
-import Result from '../../atoms/result';
+import { ColoredBox } from '@/atoms/box';
+import BlockLink from '@/atoms/link/BlockLink';
+import Result from '@/atoms/result';
+import { Notification } from '~/models/interfaces';
 
 interface NotificationToastProps {
   notification: Notification;

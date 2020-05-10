@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { color, hoverColor } from '../../../theme';
-import BaseButton from './BaseButton';
+import BaseButton from '@/atoms/button/BaseButton';
+import { color, hoverColor } from '~/theme';
 
 const Button = styled(BaseButton)<{ variant?: string }>`
   padding: 0 20px;

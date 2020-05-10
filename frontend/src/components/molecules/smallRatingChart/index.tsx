@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FC } from 'react';
-import { TaskRating } from '../../../models/interfaces';
-import getRatingPercentage from '../../../utils/getRatingPercentage';
-import SmallRatingChartBar from './bar';
+import SmallRatingChartBar from '@/molecules/smallRatingChart/bar';
+import { TaskRating } from '~/models/interfaces';
+import getRatingPercentage from '~/utils/getRatingPercentage';
 
 interface SmallRatingChart {
   id: string;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC } from 'react';
-import Button from '../../atoms/button';
+import Button from '@/atoms/button';
 
 interface ProfileStatusProps {
   isAuthenticated: boolean;

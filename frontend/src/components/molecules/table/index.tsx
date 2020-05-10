@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { color } from '../../../theme';
+import { color } from '~/theme';
 
 const Table = styled.table<{ variant?: string }>`
   width: 100%;

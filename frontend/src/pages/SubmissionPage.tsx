@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Col, Container, Grid, Row } from '../components/atoms/grid';
-import Table from '../components/molecules/table';
-import { Submission } from '../models/interfaces';
-import PrettyDate from '../components/atoms/prettyDate';
-import Loading from '../components/atoms/loading';
-import Defined from '../components/helpers/defined';
-import CodeViewer from '../components/atoms/codeViewer';
-import Result from '../components/atoms/result';
-import Link from '../components/atoms/link';
-import { Paragraph, Subtitle, Title } from '../components/atoms/typography';
-import { Spacer } from '../components/atoms/spacers';
+import { Col, Container, Grid, Row } from '@/atoms/grid';
+import Table from '@/molecules/table';
+import PrettyDate from '@/atoms/prettyDate';
+import Loading from '@/atoms/loading';
+import Defined from '@/helpers/defined';
+import CodeViewer from '@/atoms/codeViewer';
+import Result from '@/atoms/result';
+import Link from '@/atoms/link';
+import { Paragraph, Subtitle, Title } from '@/atoms/typography';
+import { Spacer } from '@/atoms/spacers';
+import { Submission } from '~/models/interfaces';
 
 interface SubmissionPageProps {
   submission: Submission;

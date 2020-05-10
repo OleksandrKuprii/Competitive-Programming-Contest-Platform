@@ -1,7 +1,7 @@
 import { action, computed, thunk } from 'easy-peasy';
-import loadingModel from './loadingModel';
-import baseURL from './apiBaseURL';
-import { SolutionSubmissionModel } from './interfaces';
+import loadingModel from '~/models/loadingModel';
+import baseURL from '~/models/apiBaseURL';
+import { SolutionSubmissionModel } from '~/models/interfaces';
 
 const solutionSubmissionModel: SolutionSubmissionModel = {
   loading: loadingModel(),
