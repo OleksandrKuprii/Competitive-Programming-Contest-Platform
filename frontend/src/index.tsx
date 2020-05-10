@@ -3,11 +3,10 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { createStore, StoreProvider } from 'easy-peasy';
 import createAuth0Client from '@auth0/auth0-spa-js';
-import App from './App';
-import i18n from './locales/i18n';
-import storeModel from './models/store';
-import './types/index.d.ts';
-import './serviceWorker';
+import App from '~/App';
+import i18n from '~/locales/i18n';
+import storeModel from '~/models/store';
+import '~/types/index.d';
 
 const main = async () => {
   const auth0 = await createAuth0Client({

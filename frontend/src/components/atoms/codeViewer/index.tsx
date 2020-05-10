@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FC } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { FC } from 'react';
 
 interface CodeViewerProps {
   children: string;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FC, ReactNode, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Submission } from '../../../models/interfaces';
-import ErrorPage from '../../../pages/ErrorPage';
+import { Submission } from '~/models/interfaces';
+import ErrorPage from '~/pages/ErrorPage';
 
 interface SubmissionFromURLProps {
   children: (submission: Submission) => ReactNode;

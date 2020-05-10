@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { TransitionGroup } from 'react-transition-group';
 import { FC, ReactNode } from 'react';
-import { useStoreState } from '../../../hooks/store';
-import NotificationToast from '../../molecules/notificationToast';
-import { Grid } from '../../atoms/grid';
-import Fade from '../../animations/fade';
+import { TransitionGroup } from 'react-transition-group';
+import NotificationToast from '@/molecules/notificationToast';
+import { Grid } from '@/atoms/grid';
+import Fade from '@/animations/fade';
+import { useStoreState } from '~/hooks/store';
 
 interface WithNotificationsProps {
   children: ReactNode;

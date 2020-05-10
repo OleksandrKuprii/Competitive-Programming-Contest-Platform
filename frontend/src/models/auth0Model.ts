@@ -1,5 +1,5 @@
 import { thunk } from 'easy-peasy';
-import { Auth0Model, Auth0ModelInitialState } from './interfaces';
+import { Auth0Model, Auth0ModelInitialState } from '~/models/interfaces';
 
 const auth0Model: (initialState: Auth0ModelInitialState) => Auth0Model = (
   initialState,

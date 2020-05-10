@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { FC } from 'react';
 import styled from 'styled-components';
-import Loading from '../components/atoms/loading';
-import { Spacer } from '../components/atoms/spacers';
-import { Title } from '../components/atoms/typography';
-import { Grid, Row } from '../components/atoms/grid';
+import Loading from '@/atoms/loading';
+import { Spacer } from '@/atoms/spacers';
+import { Title } from '@/atoms/typography';
+import { Grid, Row } from '@/atoms/grid';
 
 const LoadingContainer = styled.div``;
 

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Col, Row } from '../components/atoms/grid';
-import SolutionSubmissionForm from '../components/organisms/solutionSubmissionForm';
-import { Task } from '../models/interfaces';
-import Table from '../components/molecules/table';
-import HtmlTextSection from '../components/molecules/htmlTextSection';
-import Defined from '../components/helpers/defined';
-import SolutionDropZone from '../components/organisms/solutionDropZone';
-import { Spacer } from '../components/atoms/spacers';
-import { TextPaper, Title } from '../components/atoms/typography';
+import { Col, Row } from '@/atoms/grid';
+import SolutionSubmissionForm from '@/organisms/solutionSubmissionForm';
+import Table from '@/molecules/table';
+import HtmlTextSection from '@/molecules/htmlTextSection';
+import Defined from '@/helpers/defined';
+import SolutionDropZone from '@/organisms/solutionDropZone';
+import { Spacer } from '@/atoms/spacers';
+import { TextPaper, Title } from '@/atoms/typography';
+import { Task } from '~/models/interfaces';
 
 interface TaskPageProps {
   task: Task;

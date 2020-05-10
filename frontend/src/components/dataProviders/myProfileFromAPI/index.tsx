@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, ReactNode, useEffect } from 'react';
-import { User } from '../../../models/interfaces';
-import Defined from '../../helpers/defined';
+import Defined from '@/helpers/defined';
+import { User } from '~/models/interfaces';
 
 interface MyProfileFromAPI {
   fetchMyProfile: () => any;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import moment from 'moment';
 import { FC } from 'react';
+import moment from 'moment';
 
 interface PrettyDateProps {
   timestamp?: Date;

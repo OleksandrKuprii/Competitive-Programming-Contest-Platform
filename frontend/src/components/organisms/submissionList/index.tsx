@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Submission } from '../../../models/interfaces';
-import PrettyDate from '../../atoms/prettyDate';
-import Result from '../../atoms/result';
-import Defined from '../../helpers/defined';
-import Link from '../../atoms/link';
-import StyledTable from '../../molecules/table';
+import PrettyDate from '@/atoms/prettyDate';
+import Result from '@/atoms/result';
+import Defined from '@/helpers/defined';
+import Link from '@/atoms/link';
+import StyledTable from '@/molecules/table';
+import { Submission } from '~/models/interfaces';
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();

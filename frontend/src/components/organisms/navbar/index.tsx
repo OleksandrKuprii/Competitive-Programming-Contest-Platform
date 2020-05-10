@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FC, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import ProfileStatus from '../../molecules/profileStatus';
-import { Container, Row } from '../../atoms/grid';
-import Link from '../../atoms/link';
-import { HorizontalSpacer } from '../../atoms/spacers';
+import ProfileStatus from '@/molecules/profileStatus';
+import { Container, Row } from '@/atoms/grid';
+import Link from '@/atoms/link';
+import { HorizontalSpacer } from '@/atoms/spacers';
 
-const brandIcon = require('../../../assets/brandIcon.png');
+const brandIcon = require('~/assets/brandIcon.png');
 
 interface NavbarProps {
   isAuthenticated: boolean;

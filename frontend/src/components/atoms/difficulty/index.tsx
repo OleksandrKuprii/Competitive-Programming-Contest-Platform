@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FaStar, FaStarHalf } from 'react-icons/fa';
 import { FC } from 'react';
+import { FaStar, FaStarHalf } from 'react-icons/fa';
 
 interface DifficultyProps {
   difficulty: number;

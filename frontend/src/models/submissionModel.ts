@@ -1,9 +1,9 @@
 import { actionOn, thunk } from 'easy-peasy';
-import baseURL from './apiBaseURL';
-import resultToPointsAndStatus from '../utils/resultToPointsAndStatus';
-import { Submission, SubmissionModel } from './interfaces';
-import loadingModel from './loadingModel';
-import updateObjectWithProperty from '../utils/updateObjectWithProperty';
+import baseURL from '~/models/apiBaseURL';
+import resultToPointsAndStatus from '~/utils/resultToPointsAndStatus';
+import { Submission, SubmissionModel } from '~/models/interfaces';
+import loadingModel from '~/models/loadingModel';
+import updateObjectWithProperty from '~/utils/updateObjectWithProperty';
 
 const submissionModel: SubmissionModel = {
   ...loadingModel(),

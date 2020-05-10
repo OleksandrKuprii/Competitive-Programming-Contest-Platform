@@ -1,6 +1,6 @@
 import { actionOn, thunk } from 'easy-peasy';
-import { User, UserModel } from './interfaces';
-import baseURL from './apiBaseURL';
+import { User, UserModel } from '~/models/interfaces';
+import baseURL from '~/models/apiBaseURL';
 
 const userModel: UserModel = {
   fetchMyProfile: thunk(async (actions, _, { injections }) => {

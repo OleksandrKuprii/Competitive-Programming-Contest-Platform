@@ -1,6 +1,6 @@
 import { action, computed, thunkOn } from 'easy-peasy';
-import sleep from '../utils/sleep';
-import { Submission, SubmissionHunterModel } from './interfaces';
+import sleep from '~/utils/sleep';
+import { Submission, SubmissionHunterModel } from '~/models/interfaces';
 
 const checkSubmissions = (
   submissions: Submission[],

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
-import { Row } from '../../atoms/grid';
+import { Row } from '@/atoms/grid';
 
 export interface WithFilterBarProps {
   children: ReactNode;

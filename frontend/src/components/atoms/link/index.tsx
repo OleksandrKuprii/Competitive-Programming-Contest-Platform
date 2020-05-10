@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { color, foreground } from '../../../theme';
+import { color, foreground } from '~/theme';
 
 const Link = styled.a<{ variant?: string }>`
   cursor: pointer;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { color, hoverColor } from '../../../theme';
+import { color, hoverColor } from '~/theme';
 
 interface PillSelectProps {
   options: { id: string; name: string }[];

@@ -1,5 +1,5 @@
 import { action } from 'easy-peasy';
-import { LoadingModel } from './interfaces';
+import { LoadingModel } from '~/models/interfaces';
 
 const loadingModel: () => LoadingModel = () => ({
   loadingStatus: false,

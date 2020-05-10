@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FC, ReactNode, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Task } from '../../../models/interfaces';
-import ErrorPage from '../../../pages/ErrorPage';
+import { Task } from '~/models/interfaces';
+import ErrorPage from '~/pages/ErrorPage';
 
 interface TaskFromURLProps {
   children: (task: Task) => ReactNode;

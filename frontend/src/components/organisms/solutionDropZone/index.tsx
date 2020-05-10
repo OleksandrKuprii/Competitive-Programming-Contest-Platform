@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { ReactNode } from 'react';
 import Dropzone from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
-import { ReactNode } from 'react';
 import { FaFileUpload } from 'react-icons/fa';
-import { BigTitle, Paragraph } from '../../atoms/typography';
-import { Box } from '../../atoms/box';
+import { BigTitle, Paragraph } from '@/atoms/typography';
+import { Box } from '@/atoms/box';
 
 export interface SolutionDropZoneProps {
   children: ReactNode;

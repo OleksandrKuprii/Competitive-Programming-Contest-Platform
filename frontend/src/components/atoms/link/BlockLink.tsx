@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import Link from './index';
+import Link from '@/atoms/link';
 
 const BlockLink = styled(Link)<{ padding?: number }>`
   display: block;
