@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
-import styled from 'styled-components';
-import { color, hoverColor } from '~/theme';
+import styled, { css } from 'styled-components';
+import ColoredBox from '@/atoms/box/ColoredBox';
 
 interface PillSelectProps {
   options: { id: string; name: string }[];
@@ -9,24 +9,24 @@ interface PillSelectProps {
   onChange: (newState: string[]) => any;
 }
 
-const Pill = styled.div<{ variant: string }>`
-  border-radius: 10px;
+const Pill = styled(ColoredBox)<{ variant: string; active: boolean }>`
   padding: 10px;
   margin: 0 2px;
   transition: all 0.2s ease-in-out;
 
-  background: ${color};
-
-  &:hover {
-    background: ${hoverColor};
-  }
+  ${(props) =>
+    props.active &&
+    css`
+      transform: translateY(-10%);
+    `}
 `;
 
 const PillSelect: FC<PillSelectProps> = ({ options, active, onChange }) => (
   <>
     {options.map(({ name, id }) => (
       <Pill
-        variant={active.includes(id) ? 'primary' : 'dark'}
+        variant={active.includes(id) ? 'dark' : ''}
+        active={active.includes(id)}
         key={id}
         onClick={() => {
           const newState = [...active];
