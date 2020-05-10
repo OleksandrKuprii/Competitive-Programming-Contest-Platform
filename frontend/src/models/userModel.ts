@@ -23,6 +23,7 @@ const userModel: UserModel = {
         signupDate: new Date(body.registered),
         username: body.nickname,
         fullname: body.name,
+        picture: body.picture,
       };
 
       return user;

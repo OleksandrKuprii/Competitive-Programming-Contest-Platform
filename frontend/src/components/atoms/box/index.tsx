@@ -1,7 +1,16 @@
 import styled, { css } from 'styled-components';
-import { color } from '~/theme';
 
-export const Box = styled.div<{ padding?: number }>`
+const Box = styled.div<{
+  padding?: number;
+  width?: string;
+  height?: string;
+}>`
+  height: ${(props) => props.height};
+  ${(props) =>
+    props.width &&
+    css`
+      width: ${props.width};
+    `};
   ${(props) =>
     props.padding &&
     css`
@@ -10,6 +19,8 @@ export const Box = styled.div<{ padding?: number }>`
   box-shadow: 2px 2px 2px 2px #000;
 `;
 
-export const ColoredBox = styled(Box)<{ variant?: string }>`
-  background-color: ${color};
-`;
+Box.defaultProps = {
+  height: '100%',
+};
+
+export default Box;

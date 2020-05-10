@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { FC } from 'react';
-import SmallRatingChartBar from '@/molecules/smallRatingChart/bar';
+import SmallRatingChartBar from '@/atoms/smallRatingChartBar';
+import Box from '@/atoms/box';
+import ReactTooltip from 'react-tooltip';
 import { TaskRating } from '~/models/interfaces';
 import getRatingPercentage from '~/utils/getRatingPercentage';
 
 interface SmallRatingChart {
-  id: string;
   rating: TaskRating;
 }
 
-const SmallRatingChart: FC<SmallRatingChart> = ({ id, rating }) => {
+const SmallRatingChart: FC<SmallRatingChart> = ({ rating }) => {
   const { correct, partial, zero } = rating;
 
   if (correct === 0 && correct === partial && correct === zero) {
@@ -23,7 +24,9 @@ const SmallRatingChart: FC<SmallRatingChart> = ({ id, rating }) => {
   } = getRatingPercentage(rating);
 
   return (
-    <div style={{ height: 20, width: '10vw', padding: 3 }}>
+    <Box height="20px" width="10vw">
+      <ReactTooltip />
+
       {[
         {
           number: correct,
@@ -42,16 +45,16 @@ const SmallRatingChart: FC<SmallRatingChart> = ({ id, rating }) => {
         },
       ]
         .filter(({ number }) => number !== 0)
-        .map(({ percentage, number, color }) => (
-          <SmallRatingChartBar
-            key={`${id}${color}`}
-            id={id}
-            percentage={percentage}
-            number={number}
-            color={color}
-          />
+        .map(({ percentage, color, number }) => (
+          <React.Fragment key={color}>
+            <SmallRatingChartBar
+              percentage={percentage}
+              variant={color}
+              data-tip={`${number} - ${percentage}%`}
+            />
+          </React.Fragment>
         ))}
-    </div>
+    </Box>
   );
 };
 
