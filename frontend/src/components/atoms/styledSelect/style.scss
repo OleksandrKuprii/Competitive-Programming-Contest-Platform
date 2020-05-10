@@ -1,0 +1,15 @@
+.react-select {
+  * {
+    font-family: 'Montserrat', sans-serif !important;
+    color: white !important;
+  }
+
+  .react-select__control {
+    &,
+    &:hover,
+    &:focus {
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+}

@@ -164,102 +164,100 @@ const TasksPage: FC<TasksPageProps> = ({
 
               <Col size={1}>
                 <Grid justifyContent="center">
-                  <div className="d-flex justify-content-center">
-                    <Range
-                      onChange={(v) => {
-                        setDifficultyValues(v);
-                      }}
-                      onFinalChange={setDifficultyRange}
-                      min={1}
-                      max={10}
-                      values={difficultyValues}
-                      renderThumb={({ props, isDragged, index }) => (
+                  <Range
+                    onChange={(v) => {
+                      setDifficultyValues(v);
+                    }}
+                    onFinalChange={setDifficultyRange}
+                    min={1}
+                    max={10}
+                    values={difficultyValues}
+                    renderThumb={({ props, index }) => (
+                      <div
+                        {...props}
+                        style={{
+                          ...props.style,
+                          height: '20px',
+                          width: '20px',
+                          // borderRadius: '2px',
+                          backgroundColor: '#333',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          boxShadow: '0px 1px 3px #000',
+                        }}
+                      >
                         <div
-                          {...props}
                           style={{
-                            ...props.style,
-                            height: '21px',
-                            width: '21px',
-                            borderRadius: '2px',
-                            backgroundColor: '#333',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            boxShadow: '0px 1px 3px #000',
+                            position: 'absolute',
+                            top: '-28px',
+                            color: '#fff',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                            fontFamily:
+                              'Arial,Helvetica Neue,Helvetica,sans-serif',
+                            padding: '4px',
+                            // borderRadius: '4px',
+                            backgroundColor: '#212121',
                           }}
                         >
-                          <div
-                            style={{
-                              position: 'absolute',
-                              top: '-28px',
-                              color: '#fff',
-                              fontWeight: 'bold',
-                              fontSize: '14px',
-                              fontFamily:
-                                'Arial,Helvetica Neue,Helvetica,sans-serif',
-                              padding: '4px',
-                              borderRadius: '4px',
-                              backgroundColor: '#212121',
-                            }}
-                          >
-                            {
-                              [
-                                'newbie',
-                                'novice',
-                                'rookie',
-                                'beginner',
-                                'intermediate',
-                                'skillful',
-                                'seasoned',
-                                'advanced',
-                                'senior',
-                                'expert',
-                              ][difficultyValues[index] - 1]
-                            }
-                          </div>
-                          <div
-                            style={{
-                              height: '8px',
-                              width: '4px',
-                              backgroundColor: isDragged ? '#e76f51' : '#CCC',
-                            }}
-                          />
+                          {
+                            [
+                              'newbie',
+                              'novice',
+                              'rookie',
+                              'beginner',
+                              'intermediate',
+                              'skillful',
+                              'seasoned',
+                              'advanced',
+                              'senior',
+                              'expert',
+                            ][difficultyValues[index] - 1]
+                          }
                         </div>
-                      )}
-                      renderTrack={({ props, children }) => (
-                        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                         <div
-                          onMouseDown={props.onMouseDown}
-                          onTouchStart={props.onTouchStart}
                           style={{
-                            ...props.style,
-                            height: '24px',
-                            display: 'flex',
+                            height: '8px',
+                            width: '4px',
+                            backgroundColor: '#CCC',
+                          }}
+                        />
+                      </div>
+                    )}
+                    renderTrack={({ props, children }) => (
+                      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+                      <div
+                        onMouseDown={props.onMouseDown}
+                        onTouchStart={props.onTouchStart}
+                        style={{
+                          ...props.style,
+                          height: '24px',
+                          display: 'flex',
+                          width: '100%',
+                        }}
+                      >
+                        <div
+                          ref={props.ref}
+                          style={{
+                            height: '20px',
                             width: '100%',
+                            background: getTrackBackground({
+                              values: difficultyValues,
+                              colors: ['transparent', '#212121', 'transparent'],
+                              min: 1,
+                              max: 10,
+                            }),
+                            alignSelf: 'center',
+                            boxShadow: '2px 2px 2px 2px #000',
+                            // borderRadius: 5,
                           }}
                         >
-                          <div
-                            ref={props.ref}
-                            style={{
-                              height: '20px',
-                              width: '100%',
-                              borderRadius: '4px',
-                              background: getTrackBackground({
-                                values: difficultyValues,
-                                colors: ['#555', '#e76f51', '#555'],
-                                min: 1,
-                                max: 10,
-                              }),
-                              alignSelf: 'center',
-                              boxShadow: '2px 2px 2px 2px #000',
-                            }}
-                          >
-                            {children}
-                          </div>
+                          {children}
                         </div>
-                      )}
-                    />
-                  </div>
+                      </div>
+                    )}
+                  />
                 </Grid>
               </Col>
 
@@ -267,7 +265,7 @@ const TasksPage: FC<TasksPageProps> = ({
 
               <Col size={1}>
                 <Grid justifyContent="center">
-                  <Row>
+                  <Row justifyContent="space-between">
                     <PillSelect
                       options={[
                         { id: 'correct', name: 'Correct' },
