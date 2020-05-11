@@ -128,6 +128,21 @@ const taskModel: TaskModel = {
     (state, target) => {
       const { points, status, id, taskId } = target.payload;
 
+      if (points === undefined) {
+        return;
+      }
+
+      const task = state.tasks.find((t) => t.id === taskId);
+
+      if (
+        !task ||
+        task.points === undefined ||
+        // @ts-ignore
+        task.points > points
+      ) {
+        return;
+      }
+
       const update = {
         submissionId: id,
         points,

@@ -1,12 +1,15 @@
 import styled from 'styled-components';
+import Box from '@/atoms/box';
 
-const Paper = styled.div`
-  padding: 30px;
-  box-shadow: 2px 2px 2px 2px #000;
-  background-color: #111;
+const Paper = styled(Box)`
   * {
     font-family: 'Open Sans', sans-serif;
   }
 `;
+
+Paper.defaultProps = {
+  padding: 30,
+  height: 'fit-content',
+};
 
 export default Paper;
