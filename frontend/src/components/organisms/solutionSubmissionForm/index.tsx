@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC } from 'react';
-import CodeViewer from '@/atoms/codeViewer';
+import CodeViewer from '@/molecules/codeViewer';
 import Defined from '@/helpers/defined';
 import Button from '@/atoms/button';
 import { Grid, Row } from '@/atoms/grid';

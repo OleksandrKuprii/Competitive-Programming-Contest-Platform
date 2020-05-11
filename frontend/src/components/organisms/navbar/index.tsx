@@ -39,7 +39,7 @@ const Navbar: FC<NavbarProps> = ({ isAuthenticated, onSignIn, onSignOut }) => {
     <StyledNavbar>
       <Container>
         <Row style={{ padding: '10px 0' }}>
-          <Brand href="#/">
+          <Brand noHover href="#/">
             <img
               style={{ display: 'block' }}
               src={brandIcon}

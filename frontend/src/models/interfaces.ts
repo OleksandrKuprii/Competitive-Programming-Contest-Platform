@@ -3,11 +3,12 @@ import Injections from '~/injections';
 
 export interface StoreModel {
   auth0: Auth0Model;
-  task: TaskModel;
-  submission: SubmissionModel;
-  solutionSubmission: SolutionSubmissionModel;
+  myProfileEdit: MyProfileEditModel;
   notification: NotificationModel;
+  solutionSubmission: SolutionSubmissionModel;
+  submission: SubmissionModel;
   submissionHunter: SubmissionHunterModel;
+  task: TaskModel;
   user: UserModel;
 }
 
@@ -249,4 +250,10 @@ export interface UserModel extends LoadingModel {
   >;
 
   fetchedMyProfile: ActionOn<UserModel, StoreModel>;
+}
+
+export interface MyProfileEditModel {
+  editing: boolean;
+
+  fullname?: string;
 }
