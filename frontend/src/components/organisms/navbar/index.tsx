@@ -6,6 +6,7 @@ import ProfileStatus from '@/molecules/profileStatus';
 import { Container, Row } from '@/atoms/grid';
 import Link from '@/atoms/link';
 import { HorizontalSpacer } from '@/atoms/spacers';
+import { Paragraph } from '@/atoms/typography';
 
 const brandIcon = require('~/assets/brandIcon.png');
 
@@ -22,7 +23,8 @@ const StyledNavbar = styled.nav`
 `;
 
 const Brand = styled(Link)`
-  display: block;
+  display: flex;
+  line-height: 45px;
 `;
 
 const NavLink = styled(Link)`
@@ -38,7 +40,16 @@ const Navbar: FC<NavbarProps> = ({ isAuthenticated, onSignIn, onSignOut }) => {
       <Container>
         <Row style={{ padding: '10px 0' }}>
           <Brand href="#/">
-            <img src={brandIcon} height={45} alt="Brand logo" />
+            <img
+              style={{ display: 'block' }}
+              src={brandIcon}
+              height={45}
+              alt="Brand logo"
+            />
+
+            <Paragraph style={{ fontSize: 21, paddingLeft: 10 }}>
+              Toucan
+            </Paragraph>
           </Brand>
 
           <div style={{ marginRight: 'auto' }} />

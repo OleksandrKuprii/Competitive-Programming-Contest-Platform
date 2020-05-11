@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components';
 
-export const baseParagraph = styled.p<{ align?: string; bold?: boolean }>`
+export const baseParagraph = styled.p<{
+  align?: string;
+  bold?: boolean;
+  semiBold?: boolean;
+}>`
   margin: 0;
   padding: 0;
   ${(props) =>
@@ -12,6 +16,11 @@ export const baseParagraph = styled.p<{ align?: string; bold?: boolean }>`
     props.bold &&
     css`
       font-weight: bold;
+    `}
+  ${(props) =>
+    props.semiBold &&
+    css`
+      font-weight: 600;
     `}
 `;
 
@@ -30,5 +39,5 @@ export const BigTitle = styled(baseParagraph)`
 
 export const Subtitle = styled(baseParagraph)`
   font-size: 1.3em;
-  padding: 20px 0;
+  padding: 10px 0;
 `;

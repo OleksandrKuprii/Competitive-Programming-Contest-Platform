@@ -24,7 +24,7 @@ const WithNotifications: FC<WithNotificationsProps> = ({ children }) => {
           right: 0,
           zIndex: 9999,
           padding: 40,
-          width: 275,
+          width: 320,
           height: 300,
           flexDirection: 'column-reverse',
         }}

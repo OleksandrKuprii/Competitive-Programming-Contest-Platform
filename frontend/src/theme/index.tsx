@@ -1,5 +1,5 @@
 import theme from 'styled-theming';
-import { darken } from 'polished';
+import { darken, lighten } from 'polished';
 
 export const background = theme('mode', {
   dark: '#121212',
@@ -21,7 +21,7 @@ export const color = theme.variants('mode', 'variant', {
 export const hoverColor = theme.variants('mode', 'variant', {
   primary: { dark: darken(0.1, '#e76f51') },
 
-  danger: { dark: darken(0.1, '#f94144') },
+  danger: { dark: lighten(0.05, '#f94144') },
 
   dark: { dark: darken(0.2, '#212121') },
   grey: { dark: darken(0.2, '#555') },

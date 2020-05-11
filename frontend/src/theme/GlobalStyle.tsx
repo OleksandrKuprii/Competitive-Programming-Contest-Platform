@@ -25,6 +25,22 @@ const GlobalStyle = createGlobalStyle`
   button {
     font-family: 'Montserrat', sans-serif;
   }
+  
+  ::-webkit-scrollbar-track
+  {
+      background-color: transparent;
+  }
+
+  ::-webkit-scrollbar
+  {
+      width: 12px;
+      background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb
+  {
+      background-color: #555;
+  }
 `;
 
 export default GlobalStyle;
