@@ -237,7 +237,7 @@ export interface User {
   signupDate: Date;
 }
 
-export interface UserModel {
+export interface UserModel extends LoadingModel {
   myProfile?: User;
 
   fetchMyProfile: Thunk<

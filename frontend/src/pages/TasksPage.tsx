@@ -16,6 +16,8 @@ import LinkButton from '@/atoms/button/LinkButton';
 import StyledSelect from '@/atoms/styledSelect';
 import { HorizontalSpacer, Spacer } from '@/atoms/spacers';
 import SortControl from '@/atoms/sortControl';
+import DataFilter from '@/dataProviders/dataFilter';
+import DataSort from '@/dataProviders/dataSort';
 import { Category, Task } from '~/models/interfaces';
 import LoadingPage from '~/pages/LoadingPage';
 
@@ -38,7 +40,7 @@ interface TasksPageProps {
 }
 
 const TasksPage: FC<TasksPageProps> = ({
-  tasks: rawTasks,
+  tasks,
   tasksLoading,
   categories,
   selectedCategories,
@@ -51,75 +53,6 @@ const TasksPage: FC<TasksPageProps> = ({
   setSortBy,
 }) => {
   const { t } = useTranslation();
-
-  const resultFilter: ((points: number | undefined) => any)[] = [];
-
-  if (selectedResults.length !== 0) {
-    if (!selectedResults.includes('notStarted')) {
-      resultFilter.push((points) => points !== undefined && points !== null);
-    }
-
-    if (!selectedResults.includes('zero')) {
-      resultFilter.push((points) => points !== 0);
-    }
-
-    if (!selectedResults.includes('partial')) {
-      resultFilter.push(
-        (points) =>
-          points === undefined ||
-          points === null ||
-          !(points > 1 && points < 100),
-      );
-    }
-
-    if (!selectedResults.includes('correct')) {
-      resultFilter.push((points) => points !== 100);
-    }
-  }
-
-  const tasks = (selectedCategories.length === 0
-    ? rawTasks
-    : [...rawTasks].filter(({ categoryId }) => {
-        return (
-          categoryId !== undefined && selectedCategories.includes(categoryId)
-        );
-      })
-  )
-    .filter(
-      ({ difficulty }) =>
-        difficulty === undefined ||
-        (difficultyRange[0] <= difficulty && difficultyRange[1] >= difficulty),
-    )
-    .filter(({ points }) => resultFilter.every((f) => f(points)));
-
-  tasks.sort((a: any, b: any) => {
-    const { id, order } = sortBy;
-
-    const aValue = a[id] as any;
-    const bValue = b[id] as any;
-
-    if (aValue === bValue && aValue === undefined) {
-      return 0;
-    }
-
-    if (aValue === undefined) {
-      return -order;
-    }
-
-    if (bValue === undefined) {
-      return order;
-    }
-
-    if (aValue > bValue) {
-      return order;
-    }
-
-    if (bValue > aValue) {
-      return -order;
-    }
-
-    return 0;
-  });
 
   const [difficultyValues, setDifficultyValues] = useState(difficultyRange);
 
@@ -179,7 +112,6 @@ const TasksPage: FC<TasksPageProps> = ({
                           ...props.style,
                           height: '20px',
                           width: '20px',
-                          // borderRadius: '2px',
                           backgroundColor: '#333',
                           display: 'flex',
                           justifyContent: 'center',
@@ -197,7 +129,6 @@ const TasksPage: FC<TasksPageProps> = ({
                             fontFamily:
                               'Arial,Helvetica Neue,Helvetica,sans-serif',
                             padding: '4px',
-                            // borderRadius: '4px',
                             backgroundColor: '#212121',
                           }}
                         >
@@ -250,7 +181,6 @@ const TasksPage: FC<TasksPageProps> = ({
                             }),
                             alignSelf: 'center',
                             boxShadow: '2px 2px 2px 2px #000',
-                            // borderRadius: 5,
                           }}
                         >
                           {children}
@@ -307,74 +237,121 @@ const TasksPage: FC<TasksPageProps> = ({
             </tr>
           </thead>
           <tbody>
-            {tasks.map(
-              ({
-                id,
-                categoryId,
-                categoryName,
-                difficulty,
-                name,
-                points,
-                rating,
-                status,
-                submissionId,
-              }) => (
-                <tr key={id}>
-                  <td style={{ maxWidth: 200, overflow: 'hidden' }}>
-                    <Link href={`#/task/view/${id}`}>{name}</Link>
-                  </td>
-                  <td>
-                    <Defined value={categoryId}>
-                      {(definedCategory) => (
-                        <LinkButton
-                          onClick={() => {
-                            setSelectedCategories([definedCategory]);
-                          }}
-                        >
-                          {categoryName}
-                        </LinkButton>
-                      )}
-                    </Defined>
-                  </td>
-                  <td>
-                    <Defined value={difficulty}>
-                      {(definedDifficulty) => (
-                        <Difficulty difficulty={definedDifficulty} />
-                      )}
-                    </Defined>
-                  </td>
-                  <td>
-                    <Defined value={rating}>
-                      {(definedRating) => (
-                        <SmallRatingChart rating={definedRating} />
-                      )}
-                    </Defined>
-                  </td>
-                  <td>
-                    <Defined value={status}>
-                      {(definedStatus) => (
-                        <Defined value={points}>
-                          {(definedPoints) => (
-                            <Defined value={submissionId}>
-                              {(definedSubmissionId) => (
-                                <Link
-                                  href={`#/submission/view/${definedSubmissionId}`}
-                                >
-                                  <Result
-                                    status={definedStatus}
-                                    points={definedPoints}
-                                  />
-                                </Link>
-                              )}
-                            </Defined>
-                          )}
-                        </Defined>
-                      )}
-                    </Defined>
-                  </td>
-                </tr>
-              ),
-            )}
+            <DataFilter
+              tests={[
+                ({ difficulty }) =>
+                  difficulty !== undefined &&
+                  difficulty >= difficultyRange[0] &&
+                  difficulty <= difficultyRange[1],
+                ({ categoryId }) =>
+                  selectedCategories.length === 0 ||
+                  (categoryId !== undefined &&
+                    selectedCategories.includes(categoryId)),
+                ({ points }) => {
+                  if (selectedResults.length === 0) {
+                    return true;
+                  }
+
+                  if (points === undefined || points === null) {
+                    return selectedResults.includes('notStarted');
+                  }
+
+                  if (points === 0) {
+                    return selectedResults.includes('zero');
+                  }
+
+                  if (points === 100) {
+                    return selectedResults.includes('correct');
+                  }
+
+                  return selectedResults.includes('partial');
+                },
+              ]}
+              items={tasks}
+            >
+              {(filtered) => (
+                <>
+                  <DataSort
+                    items={filtered}
+                    value={(task) =>
+                      (task as { [key: string]: any })[sortBy.id]
+                    }
+                    order={sortBy.order}
+                  >
+                    {(sortedAndFiltered) =>
+                      sortedAndFiltered.map(
+                        ({
+                          id,
+                          categoryId,
+                          categoryName,
+                          difficulty,
+                          name,
+                          points,
+                          rating,
+                          status,
+                          submissionId,
+                        }) => (
+                          <tr key={id}>
+                            <td style={{ maxWidth: 200, overflow: 'hidden' }}>
+                              <Link href={`#/task/view/${id}`}>{name}</Link>
+                            </td>
+                            <td>
+                              <Defined value={categoryId}>
+                                {(definedCategory) => (
+                                  <LinkButton
+                                    onClick={() => {
+                                      setSelectedCategories([definedCategory]);
+                                    }}
+                                  >
+                                    {categoryName}
+                                  </LinkButton>
+                                )}
+                              </Defined>
+                            </td>
+                            <td>
+                              <Defined value={difficulty}>
+                                {(definedDifficulty) => (
+                                  <Difficulty difficulty={definedDifficulty} />
+                                )}
+                              </Defined>
+                            </td>
+                            <td>
+                              <Defined value={rating}>
+                                {(definedRating) => (
+                                  <SmallRatingChart rating={definedRating} />
+                                )}
+                              </Defined>
+                            </td>
+                            <td>
+                              <Defined value={status}>
+                                {(definedStatus) => (
+                                  <Defined value={points}>
+                                    {(definedPoints) => (
+                                      <Defined value={submissionId}>
+                                        {(definedSubmissionId) => (
+                                          <Link
+                                            href={`#/submission/view/${definedSubmissionId}`}
+                                          >
+                                            <Result
+                                              status={definedStatus}
+                                              points={definedPoints}
+                                            />
+                                          </Link>
+                                        )}
+                                      </Defined>
+                                    )}
+                                  </Defined>
+                                )}
+                              </Defined>
+                            </td>
+                          </tr>
+                        ),
+                      )
+                    }
+                  </DataSort>
+                </>
+              )}
+            </DataFilter>
           </tbody>
         </Table>
       </WithFilterBar>

@@ -5,8 +5,8 @@ import { ThemeProvider } from 'styled-components';
 import TaskFromURL from '@/dataProviders/taskFromURL';
 import WithNotifications from '@/templates/withNotifications';
 import WithNavbar from '@/templates/withNavbar';
-import MyProfileFromAPI from '@/dataProviders/myProfileFromAPI';
-import SubmissionFromURL from '@/dataProviders/submissionFromUrl';
+import ProfileFromAPI from '@/dataProviders/profileFromAPI';
+import SubmissionFromURL from '@/dataProviders/submissionFromURL';
 import SubmissionsPage from '~/pages/SubmissionsPage';
 import SubmissionPage from '~/pages/SubmissionPage';
 import ProfilePage from '~/pages/ProfilePage';
@@ -97,10 +97,6 @@ const App = () => {
     [selectedLanguage],
   );
 
-  const fetchMyProfileCallback = useCallback(() => {
-    fetchMyProfile();
-  }, [fetchMyProfile]);
-
   /* </editor-fold> */
 
   const languages = ['python3', 'python2', 'c++', 'c', 'pascal'];
@@ -116,6 +112,7 @@ const App = () => {
     fileUploaded,
     myProfile,
     categories,
+    myProfileLoading,
   } = useStoreState(
     (state) => ({
       isAuthenticated: state.auth0.isAuthenticated,
@@ -128,6 +125,7 @@ const App = () => {
       fileUploaded: state.solutionSubmission.fileUploaded,
       myProfile: state.user.myProfile,
       categories: state.task.categories,
+      myProfileLoading: state.user.loadingStatus,
     }),
     shallowEqual,
   );
@@ -137,6 +135,7 @@ const App = () => {
 
     if (isAuthenticated) {
       fetchMyProfile();
+
       fetchSubmissions().then(() => {
         checkSubmissions();
       });
@@ -223,12 +222,9 @@ const App = () => {
               </Route>
 
               <Route path="/profile/my">
-                <MyProfileFromAPI
-                  fetchMyProfile={fetchMyProfileCallback}
-                  myProfile={myProfile}
-                >
+                <ProfileFromAPI profile={myProfile} loading={myProfileLoading}>
                   {(user) => <ProfilePage user={user} />}
-                </MyProfileFromAPI>
+                </ProfileFromAPI>
               </Route>
 
               <Route path="/" exact>
