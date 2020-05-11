@@ -20,6 +20,7 @@ const Control = styled.div<{ active: boolean; variant: string }>`
     props.active &&
     css`
       color: ${color};
+      transform: scale(1.7) translateY(10%);
     `}
 
   &:hover {

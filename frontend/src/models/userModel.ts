@@ -1,9 +1,14 @@
 import { actionOn, thunk } from 'easy-peasy';
 import { User, UserModel } from '~/models/interfaces';
 import baseURL from '~/models/apiBaseURL';
+import loadingModel from '~/models/loadingModel';
 
 const userModel: UserModel = {
+  ...loadingModel(),
+
   fetchMyProfile: thunk(async (actions, _, { injections }) => {
+    actions.loading();
+
     try {
       const token = await injections.auth0.getTokenSilently();
 
@@ -42,6 +47,8 @@ const userModel: UserModel = {
       }
 
       state.myProfile = user;
+
+      state.loadingStatus = false;
     },
   ),
 };
