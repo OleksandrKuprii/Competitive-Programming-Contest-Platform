@@ -34,7 +34,7 @@ async def compile(submission_code_path: str, config: CompilerConfig) -> Optional
                 'ro': True  # read-only
             },
             volume.name: {
-                'bind': f'/usr/app/compiled',
+                'bind': '/usr/app/compiled',
                 'ro': False  # read-only
             }
         })
