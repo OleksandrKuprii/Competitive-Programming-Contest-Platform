@@ -96,8 +96,8 @@ const TaskPage: FC<TaskPageProps> = ({
                 <tbody>
                   {definedExamples.map((example) => (
                     <tr key={example.input + example.output}>
-                      <td style={{ whiteSpace: 'pre-line', margin: 0, padding: 0 }}>{example.input}</td>
-                      <td style={{ whiteSpace: 'pre-line', margin: 0, padding: 0 }}>{example.output}</td>
+                      <td style={{ whiteSpace: 'pre-line', verticalAlign: 'top' }}>{example.input}</td>
+                      <td style={{ whiteSpace: 'pre-line', verticalAlign: 'top' }}>{example.output}</td>
                     </tr>
                   ))}
                 </tbody>
