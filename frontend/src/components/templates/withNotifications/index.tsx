@@ -8,9 +8,13 @@ import { useStoreState } from '~/hooks/store';
 
 interface WithNotificationsProps {
   children: ReactNode;
+  onDismiss: (id: number) => any;
 }
 
-const WithNotifications: FC<WithNotificationsProps> = ({ children }) => {
+const WithNotifications: FC<WithNotificationsProps> = ({
+  children,
+  onDismiss,
+}) => {
   const notifications = useStoreState((state) => state.notification.list);
 
   return (
@@ -32,7 +36,10 @@ const WithNotifications: FC<WithNotificationsProps> = ({ children }) => {
         <TransitionGroup className="notifications">
           {notifications.map((notification) => (
             <Fade key={notification.id} in>
-              <NotificationToast notification={notification} />
+              <NotificationToast
+                notification={notification}
+                onDismiss={onDismiss}
+              />
             </Fade>
           ))}
         </TransitionGroup>

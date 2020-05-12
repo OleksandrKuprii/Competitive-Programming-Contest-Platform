@@ -6,16 +6,18 @@ import notificationModel from '~/models/notificationModel';
 import submissionHunterModel from '~/models/submissionHunterModel';
 import { Auth0ModelInitialState, StoreModel } from '~/models/interfaces';
 import userModel from '~/models/userModel';
+import myProfileEditModel from '~/models/myProfileEditModel';
 
 const storeModel: (
   auth0ModelInitialState: Auth0ModelInitialState,
 ) => StoreModel = (auth0ModelInitialState) => ({
   auth0: auth0Model(auth0ModelInitialState),
-  task: taskModel,
-  submission: submissionModel,
-  solutionSubmission: solutionSubmissionModel,
+  myProfileEdit: myProfileEditModel,
   notification: notificationModel,
+  solutionSubmission: solutionSubmissionModel,
+  submission: submissionModel,
   submissionHunter: submissionHunterModel,
+  task: taskModel,
   user: userModel,
 });
 

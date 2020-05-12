@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FC } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import Box from '@/atoms/box';
 
 interface CodeViewerProps {
   children: string;
@@ -22,19 +23,20 @@ const CodeViewer: FC<CodeViewerProps> = ({
   maxHeight,
 }) => {
   return (
-    <SyntaxHighlighter
-      language={languageTransformations[language] || language}
-      style={theme || tomorrowNight}
-      showLineNumbers
-      customStyle={{
-        maxHeight: maxHeight || 500,
-        width: '100%',
-        boxShadow: '2px 2px 2px 2px #000',
-        margin: 0,
-      }}
-    >
-      {children}
-    </SyntaxHighlighter>
+    <Box height="fit-content" width="100%">
+      <SyntaxHighlighter
+        language={languageTransformations[language] || language}
+        style={theme || tomorrowNight}
+        showLineNumbers
+        customStyle={{
+          maxHeight: maxHeight || 500,
+          width: '100%',
+          margin: 0,
+        }}
+      >
+        {children}
+      </SyntaxHighlighter>
+    </Box>
   );
 };
 

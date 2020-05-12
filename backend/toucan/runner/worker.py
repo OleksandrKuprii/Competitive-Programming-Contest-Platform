@@ -118,11 +118,11 @@ async def execute_test(test_to_worker: TestToWorker, pool: Pool, volume: Volume 
 
     container_volumes = {
         input_abspath: {
-            'bind': f'/usr/app/input.txt',
+            'bind': '/usr/app/input.txt',
             'ro': True  # read-only
         },
         temporary_file_path: {
-            'bind': f'/usr/app/output.txt',
+            'bind': '/usr/app/output.txt',
             'ro': False  # read-only
         }
     }

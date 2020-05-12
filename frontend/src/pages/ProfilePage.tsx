@@ -5,7 +5,6 @@ import { Col, Grid, Row } from '@/atoms/grid';
 import Box from '@/atoms/box';
 import PrettyDate from '@/atoms/prettyDate';
 import { Spacer } from '@/atoms/spacers';
-import { Subtitle } from '@/atoms/typography';
 import { User } from '~/models/interfaces';
 
 interface ProfilePageArgs {
@@ -21,7 +20,6 @@ const ProfilePage: FC<ProfilePageArgs> = ({ user }) => {
         </Col>
       </Row>
       <Spacer />
-      <Subtitle>Additional info</Subtitle>
       <Row>
         <Col>
           <Box padding={20}>

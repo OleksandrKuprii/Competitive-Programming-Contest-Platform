@@ -31,6 +31,7 @@ const App = () => {
     selectedLanguage,
     fetchMyProfile,
     checkSubmissions,
+    dismissedNotification,
   } = useStoreActions((actions) => ({
     fetchTask: actions.task.fetch,
     fetchTasks: actions.task.fetchAll,
@@ -44,6 +45,7 @@ const App = () => {
     selectedLanguage: actions.solutionSubmission.selectedLanguage,
     fetchMyProfile: actions.user.fetchMyProfile,
     checkSubmissions: actions.submissionHunter.checkSubmissions,
+    dismissedNotification: actions.notification.dismissedNotification,
   }));
 
   /* <editor-fold desc="Callbacks"> */
@@ -160,7 +162,7 @@ const App = () => {
     <ThemeProvider theme={{ mode: 'dark' }}>
       <GlobalStyle />
       <HashRouter>
-        <WithNotifications>
+        <WithNotifications onDismiss={dismissedNotification}>
           <WithNavbar
             isAuthenticated={isAuthenticated}
             onSignIn={signInCallback}

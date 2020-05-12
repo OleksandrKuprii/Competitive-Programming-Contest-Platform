@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { color } from '~/theme';
+import shadow from '~/mixins/shadow';
 
 const Table = styled.table<{ variant?: string }>`
-  width: 100%;
+  ${shadow};
 
-  box-shadow: 2px 2px 2px 2px #000;
+  width: 100%;
 
   border-collapse: collapse;
 

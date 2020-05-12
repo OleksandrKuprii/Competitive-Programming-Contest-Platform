@@ -6,7 +6,7 @@ import Table from '@/molecules/table';
 import PrettyDate from '@/atoms/prettyDate';
 import Loading from '@/atoms/loading';
 import Defined from '@/helpers/defined';
-import CodeViewer from '@/atoms/codeViewer';
+import CodeViewer from '@/molecules/codeViewer';
 import Result from '@/atoms/result';
 import Link from '@/atoms/link';
 import { Paragraph, Subtitle, Title } from '@/atoms/typography';

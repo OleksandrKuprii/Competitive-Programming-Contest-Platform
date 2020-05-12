@@ -31,7 +31,7 @@ const GlobalStyle = createGlobalStyle`
       background-color: transparent;
   }
 
-  ::-webkit-scrollbar
+  ::-webkit-scrollbar, ::-webkit-scrollbar-corner
   {
       width: 12px;
       background-color: transparent;
