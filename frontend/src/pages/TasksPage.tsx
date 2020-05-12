@@ -16,43 +16,37 @@ import LinkButton from '@/atoms/button/LinkButton';
 import StyledSelect from '@/atoms/styledSelect';
 import { HorizontalSpacer, Spacer } from '@/atoms/spacers';
 import SortControl from '@/atoms/sortControl';
-import DataFilter from '@/dataProviders/dataFilter';
-import DataSort from '@/dataProviders/dataSort';
-import { Category, Task } from '~/models/interfaces';
+import DataFilter from '@/providers/dataFilter';
+import DataSort from '@/providers/dataSort';
 import LoadingPage from '~/pages/LoadingPage';
+import { useStoreState, useStoreActions } from '~/hooks/store';
+import { SortBy } from '~/typings/models';
 
-interface TasksPageProps {
-  categories: Category[];
-  selectedCategories: string[];
-  setSelectedCategories: (categories: string[]) => any;
-
-  difficultyRange: number[];
-  setDifficultyRange: (range: number[]) => any;
-
-  selectedResults: string[];
-  setSelectedResults: (results: string[]) => any;
-
-  tasks: Task[];
-  tasksLoading: boolean;
-
-  sortBy: { id: string; order: number };
-  setSortBy: (sortBy: { id: string; order: number }) => any;
-}
-
-const TasksPage: FC<TasksPageProps> = ({
-  tasks,
-  tasksLoading,
-  categories,
-  selectedCategories,
-  setSelectedCategories,
-  selectedResults,
-  setSelectedResults,
-  difficultyRange,
-  setDifficultyRange,
-  sortBy,
-  setSortBy,
-}) => {
+const TasksPage: FC = () => {
   const { t } = useTranslation();
+
+  const {
+    selectedCategories: selectedCategoriesAction,
+    selectedResults,
+    selectedDifficultyRange,
+    selectedSortBy,
+  } = useStoreActions((actions) => ({
+    ...actions.filterAndSort,
+  }));
+
+  const tasksLoading = useStoreState((state) => state.task.loadingStatus);
+  const difficultyRange = useStoreState(
+    (state) => state.filterAndSort.difficultyRange,
+  );
+  const selectedCategories = useStoreState(
+    (state) => state.filterAndSort.categories,
+  );
+  const results = useStoreState((state) => state.filterAndSort.results);
+  const sortBy = useStoreState((state) => state.filterAndSort.sortBy);
+  const order = useStoreState((state) => state.filterAndSort.order);
+
+  const tasks = useStoreState((state) => state.task.tasks);
+  const categories = useStoreState((state) => state.task.categories);
 
   const [difficultyValues, setDifficultyValues] = useState(difficultyRange);
 
@@ -81,13 +75,13 @@ const TasksPage: FC<TasksPageProps> = ({
                     }))}
                     onChange={(selected: any) => {
                       if (selected === null) {
-                        setSelectedCategories([]);
+                        selectedCategoriesAction([]);
                         return;
                       }
 
                       const ids = selected.map((s: any) => s.value);
 
-                      setSelectedCategories(ids);
+                      selectedCategoriesAction(ids);
                     }}
                   />
                 </Grid>
@@ -101,7 +95,7 @@ const TasksPage: FC<TasksPageProps> = ({
                     onChange={(v) => {
                       setDifficultyValues(v);
                     }}
-                    onFinalChange={setDifficultyRange}
+                    onFinalChange={selectedDifficultyRange}
                     min={1}
                     max={10}
                     values={difficultyValues}
@@ -203,8 +197,8 @@ const TasksPage: FC<TasksPageProps> = ({
                         { id: 'zero', name: 'Zero' },
                         { id: 'notStarted', name: 'Not Started' },
                       ]}
-                      active={selectedResults}
-                      onChange={setSelectedResults}
+                      active={results}
+                      onChange={selectedResults}
                     />
                   </Row>
                 </Grid>
@@ -221,15 +215,15 @@ const TasksPage: FC<TasksPageProps> = ({
               <th style={{ display: 'flex', verticalAlign: 'center' }}>
                 {t('headers.difficulty')}
                 <SortControl
-                  onChange={(order) => {
-                    if (order === 0) {
-                      setSortBy({ id: 'publishedAt', order: -1 });
+                  onChange={(o) => {
+                    if (o === 0) {
+                      selectedSortBy({ sortBy: SortBy.publishedAt, order: -1 });
                       return;
                     }
 
-                    setSortBy({ id: 'difficulty', order });
+                    selectedSortBy({ sortBy: SortBy.difficulty, order: o });
                   }}
-                  active={sortBy.id === 'difficulty' ? sortBy.order : 0}
+                  active={sortBy === 'difficulty' ? order : 0}
                 />{' '}
               </th>
               <th>{t('headers.rating')}</th>
@@ -248,23 +242,23 @@ const TasksPage: FC<TasksPageProps> = ({
                   (categoryId !== undefined &&
                     selectedCategories.includes(categoryId)),
                 ({ points }) => {
-                  if (selectedResults.length === 0) {
+                  if (results.length === 0) {
                     return true;
                   }
 
                   if (points === undefined || points === null) {
-                    return selectedResults.includes('notStarted');
+                    return results.includes('notStarted');
                   }
 
                   if (points === 0) {
-                    return selectedResults.includes('zero');
+                    return results.includes('zero');
                   }
 
                   if (points === 100) {
-                    return selectedResults.includes('correct');
+                    return results.includes('correct');
                   }
 
-                  return selectedResults.includes('partial');
+                  return results.includes('partial');
                 },
               ]}
               items={tasks}
@@ -273,10 +267,8 @@ const TasksPage: FC<TasksPageProps> = ({
                 <>
                   <DataSort
                     items={filtered}
-                    value={(task) =>
-                      (task as { [key: string]: any })[sortBy.id]
-                    }
-                    order={sortBy.order}
+                    value={(task) => (task as { [key: string]: any })[sortBy]}
+                    order={order}
                   >
                     {(sortedAndFiltered) =>
                       sortedAndFiltered.map(
@@ -300,7 +292,9 @@ const TasksPage: FC<TasksPageProps> = ({
                                 {(definedCategory) => (
                                   <LinkButton
                                     onClick={() => {
-                                      setSelectedCategories([definedCategory]);
+                                      selectedCategoriesAction([
+                                        definedCategory,
+                                      ]);
                                     }}
                                   >
                                     {categoryName}

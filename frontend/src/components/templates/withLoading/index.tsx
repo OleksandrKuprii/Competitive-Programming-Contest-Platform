@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
+import LoadingPage from '~/pages/LoadingPage';
 
 interface WithLoadingStatusProps {
   children: ReactNode;
   loading: boolean;
-  loadingNode: ReactNode;
+  loadingNode?: ReactNode;
 }
 
 const WithLoading: FC<WithLoadingStatusProps> = ({
@@ -13,7 +14,7 @@ const WithLoading: FC<WithLoadingStatusProps> = ({
   loadingNode,
 }) => {
   if (loading) {
-    return <>{loadingNode}</>;
+    return <>{loadingNode || <LoadingPage />}</>;
   }
 
   return <>{children}</>;

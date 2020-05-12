@@ -4,14 +4,13 @@ import submissionModel from '~/models/submissionModel';
 import solutionSubmissionModel from '~/models/solutionSubmissionModel';
 import notificationModel from '~/models/notificationModel';
 import submissionHunterModel from '~/models/submissionHunterModel';
-import { Auth0ModelInitialState, StoreModel } from '~/models/interfaces';
 import userModel from '~/models/userModel';
 import myProfileEditModel from '~/models/myProfileEditModel';
+import filterAndSortModel from '~/models/filterAndSort';
+import { StoreModel } from '~/typings/models';
 
-const storeModel: (
-  auth0ModelInitialState: Auth0ModelInitialState,
-) => StoreModel = (auth0ModelInitialState) => ({
-  auth0: auth0Model(auth0ModelInitialState),
+const storeModel: StoreModel = {
+  auth0: auth0Model,
   myProfileEdit: myProfileEditModel,
   notification: notificationModel,
   solutionSubmission: solutionSubmissionModel,
@@ -19,6 +18,7 @@ const storeModel: (
   submissionHunter: submissionHunterModel,
   task: taskModel,
   user: userModel,
-});
+  filterAndSort: filterAndSortModel,
+};
 
 export default storeModel;

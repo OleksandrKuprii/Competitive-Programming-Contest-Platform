@@ -12,8 +12,6 @@ export interface HtmlTextSectionProps {
 const htmlToReactParser = new HtmlToReactParser();
 
 const SectionContainer = styled(Paragraph)`
-  white-space: pre-line;
-
   * {
     margin: 0;
     padding: 0;

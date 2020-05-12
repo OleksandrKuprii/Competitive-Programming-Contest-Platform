@@ -5,7 +5,7 @@ import { Col, Grid, Row } from '@/atoms/grid';
 import Box from '@/atoms/box';
 import PrettyDate from '@/atoms/prettyDate';
 import { Spacer } from '@/atoms/spacers';
-import { User } from '~/models/interfaces';
+import User from '~/typings/entities/user';
 
 interface ProfilePageArgs {
   user: User;

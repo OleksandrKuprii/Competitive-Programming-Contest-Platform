@@ -5,7 +5,7 @@ import Result from '@/atoms/result';
 import Defined from '@/helpers/defined';
 import Link from '@/atoms/link';
 import StyledTable from '@/molecules/table';
-import { Submission } from '~/models/interfaces';
+import { Submission } from '~/typings/entities/submission';
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();

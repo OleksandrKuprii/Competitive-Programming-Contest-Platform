@@ -7,7 +7,7 @@ import ColoredBox from '@/atoms/box/ColoredBox';
 import { Col, Row } from '@/atoms/grid';
 import { FaAngleDoubleRight } from 'react-icons/all';
 import IconButton from '@/atoms/button/IconButton';
-import { Notification } from '~/models/interfaces';
+import Notification from '~/typings/entities/notification';
 
 interface NotificationToastProps {
   notification: Notification;

@@ -1,16 +1,19 @@
 import { actionOn, thunk } from 'easy-peasy';
-import { User, UserModel } from '~/models/interfaces';
 import baseURL from '~/models/apiBaseURL';
 import loadingModel from '~/models/loadingModel';
+import User from '~/typings/entities/user';
+import auth0Token from '~/models/auth0Token';
+import { UserModel } from '~/typings/models';
 
 const userModel: UserModel = {
+  ...auth0Token(),
   ...loadingModel(),
 
-  fetchMyProfile: thunk(async (actions, _, { injections }) => {
+  fetchMyProfile: thunk(async (actions) => {
     actions.loading();
 
     try {
-      const token = await injections.auth0.getTokenSilently();
+      const token = await actions.getToken();
 
       const response = await fetch(`${baseURL}/profile/my`, {
         headers: {

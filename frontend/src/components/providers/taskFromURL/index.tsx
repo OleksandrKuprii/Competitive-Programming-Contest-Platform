@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { FC, ReactNode, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Task } from '~/models/interfaces';
 import ErrorPage from '~/pages/ErrorPage';
+import { useStoreActions, useStoreState } from '~/hooks/store';
+import { Task } from '~/typings/entities/task';
 
 interface TaskFromURLProps {
   children: (task: Task) => ReactNode;
-  tasks: Task[];
-  fetchTask: (id: string) => any;
 }
 
-const TaskFromURL: FC<TaskFromURLProps> = ({ children, tasks, fetchTask }) => {
+const TaskFromURL: FC<TaskFromURLProps> = ({ children }) => {
   const { id } = useParams();
+
+  const tasks = useStoreState((state) => state.task.tasks);
+  const fetchTask = useStoreActions((actions) => actions.task.fetch);
 
   useEffect(() => {
     if (!id) return;
 
-    fetchTask(id);
+    fetchTask({ id }).then();
   }, [id, fetchTask]);
 
   if (!id) {

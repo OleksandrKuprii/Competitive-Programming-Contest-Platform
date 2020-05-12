@@ -1,5 +1,5 @@
 import { persist } from 'easy-peasy';
-import { MyProfileEditModel } from '~/models/interfaces';
+import { MyProfileEditModel } from '~/typings/models';
 
 const myProfileEditModel: MyProfileEditModel = persist({
   editing: false,

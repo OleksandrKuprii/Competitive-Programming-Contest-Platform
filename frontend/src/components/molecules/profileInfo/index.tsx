@@ -4,7 +4,7 @@ import Box from '@/atoms/box';
 import ProfileImage from '@/atoms/profileImage';
 import { Col, Grid, Row } from '@/atoms/grid';
 import { Paragraph, Title } from '@/atoms/typography';
-import { User } from '~/models/interfaces';
+import User from '~/typings/entities/user';
 
 interface ProfileInfoProps {
   user: User;

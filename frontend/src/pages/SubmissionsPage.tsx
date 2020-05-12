@@ -2,21 +2,20 @@ import * as React from 'react';
 import { FC } from 'react';
 import SubmissionList from '@/organisms/submissionList';
 import WithLoading from '@/templates/withLoading';
-import { Submission } from '~/models/interfaces';
 import LoadingPage from '~/pages/LoadingPage';
+import { useStoreState } from '~/hooks/store';
 
-interface SubmissionsPageProps {
-  submissions: Submission[];
-  submissionsLoading: boolean;
-}
+const SubmissionsPage: FC = () => {
+  const submissions = useStoreState((state) => state.submission.submissions);
+  const submissionsLoading = useStoreState(
+    (state) => state.submission.loadingStatus,
+  );
 
-const SubmissionsPage: FC<SubmissionsPageProps> = ({
-  submissions,
-  submissionsLoading,
-}) => (
-  <WithLoading loading={submissionsLoading} loadingNode={<LoadingPage />}>
-    <SubmissionList submissions={submissions} />
-  </WithLoading>
-);
+  return (
+    <WithLoading loading={submissionsLoading} loadingNode={<LoadingPage />}>
+      <SubmissionList submissions={submissions} />
+    </WithLoading>
+  );
+};
 
 export default SubmissionsPage;
