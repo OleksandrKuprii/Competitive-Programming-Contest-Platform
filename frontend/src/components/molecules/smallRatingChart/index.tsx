@@ -3,8 +3,8 @@ import { FC } from 'react';
 import SmallRatingChartBar from '@/atoms/smallRatingChartBar';
 import Box from '@/atoms/box';
 import ReactTooltip from 'react-tooltip';
-import { TaskRating } from '~/models/interfaces';
 import getRatingPercentage from '~/utils/getRatingPercentage';
+import { TaskRating } from '~/typings/entities/task';
 
 interface SmallRatingChart {
   rating: TaskRating;

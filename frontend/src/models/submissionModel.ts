@@ -1,18 +1,21 @@
 import { actionOn, thunk } from 'easy-peasy';
 import baseURL from '~/models/apiBaseURL';
 import resultToPointsAndStatus from '~/utils/resultToPointsAndStatus';
-import { Submission, SubmissionModel } from '~/models/interfaces';
 import loadingModel from '~/models/loadingModel';
 import updateObjectWithProperty from '~/utils/updateObjectWithProperty';
+import { Submission } from '~/typings/entities/submission';
+import auth0Token from '~/models/auth0Token';
+import { SubmissionModel } from '~/typings/models';
 
 const submissionModel: SubmissionModel = {
+  ...auth0Token(),
   ...loadingModel(),
 
   submissions: [],
 
-  fetch: thunk(async (actions, { id }, { injections }) => {
+  fetch: thunk(async (actions, { id }) => {
     try {
-      const token = await injections.auth0.getTokenSilently();
+      const token = await actions.getToken();
 
       const response = await fetch(`${baseURL}/submission/${id}`, {
         headers: {
@@ -44,11 +47,11 @@ const submissionModel: SubmissionModel = {
     }
   }),
 
-  fetchAll: thunk(async (actions, _, { injections }) => {
+  fetchAll: thunk(async (actions) => {
     actions.loading();
 
     try {
-      const token = await injections.auth0.getTokenSilently();
+      const token = await actions.getToken();
 
       const response = await fetch(
         `${baseURL}/submissions?offset=0&number=300`,

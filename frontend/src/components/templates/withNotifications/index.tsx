@@ -1,21 +1,28 @@
 import * as React from 'react';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useCallback } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import NotificationToast from '@/molecules/notificationToast';
 import { Grid } from '@/atoms/grid';
 import Fade from '@/animations/fade';
-import { useStoreState } from '~/hooks/store';
+import { useStoreState, useStoreActions } from '~/hooks/store';
 
 interface WithNotificationsProps {
   children: ReactNode;
-  onDismiss: (id: number) => any;
 }
 
-const WithNotifications: FC<WithNotificationsProps> = ({
-  children,
-  onDismiss,
-}) => {
+const WithNotifications: FC<WithNotificationsProps> = ({ children }) => {
   const notifications = useStoreState((state) => state.notification.list);
+
+  const dismissedNotification = useStoreActions(
+    (actions) => actions.notification.dismissedNotification,
+  );
+
+  const onDismiss = useCallback(
+    (id: number) => {
+      dismissedNotification(id);
+    },
+    [dismissedNotification],
+  );
 
   return (
     <>

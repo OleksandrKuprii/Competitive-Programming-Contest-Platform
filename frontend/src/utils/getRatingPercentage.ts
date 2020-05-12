@@ -1,4 +1,4 @@
-import { TaskRating } from '~/models/interfaces';
+import { TaskRating } from '~/typings/entities/task';
 
 const getRatingPercentage = (rating: TaskRating) => {
   const sum = rating.zero + rating.partial + rating.correct;

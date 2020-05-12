@@ -1,29 +1,41 @@
 import * as React from 'react';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import CodeViewer from '@/molecules/codeViewer';
 import Defined from '@/helpers/defined';
 import Button from '@/atoms/button';
 import { Grid, Row } from '@/atoms/grid';
 import { HorizontalSpacer, Spacer } from '@/atoms/spacers';
 import StyledSelect from '@/atoms/styledSelect';
+import { useStoreState, useStoreActions } from '~/hooks/store';
 
-interface SolutionSubmissionFormProps {
-  code?: string;
-  language: string;
-  languages: string[];
-  selectedLanguage: (language: string) => any;
-  cancelled: () => any;
-  submitted: () => any;
+interface SolutionSubmissionForm {
+  taskId: string;
 }
 
-const SolutionSubmissionForm: FC<SolutionSubmissionFormProps> = ({
-  code,
-  language,
-  languages,
-  selectedLanguage,
-  submitted,
-  cancelled,
-}) => {
+const SolutionSubmissionForm: FC<SolutionSubmissionForm> = ({ taskId }) => {
+  const code = useStoreState((state) => state.solutionSubmission.code);
+  const language = useStoreState((state) => state.solutionSubmission.language);
+
+  const selectedLanguage = useStoreActions(
+    (actions) => actions.solutionSubmission.selectedLanguage,
+  );
+  const submit = useStoreActions(
+    (actions) => actions.solutionSubmission.submit,
+  );
+  const cancelled = useStoreActions(
+    (actions) => actions.solutionSubmission.canceled,
+  );
+
+  const canceledCallback = useCallback(() => {
+    cancelled();
+  }, [cancelled]);
+
+  const submittedCallback = useCallback(() => {
+    submit(taskId);
+  }, [submit, taskId]);
+
+  const languages = ['python3', 'python2', 'c++', 'c', 'pascal'];
+
   return (
     <Grid>
       <Row>
@@ -55,9 +67,9 @@ const SolutionSubmissionForm: FC<SolutionSubmissionFormProps> = ({
 
         <HorizontalSpacer size={10} />
 
-        <Button onClick={submitted}>Submit</Button>
+        <Button onClick={submittedCallback}>Submit</Button>
 
-        <Button variant="danger" onClick={cancelled}>
+        <Button variant="danger" onClick={canceledCallback}>
           Cancel
         </Button>
       </Row>

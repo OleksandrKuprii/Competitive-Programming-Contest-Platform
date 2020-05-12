@@ -1,10 +1,10 @@
 import { action, computed, thunk } from 'easy-peasy';
-import loadingModel from '~/models/loadingModel';
+import auth0Token from '~/models/auth0Token';
 import baseURL from '~/models/apiBaseURL';
-import { SolutionSubmissionModel } from '~/models/interfaces';
+import { SolutionSubmissionModel } from '~/typings/models';
 
 const solutionSubmissionModel: SolutionSubmissionModel = {
-  loading: loadingModel(),
+  ...auth0Token(),
 
   language: 'python3',
 
@@ -27,55 +27,43 @@ const solutionSubmissionModel: SolutionSubmissionModel = {
   }),
 
   uploadFile: thunk(async (actions, file) => {
-    actions.loading.loading();
-
     const code = await file.text();
     const filename = file.name;
 
     actions.uploadedFile({ code, filename });
-
-    actions.loading.loaded();
   }),
 
-  submit: thunk(
-    async (actions, taskId, { injections, getState, getStoreState }) => {
-      const { code, language } = getState();
+  submit: thunk(async (actions, taskId, { getState, getStoreState }) => {
+    const { code, language } = getState();
 
-      actions.canceled();
+    const token = await actions.getToken();
 
-      let token;
+    actions.canceled();
 
-      try {
-        token = await injections.auth0.getTokenSilently();
-      } catch {
-        token = undefined;
-      }
-
-      const response = await fetch(`${baseURL}/submission`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          alias: taskId,
-          code,
-          lang: language,
-        }),
-      });
-
-      const body = await response.json();
-
-      return {
-        id: body.submission_id,
-        submitted: new Date(body.timestamp),
-        loading: true,
-        language,
-        taskId,
-        taskName: getStoreState().task.tasks.find((t) => t.id === taskId)?.name,
+    const response = await fetch(`${baseURL}/submission`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        alias: taskId,
         code,
-      };
-    },
-  ),
+        lang: language,
+      }),
+    });
+
+    const body = await response.json();
+
+    return {
+      id: body.submission_id,
+      submitted: new Date(body.timestamp),
+      loading: true,
+      language,
+      taskId,
+      taskName: getStoreState().task.tasks.find((t) => t.id === taskId)?.name,
+      code,
+    };
+  }),
 };
 
 export default solutionSubmissionModel;

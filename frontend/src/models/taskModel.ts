@@ -1,19 +1,22 @@
 import { actionOn, computed, thunk } from 'easy-peasy';
 import baseURL from '~/models/apiBaseURL';
 import resultToPointsAndStatus from '~/utils/resultToPointsAndStatus';
-import { Category, TaskModel } from '~/models/interfaces';
 import loadingModel from '~/models/loadingModel';
 import updateObjectWithProperty from '~/utils/updateObjectWithProperty';
+import Category from '~/typings/entities/category';
+import auth0Token from '~/models/auth0Token';
+import { TaskModel } from '~/typings/models';
 
 const taskModel: TaskModel = {
   ...loadingModel(),
+  ...auth0Token(),
 
   tasks: [],
 
-  fetch: thunk(async (actions, { id }, { injections }) => {
+  fetch: thunk(async (actions, { id }) => {
     const endpoint = async () => {
       try {
-        const token = await injections.auth0.getTokenSilently();
+        const token = await actions.getToken();
 
         return fetch(`${baseURL}/task/auth/${id}`, {
           headers: {
@@ -56,12 +59,12 @@ const taskModel: TaskModel = {
     };
   }),
 
-  fetchAll: thunk(async (actions, _, { injections }) => {
+  fetchAll: thunk(async (actions) => {
     actions.loading();
 
     const endpoint = async () => {
       try {
-        const token = await injections.auth0.getTokenSilently();
+        const token = await actions.getToken();
 
         return fetch(`${baseURL}/tasks/auth?offset=0&number=300`, {
           headers: {

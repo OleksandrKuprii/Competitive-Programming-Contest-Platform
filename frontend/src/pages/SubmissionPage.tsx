@@ -9,9 +9,9 @@ import Defined from '@/helpers/defined';
 import CodeViewer from '@/molecules/codeViewer';
 import Result from '@/atoms/result';
 import Link from '@/atoms/link';
-import { Paragraph, Subtitle, Title } from '@/atoms/typography';
+import { Paragraph, Title } from '@/atoms/typography';
 import { Spacer } from '@/atoms/spacers';
-import { Submission } from '~/models/interfaces';
+import { Submission } from '~/typings/entities/submission';
 
 interface SubmissionPageProps {
   submission: Submission;
@@ -69,9 +69,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ submission }) => {
             <Defined value={submission.tests}>
               {(definedTests) => (
                 <>
-                  <Row>
-                    <Subtitle>Results per test</Subtitle>
-                  </Row>
+                  <Spacer size={20} />
 
                   <Row>
                     <Table>
