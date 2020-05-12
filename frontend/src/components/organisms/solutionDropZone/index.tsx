@@ -22,8 +22,10 @@ const SolutionDropZone: FC<SolutionDropZoneProps> = ({ children }) => {
   );
 
   const onDropAccepted = useCallback(
-    (files: File[]) => {
-      uploadFile(files[0]);
+    async (files: File[]) => {
+      await uploadFile(files[0]);
+
+      document.body.scrollIntoView(false);
     },
     [uploadFile],
   );
