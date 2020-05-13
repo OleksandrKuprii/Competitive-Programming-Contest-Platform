@@ -52,92 +52,94 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
     # Variable to store additional SQL query to give database module
     sql = ''
 
-    # A mapping to connect <params> keys with column names in database
-    column_map = {
-        'name_sort': 'tasks.name',
-        'category_sort': 'tasks.category',
-        'difficulty_sort': 'tasks.difficulty',
-        'date_sort': 'tasks.created'
-    }
+    if params is not None:
 
-    def iterable_to_str(iterable: Iterable, quotes=False) -> str:
-        """Convert iterable to string separated by comma and space.
+        # A mapping to connect <params> keys with column names in database
+        column_map = {
+            'name_sort': 'tasks.name',
+            'category_sort': 'tasks.category',
+            'difficulty_sort': 'tasks.difficulty',
+            'date_sort': 'tasks.created'
+        }
 
-        The additional parameter <quotes> with value True puts values in
-        iterable to double quotes.
+        def iterable_to_str(iterable: Iterable, quotes=False) -> str:
+            """Convert iterable to string separated by comma and space.
 
-        Returns
-        -------
-        The final string separated by comma and space
-        """
-        res = ''
-        for x in iterable:
-            if quotes:
-                res += "'" + str(x) + "', "
-            else:
-                res += str(x) + ', '
-        return res[:-2]
+            The additional parameter <quotes> with value True puts values in
+            iterable to double quotes.
 
-    # For each key, value in values of parameters
-    for k, v in params.items():
+            Returns
+            -------
+            The final string separated by comma and space
+            """
+            res = ''
+            for x in iterable:
+                if quotes:
+                    res += "'" + str(x) + "', "
+                else:
+                    res += str(x) + ', '
+            return res[:-2]
 
-        # If key is 'difficulty'
-        if k == 'difficulty':
+        # For each key, value in values of parameters
+        for k, v in params.items():
 
-            # If SQL statement 'WHERE' is present in <sql>
-            if 'WHERE' in sql:
+            # If key is 'difficulty'
+            if k == 'difficulty':
 
-                # Add new filter with logical 'AND'
-                # Converting value to string
-                sql += f'AND {k} IN ({iterable_to_str(v)}) '
-            else:
+                # If SQL statement 'WHERE' is present in <sql>
+                if 'WHERE' in sql:
 
-                # Add new filter starting with SQl statement 'WHERE'
-                # Converting value to string
-                sql += f'WHERE {k} IN ({iterable_to_str(v)}) '
+                    # Add new filter with logical 'AND'
+                    # Converting value to string
+                    sql += f'AND {k} IN ({iterable_to_str(v)}) '
+                else:
 
-        # If key is 'categories'
-        if k == 'categories':
+                    # Add new filter starting with SQl statement 'WHERE'
+                    # Converting value to string
+                    sql += f'WHERE {k} IN ({iterable_to_str(v)}) '
 
-            # If SQL statement 'WHERE' is present in <sql>
-            if 'WHERE' in sql:
+            # If key is 'categories'
+            if k == 'categories':
 
-                # Add new filter with logical 'AND'
-                # Converting value to string, where each element in quotes,
-                # so SQL get each category as string
-                sql += f'AND category IN ({iterable_to_str(v, True)}) '
-            else:
+                # If SQL statement 'WHERE' is present in <sql>
+                if 'WHERE' in sql:
 
-                # Add new filter starting with SQl statement 'WHERE'
-                # Converting value to string, where each element in quotes,
-                # so SQL get each category as string
-                sql += f'WHERE category IN ({iterable_to_str(v, True)}) '
+                    # Add new filter with logical 'AND'
+                    # Converting value to string, where each element in quotes,
+                    # so SQL get each category as string
+                    sql += f'AND category IN ({iterable_to_str(v, True)}) '
+                else:
 
-    # Add new line character to <sql> to divide commands
-    sql += '\n'
+                    # Add new filter starting with SQl statement 'WHERE'
+                    # Converting value to string, where each element in quotes,
+                    # so SQL get each category as string
+                    sql += f'WHERE category IN ({iterable_to_str(v, True)}) '
 
-    # For each key, value in values of parameters
-    for k, v in params.items():
+        # Add new line character to <sql> to divide commands
+        sql += '\n'
 
-        # If key is in <column_map>
-        if k in column_map:
+        # For each key, value in values of parameters
+        for k, v in params.items():
 
-            # If SQL statement 'ORDER' is present in <sql>
-            if 'ORDER' in sql:
+            # If key is in <column_map>
+            if k in column_map:
 
-                # Add new sort to SQL query separated with comma
-                sql += f', {column_map[k]} {v}'
-            else:
+                # If SQL statement 'ORDER' is present in <sql>
+                if 'ORDER' in sql:
 
-                # Add new sort to SQL query with statement 'ORDER BY'
-                sql += f'ORDER BY {column_map[k]} {v}'
+                    # Add new sort to SQL query separated with comma
+                    sql += f', {column_map[k]} {v}'
+                else:
 
-    # Add new line character to <sql> to divide commands
-    sql += '\n'
+                    # Add new sort to SQL query with statement 'ORDER BY'
+                    sql += f'ORDER BY {column_map[k]} {v}'
 
-    # Add 'LIMIT' and 'OFFSET' statement to query in order to get <number> of
-    # tasks and skip <offset> ones
-    sql += f'LIMIT {params["number"]} OFFSET {params["offset"]}\n'
+        # Add new line character to <sql> to divide commands
+        sql += '\n'
+
+        # Add 'LIMIT' and 'OFFSET' statement to query in order to get <number> of
+        # tasks and skip <offset> ones
+        sql += f'LIMIT {params["number"]} OFFSET {params["offset"]}\n'
 
     # Get task from database
     tasks = await database.get_tasks(sql, conn)
@@ -169,7 +171,7 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
                                                      conn)
 
                 # If the points number is in values in filter
-                if result['points'] in params['result']:
+                if params is not None and result['points'] in params['result']:
 
                     # Add best submission's information to <tasks>
                     tasks[i]['best_submission'] = {
@@ -185,7 +187,7 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
                 task_index_to_delete.append(i)
 
             # Else if None is not present in values to filter
-            elif None not in params['result']:
+            elif params is not None and None not in params['result']:
 
                 # In other case add this index to list of ones to be deleted in
                 # future
