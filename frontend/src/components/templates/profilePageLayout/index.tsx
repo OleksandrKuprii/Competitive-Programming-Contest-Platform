@@ -7,11 +7,11 @@ import PrettyDate from '@/atoms/prettyDate';
 import { Spacer } from '@/atoms/spacers';
 import User from '~/typings/entities/user';
 
-interface ProfilePageArgs {
+interface ProfilePageLayoutArgs {
   user: User;
 }
 
-const ProfilePage: FC<ProfilePageArgs> = ({ user }) => {
+const ProfilePageLayout: FC<ProfilePageLayoutArgs> = ({ user }) => {
   return (
     <Grid>
       <Row>
@@ -31,4 +31,4 @@ const ProfilePage: FC<ProfilePageArgs> = ({ user }) => {
   );
 };
 
-export default memo(ProfilePage);
+export default memo(ProfilePageLayout);

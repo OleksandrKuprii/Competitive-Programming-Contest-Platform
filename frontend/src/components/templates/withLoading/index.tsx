@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
-import LoadingPage from '~/pages/LoadingPage';
+import LoadingPage from '~/pages/fallback/LoadingPage';
 
 interface WithLoadingStatusProps {
   children: ReactNode;
