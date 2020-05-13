@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, ReactNode, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import ErrorPage from '~/pages/ErrorPage';
+import ErrorPage from '~/pages/fallback/ErrorPage';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 import { Submission } from '~/typings/entities/submission';
 

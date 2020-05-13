@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FC } from 'react';
 import SubmissionList from '@/organisms/submissionList';
 import WithLoading from '@/templates/withLoading';
-import LoadingPage from '~/pages/LoadingPage';
+import LoadingPage from '~/pages/fallback/LoadingPage';
 import { useStoreState } from '~/hooks/store';
 
 const SubmissionsPage: FC = () => {

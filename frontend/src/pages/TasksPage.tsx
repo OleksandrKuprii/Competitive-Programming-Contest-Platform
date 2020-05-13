@@ -18,7 +18,7 @@ import { HorizontalSpacer, Spacer } from '@/atoms/spacers';
 import SortControl from '@/atoms/sortControl';
 import DataFilter from '@/providers/dataFilter';
 import DataSort from '@/providers/dataSort';
-import LoadingPage from '~/pages/LoadingPage';
+import LoadingPage from '~/pages/fallback/LoadingPage';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 import { SortBy } from '~/typings/models';
 

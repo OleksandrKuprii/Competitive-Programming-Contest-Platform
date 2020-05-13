@@ -4,7 +4,7 @@ import WithLoading from '@/templates/withLoading';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 import auth0Config from '~/auth0.config.json';
-import LoadingPage from '~/pages/LoadingPage';
+import LoadingPage from '~/pages/fallback/LoadingPage';
 
 interface Auth0ProviderProps {
   children: ReactNode;
