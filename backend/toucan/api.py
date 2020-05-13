@@ -272,11 +272,8 @@ async def get_tasks(request):
     for key in ['result', 'result_sort']:
         try:
             del params[key]
-        except KeyError:
+        except (KeyError, TypeError):
             pass
-
-    if params is None:
-        return Response(status=400)
 
     async with pool.acquire() as conn:
         tasks = await task.get_tasks('', params, conn)
