@@ -65,13 +65,13 @@ async def get_nickname_by_id(user_id: str, conn: Connection) -> str:
     return fetch['nickname']
 
 
-async def register_user(user_info: dict, conn: Connection) -> None:
+async def register_user(user_id: str, conn: Connection) -> None:
     """Register new user and insert user info to the database.
 
     Parameters
     ----------
-    user_info: dict
-        Information about new user to be inserted in the database
+    user_id: str
+        The id of the user
     conn: Connection
         A connection to the database
     """
@@ -80,15 +80,13 @@ async def register_user(user_info: dict, conn: Connection) -> None:
 
     async with conn.transaction():
         await conn.execute("""
-            INSERT INTO coreschema.users (id, nickname, name, picture, email,
-            registered)
-            VALUES ($1, $2, $3, $4, $5, $6)
-        """, user_info['sub'], user_info['nickname'], user_info['name'],
-            user_info['picture'], user_info['email'], timestamp)
+            INSERT INTO coreschema.users (id, email, registered)
+            VALUES ($1, $2)
+        """, user_id, timestamp)
 
         await conn.execute("""
             INSERT INTO coreschema.rating (user_id, public_task_rating) VALUES ($1, 0)
-        """, user_info['sub'])
+        """, user_id)
 
 
 async def update_profile(user_id: str, sql: str, conn: Connection) -> None:
@@ -110,3 +108,43 @@ async def update_profile(user_id: str, sql: str, conn: Connection) -> None:
             SET {sql}
             WHERE id = $1
         """, user_id)
+
+
+async def check_registration(user_id: str, conn: Connection) -> bool:
+    """Check if user was registered and he exists in the database.
+
+    Parameters
+    ----------
+    user_id: str
+        The id of the user
+    conn: Connection
+        A connection to the database
+    """
+    async with conn.transaction():
+        fetch = await conn.fetchval("""
+            SELECT count(*)
+            FROM coreschema.users
+            WHERE id = $1
+        """, user_id)
+
+    return bool(fetch)
+
+
+async def check_nickname_existence(nickname: str, conn: Connection) -> bool:
+    """Check if nickname exists in the database.
+
+    Parameters
+    ----------
+    nickname: str
+        The nickname that has to be checked
+    conn: Connection
+        A connection to the database
+    """
+    async with conn.transaction():
+        fetch = await conn.fetchval("""
+            SELECT count(*)
+            FROM coreschema.users
+            WHERE nickname = $1
+        """, nickname)
+
+    return bool(fetch)

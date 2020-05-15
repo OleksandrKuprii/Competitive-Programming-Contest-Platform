@@ -65,18 +65,22 @@ async def get_my_info(user_id: str, conn: Connection) -> dict:
     return user_info
 
 
-async def register_user(user_info: dict, conn: Connection) -> None:
+async def register_user(user_id: str, user_info: dict, conn: Connection) -> None:
     """Register new user and insert user info to the database.
 
     Parameters
     ----------
+    user_id:
+        The id of the user
     user_info: dict
         Information about new user to be inserted in the database
     conn: Connection
         A connection to the database
     """
     # Call database to register user
-    await database.register_user(user_info, conn)
+    await database.register_user(user_id, conn)
+    print(user_info)
+    await update_profile(user_id, user_info, conn)
 
 
 async def update_profile(user_id: str, info: dict, conn: Connection) -> None:
@@ -116,3 +120,29 @@ async def update_profile(user_id: str, info: dict, conn: Connection) -> None:
 
     # Call database to update profile
     await database.update_profile(user_id, sql, conn)
+
+
+async def check_registration(user_id: str, conn: Connection) -> bool:
+    """Check if user was registered and he exists in the database.
+
+    Parameters
+    ----------
+    user_id: str
+        The id of the user
+    conn: Connection
+        A connection to the database
+    """
+    return await database.check_registration(user_id, conn)
+
+
+async def check_nickname_existence(nickname: str, conn: Connection) -> bool:
+    """Check if nickname exists in the database.
+
+    Parameters
+    ----------
+    nickname: str
+        The nickname that has to be checked
+    conn: Connection
+        A connection to the database
+    """
+    return await database.check_nickname_existence(nickname, conn)
