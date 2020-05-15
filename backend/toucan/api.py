@@ -427,30 +427,63 @@ async def get_profile(request, **kwargs):
     return json_response(user_info)
 
 
+@routes.get(r'/check_nickname/{nickname:.{3,}}')
+@requires_auth
+async def nickname_existence(request, **kwargs):
+    """Check if nickname exists."""
+    nickname = request.match_info['nickname']
+
+    async with pool.acquire() as conn:
+        nickname_exists = await user.check_nickname_existence(nickname, conn)
+
+    return json_response({'nickname_exists': nickname_exists})
+
+
 @routes.get('/profile/my')
 @requires_auth
 async def get_my_profile(request, **kwargs):
     """Get my profile."""
-    token = request.headers['Authorization']
-
-    req = Request('https://' + AUTH0_DOMAIN + '/userinfo')
-    req.add_header('Authorization', token)
-    resp = urlopen(req)
-
-    auth0_user_info = json.loads(resp.read())
-
-    need_keys = ('sub', 'nickname', 'name', 'email', 'picture')
-    auth0_user_info = {k: v for k, v in auth0_user_info.items() if k in
-                       need_keys}
-
     async with pool.acquire() as conn:
-        user_info = await user.get_my_info(auth0_user_info['sub'], conn)
+        if await user.check_registration(kwargs['user_info']['sub'], conn):
 
-        if not user_info:
-            await user.register_user(auth0_user_info, conn)
-            return auth0_user_info
+            user_info = await user.get_my_info(kwargs['user_info']['sub'], conn)
 
-        return json_response(user_info)
+            return json_response({
+                'registered': True,
+                'email_verified': True,
+                'info': user_info
+            })
+
+        else:
+            token = request.headers['Authorization']
+
+            req = Request('https://' + AUTH0_DOMAIN + '/userinfo')
+            req.add_header('Authorization', token)
+            resp = urlopen(req)
+
+            auth0_user_info = json.loads(resp.read())
+
+            keys = ('nickname', 'name', 'locale', 'picture')
+            user_info = {}
+
+            for k in keys:
+                try:
+                    user_info[k] = auth0_user_info[k]
+                except KeyError:
+                    pass
+
+            if auth0_user_info['email_verified']:
+                return json_response({
+                    'registered': False,
+                    'email_verified': True,
+                    'info': user_info
+                })
+            else:
+                return json_response({
+                    'registered': False,
+                    'email_verified': False,
+                    'info': user_info
+                })
 
 
 @routes.post('/profile/my')
@@ -461,7 +494,10 @@ async def update_profile(request, **kwargs):
     body = await request.json()
 
     async with pool.acquire() as conn:
-        await user.update_profile(user_id, body, conn)
+        if await user.check_registration(user_id, conn):
+            await user.update_profile(user_id, body, conn)
+        else:
+            await user.register_user(user_id, body, conn)
 
     return Response(status=200)
 
