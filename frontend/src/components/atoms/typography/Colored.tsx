@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { baseParagraph } from '@/atoms/typography';
 import { color } from '~/theme';
 
-const Colored = styled(baseParagraph)<{ variant?: string }>`
+const Colored = styled.span<{ variant?: string }>`
   color: ${color};
 `;
 

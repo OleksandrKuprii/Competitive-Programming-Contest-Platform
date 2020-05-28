@@ -5,6 +5,7 @@ import Category from '~/typings/entities/category';
 import User from '~/typings/entities/user';
 import { Submission } from '~/typings/entities/submission';
 import Notification from '~/typings/entities/notification';
+import MyProfileMeta from '~/models/myProfileMeta';
 
 export interface Auth0Token {
   getToken: Thunk<Auth0Token, undefined, undefined, StoreModel>;
@@ -160,12 +161,14 @@ export interface TaskModel extends LoadingModel, Auth0Token {
 export interface UserModel extends LoadingModel, Auth0Token {
   myProfile?: User;
 
+  myProfileMeta?: MyProfileMeta;
+
   fetchMyProfile: Thunk<
     UserModel,
     undefined,
     undefined,
     StoreModel,
-    Promise<User | { error: boolean }>
+    Promise<[User, MyProfileMeta] | { error: boolean }>
   >;
 
   fetchedMyProfile: ActionOn<UserModel, StoreModel>;

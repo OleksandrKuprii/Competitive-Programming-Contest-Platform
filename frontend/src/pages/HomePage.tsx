@@ -5,6 +5,7 @@ import { Col, Grid, Row } from '@/atoms/grid';
 import { BigTitle, Paragraph, Subtitle } from '@/atoms/typography';
 import { Spacer } from '@/atoms/spacers';
 
+
 const Homepage = () => {
   const { t } = useTranslation();
 

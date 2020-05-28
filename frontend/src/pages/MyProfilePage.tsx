@@ -4,7 +4,7 @@ import Defined from '@/helpers/defined';
 import ProfilePageLayout from '@/templates/profilePageLayout';
 import { useStoreState } from '~/hooks/store';
 
-const MyProfile = () => {
+const MyProfilePage = () => {
   const myProfile = useStoreState((state) => state.user.myProfile);
   const myProfileLoading = useStoreState((state) => state.user.loadingStatus);
 
@@ -17,4 +17,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default MyProfilePage;

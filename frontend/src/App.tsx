@@ -14,7 +14,9 @@ import TaskPage from '~/pages/TaskPage';
 import TasksPage from '~/pages/TasksPage';
 import HomePage from '~/pages/HomePage';
 import GlobalStyle from '~/theme/GlobalStyle';
-import MyProfile from '~/pages/MyProfile';
+import MyProfilePage from '~/pages/MyProfilePage';
+import ForceRegister from '@/templates/forceRegister';
+import RegisterPage from '~/pages/RegiserPage';
 
 const App = () => (
   <ThemeProvider theme={{ mode: 'dark' }}>
@@ -26,41 +28,47 @@ const App = () => (
 
         <WithNotifications>
           <WithNavbar>
-            <Switch>
-              <Route path="/tournaments">
-                <TournamentsPage />
-              </Route>
+            <ForceRegister>
+              <Switch>
+                <Route path="/register">
+                  <RegisterPage />
+                </Route>
 
-              <Route path="/task/view/:id">
-                <TaskPage />
-              </Route>
+                <Route path="/tournaments">
+                  <TournamentsPage />
+                </Route>
 
-              <Route path="/tasks">
-                <TasksPage />
-              </Route>
+                <Route path="/task/view/:id">
+                  <TaskPage />
+                </Route>
 
-              <Route path="/submissions">
-                <SubmissionsPage />
-              </Route>
+                <Route path="/tasks">
+                  <TasksPage />
+                </Route>
 
-              <Route path="/submission/view/:id">
-                <SubmissionFromURL>
-                  {(submission) => <SubmissionPage submission={submission} />}
-                </SubmissionFromURL>
-              </Route>
+                <Route path="/submissions">
+                  <SubmissionsPage />
+                </Route>
 
-              <Route path="/profile/my">
-                <MyProfile />
-              </Route>
+                <Route path="/submission/view/:id">
+                  <SubmissionFromURL>
+                    {(submission) => <SubmissionPage submission={submission} />}
+                  </SubmissionFromURL>
+                </Route>
 
-              <Route path="/" exact>
-                <HomePage />
-              </Route>
+                <Route path="/profile/my">
+                  <MyProfilePage />
+                </Route>
 
-              <Route path="/">
-                <Redirect to="/" />
-              </Route>
-            </Switch>
+                <Route path="/" exact>
+                  <HomePage />
+                </Route>
+
+                <Route path="/">
+                  <Redirect to="/" />
+                </Route>
+              </Switch>
+            </ForceRegister>
 
             <Spacer />
           </WithNavbar>

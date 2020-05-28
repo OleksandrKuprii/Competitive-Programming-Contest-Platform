@@ -19,10 +19,9 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: ${background};
     color: ${foreground};
-    font-family: 'Montserrat', sans-serif;
   }
   
-  button {
+  body, button, input, textarea {
     font-family: 'Montserrat', sans-serif;
   }
   
