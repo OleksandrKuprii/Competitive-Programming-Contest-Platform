@@ -1,19 +1,10 @@
 import * as React from 'react';
-import {
-  FC,
-  Ref,
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FC, RefObject, useCallback, useRef, useState } from 'react';
 import { Paragraph, Title } from '@/atoms/typography';
-import { Col, Container, Row } from '@/atoms/grid';
+import { Col, Row } from '@/atoms/grid';
 import { Spacer } from '@/atoms/spacers';
 import InputWithHeader from '@/molecules/inputWithHeader';
 import Button from '@/atoms/button';
-import Box from '@/atoms/box';
 import ColoredBox from '@/atoms/box/ColoredBox';
 import TextArea from '@/atoms/textArea';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useStoreState } from '~/hooks/store';
 import { FC, memo, ReactNode } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
+import { useStoreState } from '~/hooks/store';
 
 interface ForceRegisterProps {
   children: ReactNode;
@@ -11,8 +11,6 @@ const ForceRegister: FC<ForceRegisterProps> = ({ children }) => {
   const history = useHistory();
 
   const { pathname } = history.location;
-
-  console.log(pathname)
 
   const registered = useStoreState(
     (state) => state.user.myProfileMeta?.registered,

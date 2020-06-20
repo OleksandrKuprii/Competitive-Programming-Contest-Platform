@@ -7,6 +7,7 @@ import SubmissionFromURL from '@/providers/submissionFromURL';
 import Auth0Provider from '@/providers/auth0Provider';
 import StartupFetcher from '@/startupFetcher';
 import { Spacer } from '@/atoms/spacers';
+import ForceRegister from '@/templates/forceRegister';
 import SubmissionsPage from '~/pages/SubmissionsPage';
 import SubmissionPage from '~/pages/SubmissionPage';
 import TournamentsPage from '~/pages/TournamentsPage';
@@ -15,8 +16,7 @@ import TasksPage from '~/pages/TasksPage';
 import HomePage from '~/pages/HomePage';
 import GlobalStyle from '~/theme/GlobalStyle';
 import MyProfilePage from '~/pages/MyProfilePage';
-import ForceRegister from '@/templates/forceRegister';
-import RegisterPage from '~/pages/RegiserPage';
+import RegisterPage from '~/pages/RegisterPage';
 
 const App = () => (
   <ThemeProvider theme={{ mode: 'dark' }}>

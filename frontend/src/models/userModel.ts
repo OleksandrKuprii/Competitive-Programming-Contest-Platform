@@ -51,7 +51,7 @@ const userModel: UserModel = {
   fetchedMyProfile: actionOn(
     (actions) => actions.fetchMyProfile.successType,
     (state, target) => {
-      const result = target.result;
+      const { result } = target;
 
       if (result.error) {
         return;
