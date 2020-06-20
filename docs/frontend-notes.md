@@ -31,7 +31,7 @@
 >
 > I recommend you forget about SPA principles while doing
 > actions with user account.
-> It is better to refresh the page than having fun shit
+> It is better to refresh the page than having fun with shit
 > like Auth0/Backend exceptions.
 >
 > Basically ForceRegister does all the main work
