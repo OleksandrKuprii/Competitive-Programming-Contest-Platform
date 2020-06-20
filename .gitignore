@@ -10,3 +10,4 @@ venv
 devenv/s3
 schema/fill.sql
 *.log
+.swp
