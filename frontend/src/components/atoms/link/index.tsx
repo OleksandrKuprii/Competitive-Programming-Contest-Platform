@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { color, foreground } from '~/theme';
+import { background, foreground } from '~/mixins/color';
 
 const Link = styled.a<{ variant?: string; noHover?: boolean }>`
   cursor: pointer;
@@ -10,7 +10,7 @@ const Link = styled.a<{ variant?: string; noHover?: boolean }>`
     !props.noHover &&
     css`
       &:hover {
-        color: ${color};
+        color: ${background};
       }
     `}
 `;

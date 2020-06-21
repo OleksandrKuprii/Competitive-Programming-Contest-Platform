@@ -1,17 +1,17 @@
 import styled from "styled-components";
-import { color, foreground } from "~/theme";
-import shadow from "~/mixins/shadow";
+import { background, foreground } from "~/mixins/color";
+import { normalShadow } from "~/mixins/shadow";
 
 
 const TextArea = styled.textarea<{ variant?: string }>`
-  background: ${color};
+  background: ${background};
   color: ${foreground};
   padding: 10px;
   border: none;
   width: 100%;
   resize: none;
   
-  ${shadow};
+  ${normalShadow};
 `;
 
 TextArea.defaultProps = {

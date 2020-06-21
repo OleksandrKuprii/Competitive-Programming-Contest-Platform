@@ -8,8 +8,6 @@ const Paper = styled(Box)`
 `;
 
 Paper.defaultProps = {
-  padding: 30,
-  height: 'fit-content',
 };
 
 export default Paper;

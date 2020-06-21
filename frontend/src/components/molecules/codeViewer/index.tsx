@@ -23,7 +23,7 @@ const CodeViewer: FC<CodeViewerProps> = ({
   maxHeight,
 }) => {
   return (
-    <Box height="fit-content" width="100%">
+    <Box>
       <SyntaxHighlighter
         language={languageTransformations[language] || language}
         style={theme || tomorrowNight}

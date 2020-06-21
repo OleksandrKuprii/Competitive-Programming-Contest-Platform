@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { foreground } from '~/theme';
+import { foreground } from '~/mixins/color';
 
 const BaseButton = styled.button`
   border: none;

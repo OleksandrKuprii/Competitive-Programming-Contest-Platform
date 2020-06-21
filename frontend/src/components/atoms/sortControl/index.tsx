@@ -2,9 +2,8 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import styled, { css } from 'styled-components';
-import { Grid, Row } from '@/atoms/grid';
-import { HorizontalSpacer } from '@/atoms/spacers';
-import { color } from '~/theme';
+import { Grid, Row, JustifyContent } from '@/atoms/grid';
+import { background } from '~/mixins/color';
 
 interface SortControlArgs {
   onChange: (order: number) => any;
@@ -19,7 +18,7 @@ const Control = styled.div<{ active: boolean; variant: string }>`
   ${(props) =>
     props.active &&
     css`
-      color: ${color};
+      color: ${background};
       transform: scale(1.7) translateY(10%);
     `}
 
@@ -52,9 +51,7 @@ const SortControl: React.FunctionComponent<SortControlArgs> = ({
 
   return (
     <>
-      <HorizontalSpacer size={5} />
-
-      <Grid justifyContent="center">
+      <Grid justifyContent={JustifyContent.Center}>
         <Row>
           <Control
             variant="primary"

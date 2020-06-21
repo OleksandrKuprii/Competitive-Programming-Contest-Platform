@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
 import { Parser as HtmlToReactParser } from 'html-to-react';
-import { Paragraph, Subtitle } from '@/atoms/typography';
+import { Text, Subtitle, FontWeight } from '@/atoms/typography';
 import styled from 'styled-components';
 
 export interface HtmlTextSectionProps {
@@ -11,7 +11,7 @@ export interface HtmlTextSectionProps {
 
 const htmlToReactParser = new HtmlToReactParser();
 
-const SectionContainer = styled(Paragraph)`
+const SectionContainer = styled(Text)`
   * {
     margin: 0;
     padding: 0;
@@ -28,7 +28,7 @@ const HtmlTextSection: FC<HtmlTextSectionProps> = ({ header, text }) => {
 
   return (
     <>
-      {header && <Subtitle semiBold>{header}</Subtitle>}
+      {header && <Subtitle weight={FontWeight.Bold}>{header}</Subtitle>}
       <SectionContainer>{parsed}</SectionContainer>
     </>
   );

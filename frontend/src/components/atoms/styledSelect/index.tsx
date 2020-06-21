@@ -8,7 +8,7 @@ import '@/atoms/styledSelect/style.scss';
 const animatedComponents = makeAnimated();
 
 const StyledSelect: FC<Props> = (props) => (
-  <Box height="fit-content">
+  <Box>
     <Select
       className="react-select"
       classNamePrefix="react-select"

@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import shadow from '~/mixins/shadow';
-import { color, foreground } from '~/theme';
+import { normalShadow } from '~/mixins/shadow';
+import { background, foreground } from '~/mixins/color';
 
 const Input = styled.input<{ variant?: string }>`
-  ${shadow};
+  ${normalShadow};
 
-  background-color: ${color};
+  background-color: ${background};
   color: ${foreground};
 
   border: none;

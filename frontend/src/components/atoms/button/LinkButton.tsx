@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import BaseButton from '@/atoms/button/BaseButton';
-import { color } from '~/theme';
+import { foreground } from '~/mixins/color';
 
 const LinkButton = styled(BaseButton)<{ variant?: string }>`
   &:hover {
-    color: ${color};
+    color: ${foreground};
   }
 `;
 

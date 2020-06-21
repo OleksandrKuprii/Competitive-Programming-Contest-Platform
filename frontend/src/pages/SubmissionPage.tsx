@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Col, Container, Grid, Row } from '@/atoms/grid';
+import { Col, Grid, Row, JustifyContent } from '@/atoms/grid';
 import Table from '@/molecules/table';
 import PrettyDate from '@/atoms/prettyDate';
 import Loading from '@/atoms/loading';
@@ -9,8 +9,7 @@ import Defined from '@/helpers/defined';
 import CodeViewer from '@/molecules/codeViewer';
 import Result from '@/atoms/result';
 import Link from '@/atoms/link';
-import { Paragraph, Title } from '@/atoms/typography';
-import { Spacer } from '@/atoms/spacers';
+import { Text, Title, TextAlign, FontWeight } from '@/atoms/typography';
 import { Submission } from '~/typings/entities/submission';
 
 interface SubmissionPageProps {
@@ -69,8 +68,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ submission }) => {
             <Defined value={submission.tests}>
               {(definedTests) => (
                 <>
-                  <Spacer size={20} />
-
                   <Row>
                     <Table>
                       <thead>
@@ -113,19 +110,17 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ submission }) => {
                   <Row>
                     {submission.testCount !== undefined &&
                     definedTests.length < submission.testCount ? (
-                      <Container>
-                        <Spacer />
-
+                      <>
                         <Grid>
-                          <Row justifyContent="center">
+                          <Row justifyContent={JustifyContent.Center}>
                             <Loading variant="running" />
                           </Row>
                         </Grid>
 
-                        <Paragraph align="center" bold style={{ fontSize: 18 }}>
+                        <Text align={TextAlign.Center} weight={FontWeight.Bold} style={{ fontSize: 18 }}>
                           Running
-                        </Paragraph>
-                      </Container>
+                        </Text>
+                      </>
                     ) : undefined}
                   </Row>
                 </>

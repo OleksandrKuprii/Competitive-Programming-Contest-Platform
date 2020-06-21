@@ -3,7 +3,7 @@ import { FC, ReactNode, useCallback } from 'react';
 import Dropzone from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { FaFileUpload } from 'react-icons/fa';
-import { BigTitle, Paragraph } from '@/atoms/typography';
+import { Text, TextAlign } from '@/atoms/typography';
 import Box from '@/atoms/box';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 
@@ -47,13 +47,9 @@ const SolutionDropZone: FC<SolutionDropZoneProps> = ({ children }) => {
               children
             ) : (
               <Box padding={100}>
-                <BigTitle align="center">
-                  <FaFileUpload />
-                </BigTitle>
-
-                <Paragraph style={{ cursor: 'default' }} align="center">
+                <Text style={{ cursor: 'default' }} align={TextAlign.Center}>
                   {t('taskPage.dropFileHere')}
-                </Paragraph>
+                </Text>
               </Box>
             )}
           </div>

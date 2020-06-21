@@ -4,7 +4,6 @@ import ProfileInfo from '@/molecules/profileInfo';
 import { Col, Grid, Row } from '@/atoms/grid';
 import Box from '@/atoms/box';
 import PrettyDate from '@/atoms/prettyDate';
-import { Spacer } from '@/atoms/spacers';
 import User from '~/typings/entities/user';
 
 interface ProfilePageLayoutArgs {
@@ -19,7 +18,7 @@ const ProfilePageLayout: FC<ProfilePageLayoutArgs> = ({ user }) => {
           <ProfileInfo user={user} />
         </Col>
       </Row>
-      <Spacer />
+      
       <Row>
         <Col>
           <Box padding={20}>

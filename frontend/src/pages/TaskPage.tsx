@@ -5,7 +5,6 @@ import { Col, Row } from '@/atoms/grid';
 import Table from '@/molecules/table';
 import HtmlTextSection from '@/molecules/htmlTextSection';
 import Defined from '@/helpers/defined';
-import { Spacer } from '@/atoms/spacers';
 import { Title } from '@/atoms/typography';
 import Paper from '@/atoms/paper';
 import TaskFromURL from '@/providers/taskFromURL';
@@ -42,7 +41,6 @@ const TaskPage: FC = () => {
                 </TaskDescriptionSections>
               </Paper>
 
-              <Spacer size={20} />
 
               <Defined value={task.examples}>
                 {(definedExamples) => (
@@ -95,7 +93,6 @@ const TaskPage: FC = () => {
                 </tbody>
               </Table>
 
-              <Spacer size={10} />
 
               <Table>
                 <thead>
@@ -114,7 +111,6 @@ const TaskPage: FC = () => {
             </Col>
           </Row>
 
-          <Spacer size={20} />
         </WithSubmissionArea>
       )}
     </TaskFromURL>

@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import BaseButton from '@/atoms/button/BaseButton';
-import { color, hoverColor } from '~/theme';
+import { background, hoverBackground } from '~/mixins/color';
 
-const Button = styled(BaseButton)<{ variant?: string; padding?: string }>`
-  padding: ${(props) => props.padding || '0 20px'};
-  background-color: ${color};
+const Button = styled(BaseButton)<{ variant?: string }>`
+  padding: 15px;
+  background-color: ${background};
 
   &:not(:disabled):hover {
-    background-color: ${hoverColor};
+    background-color: ${hoverBackground};
   }
   
   :disabled {

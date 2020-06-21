@@ -1,25 +1,25 @@
 import React from 'react';
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
 import WithNotifications from '@/templates/withNotifications';
-import WithNavbar from '@/templates/withNavbar';
 import SubmissionFromURL from '@/providers/submissionFromURL';
 import Auth0Provider from '@/providers/auth0Provider';
 import StartupFetcher from '@/startupFetcher';
-import { Spacer } from '@/atoms/spacers';
 import ForceRegister from '@/templates/forceRegister';
+import SidebarLayout from '@/templates/sidebarLayout';
+import Sidebar from '@/organisms/Sidebar';
 import SubmissionsPage from '~/pages/SubmissionsPage';
 import SubmissionPage from '~/pages/SubmissionPage';
 import TournamentsPage from '~/pages/TournamentsPage';
 import TaskPage from '~/pages/TaskPage';
 import TasksPage from '~/pages/TasksPage';
 import HomePage from '~/pages/HomePage';
-import GlobalStyle from '~/theme/GlobalStyle';
+import GlobalStyle from '~/GlobalStyle';
 import MyProfilePage from '~/pages/MyProfilePage';
 import RegisterPage from '~/pages/RegisterPage';
 
+
 const App = () => (
-  <ThemeProvider theme={{ mode: 'dark' }}>
+  <>
     <GlobalStyle />
 
     <HashRouter>
@@ -27,8 +27,8 @@ const App = () => (
         <StartupFetcher />
 
         <WithNotifications>
-          <WithNavbar>
-            <ForceRegister>
+          <ForceRegister>
+            <SidebarLayout sidebar={<Sidebar />}>
               <Switch>
                 <Route path="/register">
                   <RegisterPage />
@@ -68,14 +68,12 @@ const App = () => (
                   <Redirect to="/" />
                 </Route>
               </Switch>
-            </ForceRegister>
-
-            <Spacer />
-          </WithNavbar>
-        </WithNotifications>
+             </SidebarLayout>
+          </ForceRegister>
+      </WithNotifications>
       </Auth0Provider>
     </HashRouter>
-  </ThemeProvider>
+  </>
 );
 
 export default App;

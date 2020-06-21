@@ -24,7 +24,7 @@ const SmallRatingChart: FC<SmallRatingChart> = ({ rating }) => {
   } = getRatingPercentage(rating);
 
   return (
-    <Box height="20px" width="10vw">
+    <Box>
       <ReactTooltip />
 
       {[

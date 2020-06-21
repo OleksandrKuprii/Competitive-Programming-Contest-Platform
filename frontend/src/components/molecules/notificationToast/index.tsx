@@ -3,7 +3,7 @@ import { FC, useCallback } from 'react';
 import styled from 'styled-components';
 import BlockLink from '@/atoms/link/BlockLink';
 import Result from '@/atoms/result';
-import ColoredBox from '@/atoms/box/ColoredBox';
+import Box from '@/atoms/box';
 import { Col, Row } from '@/atoms/grid';
 import { FaAngleDoubleRight } from 'react-icons/all';
 import IconButton from '@/atoms/button/IconButton';
@@ -14,7 +14,7 @@ interface NotificationToastProps {
   onDismiss: (id: number) => any;
 }
 
-const NotificationToastContainer = styled(ColoredBox)`
+const NotificationToastContainer = styled(Box)`
   margin-top: 20px;
 `;
 

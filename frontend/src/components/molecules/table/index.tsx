@@ -1,17 +1,16 @@
 import styled from 'styled-components';
-import { color } from '~/theme';
-import shadow from '~/mixins/shadow';
+import { background, foreground } from '~/mixins/color';
+import { normalShadow } from '~/mixins/shadow';
 
 const Table = styled.table<{ variant?: string }>`
-  ${shadow};
+  ${normalShadow};
 
   width: 100%;
 
   border-collapse: collapse;
-
-  thead {
-    background: ${color};
-  }
+  
+  background: ${background};
+  color: ${foreground};
 
   th {
     text-align: left;
@@ -22,9 +21,5 @@ const Table = styled.table<{ variant?: string }>`
     padding: 10px;
   }
 `;
-
-Table.defaultProps = {
-  variant: 'dark',
-};
 
 export default Table;

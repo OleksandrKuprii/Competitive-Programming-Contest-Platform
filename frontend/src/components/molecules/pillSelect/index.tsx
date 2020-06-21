@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
-import ColoredBox from '@/atoms/box/ColoredBox';
+import Box from '@/atoms/box';
 
 interface PillSelectProps {
   options: { id: string; name: string }[];
@@ -9,7 +9,7 @@ interface PillSelectProps {
   onChange: (newState: string[]) => any;
 }
 
-const Pill = styled(ColoredBox)<{ variant: string; active: boolean }>`
+const Pill = styled(Box)<{ variant: string; active: boolean }>`
   padding: 10px;
   margin: 0 2px;
   transition: all 0.2s ease-in-out;

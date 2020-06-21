@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { color } from '~/theme';
+import { foreground } from '~/mixins/color';
 
 const Colored = styled.span<{ variant?: string }>`
-  color: ${color};
+  color: ${foreground};
 `;
 
 Colored.defaultProps = {

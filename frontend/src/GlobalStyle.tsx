@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import { background, foreground } from '~/theme';
+import { backgroundColors, foregroundColors } from '~/mixins/color';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -14,15 +14,17 @@ const GlobalStyle = createGlobalStyle`
   body, html {
     margin: 0;
     padding: 0;
+
+    overflow: hidden;
   }
   
   body {
-    background: ${background};
-    color: ${foreground};
+    background: ${backgroundColors.light};
+    color: ${foregroundColors.light};
   }
   
   body, button, input, textarea {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', sans-serif;
   }
   
   ::-webkit-scrollbar-track

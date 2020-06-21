@@ -4,7 +4,6 @@ import CodeViewer from '@/molecules/codeViewer';
 import Defined from '@/helpers/defined';
 import Button from '@/atoms/button';
 import { Grid, Row } from '@/atoms/grid';
-import { HorizontalSpacer, Spacer } from '@/atoms/spacers';
 import StyledSelect from '@/atoms/styledSelect';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 
@@ -46,8 +45,6 @@ const SolutionSubmissionForm: FC<SolutionSubmissionForm> = ({ taskId }) => {
         </Defined>
       </Row>
 
-      <Spacer size={20} />
-
       <Row>
         <div style={{ width: 200 }}>
           <StyledSelect
@@ -64,8 +61,6 @@ const SolutionSubmissionForm: FC<SolutionSubmissionForm> = ({ taskId }) => {
             }}
           />
         </div>
-
-        <HorizontalSpacer size={10} />
 
         <Button onClick={submittedCallback}>Submit</Button>
 
