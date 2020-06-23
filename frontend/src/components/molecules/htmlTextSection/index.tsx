@@ -3,6 +3,8 @@ import { FC } from 'react';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 import { Text, Subtitle, FontWeight } from '@/atoms/typography';
 import styled from 'styled-components';
+import Spacer from "@/atoms/spacer";
+import {Padding} from "~/mixins/padding";
 
 export interface HtmlTextSectionProps {
   text: string;
@@ -27,10 +29,12 @@ const HtmlTextSection: FC<HtmlTextSectionProps> = ({ header, text }) => {
   const parsed = htmlToReactParser.parse(text);
 
   return (
-    <>
-      {header && <Subtitle weight={FontWeight.Bold}>{header}</Subtitle>}
+    <div style={{ width: '30vw', margin: '0 auto' }}>
+      <Spacer top={Padding.Normal} />
+      {header && <Subtitle>{header}</Subtitle>}
+      <Spacer top={Padding.Normal} />
       <SectionContainer>{parsed}</SectionContainer>
-    </>
+    </div>
   );
 };
 

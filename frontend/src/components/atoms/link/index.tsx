@@ -3,7 +3,6 @@ import { background, foreground } from '~/mixins/color';
 
 const Link = styled.a<{ variant?: string; noHover?: boolean }>`
   cursor: pointer;
-  color: ${foreground};
   text-decoration: none;
 
   ${(props) =>

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Box, { BoxProps } from '@/atoms/box';
 
 const Extended = styled(Box)`
-  width: 100vw;
+  width: 80vw;
 `;
 
 const Container = styled.div`

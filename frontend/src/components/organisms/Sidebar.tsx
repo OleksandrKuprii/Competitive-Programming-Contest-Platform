@@ -2,23 +2,18 @@ import * as React from 'react';
 import { FC } from 'react';
 
 import Box from '@/atoms/box';
-import { Title } from '@/atoms/typography';
+import { Title, Text } from '@/atoms/typography';
 import { Padding } from '~/mixins/padding';
 
-import { Grid, JustifyContent } from '@/atoms/grid';
+import Spacer from "@/atoms/spacer";
+import Button from "@/atoms/button";
+import {List, ListItem} from "@/atoms/list";
 
 const Sidebar: FC = () => (
-  <Box variant="dark" height="100vh">
-    <Title>Toucan</Title>
+  <Box variant="lightDarken" height="100vh">
+    <Box variant="darkDarken" height="53px" />
 
-    <div style={{ paddingTop: 59 }}></div>
-
-    <Box padding={Padding.Normal} variant="primary">
-      Home
-    </Box>
-    <Box padding={Padding.Normal} variant="dark">
-      Tasks
-    </Box>
+    <Box variant="primaryDarken" height="59px" />
   </Box>
 );
 

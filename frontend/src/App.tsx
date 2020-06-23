@@ -12,7 +12,6 @@ import SubmissionPage from '~/pages/SubmissionPage';
 import TournamentsPage from '~/pages/TournamentsPage';
 import TaskPage from '~/pages/TaskPage';
 import TasksPage from '~/pages/TasksPage';
-import HomePage from '~/pages/HomePage';
 import GlobalStyle from '~/GlobalStyle';
 import MyProfilePage from '~/pages/MyProfilePage';
 import RegisterPage from '~/pages/RegisterPage';
@@ -60,12 +59,8 @@ const App = () => (
                   <MyProfilePage />
                 </Route>
 
-                <Route path="/" exact>
-                  <HomePage />
-                </Route>
-
                 <Route path="/">
-                  <Redirect to="/" />
+                  <Redirect to="/tasks" />
                 </Route>
               </Switch>
              </SidebarLayout>

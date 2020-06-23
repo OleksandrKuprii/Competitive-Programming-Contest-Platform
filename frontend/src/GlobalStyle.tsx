@@ -5,6 +5,7 @@ const GlobalStyle = createGlobalStyle`
   * {
     outline: none;
     box-sizing: border-box;
+    font-family: 'Roboto', sans-serif !important;
   }
   
   html {
@@ -21,10 +22,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: ${backgroundColors.light};
     color: ${foregroundColors.light};
-  }
-  
-  body, button, input, textarea {
-    font-family: 'Roboto', sans-serif;
+
+    letter-spacing: 0.5px;
   }
   
   ::-webkit-scrollbar-track

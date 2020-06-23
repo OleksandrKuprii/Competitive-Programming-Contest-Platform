@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
 import Box from '@/atoms/box';
+import Button from "@/atoms/button";
 
 interface PillSelectProps {
   options: { id: string; name: string }[];
@@ -9,23 +10,17 @@ interface PillSelectProps {
   onChange: (newState: string[]) => any;
 }
 
-const Pill = styled(Box)<{ variant: string; active: boolean }>`
+const Pill = styled(Button)<{ variant: string; active: boolean }>`
   padding: 10px;
   margin: 0 2px;
   transition: all 0.2s ease-in-out;
-
-  ${(props) =>
-    props.active &&
-    css`
-      transform: translateY(-10%);
-    `}
 `;
 
 const PillSelect: FC<PillSelectProps> = ({ options, active, onChange }) => (
   <>
     {options.map(({ name, id }) => (
       <Pill
-        variant={active.includes(id) ? 'dark' : ''}
+        variant={active.includes(id) ? 'primaryComplement' : ''}
         active={active.includes(id)}
         key={id}
         onClick={() => {

@@ -6,7 +6,6 @@ import Result from '@/atoms/result';
 import Box from '@/atoms/box';
 import { Col, Row } from '@/atoms/grid';
 import { FaAngleDoubleRight } from 'react-icons/all';
-import IconButton from '@/atoms/button/IconButton';
 import Notification from '~/typings/entities/notification';
 
 interface NotificationToastProps {
@@ -61,9 +60,9 @@ const NotificationToast: FC<NotificationToastProps> = ({
           )}
         </Col>
 
-        <IconButton variant="danger" onClick={dismissCallback}>
-          <FaAngleDoubleRight />
-        </IconButton>
+        {/*<IconButton variant="danger" onClick={dismissCallback}>*/}
+        {/*  <FaAngleDoubleRight />*/}
+        {/*</IconButton>*/}
       </Row>
     </NotificationToastContainer>
   );

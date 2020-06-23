@@ -8,7 +8,7 @@ const Table = styled.table<{ variant?: string }>`
   width: 100%;
 
   border-collapse: collapse;
-  
+
   background: ${background};
   color: ${foreground};
 

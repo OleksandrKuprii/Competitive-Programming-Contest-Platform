@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 import Box from '@/atoms/box';
+import {Padding} from "~/mixins/padding";
 
 const Paper = styled(Box)`
-  * {
-    font-family: 'Open Sans', sans-serif;
-  }
+  font-size: 18px;
 `;
 
 Paper.defaultProps = {

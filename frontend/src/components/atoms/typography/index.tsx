@@ -8,8 +8,9 @@ export enum TextAlign {
 }
 
 export enum FontWeight {
-  Bold  = "bold",
-  Light = "lighter"
+  Bold   = "bold",
+  Medium = 500,
+  Light  = "lighter"
 }
 
 export const Text = styled.p<{
@@ -19,7 +20,7 @@ export const Text = styled.p<{
   letterSpacing?: number;
 }>`
   margin: 0;
-  padding: 0.5em 0.7em;
+  padding: 0;
   
   text-align: ${props => props.align};
 
@@ -45,8 +46,9 @@ export const Subtitle = (() => {
   const title = styled(Text)``;
 
   title.defaultProps = ({
-    size: 2,
-    weight: FontWeight.Bold,
+    size: 1.25,
+    letterSpacing: 0.15,
+    weight: FontWeight.Medium,
   });
 
   return title;
