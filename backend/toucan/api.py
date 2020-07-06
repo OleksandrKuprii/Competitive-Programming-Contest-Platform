@@ -17,7 +17,7 @@ from asyncpg.pool import Pool
 import jose
 from jose import jwt
 
-from six.moves.urllib.request import urlopen, Request
+from six.moves.urllib.request import urlopen
 
 import database
 import submission
@@ -494,6 +494,7 @@ async def update_profile(request, **kwargs):
 @routes.post('/task')
 @requires_auth
 async def add_task(request, **kwargs):
+    """Add task."""
     body = await request.json()
 
     async with pool.acquire() as conn:

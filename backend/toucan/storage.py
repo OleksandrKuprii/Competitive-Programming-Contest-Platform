@@ -114,6 +114,7 @@ async def get_code(submission_id: int) -> str:
 
 
 async def add_task(task_info: dict):
+    """Add task."""
     alias = task_info['alias']
 
     async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:

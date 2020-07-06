@@ -249,16 +249,18 @@ async def get_task_id_from_alias(alias: str, conn) -> int:
 
 
 async def add_task_to_storage(task_info: dict):
+    """Add task to storage."""
     await storage.add_task(task_info)
 
 
 async def add_task(task_info: dict, conn: Connection):
+    """Add task."""
     task_main = task_info['name'], task_info['alias'], task_info['category'], \
-                task_info['difficulty'], task_info['wall_time_limit'], \
-                task_info['cpu_time_limit'], task_info['memory_limit'], datetime.now()
+        task_info['difficulty'], task_info['wall_time_limit'], \
+        task_info['cpu_time_limit'], task_info['memory_limit'], datetime.now()
 
     task_description = task_info['alias'], task_info['main'], task_info['input_format'], \
-                       task_info['output_format'], json.dumps(task_info['additional_sections'])
+        task_info['output_format'], json.dumps(task_info['additional_sections'])
 
     task_examples = []
     for x in task_info['examples']:
