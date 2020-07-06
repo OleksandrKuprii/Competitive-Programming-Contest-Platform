@@ -8,7 +8,7 @@ from datetime import datetime
 from functools import wraps
 
 from aiohttp import web
-from aiohttp.web import Application, Response, _run_app, json_response
+from aiohttp.web import Application, Response, _run_app, json_response, Request
 
 import aiohttp_cors
 
@@ -25,7 +25,6 @@ import task
 from dataclass import UserSubmission
 from user import user
 
-
 routes = web.RouteTableDef()
 
 AUTH0_DOMAIN = 'dev-gly-dk66.eu.auth0.com'
@@ -38,8 +37,7 @@ logging.basicConfig(filename='api.log',
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
-json_url = urlopen('https://' + AUTH0_DOMAIN +
-                   "/.well-known/jwks.json")
+json_url = urlopen('https://' + AUTH0_DOMAIN + "/.well-known/jwks.json")
 jwks = json.loads(json_url.read())
 
 pool: Pool
@@ -51,25 +49,23 @@ def get_token_auth_header(request):
 
     if not auth:
         return json_response({"code": "authorization_header_missing",
-                              "description":
-                                  "Authorization header is expected"},
-                             status=401)
+                              "description": "Authorization header is expected"}, status=401)
 
     parts = auth.split()
 
     if parts[0].lower() != "bearer":
         return json_response({"code": "invalid_header",
-                              "description":
-                                  "Authorization header must start with"
-                                  " Bearer"}, status=401)
+                              "description": "Authorization header must start with Bearer"
+                              },
+                             status=401)
     elif len(parts) == 1:
         return json_response({"code": "invalid_header",
-                              "description": "Token not found"}, status=401)
+                              "description": "Token not found"
+                              }, status=401)
     elif len(parts) > 2:
         return json_response({"code": "invalid_header",
-                              "description":
-                                  "Authorization header must be"
-                                  " Bearer token"}, status=401)
+                              "description": "Authorization header must be Bearer token"},
+                             status=401)
 
     token = parts[1]
     return token
@@ -94,6 +90,7 @@ def requires_scope(required_scope, request):
 
 def requires_auth(f):
     """Determine if the Access Token is valid."""
+
     @wraps(f)
     def decorated(*args, **kwargs):
         """Function-decorator."""
@@ -134,14 +131,12 @@ def requires_auth(f):
                                      status=401)
             except jwt.JWTClaimsError:
                 return json_response({"code": "invalid_claims",
-                                      "description": "incorrect claims, \
-                                                     please"
-                                                     "check the audience and "
-                                                     "issuer"}, status=401)
+                                      "description": "incorrect claims, please check the audience "
+                                                     "and issuer"
+                                      }, status=401)
             except Exception:
                 return json_response({"code": "invalid_header",
-                                      "description": "Unable to parse "
-                                                     "authentication token."},
+                                      "description": "Unable to parse authentication token."},
                                      status=401)
 
             return f(*args, **kwargs)
@@ -162,8 +157,7 @@ def parse_task_params(params):
         except (KeyError, ValueError):
             return
 
-    sort_params = ['name_sort', 'category_sort', 'difficulty_sort',
-                   'result_sort', 'date_sort']
+    sort_params = ['name_sort', 'category_sort', 'difficulty_sort', 'result_sort', 'date_sort']
 
     for param in sort_params:
         try:
@@ -220,8 +214,7 @@ def parse_task_params(params):
             else:
                 reg = re.search(r'^(\d+)-(\d+)$', r)
                 if reg:
-                    temp_result = range(int(reg.group(1)),
-                                        int(reg.group(2)) + 1)
+                    temp_result = range(int(reg.group(1)), int(reg.group(2)) + 1)
                     for d in temp_result:
                         params['result'].add(d)
     except KeyError:
@@ -240,8 +233,7 @@ async def post_submission(request, **kwargs):
     try:
         timestamp = datetime.now().astimezone()
         user_id = user_info['sub']
-        submission_data = UserSubmission(**body, timestamp=timestamp,
-                                         user_id=user_id)
+        submission_data = UserSubmission(**body, timestamp=timestamp, user_id=user_id)
     except TypeError:
         return Response(status=400)
 
@@ -249,8 +241,7 @@ async def post_submission(request, **kwargs):
 
     if len(submission_code.encode('utf-8')) > 64000:
         return json_response({'code': 'too_big_file',
-                              'description': 'The submitted file is bigger '
-                                             'than 64 KB.'},
+                              'description': 'The submitted file is bigger than 64 KB.'},
                              status=413)
 
     async with pool.acquire() as conn:
@@ -356,8 +347,7 @@ async def get_submissions(request, **kwargs):
     user_info = kwargs['user_info']
 
     if list(params.values()).count('') or \
-            ('number' not in list(params.keys()) or
-             'offset' not in list(params.keys())):
+            ('number' not in list(params.keys()) or 'offset' not in list(params.keys())):
         return Response(status=400)
 
     user_id = user_info['sub']
@@ -379,8 +369,7 @@ async def get_submission(request, **kwargs):
     submission_id = int(request.match_info['submission_id'])
 
     async with pool.acquire() as conn:
-        submission_data = await submission.get_submission(submission_id,
-                                                          user_id, conn)
+        submission_data = await submission.get_submission(submission_id, user_id, conn)
 
     return json_response(submission_data)
 
@@ -502,17 +491,24 @@ async def update_profile(request, **kwargs):
     return Response(status=200)
 
 
+@routes.post('/task')
+@requires_auth
+async def add_task(request, **kwargs):
+    body = await request.json()
+
+    async with pool.acquire() as conn:
+        await task.add_task(body, conn)
+
+
 app = Application()
 
-cors = aiohttp_cors.setup(app,
-                          defaults={
-                              "*":
-                                  aiohttp_cors.ResourceOptions(
-                                      allow_credentials=True,
-                                      expose_headers="*",
-                                      allow_headers="*",
-                                  )
-                          })
+cors = aiohttp_cors.setup(app, defaults={
+    "*": aiohttp_cors.ResourceOptions(
+        allow_credentials=True,
+        expose_headers="*",
+        allow_headers="*",
+    )
+})
 
 app.add_routes(routes)
 

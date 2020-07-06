@@ -1,5 +1,6 @@
 """Handles storage logic."""
 import os
+import json
 
 import aioboto3
 
@@ -8,6 +9,7 @@ from dataclass import SubmissionToStorage
 
 SUBMISSIONS_BUCKET = 'submissions'
 TESTS_BUCKET = 'tests'
+TASKS_BUCKET = 'tasks'
 
 LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
 
@@ -109,3 +111,11 @@ async def get_code(submission_id: int) -> str:
         code = await obj_body.read()
 
         return code.decode()
+
+
+async def add_task(task_info: dict):
+    alias = task_info['alias']
+
+    async with aioboto3.resource("s3", endpoint_url=S3_ENDPOINT) as s3:
+        obj = await s3.Object(TASKS_BUCKET, '/pending/' + alias + '.json')
+        await obj.put(Body=json.dumps(task_info))

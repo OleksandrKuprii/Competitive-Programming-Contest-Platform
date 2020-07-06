@@ -10,3 +10,6 @@ aws s3 mb s3://submissions\
 
 aws s3 mb s3://tests\
     --endpoint-url="$S3_ENDPOINT"
+
+aws s3 mb s3://tasks\
+    --endpoint-url="$S3_ENDPOINT"
