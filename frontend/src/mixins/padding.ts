@@ -7,6 +7,7 @@ import { css } from 'styled-components';
 export enum Padding {
   None   = 0,
   Normal = 10,
+  Medium = 20,
   Large  = 50,
 }
 

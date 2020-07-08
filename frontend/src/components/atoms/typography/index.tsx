@@ -4,7 +4,8 @@ import styled, { css } from 'styled-components';
 // ALERT: using em instead of pixels
 
 export enum TextAlign {
-  Center = "center"
+  Center = "center",
+  Right  = "right"
 }
 
 export enum FontWeight {
@@ -18,6 +19,7 @@ export const Text = styled.p<{
   weight?: FontWeight;
   size?: number;
   letterSpacing?: number;
+  lineHeight?: string;
 }>`
   margin: 0;
   padding: 0;
@@ -28,6 +30,10 @@ export const Text = styled.p<{
   font-size: ${props => props.size || 1}em;
 
   letter-spacing: ${props => props.letterSpacing || 0.5}px;
+  
+  ${props => props.lineHeight && css`
+    line-height: ${props.lineHeight};
+  `};
 `;
 
 export const Title = (() => {
@@ -37,6 +43,7 @@ export const Title = (() => {
     size: 1.5,
     letterSpacing: -1.5,
     weight: FontWeight.Light,
+    lineHeight: '140%',
   });
 
   return title;
@@ -48,7 +55,6 @@ export const Subtitle = (() => {
   title.defaultProps = ({
     size: 1.25,
     letterSpacing: 0.15,
-    weight: FontWeight.Medium,
   });
 
   return title;

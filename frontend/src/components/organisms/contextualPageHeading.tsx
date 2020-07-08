@@ -1,46 +1,35 @@
 import * as React from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import WideBox from "@/atoms/wideBox";
-import {Title} from "@/atoms/typography";
-import {Row} from "@/atoms/grid";
-import {useStoreState} from "~/hooks/store";
-import Difficulty from "@/atoms/difficulty";
 import {Padding} from "~/mixins/padding";
+import TasksHeading from "@/organisms/contextualHeadings/tasks";
+import TaskHeading from "@/organisms/contextualHeadings/task";
+import {FC} from "react";
+import {isTask, isTasks} from "@/organisms/pathnameTesters";
+import {AlignItems, JustifyContent, Row} from "@/atoms/grid";
+
 
 const ContextualPageHeading = () => {
-  const tasks = useStoreState((state) => state.task.tasks);
-
-  const {id} = useParams();
-
   const history = useHistory();
 
   const {pathname} = history.location;
 
-  if (pathname === '/tasks') {
-    return <Title>Tasks</Title>
+  if (isTasks(pathname)) {
+    return <TasksHeading/>
   }
 
-  if (pathname.match(/\/task\/view/)) {
-    const task = tasks.find(task => task.id === id);
-
-    if (!task) {
-      return <></>;
-    }
-
-    return (
-      <Row>
-        <Title>{task.name}</Title>
-        <Title>{task.difficulty && <Difficulty difficulty={task.difficulty}/>}</Title>
-      </Row>
-    );
+  if (isTask(pathname)) {
+    return <TaskHeading/>
   }
 
   return <></>;
 };
 
 const ContextualPageHeadingWrapper = () => (
-  <WideBox variant="dark" height="53px" padding={Padding.Normal}>
-    <ContextualPageHeading/>
+  <WideBox variant="dark">
+    <Row justifyContent={JustifyContent.Center} alignItems={AlignItems.Center}  height="53px">
+      <ContextualPageHeading/>
+    </Row>
   </WideBox>
 );
 

@@ -1,8 +1,14 @@
-import styled from "styled-components";
-import {background, foreground, hoverBackground} from "~/mixins/color";
+import styled, {css} from "styled-components";
+import {background, foreground, hoverBackground, hoverForeground} from "~/mixins/color";
 
 
-const Button = styled.button`
+interface ButtonProps {
+  icon?: boolean;
+  variant?: string;
+}
+
+
+const Button = styled.button<ButtonProps>`
   border: none;
   background: ${background};
   color: ${foreground};
@@ -17,11 +23,16 @@ const Button = styled.button`
   
   border-radius: 5px;
   
-  transition: background 0.3s;
+  transition: all 0.3s;
   
   &:hover {
     background: ${hoverBackground};
+    color: ${hoverForeground};
   }
+  
+  ${props => props.icon && css`
+    font-size: 18px;
+  `};
 `;
 
 export default Button;

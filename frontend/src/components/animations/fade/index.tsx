@@ -23,8 +23,8 @@ interface FadeProps {
 }
 
 const fadeIn = keyframes`
-  0% { opacity: 0; transform: translateX(100%); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% { opacity: 0.3; transform: scaleY(0.97) }
+  100% { opacity: 1; }
 `;
 
 const FadeInElem = styled.div`

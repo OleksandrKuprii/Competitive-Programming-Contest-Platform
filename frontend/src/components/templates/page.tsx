@@ -9,6 +9,8 @@ import ContextualPageActions from "@/organisms/contextualPageActions";
 import ContextualPageHeading from "@/organisms/contextualPageHeading";
 import {Padding} from "~/mixins/padding";
 import Spacer from "@/atoms/spacer";
+import Fade from "@/animations/fade";
+import Box from "@/atoms/box";
 
 interface PageProps {
   children: ReactNode;
@@ -18,15 +20,15 @@ interface PageProps {
 const Page: FC<PageProps> = ({children}) =>
   (
     <>
-      <div style={{ position: 'fixed' }}>
-        <ContextualPageHeading/>
-        <ContextualPageActions/>
-      </div>
+      <ContextualPageHeading/>
+      <ContextualPageActions/>
 
-      <Spacer top={(53 + 59 + Padding.Large) as Padding} />
-
-      <WideBox>
-        {children}
+      <WideBox style={{maxHeight: 'calc(100vh - 53px - 59px)'}}>
+        <Fade in>
+          <Box padding={Padding.Large}>
+            {children}
+          </Box>
+        </Fade>
       </WideBox>
     </>
   )

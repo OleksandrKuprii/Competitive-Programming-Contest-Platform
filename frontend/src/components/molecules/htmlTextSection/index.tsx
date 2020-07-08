@@ -29,7 +29,7 @@ const HtmlTextSection: FC<HtmlTextSectionProps> = ({ header, text }) => {
   const parsed = htmlToReactParser.parse(text);
 
   return (
-    <div style={{ width: '30vw', margin: '0 auto' }}>
+    <div style={{ padding: Padding.Large }}>
       <Spacer top={Padding.Normal} />
       {header && <Subtitle>{header}</Subtitle>}
       <Spacer top={Padding.Normal} />

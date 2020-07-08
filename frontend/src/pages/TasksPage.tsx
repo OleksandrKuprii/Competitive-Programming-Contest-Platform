@@ -24,6 +24,7 @@ import {SortBy} from '~/typings/models';
 import WideBox from '@/atoms/wideBox';
 
 import {Padding} from '~/mixins/padding';
+import Box from "@/atoms/box";
 
 const TasksPage: FC = () => {
   const {t} = useTranslation();
@@ -53,7 +54,7 @@ const TasksPage: FC = () => {
   return (
     <Page>
       <WithLoading loading={tasksLoading} loadingNode={<LoadingPage/>}>
-        <Table>
+          <Table>
           <thead>
           <tr>
             <th>{t('headers.name')}</th>

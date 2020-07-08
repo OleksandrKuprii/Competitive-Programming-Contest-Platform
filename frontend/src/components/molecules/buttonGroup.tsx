@@ -7,6 +7,8 @@ const ButtonGroup = styled(Box)`
     border-radius: 0;
   }
   
+  width: fit-content;
+  
   border-radius: 5px;
   overflow: hidden;
 `;

@@ -4,33 +4,33 @@ import * as React from 'react';
 import {useHistory} from 'react-router-dom';
 import WideBox from '@/atoms/wideBox';
 import {Padding} from "~/mixins/padding";
-import TasksPageContextualActions from "@/organisms/contextualActions/tasksPage";
+import TasksPageContextualActions from "@/organisms/contextualActions/tasks";
 import Button from "@/atoms/button";
-import {Row} from "@/atoms/grid";
+import {AlignItems, JustifyContent, Row} from "@/atoms/grid";
 import Spacer from "@/atoms/spacer";
-import Box from "@/atoms/box";
 import ButtonGroup from "@/molecules/buttonGroup";
+import {isTask, isTasks} from "@/organisms/pathnameTesters";
 
 
 const ContextualPageActions = () => {
   const history = useHistory();
 
-  if (history.location.pathname === '/tasks') {
+  const { pathname } = history.location;
+
+  if (isTasks(pathname)) {
     return <TasksPageContextualActions />;
   }
 
-  if (history.location.pathname.match(/\/task\/view/)) {
+  if (isTask(pathname)) {
     return <Row>
       <Button variant="primaryComplement">Submit</Button>
 
       <Spacer right={Padding.Normal} />
 
-
       <ButtonGroup>
-
-      <Button>A+</Button>
-      <Button>A-</Button>
-        </ButtonGroup>
+        <Button>A+</Button>
+        <Button>A-</Button>
+      </ButtonGroup>
     </Row>
   }
 
@@ -39,8 +39,10 @@ const ContextualPageActions = () => {
 
 const ContextualPageActionsWrapper = () => {
   return (
-    <WideBox variant="primary" padding={Padding.Normal} height="59px">
-      <ContextualPageActions />
+    <WideBox variant="primary">
+      <Row justifyContent={JustifyContent.Center} alignItems={AlignItems.Center} height="59px">
+        <ContextualPageActions />
+      </Row>
     </WideBox>
   )
 };

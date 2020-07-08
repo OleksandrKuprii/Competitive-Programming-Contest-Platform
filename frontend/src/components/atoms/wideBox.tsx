@@ -1,7 +1,7 @@
 // wideBox.tsx - extends the width of box
 
 import * as React from 'react';
-import { FC, ReactNode } from 'react';
+import {CSSProperties, FC, ReactNode} from 'react';
 
 import styled from 'styled-components';
 import Box, { BoxProps } from '@/atoms/box';
@@ -16,14 +16,15 @@ const Container = styled.div`
 
 interface WideBoxProps extends BoxProps {
   children: ReactNode;
+  style?: CSSProperties;
 }
 
 const WideBox: FC<WideBoxProps> = (props) => {
-  const { children, ...boxProps } = props;
+  const { children, style, ...boxProps } = props;
 
   return (
-    <Extended {...boxProps}>
-      <Container>
+    <Extended {...boxProps} style={{ overflow: 'auto' }}>
+      <Container style={style}>
         {children}
       </Container>
     </Extended>

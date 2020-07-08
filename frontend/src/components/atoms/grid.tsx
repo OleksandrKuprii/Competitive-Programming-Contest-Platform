@@ -9,7 +9,10 @@ import resizable, { ResizableProps } from '~/mixins/resizable';
 
 export enum JustifyContent {
   Center        = "center",
-  SpaceBetween  = "space-between"
+  SpaceBetween  = "space-between",
+  SpaceAround   = "space-around",
+  FlexStart     = "flex-start",
+  FlexEnd       = "flex-end",
 }
 
 export enum FlexDirection {
@@ -17,9 +20,14 @@ export enum FlexDirection {
   Row    = "row"
 }
 
+export enum AlignItems {
+  Center = "center",
+}
+
 export interface FlexProps extends ResizableProps {
   justifyContent?: JustifyContent;
   direction?: FlexDirection;
+  alignItems?: AlignItems;
 }
 
 export const Flex = styled.div<FlexProps>`
@@ -27,6 +35,7 @@ export const Flex = styled.div<FlexProps>`
 
   justify-content: ${props => props.justifyContent};
   flex-direction: ${props => props.direction};
+  align-items: ${props => props.alignItems};
 
   ${resizable};
 `;
