@@ -50,12 +50,34 @@ export const Title = (() => {
 })();
 
 export const Subtitle = (() => {
-  const title = styled(Text)``;
+  const subtitle = styled(Text)``;
 
-  title.defaultProps = ({
+  subtitle.defaultProps = ({
     size: 1.25,
     letterSpacing: 0.15,
   });
 
-  return title;
+  return subtitle;
+})();
+
+export const Subtitle2 = (() => {
+  const subtitle2 = styled(Text)``;
+
+  subtitle2.defaultProps = ({
+    size: 1.1,
+    letterSpacing: 0.1,
+  });
+
+  return subtitle2;
+})();
+
+export const Caption = (() => {
+  const description = styled(Text)``;
+
+  description.defaultProps = ({
+    size: 0.85,
+    letterSpacing: 0.4,
+  });
+
+  return description;
 })();

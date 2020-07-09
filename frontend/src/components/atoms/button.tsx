@@ -5,13 +5,12 @@ import {background, foreground, hoverBackground, hoverForeground} from "~/mixins
 interface ButtonProps {
   icon?: boolean;
   variant?: string;
+  disabled?: boolean;
 }
 
 
 const Button = styled.button<ButtonProps>`
   border: none;
-  background: ${background};
-  color: ${foreground};
   
   padding: 10px 15px;
   
@@ -25,14 +24,23 @@ const Button = styled.button<ButtonProps>`
   
   transition: all 0.3s;
   
-  &:hover {
-    background: ${hoverBackground};
-    color: ${hoverForeground};
-  }
   
   ${props => props.icon && css`
     font-size: 18px;
   `};
+  
+  ${props => !props.disabled ? css`
+    background: ${background};
+    color: ${foreground};
+    
+    &:hover {
+      background: ${hoverBackground};
+      color: ${hoverForeground};
+    }
+  ` : css`
+    background-color: #ccc;
+    color: #555;
+  `}
 `;
 
 export default Button;

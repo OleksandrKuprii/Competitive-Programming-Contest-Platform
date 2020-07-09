@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FC} from 'react';
+import {FC, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Col, Row} from '@/atoms/grid';
 import Table from '@/molecules/table';
@@ -24,6 +24,8 @@ const Td = styled.td`
 
 const TaskPage: FC = () => {
   const {t} = useTranslation();
+
+  const [submitModalState, setSubmitModalState] = useState(false);
 
   return (
     <>
@@ -74,8 +76,8 @@ const TaskPage: FC = () => {
         </TaskFromURL>
       </Page>
 
-      <Modal active={false}>
-
+      <Modal active={submitModalState} title="Submit">
+        I am modal
       </Modal>
     </>
   );

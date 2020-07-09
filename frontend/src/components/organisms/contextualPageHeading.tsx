@@ -1,29 +1,26 @@
 import * as React from 'react';
-import {useHistory, useParams} from 'react-router-dom';
 import WideBox from "@/atoms/wideBox";
-import {Padding} from "~/mixins/padding";
 import TasksHeading from "@/organisms/contextualHeadings/tasks";
 import TaskHeading from "@/organisms/contextualHeadings/task";
-import {FC} from "react";
-import {isTask, isTasks} from "@/organisms/pathnameTesters";
 import {AlignItems, JustifyContent, Row} from "@/atoms/grid";
+import { Switch, Route } from 'react-router-dom';
+import EditProfileHeading from "@/organisms/contextualHeadings/editProfile";
 
 
-const ContextualPageHeading = () => {
-  const history = useHistory();
-
-  const {pathname} = history.location;
-
-  if (isTasks(pathname)) {
-    return <TasksHeading/>
-  }
-
-  if (isTask(pathname)) {
-    return <TaskHeading/>
-  }
-
-  return <></>;
-};
+const ContextualPageHeading = () =>
+  (
+    <Switch>
+      <Route path="/tasks" exact>
+        <TasksHeading/>
+      </Route>
+      <Route path="/task/view/:id">
+        <TaskHeading/>
+      </Route>
+      <Route path="/edit/profile">
+        <EditProfileHeading />
+      </Route>
+    </Switch>
+  );
 
 const ContextualPageHeadingWrapper = () => (
   <WideBox variant="dark">

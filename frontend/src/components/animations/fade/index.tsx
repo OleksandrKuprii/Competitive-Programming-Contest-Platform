@@ -23,7 +23,7 @@ interface FadeProps {
 }
 
 const fadeIn = keyframes`
-  0% { opacity: 0.3; transform: scaleY(0.97) }
+  0% { opacity: 0.3; }
   100% { opacity: 1; }
 `;
 

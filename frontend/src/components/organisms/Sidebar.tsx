@@ -9,6 +9,7 @@ import Spacer from "@/atoms/spacer";
 import ProfileQuickActions from "@/organisms/profileQuickActions";
 import {AlignItems, Grid} from "@/atoms/grid";
 import MyProfileInfo from "@/organisms/myProfileInfo";
+import RegistrationCompletionStatus from "@/organisms/registrationCompletionStatus";
 
 const Sidebar: FC = () => (
   <Box variant="lightDarken" height="100vh">

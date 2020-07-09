@@ -11,10 +11,8 @@ const Input = styled.input<{ variant?: string }>`
   border: none;
   padding: 10px;
   font-size: 1em;
+  
+  display: block;
 `;
-
-Input.defaultProps = {
-  variant: 'dark',
-};
 
 export default Input;

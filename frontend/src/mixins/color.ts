@@ -8,11 +8,11 @@ export interface ColorTable {
 
 export const allColors: ColorTable = (() => {
   const colors: ColorTable = ({
-    dark:      '#232323',
+    dark:      '#212121',
     light:     '#eeeeee',
     grey:      '#444444',
     primary:   '#f18701',
-    danger:    '#dd1c1a',
+    danger:    '#d62828',
   });
 
   colors.darkDarken = darken(0.025, colors.dark);
