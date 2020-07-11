@@ -1,29 +1,31 @@
 // Contextual actions for task page
 
 import * as React from 'react';
-import {Col, Grid, JustifyContent, Row} from "@/atoms/grid";
+import {useCallback, useState} from 'react';
 import StyledSelect from "@/atoms/styledSelect";
-import {getTrackBackground, Range} from "react-range";
-import PillSelect from "@/molecules/pillSelect";
-import WideBox from "@/atoms/wideBox";
 import {useTranslation} from "react-i18next";
 import {useStoreActions, useStoreState} from "~/hooks/store";
-import {useState} from "react";
 import Spacer from "@/atoms/spacer";
 import {Padding} from "~/mixins/padding";
+import Modal from "@/molecules/modal";
+import {Subtitle2} from "@/atoms/typography";
+import Button from "@/atoms/button";
+import TwoThumbRange from "@/atoms/twoThumbRange";
+import Checkbox from "@/atoms/checkbox";
+import {Result} from "~/typings/models";
 
 const TasksActions = () => {
   const {t} = useTranslation();
 
   const {
     selectedCategories: selectedCategoriesAction,
-    selectedResults,
+    toggledResult,
     selectedDifficultyRange,
+    clearedFilters
   } = useStoreActions((actions) => ({
     ...actions.filterAndSort,
   }));
 
-  const tasksLoading = useStoreState((state) => state.task.loadingStatus);
   const difficultyRange = useStoreState(
     (state) => state.filterAndSort.difficultyRange,
   );
@@ -33,11 +35,27 @@ const TasksActions = () => {
   const results = useStoreState((state) => state.filterAndSort.results);
   const categories = useStoreState((state) => state.task.categories);
 
-  const [difficultyValues, setDifficultyValues] = useState(difficultyRange);
+  const [showModal, setShowModal] = useState(false);
+
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
+
+  const openModal = useCallback(() => {
+    setShowModal(true);
+  }, []);
 
   return (
     <>
-      <div style={{ width: '15vw' }}>
+      <Button onClick={openModal}>
+        Filters
+      </Button>
+
+      <Modal active={showModal} title="Filters" onClose={closeModal} additionalActions={[{
+        label: 'Clear all',
+        onClick: () => clearedFilters(),
+        variant: 'light',
+      }]}>
         <StyledSelect
           isMulti
           closeMenuOnSelect={false}
@@ -63,118 +81,22 @@ const TasksActions = () => {
             selectedCategoriesAction(ids);
           }}
         />
-      </div>
 
-      <Spacer left={Padding.Large} />
+        <Spacer top={Padding.Medium}/>
 
-      <div style={{ width: '15vw' }}>
-        <Range
-          onChange={(v) => {
-            setDifficultyValues(v);
-          }}
-          onFinalChange={selectedDifficultyRange}
-          min={1}
-          max={10}
-          values={difficultyValues}
-          renderThumb={({props, index}) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                height: '20px',
-                width: '20px',
-                backgroundColor: '#333',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                boxShadow: '0px 1px 3px #000',
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '-28px',
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  fontFamily:
-                    'Arial,Helvetica Neue,Helvetica,sans-serif',
-                  padding: '4px',
-                  backgroundColor: '#212121',
-                }}
-              >
-                {
-                  [
-                    'newbie',
-                    'novice',
-                    'rookie',
-                    'beginner',
-                    'intermediate',
-                    'skillful',
-                    'seasoned',
-                    'advanced',
-                    'senior',
-                    'expert',
-                  ][difficultyValues[index] - 1]
-                }
-              </div>
-              <div
-                style={{
-                  height: '8px',
-                  width: '4px',
-                  backgroundColor: '#CCC',
-                }}
-              />
-            </div>
-          )}
-          renderTrack={({props, children}) => (
-            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-            <div
-              onMouseDown={props.onMouseDown}
-              onTouchStart={props.onTouchStart}
-              style={{
-                ...props.style,
-                height: '24px',
-                display: 'flex',
-                width: '100%',
-              }}
-            >
-              <div
-                ref={props.ref}
-                style={{
-                  height: '20px',
-                  width: '100%',
-                  background: getTrackBackground({
-                    values: difficultyValues,
-                    colors: ['transparent', '#212121', 'transparent'],
-                    min: 1,
-                    max: 10,
-                  }),
-                  alignSelf: 'center',
-                  boxShadow: '2px 2px 2px 2px #000',
-                }}
-              >
-                {children}
-              </div>
-            </div>
-          )}
-        />
-      </div>
+        <Subtitle2>Difficulty</Subtitle2>
 
-      <Spacer left={Padding.Large} />
+        <Spacer top={Padding.Normal}/>
 
-      <div >
-        <PillSelect
-          options={[
-            {id: 'correct', name: 'Correct'},
-            {id: 'partial', name: 'Partial'},
-            {id: 'zero', name: 'Zero'},
-            {id: 'notStarted', name: 'Not Started'},
-          ]}
-          active={results}
-          onChange={selectedResults}
-        />
-      </div>
+        <TwoThumbRange min={1} max={10} onChange={selectedDifficultyRange} values={difficultyRange}/>
+
+        <Spacer top={Padding.Medium}/>
+
+        <Checkbox label="Correct" value={results.includes(Result.Correct)} onClick={() => toggledResult(Result.Correct)} />
+        <Checkbox label="Partial" value={results.includes(Result.Partial)} onClick={() => toggledResult(Result.Partial)} />
+        <Checkbox label="Zero" value={results.includes(Result.Zero)} onClick={() => toggledResult(Result.Zero)} />
+        <Checkbox label="Not started" value={results.includes(Result.NotStarted)} onClick={() => toggledResult(Result.NotStarted)} />
+      </Modal>
     </>
   );
 };

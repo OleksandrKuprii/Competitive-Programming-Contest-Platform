@@ -27,17 +27,26 @@ export enum SortBy {
   difficulty = 'difficulty',
 }
 
+export enum Result {
+  Correct,
+  Partial,
+  Zero,
+  NotStarted
+}
+
 export interface FilterAndSortModel {
   difficultyRange: number[];
   categories: string[];
-  results: string[];
+  results: Result[];
 
   sortBy: SortBy;
   order: number;
 
   selectedDifficultyRange: Action<FilterAndSortModel, number[]>;
   selectedCategories: Action<FilterAndSortModel, string[]>;
-  selectedResults: Action<FilterAndSortModel, string[]>;
+  toggledResult: Action<FilterAndSortModel, Result>;
+
+  clearedFilters: Action<FilterAndSortModel>;
 
   selectedSortBy: Action<FilterAndSortModel, { sortBy: SortBy; order: number }>;
 }

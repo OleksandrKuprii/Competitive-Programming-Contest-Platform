@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FC, ReactNode} from 'react';
-import styled, {css} from "styled-components";
+import styled, {css, keyframes} from "styled-components";
 import Box from "@/atoms/box";
 import Fade from "@/animations/fade";
 import {TextAlign, Title} from "@/atoms/typography";
@@ -10,11 +10,23 @@ import Spacer from "@/atoms/spacer";
 import HorizontalRule from "@/atoms/horizontalRule";
 import Button from "@/atoms/button";
 import {MdClose} from "react-icons/all";
-import {AlignItems, Row} from "@/atoms/grid";
+import {AlignItems, Grid, Row} from "@/atoms/grid";
 
 interface ModalContainerProps {
   active: boolean;
 }
+
+const appear = keyframes`
+  from {
+    transform: translateX(-50%) translateY(-100%) scale(0.9);
+    opacity: 0;
+  }
+  
+  to {
+    transform: translateX(-50%) translateY(-50%) scale(1);
+    opacity: 1;
+  }
+`;
 
 const ModalContainer = styled(Box)<ModalContainerProps>`
   position: fixed;
@@ -24,8 +36,7 @@ const ModalContainer = styled(Box)<ModalContainerProps>`
   transform: translate(-50%, -50%);
   
   z-index: 9999;
-  width: 40vw;
-  height: 50vh;
+  width: 600px;
   
   ${props => !props.active && css`
     display: none;
@@ -36,9 +47,11 @@ const ModalContainer = styled(Box)<ModalContainerProps>`
   overflow: hidden;
   
   ${majorFocusShadow};
+  
+  animation: 0.3s ease-out ${appear};
 `;
 
-const Dimmer = styled.div`
+const Dimmer = styled.div<{ active: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -46,37 +59,70 @@ const Dimmer = styled.div`
   height: 100%;
   z-index: 9998;
   
+  ${props => !props.active && css`
+    display: none;
+  `};
+  
   background: #12121288;
-`
+`;
+
+
+interface ModalAction {
+  onClick: () => any,
+  label: string,
+  variant: string,
+}
+
 
 interface ModalProps {
   children: ReactNode;
   title: string;
+
+  onClose: () => any;
+
+  additionalActions?: ModalAction[];
 }
 
-const Modal: FC<ModalContainerProps & ModalProps> = ({active, children, title}) => (
-  <Fade in={active}>
-    <Dimmer/>
+const Modal: FC<ModalContainerProps & ModalProps> = ({active, children, title, onClose, additionalActions}) => (
+  <>
+    <Dimmer onClick={onClose} active={active}/>
     <ModalContainer active={active}>
-      <Box padding={Padding.Medium}>
-        <Row alignItems={AlignItems.Center}>
-          <Title>{title}</Title>
+      <Grid style={{height: 400}}>
+        <Box style={{padding: `${Padding.Normal}px ${Padding.Medium}px`}}>
+          <Row alignItems={AlignItems.Center}>
+            <Title>{title}</Title>
 
-          <div style={{ margin: 'auto' }}  />
+            <div style={{margin: 'auto'}}/>
+          </Row>
+        </Box>
 
-          <Button icon>
-            <MdClose/>
-          </Button>
-        </Row>
-      </Box>
+        <HorizontalRule/>
 
-      <HorizontalRule />
+        <Box padding={Padding.Medium}>
+          {children}
+        </Box>
 
-      <Box padding={Padding.Medium}>
-        {children}
-      </Box>
+        <div style={{marginTop: 'auto'}}/>
+
+        <HorizontalRule/>
+
+        <Box padding={Padding.Medium}>
+          <Row>
+            {additionalActions && additionalActions.map(({onClick, label, variant}) => (
+              <>
+                <Button variant={variant} onClick={onClick} key={label}>{label}</Button>
+                <Spacer left={Padding.Normal}/>
+              </>
+            ))}
+
+            {additionalActions && <div style={{margin: 'auto'}} />}
+
+            <Button variant="primary" onClick={onClose}>Close</Button>
+          </Row>
+        </Box>
+      </Grid>
     </ModalContainer>
-  </Fade>
+  </>
 );
 
 export default Modal;

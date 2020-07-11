@@ -26,7 +26,7 @@ const ContextualPageActions = () => (
 
 const ContextualPageActionsWrapper = () => {
   return (
-    <WideBox variant="primary">
+    <WideBox variant="grey">
       <Row justifyContent={JustifyContent.Center} alignItems={AlignItems.Center} height="59px">
         <ContextualPageActions/>
       </Row>

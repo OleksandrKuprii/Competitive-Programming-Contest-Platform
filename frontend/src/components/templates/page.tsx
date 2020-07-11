@@ -20,8 +20,10 @@ interface PageProps {
 const Page: FC<PageProps> = ({children}) =>
   (
     <>
-      <ContextualPageHeading/>
-      <ContextualPageActions/>
+      <div>
+        <ContextualPageHeading/>
+        <ContextualPageActions/>
+      </div>
 
       <WideBox style={{maxHeight: 'calc(100vh - 53px - 59px)'}}>
         <Fade in>

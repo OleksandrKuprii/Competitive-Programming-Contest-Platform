@@ -22,11 +22,11 @@ const EditProfilePage: FC = () => (
     <Spacer top={Padding.Normal} />
 
     <Row>
-      <Input placeholder="Username" />
+      <Input label="Username" />
 
       <Spacer left={Padding.Normal} />
 
-      <Input placeholder="Fullname" />
+      <Input label="Fullname" />
     </Row>
   </Page>
 );

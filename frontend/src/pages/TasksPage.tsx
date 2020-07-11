@@ -1,37 +1,26 @@
 import * as React from 'react';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {useTranslation} from 'react-i18next';
-import {getTrackBackground, Range} from 'react-range';
-import {Col, Grid, Row, JustifyContent} from '@/atoms/grid';
 import Table from '@/molecules/table';
 import Defined from '@/helpers/defined';
 import Difficulty from '@/atoms/difficulty';
 import SmallRatingChart from '@/molecules/smallRatingChart';
 import WithLoading from '@/templates/withLoading';
 import Result from '@/atoms/result';
-import WithFilterBar from '@/templates/withFilterBar';
-import PillSelect from '@/molecules/pillSelect';
 import Link from '@/atoms/link';
-import StyledSelect from '@/atoms/styledSelect';
 import SortControl from '@/atoms/sortControl';
 import DataFilter from '@/providers/dataFilter';
 import DataSort from '@/providers/dataSort';
 import Page from '@/templates/page';
 import LoadingPage from '~/pages/fallback/LoadingPage';
-import {useStoreState, useStoreActions} from '~/hooks/store';
-import {SortBy} from '~/typings/models';
-
-import WideBox from '@/atoms/wideBox';
-
-import {Padding} from '~/mixins/padding';
-import Box from "@/atoms/box";
+import {useStoreActions, useStoreState} from '~/hooks/store';
+import {Result as ResultEnum, SortBy} from '~/typings/models';
 
 const TasksPage: FC = () => {
   const {t} = useTranslation();
 
   const {
     selectedCategories: selectedCategoriesAction,
-    selectedResults,
     selectedDifficultyRange,
     selectedSortBy,
   } = useStoreActions((actions) => ({
@@ -89,23 +78,19 @@ const TasksPage: FC = () => {
                 (categoryId !== undefined &&
                   selectedCategories.includes(categoryId)),
               ({points}) => {
-                if (results.length === 0) {
-                  return true;
-                }
-
                 if (points === undefined || points === null) {
-                  return results.includes('notStarted');
+                  return results.includes(ResultEnum.NotStarted);
                 }
 
                 if (points === 0) {
-                  return results.includes('zero');
+                  return results.includes(ResultEnum.Zero);
                 }
 
                 if (points === 100) {
-                  return results.includes('correct');
+                  return results.includes(ResultEnum.Correct);
                 }
 
-                return results.includes('partial');
+                return results.includes(ResultEnum.Partial);
               },
             ]}
             items={tasks}

@@ -17,7 +17,7 @@ const Sidebar: FC = () => (
       <SidebarNavigation />
     </Box>
 
-    <Box variant="primaryDarken" height="59px" />
+    <Box variant="greyDarken" height="59px" />
 
     <Spacer top={Padding.Large} />
 

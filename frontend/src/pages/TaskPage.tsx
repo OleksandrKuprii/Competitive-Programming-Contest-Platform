@@ -25,8 +25,6 @@ const Td = styled.td`
 const TaskPage: FC = () => {
   const {t} = useTranslation();
 
-  const [submitModalState, setSubmitModalState] = useState(false);
-
   return (
     <>
       <Page>
@@ -75,10 +73,6 @@ const TaskPage: FC = () => {
           )}
         </TaskFromURL>
       </Page>
-
-      <Modal active={submitModalState} title="Submit">
-        I am modal
-      </Modal>
     </>
   );
 };
