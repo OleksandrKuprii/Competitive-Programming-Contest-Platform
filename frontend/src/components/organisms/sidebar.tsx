@@ -3,13 +3,11 @@ import { FC } from 'react';
 
 import Box from '@/atoms/box';
 import SidebarNavigation from "@/organisms/sidebarNavigation";
-import ProfileInfo from "@/molecules/profileInfo";
 import {Padding} from "~/mixins/padding";
 import Spacer from "@/atoms/spacer";
 import ProfileQuickActions from "@/organisms/profileQuickActions";
 import {AlignItems, Grid} from "@/atoms/grid";
 import MyProfileInfo from "@/organisms/myProfileInfo";
-import RegistrationCompletionStatus from "@/organisms/registrationCompletionStatus";
 
 const Sidebar: FC = () => (
   <Box variant="lightDarken" height="100vh">

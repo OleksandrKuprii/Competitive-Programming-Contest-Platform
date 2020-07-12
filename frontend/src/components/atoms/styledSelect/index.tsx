@@ -2,8 +2,6 @@ import * as React from 'react';
 import { FC } from 'react';
 import Select, { Props } from 'react-select';
 import makeAnimated from 'react-select/animated';
-import Box from '@/atoms/box';
-import '@/atoms/styledSelect/style.scss';
 
 const animatedComponents = makeAnimated();
 

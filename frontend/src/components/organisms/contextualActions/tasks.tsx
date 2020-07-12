@@ -10,7 +10,6 @@ import {Padding} from "~/mixins/padding";
 import Modal from "@/molecules/modal";
 import {Subtitle2} from "@/atoms/typography";
 import Button from "@/atoms/button";
-import TwoThumbRange from "@/atoms/twoThumbRange";
 import Checkbox from "@/atoms/checkbox";
 import {Result} from "~/typings/models";
 
@@ -51,7 +50,7 @@ const TasksActions = () => {
         Filters
       </Button>
 
-      <Modal active={showModal} title="Filters" onClose={closeModal} additionalActions={[{
+      {showModal && <Modal title="Filters" onClose={closeModal} additionalActions={[{
         label: 'Clear all',
         onClick: () => clearedFilters(),
         variant: 'light',
@@ -88,15 +87,16 @@ const TasksActions = () => {
 
         <Spacer top={Padding.Normal}/>
 
-        <TwoThumbRange min={1} max={10} onChange={selectedDifficultyRange} values={difficultyRange}/>
-
         <Spacer top={Padding.Medium}/>
 
-        <Checkbox label="Correct" value={results.includes(Result.Correct)} onClick={() => toggledResult(Result.Correct)} />
-        <Checkbox label="Partial" value={results.includes(Result.Partial)} onClick={() => toggledResult(Result.Partial)} />
-        <Checkbox label="Zero" value={results.includes(Result.Zero)} onClick={() => toggledResult(Result.Zero)} />
-        <Checkbox label="Not started" value={results.includes(Result.NotStarted)} onClick={() => toggledResult(Result.NotStarted)} />
-      </Modal>
+        <Checkbox label="Correct" value={results.includes(Result.Correct)}
+                  onClick={() => toggledResult(Result.Correct)}/>
+        <Checkbox label="Partial" value={results.includes(Result.Partial)}
+                  onClick={() => toggledResult(Result.Partial)}/>
+        <Checkbox label="Zero" value={results.includes(Result.Zero)} onClick={() => toggledResult(Result.Zero)}/>
+        <Checkbox label="Not started" value={results.includes(Result.NotStarted)}
+                  onClick={() => toggledResult(Result.NotStarted)}/>
+      </Modal>}
     </>
   );
 };

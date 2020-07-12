@@ -5,7 +5,7 @@ import { createStore, StoreProvider } from 'easy-peasy';
 import App from '~/App';
 import i18n from '~/locales/i18n';
 import storeModel from '~/models/store';
-import '~/typings/index.d';
+// import '~/typings/index.d.ts';
 
 const main = async () => {
   const store = createStore(storeModel);

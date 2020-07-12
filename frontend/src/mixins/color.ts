@@ -13,6 +13,8 @@ export const allColors: ColorTable = (() => {
     grey:      '#444444',
     primary:   '#2f6690',
     danger:    '#d62828',
+    warning:   '#ee964b',
+    info:      '#cce0ff',
   });
 
   colors.darkDarken = darken(0.025, colors.dark);

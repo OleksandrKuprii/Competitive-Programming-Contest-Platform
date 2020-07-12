@@ -7,8 +7,7 @@ import { useHistory } from 'react-router-dom';
 import {Title} from "@/atoms/typography";
 import Spacer from "@/atoms/spacer";
 import {Padding} from "~/mixins/padding";
-
-const brandIcon = require('~/assets/brandIcon.png');
+import brandIcon from '~/assets/brandIcon.png';
 
 const SidebarNavigation: FC = () => {
   const history = useHistory();
@@ -31,7 +30,7 @@ const SidebarNavigation: FC = () => {
       <Spacer left={Padding.Normal} />
       <Title>Toucan</Title>
 
-      <div style={{ marginLeft: 'auto' }}></div>
+      <div style={{marginLeft: 'auto'}} />
 
       <NavButton variant="darkDarken" onClick={goSubmissions}>
         <FiSend/>

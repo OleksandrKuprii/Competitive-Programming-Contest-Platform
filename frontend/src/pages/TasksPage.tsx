@@ -43,7 +43,7 @@ const TasksPage: FC = () => {
   return (
     <Page>
       <WithLoading loading={tasksLoading} loadingNode={<LoadingPage/>}>
-          <Table>
+        <Table>
           <thead>
           <tr>
             <th>{t('headers.name')}</th>

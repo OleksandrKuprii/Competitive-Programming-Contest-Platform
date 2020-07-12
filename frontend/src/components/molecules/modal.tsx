@@ -11,10 +11,7 @@ import HorizontalRule from "@/atoms/horizontalRule";
 import Button from "@/atoms/button";
 import {MdClose} from "react-icons/all";
 import {AlignItems, Grid, Row} from "@/atoms/grid";
-
-interface ModalContainerProps {
-  active: boolean;
-}
+import useKeyPressed from "~/hooks/useKeyPressed";
 
 const appear = keyframes`
   from {
@@ -28,7 +25,7 @@ const appear = keyframes`
   }
 `;
 
-const ModalContainer = styled(Box)<ModalContainerProps>`
+const ModalContainer = styled(Box)`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -36,11 +33,8 @@ const ModalContainer = styled(Box)<ModalContainerProps>`
   transform: translate(-50%, -50%);
   
   z-index: 9999;
-  width: 600px;
   
-  ${props => !props.active && css`
-    display: none;
-  `};
+  width: 800px;
   
   border-radius: 5px;
   
@@ -51,17 +45,13 @@ const ModalContainer = styled(Box)<ModalContainerProps>`
   animation: 0.3s ease-out ${appear};
 `;
 
-const Dimmer = styled.div<{ active: boolean }>`
+const Dimmer = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 9998;
-  
-  ${props => !props.active && css`
-    display: none;
-  `};
   
   background: #12121288;
 `;
@@ -83,46 +73,54 @@ interface ModalProps {
   additionalActions?: ModalAction[];
 }
 
-const Modal: FC<ModalContainerProps & ModalProps> = ({active, children, title, onClose, additionalActions}) => (
-  <>
-    <Dimmer onClick={onClose} active={active}/>
-    <ModalContainer active={active}>
-      <Grid style={{height: 400}}>
-        <Box style={{padding: `${Padding.Normal}px ${Padding.Medium}px`}}>
-          <Row alignItems={AlignItems.Center}>
-            <Title>{title}</Title>
+const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions}) => {
+  const escPressed = useKeyPressed('Escape');
 
-            <div style={{margin: 'auto'}}/>
-          </Row>
-        </Box>
+  if (escPressed) {
+    onClose();
+  }
 
-        <HorizontalRule/>
+  return (
+    <>
+      <Dimmer onClick={onClose} />
+      <ModalContainer>
+        <Grid style={{height: 400}}>
+          <Box style={{padding: `${Padding.Normal}px ${Padding.Medium}px`}}>
+            <Row alignItems={AlignItems.Center}>
+              <Title>{title}</Title>
 
-        <Box padding={Padding.Medium}>
-          {children}
-        </Box>
+              <div style={{margin: 'auto'}}/>
+            </Row>
+          </Box>
 
-        <div style={{marginTop: 'auto'}}/>
+          <HorizontalRule/>
 
-        <HorizontalRule/>
+          <Box padding={Padding.Medium}>
+            {children}
+          </Box>
 
-        <Box padding={Padding.Medium}>
-          <Row>
-            {additionalActions && additionalActions.map(({onClick, label, variant}) => (
-              <>
-                <Button variant={variant} onClick={onClick} key={label}>{label}</Button>
-                <Spacer left={Padding.Normal}/>
-              </>
-            ))}
+          <div style={{marginTop: 'auto'}}/>
 
-            {additionalActions && <div style={{margin: 'auto'}} />}
+          <HorizontalRule/>
 
-            <Button variant="primary" onClick={onClose}>Close</Button>
-          </Row>
-        </Box>
-      </Grid>
-    </ModalContainer>
-  </>
-);
+          <Box padding={Padding.Medium}>
+            <Row>
+              {additionalActions && additionalActions.map(({onClick, label, variant}) => (
+                <>
+                  <Button variant={variant} onClick={onClick} key={label}>{label}</Button>
+                  <Spacer left={Padding.Normal}/>
+                </>
+              ))}
+
+              {additionalActions && <div style={{margin: 'auto'}}/>}
+
+              <Button variant="primary" onClick={onClose}>Close</Button>
+            </Row>
+          </Box>
+        </Grid>
+      </ModalContainer>
+    </>
+  );
+};
 
 export default Modal;
