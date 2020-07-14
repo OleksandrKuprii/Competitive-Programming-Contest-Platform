@@ -1,8 +1,12 @@
 """Task module."""
+import json
+from datetime import datetime
 from typing import Iterable, List
+
 from asyncpg.connection import Connection
 
 import database
+import storage
 import submission
 from statistic import statistic
 
@@ -172,7 +176,6 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
 
                 # If the points number is in values in filter
                 if params is not None and result['points'] in params['result']:
-
                     # Add best submission's information to <tasks>
                     tasks[i]['best_submission'] = {
                         'result': result,
@@ -209,7 +212,6 @@ async def get_tasks(user_id: str, params: dict, conn) -> List[dict]:
 
         # If index is not in list of indexes, that must be deleted
         if i not in task_index_to_delete:
-
             # Add task to the <final_tasks>
             final_tasks.append(tasks[i])
 
@@ -244,3 +246,24 @@ async def get_task_id_from_alias(alias: str, conn) -> int:
     task_id = await database.get_task_id_from_alias(alias, conn)
 
     return task_id
+
+
+async def add_task_to_storage(task_info: dict):
+    """Add task to storage."""
+    await storage.add_task(task_info)
+
+
+async def add_task(task_info: dict, conn: Connection):
+    """Add task."""
+    task_main = task_info['name'], task_info['alias'], task_info['category'], \
+        task_info['difficulty'], task_info['wall_time_limit'], \
+        task_info['cpu_time_limit'], task_info['memory_limit'], datetime.now()
+
+    task_description = task_info['alias'], task_info['main'], task_info['input_format'], \
+        task_info['output_format'], json.dumps(task_info['additional_sections'])
+
+    task_examples = []
+    for x in task_info['examples']:
+        task_examples.append((task_info['alias'], x['input'], x['output']))
+
+    await database.add_task(task_main, task_description, tuple(task_examples), conn)

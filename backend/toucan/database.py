@@ -567,3 +567,28 @@ async def get_task_id_from_alias(alias: str, conn: Connection) -> int:
             ''', alias)
 
     return fetch['id']
+
+
+async def add_task(task_main: tuple, task_description: tuple, task_examples: tuple,
+                   conn: Connection):
+    """Add task."""
+    async with conn.transaction():
+        task_id = await conn.fetchval("""
+            INSERT INTO coreschema.tasks (id, name, alias, category, difficulty, wall_time_limit,
+            cpu_time_limit, memory_limit, created)
+            VALUES ((SELECT max(id) + 1 FROM coreschema.tasks), $1, $2, $3, $4, $5, $6, $7,
+            $8) RETURNING id
+        """, *task_main)
+
+        await conn.execute("""
+            INSERT INTO coreschema.task_descriptions (task_id, alias, main, input_format,
+            output_format, custom_sections)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """, task_id, *task_description)
+
+        task_examples = [(task_id,) + x for x in task_examples]
+
+        await conn.executemany("""
+            INSERT INTO coreschema.task_examples (task_id, alias, input_data, output_data)
+            VALUES ($1, $2, $3, $4)
+        """, task_examples)
