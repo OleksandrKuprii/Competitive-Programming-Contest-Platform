@@ -170,7 +170,7 @@ def parse_task_params(params):
 
     try:
         cats = params['categories'].strip(',').split(',')
-        params['categories'] = {cat for cat in cats if cat != ''}
+        params['categories'] = {cat.strip() for cat in cats if cat != ''}
     except KeyError:
         pass
 
