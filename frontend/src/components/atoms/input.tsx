@@ -79,7 +79,7 @@ const Input: FC<InputProps> = ({ label, value, onChange }) => {
 
   return (
     <InputContainer>
-      <input required value={value} onChange={onChangeCallback}/>
+      <input required value={value || ''} onChange={onChangeCallback}/>
       <label>{label}</label>
     </InputContainer>
   );

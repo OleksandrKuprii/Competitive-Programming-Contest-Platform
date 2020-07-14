@@ -4,7 +4,7 @@ import CodeViewer from '@/molecules/codeViewer';
 import Defined from '@/helpers/defined';
 import Button from '@/atoms/button';
 import { Grid, Row } from '@/atoms/grid';
-import StyledSelect from '@/atoms/styledSelect';
+import StyledSelect from '@/molecules/select';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 
 interface SolutionSubmissionForm {
@@ -47,19 +47,19 @@ const SolutionSubmissionForm: FC<SolutionSubmissionForm> = ({ taskId }) => {
 
       <Row>
         <div style={{ width: 200 }}>
-          <StyledSelect
-            value={{ value: language, label: language }}
-            options={languages.map((lang) => ({ value: lang, label: lang }))}
-            onChange={(option) => {
-              if (option === null || option === undefined) {
-                selectedLanguage('python3');
-                return;
-              }
+          {/*<StyledSelect*/}
+          {/*  value={{ value: language, label: language }}*/}
+          {/*  options={languages.map((lang) => ({ value: lang, label: lang }))}*/}
+          {/*  onChange={(option) => {*/}
+          {/*    if (option === null || option === undefined) {*/}
+          {/*      selectedLanguage('python3');*/}
+          {/*      return;*/}
+          {/*    }*/}
 
-              // @ts-ignore
-              selectedLanguage(option.value);
-            }}
-          />
+          {/*    // @ts-ignore*/}
+          {/*    selectedLanguage(option.value);*/}
+          {/*  }}*/}
+          {/*/>*/}
         </div>
 
         <Button onClick={submittedCallback}>Submit</Button>

@@ -27,7 +27,7 @@ const Page: FC<PageProps> = ({children}) =>
 
       <WideBox style={{maxHeight: 'calc(100vh - 53px - 59px)'}}>
         <Fade in>
-          <Box padding={Padding.Large}>
+          <Box padding={Padding.Large} style={{ minHeight: 'calc(100vh - 53px - 59px)' }}>
             {children}
           </Box>
         </Fade>

@@ -62,9 +62,11 @@ export interface ProfileEditModel {
   username?: string;
 }
 
-export interface MyProfileEditModel extends ProfileEditModel {
+export interface MyProfileEditModel extends ProfileEditModel, Auth0Token {
   onUsernameChange: Action<MyProfileEditModel, string>;
   onFullnameChange: Action<MyProfileEditModel, string>;
+
+  onSave: Thunk<MyProfileEditModel>;
 }
 
 export interface NotificationModel {

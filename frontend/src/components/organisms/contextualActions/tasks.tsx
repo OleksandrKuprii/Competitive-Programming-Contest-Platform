@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {useCallback, useState} from 'react';
-import StyledSelect from "@/atoms/styledSelect";
+import Select from "@/molecules/select";
 import {useTranslation} from "react-i18next";
 import {useStoreActions, useStoreState} from "~/hooks/store";
 import Spacer from "@/atoms/spacer";
@@ -57,7 +57,7 @@ const TasksActions = () => {
         onClick: () => clearedFilters(),
         variant: 'light',
       }]}>
-        <StyledSelect
+        <Select
           isMulti
           closeMenuOnSelect={false}
           placeholder="Category..."
