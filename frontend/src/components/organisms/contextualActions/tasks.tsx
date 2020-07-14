@@ -12,6 +12,8 @@ import {Subtitle2} from "@/atoms/typography";
 import Button from "@/atoms/button";
 import Checkbox from "@/atoms/checkbox";
 import {Result} from "~/typings/models";
+import {MaterialSlider} from "react-multi-thumb-slider";
+import {allColors} from "~/mixins/color";
 
 const TasksActions = () => {
   const {t} = useTranslation();
@@ -86,6 +88,9 @@ const TasksActions = () => {
         <Subtitle2>Difficulty</Subtitle2>
 
         <Spacer top={Padding.Normal}/>
+
+        <MaterialSlider min={1} max={10} values={difficultyRange} onChange={selectedDifficultyRange}
+                        accentColor={allColors.primary}/>
 
         <Spacer top={Padding.Medium}/>
 

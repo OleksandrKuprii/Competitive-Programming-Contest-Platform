@@ -4,7 +4,7 @@ import {FilterAndSortModel, Result, SortBy} from '~/typings/models';
 const defaultFilters = {
   difficultyRange: [1, 10],
   categories: [],
-  results: [ Result.Correct, Result.Partial, Result.Zero, Result.NotStarted ],
+  results: [],
 }
 
 const filterAndSortModel: FilterAndSortModel = {

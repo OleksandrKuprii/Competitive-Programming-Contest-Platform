@@ -71,13 +71,17 @@ const TasksPage: FC = () => {
             tests={[
               ({difficulty}) =>
                 difficulty !== undefined &&
-                difficulty >= difficultyRange[0] &&
-                difficulty <= difficultyRange[1],
+                difficulty >= Math.min(...difficultyRange) &&
+                difficulty <= Math.max(...difficultyRange),
               ({categoryId}) =>
                 selectedCategories.length === 0 ||
                 (categoryId !== undefined &&
                   selectedCategories.includes(categoryId)),
               ({points}) => {
+                if (results.length === 0) {
+                  return true;
+                }
+
                 if (points === undefined || points === null) {
                   return results.includes(ResultEnum.NotStarted);
                 }

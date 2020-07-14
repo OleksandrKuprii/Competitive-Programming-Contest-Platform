@@ -34,7 +34,7 @@ const ModalContainer = styled(Box)`
   
   z-index: 9999;
   
-  width: 800px;
+  width: 600px;
   
   border-radius: 5px;
   
@@ -84,7 +84,7 @@ const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions}) =>
     <>
       <Dimmer onClick={onClose} />
       <ModalContainer>
-        <Grid style={{height: 400}}>
+        <Grid>
           <Box style={{padding: `${Padding.Normal}px ${Padding.Medium}px`}}>
             <Row alignItems={AlignItems.Center}>
               <Title>{title}</Title>

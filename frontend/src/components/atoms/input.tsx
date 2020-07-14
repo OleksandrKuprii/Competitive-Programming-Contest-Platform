@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FC} from "react";
+import {ChangeEvent, FC, useCallback} from "react";
 import styled from "styled-components";
 import {allColors} from "~/mixins/color";
 
@@ -66,15 +66,24 @@ const InputContainer = styled.div`
 
 interface InputProps {
   label: string;
+
+  value?: string;
+  onChange: (value: string) => any;
 }
 
 
-const Input: FC<InputProps> = ({ label }) => (
-  <InputContainer>
-    <input required />
-    <label>{label}</label>
-  </InputContainer>
-);
+const Input: FC<InputProps> = ({ label, value, onChange }) => {
+  const onChangeCallback = useCallback((event: ChangeEvent) => {
+    onChange((event.target as HTMLInputElement).value);
+  }, []);
+
+  return (
+    <InputContainer>
+      <input required value={value} onChange={onChangeCallback}/>
+      <label>{label}</label>
+    </InputContainer>
+  );
+};
 
 export default Input;
 

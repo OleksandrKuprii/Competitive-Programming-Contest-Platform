@@ -57,10 +57,14 @@ export interface LoadingModel {
   loaded: Action<LoadingModel>;
 }
 
-export interface MyProfileEditModel {
-  editing: boolean;
-
+export interface ProfileEditModel {
   fullname?: string;
+  username?: string;
+}
+
+export interface MyProfileEditModel extends ProfileEditModel {
+  onUsernameChange: Action<MyProfileEditModel, string>;
+  onFullnameChange: Action<MyProfileEditModel, string>;
 }
 
 export interface NotificationModel {
