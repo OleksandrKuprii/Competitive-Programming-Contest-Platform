@@ -78,8 +78,7 @@ async def register_user(user_id: str, user_info: dict, conn: Connection) -> None
         A connection to the database
     """
     # Call database to register user
-    await database.register_user(user_id, conn)
-    print(user_info)
+    await database.register_user(user_id, user_info['email'], conn)
     await update_profile(user_id, user_info, conn)
 
 

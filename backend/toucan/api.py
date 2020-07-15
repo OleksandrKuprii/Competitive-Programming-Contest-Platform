@@ -486,6 +486,8 @@ async def update_profile(request, **kwargs):
         if await user.check_registration(user_id, conn):
             await user.update_profile(user_id, body, conn)
         else:
+            if {'email', 'nickname', 'name'} not in set(body):
+                return Response(status=400)
             await user.register_user(user_id, body, conn)
 
     return Response(status=200)
