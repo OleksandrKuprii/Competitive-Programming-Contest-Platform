@@ -71,18 +71,19 @@ async def check_test_result(
     test_points = 0  # points for current test
 
     try:
-        test_string = test_result.result.strip().replace('\r\n', '\n')
-        correct_string = correct_result.decode().strip().replace('\r\n', '\n')
-
         # Checks only successfully executed tests
         if status == 'Success':
+            test_string = test_result.result.strip().replace('\r\n', '\n')
+            correct_string = correct_result.decode().strip().replace('\r\n', '\n')
+
             if test_string == correct_string:
                 status = 'Correct'
                 test_points = points  # gives points for correct output
             else:
                 status = 'WrongAnswer'
+
     except AttributeError:
-        status = 'WrongAnswer'
+        status = 'UnknownAnswer'
 
     return ResultToDB(submission_id, test_result.test_id, status, test_points,
                       test_result.wall_time,
