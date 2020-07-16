@@ -148,3 +148,13 @@ async def check_nickname_existence(nickname: str, conn: Connection) -> bool:
         """, nickname)
 
     return bool(fetch)
+
+
+async def get_registered_users(conn: Connection) -> set:
+    """Get registered users from database."""
+    async with conn.transaction():
+        fetch = await conn.fetch("""
+            SELECT id
+            FROM coreschema.users
+        """)
+    return {x['id'] for x in fetch}

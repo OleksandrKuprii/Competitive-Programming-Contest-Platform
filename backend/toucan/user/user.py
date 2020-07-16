@@ -145,3 +145,8 @@ async def check_nickname_existence(nickname: str, conn: Connection) -> bool:
         A connection to the database
     """
     return await database.check_nickname_existence(nickname, conn)
+
+
+async def get_registered_users(conn: Connection) -> set:
+    """Get registered users."""
+    return await database.get_registered_users(conn)

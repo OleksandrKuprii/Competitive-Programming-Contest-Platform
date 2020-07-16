@@ -41,6 +41,12 @@ json_url = urlopen('https://' + AUTH0_DOMAIN + "/.well-known/jwks.json")
 jwks = json.loads(json_url.read())
 
 pool: Pool
+registered_users: set
+
+
+def check_registration(user_id):
+    """Check if user registered in the database."""
+    return user_id in registered_users
 
 
 def get_token_auth_header(request):
@@ -138,6 +144,10 @@ def requires_auth(f):
                 return json_response({"code": "invalid_header",
                                       "description": "Unable to parse authentication token."},
                                      status=401)
+
+            # Check if user is registered in the database
+            if not check_registration(kwargs['user_info']['sub']):
+                return json_response(status=401)
 
             return f(*args, **kwargs)
         return json_response({"code": "invalid_header",
@@ -490,6 +500,9 @@ async def update_profile(request, **kwargs):
                 return Response(status=400)
             await user.register_user(user_id, body, conn)
 
+            # Update the list of registered users after adding new one to the database
+            registered_users.add(user_id)
+
     return Response(status=200)
 
 
@@ -523,6 +536,11 @@ async def main():
     """Run api."""
     global pool
     pool = await database.establish_connection_from_env()
+
+    # Get list of registered users from database
+    global registered_users
+    async with pool.acquire() as conn:
+        registered_users = await user.get_registered_users(conn)
 
     await _run_app(app, port=4000)
 
