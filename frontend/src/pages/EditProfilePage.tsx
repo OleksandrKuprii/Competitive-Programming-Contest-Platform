@@ -12,7 +12,7 @@ import {useStoreState, useStoreActions} from "~/hooks/store";
 import Select from "@/molecules/select";
 
 
-const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october, november, december'];
+const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const selectOptions = months.map(month => ({
   label: month[0].toUpperCase() + month.substr(1),
@@ -24,8 +24,16 @@ const EditProfilePage: FC = () => {
   const username = useStoreState(state => state.myProfileEdit.username);
   const fullname = useStoreState(state => state.myProfileEdit.fullname);
 
+  const birthDay = useStoreState(state => state.myProfileEdit.birthDay);
+  const birthMonth = useStoreState(state => state.myProfileEdit.birthMonth);
+  const birthYear = useStoreState(state => state.myProfileEdit.birthYear);
+
   const onUsernameChange = useStoreActions(actions => actions.myProfileEdit.onUsernameChange);
   const onFullnameChange = useStoreActions(actions => actions.myProfileEdit.onFullnameChange);
+
+  const onBirthDayChange = useStoreActions(actions => actions.myProfileEdit.onBirthDayChange);
+  const onBirthMonthChange = useStoreActions(actions => actions.myProfileEdit.onBirthMonthChange);
+  const onBirthYearChange = useStoreActions(actions => actions.myProfileEdit.onBirthYearChange);
 
   return (
     <Page>
@@ -39,30 +47,30 @@ const EditProfilePage: FC = () => {
 
       <Spacer top={Padding.Normal}/>
 
-      <HorizontalRule/>
+      <Row>
+        <Input label="Username" value={username} onChange={onUsernameChange as any}/>
+
+        <Spacer left={Padding.Normal}/>
+
+        <Input label="Fullname" value={fullname} onChange={onFullnameChange as any}/>
+      </Row>
+
+      <Spacer top={Padding.Normal}/>
+
+      <Subtitle2>Birthdate</Subtitle2>
 
       <Spacer top={Padding.Normal}/>
 
       <Row>
-        <Input label="Username" value={username} onChange={onUsernameChange}/>
+        <Input label="Day" value={birthDay} onChange={onBirthDayChange as any} type="number" wide={false} />
 
         <Spacer left={Padding.Normal}/>
 
-        <Input label="Fullname" value={fullname} onChange={onFullnameChange}/>
-      </Row>
-
-      <Row>
-        <div style={{ width: 300 }}>
-        <Select options={selectOptions} />
-        </div>
+        <Input label="Month" value={birthMonth} onChange={onBirthMonthChange as any} type="number" wide={false} />
 
         <Spacer left={Padding.Normal}/>
 
-        <Input label="Day" onChange={alert} />
-
-        <Spacer left={Padding.Normal}/>
-
-        <Input label="Year" onChange={alert} />
+        <Input label="Year" value={birthYear} onChange={onBirthYearChange as any} type="number" wide={false} />
       </Row>
     </Page>
   );

@@ -14,6 +14,18 @@ const myProfileEditModel: MyProfileEditModel = {
     state.fullname = value;
   }),
 
+  onBirthDayChange: action((state, value) => {
+    state.birthDay = value;
+  }),
+
+  onBirthMonthChange: action((state, value) => {
+    state.birthMonth = value;
+  }),
+
+  onBirthYearChange: action((state, value) => {
+    state.birthYear = value;
+  }),
+
   onSave: thunk(async (actions, _, { getState }) => {
     try {
       const token = await actions.getToken();

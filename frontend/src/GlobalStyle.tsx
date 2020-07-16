@@ -39,7 +39,7 @@ const GlobalStyle = createGlobalStyle`
 
   ::-webkit-scrollbar-thumb
   {
-      background-color: #555;
+      background-color: #aaa;
   }
 `;
 

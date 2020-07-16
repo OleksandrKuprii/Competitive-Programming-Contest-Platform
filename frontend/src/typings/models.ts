@@ -60,11 +60,19 @@ export interface LoadingModel {
 export interface ProfileEditModel {
   fullname?: string;
   username?: string;
+
+  birthDay?: number;
+  birthMonth?: number;
+  birthYear?: number;
 }
 
 export interface MyProfileEditModel extends ProfileEditModel, Auth0Token {
   onUsernameChange: Action<MyProfileEditModel, string>;
   onFullnameChange: Action<MyProfileEditModel, string>;
+
+  onBirthDayChange: Action<MyProfileEditModel, number>;
+  onBirthMonthChange: Action<MyProfileEditModel, number>;
+  onBirthYearChange: Action<MyProfileEditModel, number>;
 
   onSave: Thunk<MyProfileEditModel>;
 }

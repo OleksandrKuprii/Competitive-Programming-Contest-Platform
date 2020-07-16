@@ -65,7 +65,7 @@ export const Subtitle2 = (() => {
 
   subtitle2.defaultProps = ({
     size: 1.1,
-    letterSpacing: 0.1,
+    letterSpacing: -0.5,
   });
 
   return subtitle2;

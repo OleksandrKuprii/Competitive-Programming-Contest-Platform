@@ -64,22 +64,30 @@ const InputContainer = styled.div`
 `;
 
 
-interface InputProps {
+interface InputProps<T> {
   label: string;
 
-  value?: string;
-  onChange: (value: string) => any;
+  value?: T;
+  onChange: (value: T) => any;
+
+  type?: 'number' | 'text';
+
+  wide?: boolean;
 }
 
 
-const Input: FC<InputProps> = ({ label, value, onChange }) => {
+const Input: FC<InputProps<string | number>> = ({ label, value, onChange, type, wide }) => {
+  if (wide === undefined) {
+    wide = true;
+  }
+
   const onChangeCallback = useCallback((event: ChangeEvent) => {
     onChange((event.target as HTMLInputElement).value);
   }, []);
 
   return (
     <InputContainer>
-      <input required value={value || ''} onChange={onChangeCallback}/>
+      <input type={type} required value={value || ''} onChange={onChangeCallback} style={wide ? {} : { width: 100 }} />
       <label>{label}</label>
     </InputContainer>
   );

@@ -10,6 +10,17 @@ const customStyles = {
     ...provided,
     zIndex: 999,
   }),
+  control: (provided: any) => ({
+    ...provided,
+    background: 'transparent',
+    border: 'none',
+    borderWidth: 0,
+    borderBottom: '2px #ccc solid',
+    borderRadius: 0
+  }),
+  indicatorSeparator: () => ({
+    display: 'none'
+  })
 }
 
 const Select: FC<Props> = (props) => (
