@@ -78,8 +78,7 @@ async def register_user(user_id: str, user_info: dict, conn: Connection) -> None
         A connection to the database
     """
     # Call database to register user
-    await database.register_user(user_id, conn)
-    print(user_info)
+    await database.register_user(user_id, user_info['email'], conn)
     await update_profile(user_id, user_info, conn)
 
 
@@ -146,3 +145,8 @@ async def check_nickname_existence(nickname: str, conn: Connection) -> bool:
         A connection to the database
     """
     return await database.check_nickname_existence(nickname, conn)
+
+
+async def get_registered_users(conn: Connection) -> set:
+    """Get registered users."""
+    return await database.get_registered_users(conn)

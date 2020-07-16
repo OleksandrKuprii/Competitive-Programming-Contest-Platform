@@ -65,7 +65,7 @@ async def get_nickname_by_id(user_id: str, conn: Connection) -> str:
     return fetch['nickname']
 
 
-async def register_user(user_id: str, conn: Connection) -> None:
+async def register_user(user_id: str, email: str, conn: Connection) -> None:
     """Register new user and insert user info to the database.
 
     Parameters
@@ -81,8 +81,8 @@ async def register_user(user_id: str, conn: Connection) -> None:
     async with conn.transaction():
         await conn.execute("""
             INSERT INTO coreschema.users (id, email, registered)
-            VALUES ($1, $2)
-        """, user_id, timestamp)
+            VALUES ($1, $2, $3)
+        """, user_id, email, timestamp)
 
         await conn.execute("""
             INSERT INTO coreschema.rating (user_id, public_task_rating) VALUES ($1, 0)
@@ -148,3 +148,13 @@ async def check_nickname_existence(nickname: str, conn: Connection) -> bool:
         """, nickname)
 
     return bool(fetch)
+
+
+async def get_registered_users(conn: Connection) -> set:
+    """Get registered users from database."""
+    async with conn.transaction():
+        fetch = await conn.fetch("""
+            SELECT id
+            FROM coreschema.users
+        """)
+    return {x['id'] for x in fetch}
