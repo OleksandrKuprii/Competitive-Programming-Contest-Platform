@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Text, Title} from "@/atoms/typography";
-import Spacer from "@/atoms/spacer";
+import {Text, Title} from "@/toucanui/atoms/typography";
+import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
 import Difficulty from "@/atoms/difficulty";
 import { useParams } from 'react-router-dom';

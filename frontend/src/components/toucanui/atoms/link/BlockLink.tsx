@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import Link from '@/atoms/link';
+import Link from '@/toucanui/atoms/link/index';
 
 const BlockLink = styled(Link)<{ padding?: number }>`
   display: block;
@@ -7,7 +7,7 @@ const BlockLink = styled(Link)<{ padding?: number }>`
     props.padding &&
     css`
       padding: ${props.padding}px;
-    `}
+    `};
 `;
 
 export default BlockLink;

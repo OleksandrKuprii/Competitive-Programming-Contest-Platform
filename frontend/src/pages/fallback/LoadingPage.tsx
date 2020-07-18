@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FC } from 'react';
-import Loading from '@/atoms/loading';
-import { Title, TextAlign } from '@/atoms/typography';
-import { Grid, Row, JustifyContent } from '@/atoms/grid';
+import { Title, TextAlign } from '@/toucanui/atoms/typography';
+import { Grid, Row, JustifyContent } from '@/toucanui/atoms/grid';
+import Loading from "@/toucanui/atoms/loading";
 
 interface LoadingPageProps {
   customText?: string;

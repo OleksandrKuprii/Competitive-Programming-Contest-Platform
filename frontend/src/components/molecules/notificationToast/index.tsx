@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { FC, useCallback } from 'react';
 import styled from 'styled-components';
-import BlockLink from '@/atoms/link/BlockLink';
+import BlockLink from '@/toucanui/atoms/link/BlockLink';
 import Result from '@/atoms/result';
-import Box from '@/atoms/box';
-import { Col, Row } from '@/atoms/grid';
+import Box from '@/toucanui/atoms/box';
+import { Col, Row } from '@/toucanui/atoms/grid';
 import { FaAngleDoubleRight } from 'react-icons/all';
 import Notification from '~/typings/entities/notification';
 

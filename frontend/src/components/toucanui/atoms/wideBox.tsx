@@ -4,7 +4,7 @@ import * as React from 'react';
 import {CSSProperties, FC, ReactNode} from 'react';
 
 import styled from 'styled-components';
-import Box, { BoxProps } from '@/atoms/box';
+import Box, { BoxProps } from '@/toucanui/atoms/box';
 
 const Extended = styled(Box)`
   width: 80vw;

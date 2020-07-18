@@ -2,16 +2,15 @@ import * as React from 'react';
 import {FC} from 'react';
 import {useTranslation} from 'react-i18next';
 import Table from '@/molecules/table';
-import Defined from '@/helpers/defined';
 import Difficulty from '@/atoms/difficulty';
 import SmallRatingChart from '@/molecules/smallRatingChart';
 import WithLoading from '@/templates/withLoading';
 import Result from '@/atoms/result';
-import Link from '@/atoms/link';
-import SortControl from '@/atoms/sortControl';
+import Link from '@/toucanui/atoms/link';
+import SortControl from '@/toucanui/atoms/sortControl';
 import DataFilter from '@/providers/dataFilter';
 import DataSort from '@/providers/dataSort';
-import Page from '@/templates/page';
+import Page from '@/toucanui/templates/page';
 import LoadingPage from '~/pages/fallback/LoadingPage';
 import {useStoreActions, useStoreState} from '~/hooks/store';
 import {Result as ResultEnum, SortBy} from '~/typings/models';
@@ -124,56 +123,38 @@ const TasksPage: FC = () => {
                             <Link href={`#/task/view/${id}`}>{name}</Link>
                           </td>
                           <td>
-                            <Defined value={categoryId}>
-                              {(definedCategory) => (
-                                // <LinkButton
-                                //   onClick={() => {
-                                //     selectedCategoriesAction([
-                                //       definedCategory,
-                                //     ]);
-                                //   }}
-                                // >
-                                //   {categoryName}
-                                // </LinkButton>
-                                <></>
-                              )}
-                            </Defined>
+                            {/*<Defined value={categoryId}>*/}
+                            {/*  {(definedCategory) => (*/}
+                            {/*    // <LinkButton*/}
+                            {/*    //   onClick={() => {*/}
+                            {/*    //     selectedCategoriesAction([*/}
+                            {/*    //       definedCategory,*/}
+                            {/*    //     ]);*/}
+                            {/*    //   }}*/}
+                            {/*    // >*/}
+                            {/*    //   {categoryName}*/}
+                            {/*    // </LinkButton>*/}
+                            {/*    <></>*/}
+                            {/*// )}*/}
+                            {/*</Defined>*/}
                           </td>
                           <td>
-                            <Defined value={difficulty}>
-                              {(definedDifficulty) => (
-                                <Difficulty difficulty={definedDifficulty}/>
-                              )}
-                            </Defined>
+                            {difficulty && <Difficulty difficulty={difficulty}/>}
                           </td>
                           <td>
-                            <Defined value={rating}>
-                              {(definedRating) => (
-                                <SmallRatingChart rating={definedRating}/>
-                              )}
-                            </Defined>
+                            {rating && <SmallRatingChart rating={rating}/>}
                           </td>
                           <td>
-                            <Defined value={status}>
-                              {(definedStatus) => (
-                                <Defined value={points}>
-                                  {(definedPoints) => (
-                                    <Defined value={submissionId}>
-                                      {(definedSubmissionId) => (
-                                        <Link
-                                          href={`#/submission/view/${definedSubmissionId}`}
-                                        >
-                                          <Result
-                                            status={definedStatus}
-                                            points={definedPoints}
-                                          />
-                                        </Link>
-                                      )}
-                                    </Defined>
-                                  )}
-                                </Defined>
-                              )}
-                            </Defined>
+                            {(submissionId && status && points) &&
+                            <Link
+                              href={`#/submission/view/${submissionId}`}
+                            >
+                              <Result
+                                status={status}
+                                points={points}
+                              />
+                            </Link>
+                            }
                           </td>
                         </tr>
                       ),

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import styled, { css } from 'styled-components';
-import { Grid, Row, JustifyContent } from '@/atoms/grid';
+import { Grid, Row, JustifyContent } from '@/toucanui/atoms/grid';
 import { background } from '~/mixins/color';
 
 interface SortControlArgs {

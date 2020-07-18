@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useStoreState} from "~/hooks/store";
 import BottomAlert from "@/molecules/bottomAlert";
-import Button from "@/atoms/button";
+import Button from "@/toucanui/atoms/button";
 import { useHistory, Route, Switch } from 'react-router-dom';
 import {useCallback} from "react";
 

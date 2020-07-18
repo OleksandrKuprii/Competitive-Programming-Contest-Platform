@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { FC, useCallback } from 'react';
 import CodeViewer from '@/molecules/codeViewer';
-import Defined from '@/helpers/defined';
-import Button from '@/atoms/button';
-import { Grid, Row } from '@/atoms/grid';
+import Button from '@/toucanui/atoms/button';
+import { Grid, Row } from '@/toucanui/atoms/grid';
 import StyledSelect from '@/molecules/select';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 
@@ -38,11 +37,7 @@ const SolutionSubmissionForm: FC<SolutionSubmissionForm> = ({ taskId }) => {
   return (
     <Grid>
       <Row>
-        <Defined value={code}>
-          {(definedCode) => (
-            <CodeViewer language={language}>{definedCode}</CodeViewer>
-          )}
-        </Defined>
+        {code && <CodeViewer language={language}>{code}</CodeViewer>}
       </Row>
 
       <Row>

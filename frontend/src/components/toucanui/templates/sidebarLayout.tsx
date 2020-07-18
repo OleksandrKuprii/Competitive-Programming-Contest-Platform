@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, ReactNode } from 'react';
 
-import { Row, Col } from '@/atoms/grid';
+import { Row, Col } from '@/toucanui/atoms/grid';
 
 interface SidebarLayout {
   children: ReactNode

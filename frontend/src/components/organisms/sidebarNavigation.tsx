@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {FC, useCallback} from "react";
-import {AlignItems, JustifyContent, Row} from "@/atoms/grid";
-import NavButton from "@/atoms/navButton";
+import {AlignItems, JustifyContent, Row} from "@/toucanui/atoms/grid";
+import NavButton from "@/toucanui/atoms/navButton";
 import {FiList, FiSend} from "react-icons/all";
 import { useHistory } from 'react-router-dom';
-import {Title} from "@/atoms/typography";
-import Spacer from "@/atoms/spacer";
+import {Title} from "@/toucanui/atoms/typography";
+import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
 import brandIcon from '~/assets/brandIcon.png';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
 import SmallRatingChartBar from '@/atoms/smallRatingChartBar';
-import Box from '@/atoms/box';
+import Box from '@/toucanui/atoms/box';
 import ReactTooltip from 'react-tooltip';
 import getRatingPercentage from '~/utils/getRatingPercentage';
 import { TaskRating } from '~/typings/entities/task';

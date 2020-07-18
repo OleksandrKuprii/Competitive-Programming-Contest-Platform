@@ -4,7 +4,7 @@ import WithNotifications from '@/templates/withNotifications';
 import SubmissionFromURL from '@/providers/submissionFromURL';
 import Auth0Provider from '@/providers/auth0Provider';
 import StartupFetcher from '@/startupFetcher';
-import SidebarLayout from '@/templates/sidebarLayout';
+import SidebarLayout from '@/toucanui/templates/sidebarLayout';
 import Sidebar from '@/organisms/sidebar';
 import SubmissionsPage from '~/pages/SubmissionsPage';
 import SubmissionPage from '~/pages/SubmissionPage';

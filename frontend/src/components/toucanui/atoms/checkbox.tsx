@@ -2,7 +2,7 @@ import * as React from 'react';
 import {FC, useCallback} from "react";
 import styled, {keyframes} from "styled-components";
 import {allColors} from "~/mixins/color";
-import Spacer from "@/atoms/spacer";
+import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
 
 interface CheckboxProps {

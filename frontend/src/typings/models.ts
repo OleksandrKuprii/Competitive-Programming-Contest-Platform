@@ -57,24 +57,40 @@ export interface LoadingModel {
   loaded: Action<LoadingModel>;
 }
 
-export interface ProfileEditModel {
+export interface ProfileModel {
+  email?: string;
   fullname?: string;
   username?: string;
+
+  country?: string;
+  city?: string;
+  school?: string;
 
   birthDay?: number;
   birthMonth?: number;
   birthYear?: number;
+
+  bio?: string;
 }
 
-export interface MyProfileEditModel extends ProfileEditModel, Auth0Token {
+export interface MyProfileEditModel extends ProfileModel, Auth0Token {
+  onEmailChange: Action<MyProfileEditModel, string>;
   onUsernameChange: Action<MyProfileEditModel, string>;
   onFullnameChange: Action<MyProfileEditModel, string>;
+
+  onCountryChange: Action<MyProfileEditModel, string>;
+  onCityChange: Action<MyProfileEditModel, string>;
+  onSchoolChange: Action<MyProfileEditModel, string>;
 
   onBirthDayChange: Action<MyProfileEditModel, number>;
   onBirthMonthChange: Action<MyProfileEditModel, number>;
   onBirthYearChange: Action<MyProfileEditModel, number>;
 
+  onBioChange: Action<MyProfileEditModel, string>;
+
   onSave: Thunk<MyProfileEditModel>;
+
+  onFetchedMyProfile: ActionOn<MyProfileEditModel, StoreModel>
 }
 
 export interface NotificationModel {
@@ -121,6 +137,7 @@ export interface StoreModel {
   task: TaskModel;
   user: UserModel;
   filterAndSort: FilterAndSortModel;
+  customFont: CustomFontModel;
 }
 
 export interface SubmissionHunterModel {
@@ -195,4 +212,11 @@ export interface UserModel extends LoadingModel, Auth0Token {
   >;
 
   fetchedMyProfile: ActionOn<UserModel, StoreModel>;
+}
+
+export interface CustomFontModel {
+  fontDelta: number;
+
+  onFontDeltaUp: Action<CustomFontModel>;
+  onFontDeltaDown: Action<CustomFontModel>;
 }

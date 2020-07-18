@@ -8,6 +8,7 @@ import userModel from '~/models/userModel';
 import myProfileEditModel from '~/models/myProfileEditModel';
 import filterAndSortModel from '~/models/filterAndSort';
 import { StoreModel } from '~/typings/models';
+import customFontModel from "~/models/customFontModel";
 
 const storeModel: StoreModel = {
   auth0: auth0Model,
@@ -19,6 +20,7 @@ const storeModel: StoreModel = {
   task: taskModel,
   user: userModel,
   filterAndSort: filterAndSortModel,
+  customFont: customFontModel,
 };
 
 export default storeModel;

@@ -1,7 +1,7 @@
 
 
 import * as React from 'react';
-import Button from '@/atoms/button';
+import Button from '../src/components/toucanui/atoms/button';
 
 export default { title: 'Button' };
 

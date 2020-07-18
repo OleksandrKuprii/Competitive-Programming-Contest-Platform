@@ -2,8 +2,8 @@ import * as React from 'react';
 import { FC, ReactNode, useCallback } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import NotificationToast from '@/molecules/notificationToast';
-import { Grid } from '@/atoms/grid';
-import Fade from '@/animations/fade';
+import { Grid } from '@/toucanui/atoms/grid';
+import Fade from '@/toucanui/animations/fade';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 
 interface WithNotificationsProps {

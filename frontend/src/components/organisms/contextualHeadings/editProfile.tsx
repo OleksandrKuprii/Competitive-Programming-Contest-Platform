@@ -1,7 +1,7 @@
 
 
 import * as React from 'react';
-import {Title} from "@/atoms/typography";
+import {Title} from "@/toucanui/atoms/typography";
 
 const EditProfileHeading = () => (
   <Title>Edit profile</Title>

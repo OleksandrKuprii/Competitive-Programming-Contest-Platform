@@ -3,8 +3,8 @@ import { FC, ReactNode, useCallback } from 'react';
 import Dropzone from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { FaFileUpload } from 'react-icons/fa';
-import { Text, TextAlign } from '@/atoms/typography';
-import Box from '@/atoms/box';
+import { Text, TextAlign } from '@/toucanui/atoms/typography';
+import Box from '@/toucanui/atoms/box';
 import { useStoreState, useStoreActions } from '~/hooks/store';
 
 export interface SolutionDropZoneProps {

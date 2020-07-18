@@ -1,17 +1,21 @@
-
-
 import * as React from 'react';
-import {FC, useCallback} from "react";
-import Button from "@/atoms/button";
+import {FC, useCallback} from 'react';
+import Button from "@/toucanui/atoms/button";
 import ButtonGroup from "@/molecules/buttonGroup";
-import {MdEdit, MdExitToApp} from "react-icons/all";
-import {useStoreState, useStoreActions} from "~/hooks/store";
+import {MdCameraEnhance, MdEdit, MdExitToApp} from "react-icons/all";
+import {useStoreActions, useStoreState} from "~/hooks/store";
+import {Route, Switch, useHistory} from 'react-router-dom';
 
 const ProfileQuickActionsAuthenticated: FC = () => {
   const signOut = useStoreActions(actions => actions.auth0.signOut);
+  const history = useHistory();
 
   const signOutCallback = useCallback(() => {
     signOut();
+  }, []);
+
+  const editProfileCallback = useCallback(() => {
+    history.push('/edit/profile');
   }, []);
 
   return (
@@ -19,8 +23,15 @@ const ProfileQuickActionsAuthenticated: FC = () => {
       <Button icon onClick={signOutCallback}>
         <MdExitToApp/>
       </Button>
-      <Button icon>
-        <MdEdit/>
+      <Button icon onClick={editProfileCallback}>
+        <Switch>
+          <Route path="/edit/profile">
+            <MdCameraEnhance />
+          </Route>
+          <Route>
+            <MdEdit/>
+          </Route>
+        </Switch>
       </Button>
     </ButtonGroup>
   );

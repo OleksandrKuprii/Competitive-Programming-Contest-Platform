@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from "styled-components";
-import Box from "@/atoms/box";
+import Box from "@/toucanui/atoms/box";
 import {FC} from "react";
-import {Caption, Subtitle, Title} from "@/atoms/typography";
+import {Caption, Subtitle, Title} from "@/toucanui/atoms/typography";
 import padding, {Padding} from "~/mixins/padding";
 import {background, foreground} from "~/mixins/color";
 

@@ -1,12 +1,11 @@
 import * as React from 'react';
 import {FC} from 'react';
-import Box from '@/atoms/box';
-import ProfileImage from '@/atoms/profileImage';
-import {Col, Grid, Row, JustifyContent, AlignItems} from '@/atoms/grid';
-import {Text, TextAlign, Title} from '@/atoms/typography';
+import {Col, Row} from '@/toucanui/atoms/grid';
+import {Text, TextAlign, Title} from '@/toucanui/atoms/typography';
 import User from '~/typings/entities/user';
-import Spacer from "@/atoms/spacer";
+import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
+import ProfileImage from "@/toucanui/atoms/profileImage";
 
 interface GeneralProfileInfoProps {
   picture?: string;

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import PrettyDate from '@/atoms/prettyDate';
 import Result from '@/atoms/result';
-import Defined from '@/helpers/defined';
-import Link from '@/atoms/link';
+import Link from '@/toucanui/atoms/link';
 import StyledTable from '@/molecules/table';
 import { Submission } from '~/typings/entities/submission';
+import PrettyDate from "@/toucanui/atoms/prettyDate";
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();
@@ -34,15 +33,7 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
               </td>
               <td>{language}</td>
               <td>
-                <Defined value={status}>
-                  {(definedStatus) => (
-                    <Defined value={points}>
-                      {(definedPoints) => (
-                        <Result status={definedStatus} points={definedPoints} />
-                      )}
-                    </Defined>
-                  )}
-                </Defined>
+                {(status && points) && <Result status={status} points={points} />}
               </td>
               <td>
                 <PrettyDate timestamp={submitted} />

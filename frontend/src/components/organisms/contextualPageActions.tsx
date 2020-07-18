@@ -1,10 +1,10 @@
 // contextualPageActions.tsx - guess what is does
 
 import * as React from 'react';
-import WideBox from '@/atoms/wideBox';
+import WideBox from '@/toucanui/atoms/wideBox';
 import TasksActions from "@/organisms/contextualActions/tasks";
 
-import {AlignItems, JustifyContent, Row} from "@/atoms/grid";
+import {AlignItems, JustifyContent, Row} from "@/toucanui/atoms/grid";
 import TaskActions from "@/organisms/contextualActions/task";
 import { Switch, Route } from 'react-router-dom';
 import EditProfileActions from "@/organisms/contextualActions/editProfile";

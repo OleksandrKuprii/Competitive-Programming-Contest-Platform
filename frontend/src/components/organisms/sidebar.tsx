@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { FC } from 'react';
 
-import Box from '@/atoms/box';
+import Box from '@/toucanui/atoms/box';
 import SidebarNavigation from "@/organisms/sidebarNavigation";
 import {Padding} from "~/mixins/padding";
-import Spacer from "@/atoms/spacer";
+import Spacer from "@/toucanui/atoms/spacer";
 import ProfileQuickActions from "@/organisms/profileQuickActions";
-import {AlignItems, Grid} from "@/atoms/grid";
+import {AlignItems, Grid} from "@/toucanui/atoms/grid";
 import MyProfileInfo from "@/organisms/myProfileInfo";
 
 const Sidebar: FC = () => (

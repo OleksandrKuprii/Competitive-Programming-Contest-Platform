@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FC} from "react";
-import Button from '~/components/atoms/button';
+import Button from '@/toucanui/atoms/button';
 import ButtonGroup from "@/molecules/buttonGroup";
 import {useStoreActions} from "~/hooks/store";
 

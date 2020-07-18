@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 import styled from "styled-components";
-import Box from "@/atoms/box";
+import Box from "@/toucanui/atoms/box";
 import {FC, ReactNode} from "react";
-import {Caption, Subtitle, Subtitle2, Title} from "@/atoms/typography";
+import {Caption, Subtitle, Subtitle2, Title} from "@/toucanui/atoms/typography";
 import {Padding} from "~/mixins/padding";
-import Spacer from "@/atoms/spacer";
+import Spacer from "@/toucanui/atoms/spacer";
 
 const BottomAlertContainer = styled(Box)`
   position: fixed;

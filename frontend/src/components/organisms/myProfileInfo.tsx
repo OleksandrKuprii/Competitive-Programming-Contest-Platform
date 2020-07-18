@@ -1,6 +1,5 @@
 import React, {FC} from "react";
 import {useStoreState} from "~/hooks/store";
-import Defined from "@/helpers/defined";
 import ProfileInfo from "@/molecules/profileInfo";
 
 
@@ -10,13 +9,13 @@ const MyProfileInfo: FC = () => {
   const myProfile = useStoreState(state => state.user.myProfile);
 
   if (!isAutheticated) {
-    return <ProfileInfo />
+    return <ProfileInfo/>
   }
 
   return (
-    <Defined value={myProfile}>
-      {(user) => <ProfileInfo user={user} />}
-    </Defined>
+    <>
+      {myProfile && <ProfileInfo user={myProfile}/>}
+    </>
   );
 }
 

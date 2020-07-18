@@ -1,14 +1,8 @@
-interface User {
-  username: string;
-  bio?: string;
-  birthday?: Date;
-  city?: string;
-  country?: string;
-  email?: string;
-  fullname: string;
-  picture?: string;
-  school?: string;
+import {ProfileModel} from "~/typings/models";
+
+interface User extends ProfileModel {
   signupDate: Date;
+  picture: string;
 }
 
 export default User;

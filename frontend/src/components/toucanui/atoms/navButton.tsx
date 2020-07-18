@@ -1,7 +1,7 @@
 // navButton.tsx - button override for navigation bar
 
 import styled from "styled-components";
-import Button from "@/atoms/button";
+import Button from "@/toucanui/atoms/button";
 
 const NavButton = styled(Button)`
   border-radius: 0;

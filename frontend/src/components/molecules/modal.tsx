@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {FC, ReactNode} from 'react';
 import styled, {css, keyframes} from "styled-components";
-import Box from "@/atoms/box";
-import Fade from "@/animations/fade";
-import {TextAlign, Title} from "@/atoms/typography";
+import Box from "@/toucanui/atoms/box";
+import Fade from "@/toucanui/animations/fade";
+import {TextAlign, Title} from "@/toucanui/atoms/typography";
 import {Padding} from "~/mixins/padding";
 import {majorFocusShadow} from "~/mixins/shadow";
-import Spacer from "@/atoms/spacer";
-import HorizontalRule from "@/atoms/horizontalRule";
-import Button from "@/atoms/button";
+import Spacer from "@/toucanui/atoms/spacer";
+import HorizontalRule from "@/toucanui/atoms/horizontalRule";
+import Button from "@/toucanui/atoms/button";
 import {MdClose} from "react-icons/all";
-import {AlignItems, Grid, Row} from "@/atoms/grid";
+import {AlignItems, Grid, Row} from "@/toucanui/atoms/grid";
 import useKeyPressed from "~/hooks/useKeyPressed";
 
 const appear = keyframes`

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { FC } from 'react';
 import { Parser as HtmlToReactParser } from 'html-to-react';
-import { Text, Subtitle, FontWeight } from '@/atoms/typography';
+import { Text, Subtitle, FontWeight } from '@/toucanui/atoms/typography';
 import styled from 'styled-components';
-import Spacer from "@/atoms/spacer";
+import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
 
 export interface HtmlTextSectionProps {

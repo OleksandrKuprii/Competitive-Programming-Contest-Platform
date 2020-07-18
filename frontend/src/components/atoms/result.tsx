@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import Loading from '@/atoms/loading';
-import Colored from '@/atoms/typography/Colored';
+import Loading from "@/toucanui/atoms/loading";
 
 interface ResultProps {
   points: number;
@@ -37,9 +36,9 @@ const Result: FC<ResultProps> = ({ points, status }) => {
     }
 
     return (
-      <Colored variant={color}>
+      <p>
         {points} {status.join(', ')}
-      </Colored>
+      </p>
     );
   }
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import WideBox from "@/atoms/wideBox";
+import WideBox from "@/toucanui/atoms/wideBox";
 import TasksHeading from "@/organisms/contextualHeadings/tasks";
 import TaskHeading from "@/organisms/contextualHeadings/task";
-import {AlignItems, JustifyContent, Row} from "@/atoms/grid";
+import {AlignItems, JustifyContent, Row} from "@/toucanui/atoms/grid";
 import { Switch, Route } from 'react-router-dom';
 import EditProfileHeading from "@/organisms/contextualHeadings/editProfile";
 

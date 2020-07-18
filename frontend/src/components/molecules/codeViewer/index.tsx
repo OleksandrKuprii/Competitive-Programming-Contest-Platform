@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FC } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import Box from '@/atoms/box';
+import Box from '@/toucanui/atoms/box';
 
 interface CodeViewerProps {
   children: string;

@@ -1,21 +1,16 @@
 import * as React from 'react';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Col, Row} from '@/atoms/grid';
 import Table from '@/molecules/table';
 import HtmlTextSection from '@/molecules/htmlTextSection';
-import Defined from '@/helpers/defined';
-import {Title} from '@/atoms/typography';
-import Paper from '@/atoms/paper';
 import TaskFromURL from '@/providers/taskFromURL';
 import TaskDescriptionSections from '@/providers/taskDescriptionSections';
 import styled from 'styled-components';
-import WithSubmissionArea from '@/templates/withSubmissionArea';
-import Page from '~/components/templates/page';
-import Spacer from "@/atoms/spacer";
+import Page from '@/toucanui/templates/page';
+import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
-import Modal from "@/molecules/modal";
-import Fade from "@/animations/fade";
+import Paper from '@/toucanui/atoms/paper';
+import {useStoreState} from "~/hooks/store";
 
 const Td = styled.td`
   vertical-align: top;
@@ -25,13 +20,17 @@ const Td = styled.td`
 const TaskPage: FC = () => {
   const {t} = useTranslation();
 
+  const fontDelta = useStoreState(state => state.customFont.fontDelta);
+
+  const fontSize = 18 + fontDelta;
+
   return (
     <>
       <Page>
         <TaskFromURL>
           {(task) => (
             <>
-              <Paper>
+              <Paper style={{ fontSize }}>
                 <TaskDescriptionSections task={task}>
                   {(sections) =>
                     sections.map((section) => (
@@ -45,30 +44,28 @@ const TaskPage: FC = () => {
                 </TaskDescriptionSections>
               </Paper>
 
-              <Defined value={task.examples}>
-                {(definedExamples) => (
-                  <>
-                    <Spacer top={Padding.Large}/>
+              {task.examples &&
+              <>
+                <Spacer top={Padding.Large}/>
 
-                    <Table>
-                      <thead>
-                      <tr>
-                        <th>{t('headers.input')}</th>
-                        <th>{t('headers.output')}</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {definedExamples.map((example) => (
-                        <tr key={example.input + example.output}>
-                          <Td>{example.input}</Td>
-                          <Td>{example.output}</Td>
-                        </tr>
-                      ))}
-                      </tbody>
-                    </Table>
-                  </>
-                )}
-              </Defined>
+                <Table>
+                  <thead>
+                  <tr>
+                    <th>{t('headers.input')}</th>
+                    <th>{t('headers.output')}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {task.examples.map((example) => (
+                    <tr key={example.input + example.output}>
+                      <Td>{example.input}</Td>
+                      <Td>{example.output}</Td>
+                    </tr>
+                  ))}
+                  </tbody>
+                </Table>
+              </>
+              }
             </>
           )}
         </TaskFromURL>
