@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import { backgroundColors, foregroundColors } from '~/mixins/color';
+import {backgroundColors, foreground, foregroundColors, linkColor, linkColors} from '~/mixins/color';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -34,7 +34,14 @@ const GlobalStyle = createGlobalStyle`
   
   a, a:hover {
     color: inherit;
+  }
+  
+  a {
     text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
   }
   
   ::-webkit-scrollbar-track

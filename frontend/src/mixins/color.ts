@@ -1,6 +1,6 @@
 // color.ts - defines color theme
 
-import { darken, complement, readableColor } from 'polished';
+import {darken, complement, readableColor, lighten} from 'polished';
 
 export interface ColorTable {
   [variant: string]: string;
@@ -57,6 +57,13 @@ export const hoverForegroundColors = (() => (
         [variant, readableColor(color)]))
 ))();
 
+export const linkColors = (() => (
+  Object.fromEntries(
+    Object.entries(foregroundColors)
+      .map(([variant, color]) =>
+        [variant, lighten(0.3, color)]))
+))();
+
 
 // Here go default implementations for styled components
 // using variant property
@@ -77,4 +84,5 @@ export const background = colorPicker(backgroundColors);
 export const hoverBackground = colorPicker(hoverBackgroundColors);
 export const foreground = colorPicker(foregroundColors);
 export const hoverForeground = colorPicker(hoverForegroundColors);
+export const linkColor = colorPicker(linkColors);
 

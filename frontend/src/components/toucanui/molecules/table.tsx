@@ -43,6 +43,11 @@ const TableColContainer = styled.div<{ size?: number, cols: number, header?: boo
       
       border-top: 1px solid #ddd;
     `)};
+  
+  > a, > button {
+    display: block;
+    width: 100%;
+  }
 `;
 
 interface TableColProps {

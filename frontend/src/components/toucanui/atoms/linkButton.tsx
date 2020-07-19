@@ -7,6 +7,12 @@ const LinkButton = styled.button`
   padding: 0;
   margin: 0;
   cursor: pointer;
+  
+  text-align: left;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export default LinkButton;

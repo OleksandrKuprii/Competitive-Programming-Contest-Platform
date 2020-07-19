@@ -6,7 +6,7 @@ import {normalShadow} from "~/mixins/shadow";
 const Paper = styled(Box)`
   ${normalShadow};
   
-  border-top: 35px solid #ddd;
+  border-top: 35px solid rgba(0, 0, 0, 0.05);
 `;
 
 Paper.defaultProps = {
