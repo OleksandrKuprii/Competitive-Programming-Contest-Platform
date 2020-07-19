@@ -24,7 +24,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.tsx', '.ts', '.js'],
     plugins: [
       new TsconfigPathsPlugin({}),
     ]
@@ -45,7 +45,7 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, '.build', 'dev'),
   },
-   devServer: {
+  devServer: {
     contentBase: path.join(__dirname, '.build', 'dev'),
     compress: true,
     port: 3000

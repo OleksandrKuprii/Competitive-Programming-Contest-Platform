@@ -9,7 +9,7 @@ function useHasUserPermissions() {
   const isAuthenticated = useStoreState(state => state.auth0.isAuthenticated);
   const registered = useStoreState(state => state.user.myProfileMeta?.registered);
 
-  return !(!isAuthenticated || !registered);
+  return isAuthenticated && registered;
 }
 
 export default useHasUserPermissions;

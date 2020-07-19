@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Result from '@/atoms/result';
-import Link from '@/toucanui/atoms/link';
 import StyledTable from '@/molecules/table';
 import { Submission } from '~/typings/entities/submission';
 import PrettyDate from "@/toucanui/atoms/prettyDate";
+import {Link} from "react-router-dom";
 
 const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
   const { t } = useTranslation();
@@ -26,10 +26,10 @@ const SubmissionList = ({ submissions }: { submissions: Submission[] }) => {
           ({ id, taskId, taskName, language, points, status, submitted }) => (
             <tr key={id}>
               <td>
-                <Link href={`#/submission/view/${id}`}>{id}</Link>
+                <Link to={`/submission/view/${id}`}>{id}</Link>
               </td>
               <td>
-                <Link href={`#/task/view/${taskId}`}>{taskName}</Link>
+                <Link to={`/task/view/${taskId}`}>{taskName}</Link>
               </td>
               <td>{language}</td>
               <td>

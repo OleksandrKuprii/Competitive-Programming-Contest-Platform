@@ -1,8 +1,9 @@
 import {MyProfileEditModel} from '~/typings/models';
-import {action, actionOn, computed, thunk} from "easy-peasy";
+import {action, actionOn, computed, thunk, thunkOn} from "easy-peasy";
 import baseURL from "~/models/apiBaseURL";
 import auth0Token from "~/models/auth0Token";
 import User from "~/typings/entities/user";
+import loadingModel from "~/models/loadingModel";
 
 function prependZero(num: number) {
   return ('0' + num).slice(-2);
@@ -14,6 +15,7 @@ function isoFormat(year: number, month: number, day: number) {
 }
 
 const myProfileEditModel: MyProfileEditModel = {
+  ...loadingModel(),
   ...auth0Token(),
 
   onEmailChange: action((state, value) => {
@@ -57,6 +59,8 @@ const myProfileEditModel: MyProfileEditModel = {
   }),
 
   onSave: thunk(async (actions, _, {getState}) => {
+    actions.loading();
+
     try {
       const token = await actions.getToken();
 
@@ -67,7 +71,7 @@ const myProfileEditModel: MyProfileEditModel = {
         bio,
       } = getState();
 
-      const response = await fetch(`${baseURL}/profile/my`, {
+      await fetch(`${baseURL}/profile/my`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -88,6 +92,15 @@ const myProfileEditModel: MyProfileEditModel = {
     }
   }),
 
+  onSaved: thunkOn(
+    (actions) => actions.onSave.successType,
+    async (actions, target, { getStoreActions }) => {
+      actions.loaded();
+
+      await getStoreActions().user.fetchMyProfile();
+    }
+  ),
+
   onFetchedMyProfile: actionOn(
     (actions, storeActions) => storeActions.user.fetchMyProfile.successType,
     (state, target) => {
@@ -98,8 +111,6 @@ const myProfileEditModel: MyProfileEditModel = {
       }
 
       const [user, _]: [User, any] = result;
-
-
 
       state.username = user.username;
       state.fullname = user.fullname;
@@ -116,6 +127,15 @@ const myProfileEditModel: MyProfileEditModel = {
       state.bio = user.bio;
     }
   ),
+
+  edited: computed([
+    ({ username, fullname, email, school, country, birthYear, birthMonth, birthDay, bio, city }) =>
+      ({ username, fullname, email, school, country, birthYear, birthMonth, birthDay, bio, city }),
+    (state, storeState) => storeState.user.myProfile
+  ], (editData, profileData) => (
+    !profileData ||
+    Object.entries(editData).some(([key, value]) => value !== (profileData as any)[key])
+  ))
 };
 
 export default myProfileEditModel;

@@ -73,7 +73,7 @@ export interface ProfileModel {
   bio?: string;
 }
 
-export interface MyProfileEditModel extends ProfileModel, Auth0Token {
+export interface MyProfileEditModel extends ProfileModel, Auth0Token, LoadingModel {
   onEmailChange: Action<MyProfileEditModel, string>;
   onUsernameChange: Action<MyProfileEditModel, string>;
   onFullnameChange: Action<MyProfileEditModel, string>;
@@ -89,8 +89,11 @@ export interface MyProfileEditModel extends ProfileModel, Auth0Token {
   onBioChange: Action<MyProfileEditModel, string>;
 
   onSave: Thunk<MyProfileEditModel>;
+  onSaved: ThunkOn<MyProfileEditModel, undefined, StoreModel>;
 
-  onFetchedMyProfile: ActionOn<MyProfileEditModel, StoreModel>
+  onFetchedMyProfile: ActionOn<MyProfileEditModel, StoreModel>;
+
+  edited: Computed<MyProfileEditModel, boolean, StoreModel>;
 }
 
 export interface NotificationModel {

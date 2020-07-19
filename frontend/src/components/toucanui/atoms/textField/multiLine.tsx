@@ -35,14 +35,14 @@ const Editable = styled.div`
   min-height: 55px;
   
   &:focus, &:not(:empty) {
-    min-height: 200px;
-  
     background: rgba(0, 0, 0, 0.03);
     border-bottom-width: 2px;
   }
   
   &:focus {
     border-bottom-color: ${allColors.primary};
+    
+    min-height: 200px;
   }
 `;
 

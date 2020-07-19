@@ -9,6 +9,11 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Roboto', sans-serif !important;
   }
   
+  code, code * {
+    font-family: 'Source Code Pro', monospace !important;
+    font-size: 16px;
+  }
+  
   html {
     scroll-behavior: smooth;
   }
@@ -25,6 +30,11 @@ const GlobalStyle = createGlobalStyle`
     color: ${foregroundColors.light};
 
     letter-spacing: 0.5px;
+  }
+  
+  a, a:hover {
+    color: inherit;
+    text-decoration: none;
   }
   
   ::-webkit-scrollbar-track

@@ -25,7 +25,7 @@ const appear = keyframes`
   }
 `;
 
-const ModalContainer = styled(Box)`
+const ModalContainer = styled(Box)<{ wide?: boolean }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -34,15 +34,17 @@ const ModalContainer = styled(Box)`
   
   z-index: 9999;
   
-  width: 600px;
+  width: ${props => props.wide ? 40 : 30}vw;
+  
+  max-height: 100vh;
   
   border-radius: 5px;
   
-  overflow: hidden;
+  overflow: visible;
   
   ${majorFocusShadow};
-  
   animation: 0.3s ease-out ${appear};
+  transition: 0.3s flex ease-in-out;
 `;
 
 const Dimmer = styled.div`
@@ -61,6 +63,7 @@ interface ModalAction {
   onClick: () => any,
   label: string,
   variant: string,
+  disabled?: boolean,
 }
 
 
@@ -71,9 +74,11 @@ interface ModalProps {
   onClose: () => any;
 
   additionalActions?: ModalAction[];
+
+  wide?: boolean;
 }
 
-const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions}) => {
+const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions, wide}) => {
   const escPressed = useKeyPressed('Escape');
 
   if (escPressed) {
@@ -82,8 +87,9 @@ const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions}) =>
 
   return (
     <>
-      <Dimmer onClick={onClose} />
-      <ModalContainer>
+      <Dimmer onClick={onClose}/>
+
+      <ModalContainer wide={wide}>
         <Grid>
           <Box style={{padding: `${Padding.Normal}px ${Padding.Medium}px`}}>
             <Row alignItems={AlignItems.Center}>
@@ -105,11 +111,11 @@ const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions}) =>
 
           <Box padding={Padding.Medium}>
             <Row>
-              {additionalActions && additionalActions.map(({onClick, label, variant}) => (
-                <>
-                  <Button variant={variant} onClick={onClick} key={label}>{label}</Button>
+              {additionalActions && additionalActions.map(({onClick, label, variant, disabled }) => (
+                <React.Fragment key={label}>
+                  <Button variant={variant} onClick={onClick} disabled={disabled}>{label}</Button>
                   <Spacer left={Padding.Normal}/>
-                </>
+                </React.Fragment>
               ))}
 
               {additionalActions && <div style={{margin: 'auto'}}/>}

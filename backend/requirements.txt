@@ -1,7 +1,7 @@
 --index-url https://pypi.python.org/simple
-aioboto3==8.0.2
-asyncpg==0.20.1
-docker==4.2.0
-aiohttp[speedups]==3.6.2
+aioboto3
+asyncpg
+docker
+aiohttp[speedups]
 aiohttp_cors
 python-jose

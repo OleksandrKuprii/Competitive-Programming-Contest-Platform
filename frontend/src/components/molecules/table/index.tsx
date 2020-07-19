@@ -1,8 +1,11 @@
 import styled from 'styled-components';
-import { background, foreground } from '~/mixins/color';
-import { normalShadow } from '~/mixins/shadow';
+import {
+  background,
+  foreground,
+} from '~/mixins/color';
+import {normalShadow} from "~/mixins/shadow";
 
-const Table = styled.table<{ variant?: string }>`
+const Table = styled.table<{ variant?: string, shrink?: boolean }>`
   ${normalShadow};
 
   width: 100%;
@@ -11,14 +14,23 @@ const Table = styled.table<{ variant?: string }>`
 
   background: ${background};
   color: ${foreground};
-
+  
   th {
-    text-align: left;
+    font-weight: bolder;
+    padding: ${props => props.shrink ? '10px 15px' : '18px 15px'};
+    
+    background: rgba(0, 0, 0, 0.05);
   }
 
   td,
   th {
-    padding: 10px;
+    text-align: left;
+  }
+  
+  td {
+    background: rgba(255, 255, 255, 0.1);
+    padding: ${props => props.shrink ? '10px 15px' : '15px'};
+    border-top: 1px solid #ddd;
   }
 `;
 

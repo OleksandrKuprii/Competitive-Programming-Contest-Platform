@@ -1,5 +1,5 @@
 import React from 'react';
-import {HashRouter, Redirect, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, HashRouter, Redirect, Route, Switch} from 'react-router-dom';
 import WithNotifications from '@/templates/withNotifications';
 import SubmissionFromURL from '@/providers/submissionFromURL';
 import Auth0Provider from '@/providers/auth0Provider';

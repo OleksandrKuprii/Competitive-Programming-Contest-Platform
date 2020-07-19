@@ -2,13 +2,23 @@ import * as React from 'react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loading from "@/toucanui/atoms/loading";
+import {allColors, background, backgroundColors, foreground, foregroundColors} from "~/mixins/color";
+import styled from "styled-components";
+
+const Span = styled.span<{ variant?: string, mark?: boolean }>`
+  background: ${props => props.mark ? backgroundColors.light : 'none'};
+  color: ${background};
+  border-radius: 5px;
+  padding: ${props => props.mark ? '5px 10px' : '0'};
+`;
 
 interface ResultProps {
   points: number;
   status: string[];
+  mark?: boolean;
 }
 
-const Result: FC<ResultProps> = ({ points, status }) => {
+const Result: FC<ResultProps> = ({ points, status, mark }) => {
   const { t } = useTranslation();
 
   if (status.length === 0) {
@@ -36,13 +46,13 @@ const Result: FC<ResultProps> = ({ points, status }) => {
     }
 
     return (
-      <p>
+      <Span variant={color} mark={mark}>
         {points} {status.join(', ')}
-      </p>
+      </Span>
     );
   }
 
-  return <>{status.join(', ')}</>;
+  return <span>{status.join(', ')}</span>;
 };
 
 export default React.memo(Result);

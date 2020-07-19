@@ -108,11 +108,8 @@ async def update_profile(user_id: str, info: dict, conn: Connection) -> None:
         if k not in columns:
             continue
 
-        # Updating date without quotes
-        if k == 'birthday':
-            sql += f"{k} = {v}, "
-        else:
-            sql += f"{k} = '{v}', "
+        # Date should also have quotes
+        sql += f"{k} = '{v}', "
 
     # Trim two chars in the end of string, they are ", "
     sql = sql[:-2]

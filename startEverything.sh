@@ -7,7 +7,8 @@ docker-compose up -d
 cd devenv/scripts
 . ./load_devenv
 
-sleep 5
+# Ugh... 5 seconds sometimes don't work
+sleep 10
 
 ./setup.sh
 

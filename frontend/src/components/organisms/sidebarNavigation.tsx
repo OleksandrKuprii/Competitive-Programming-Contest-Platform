@@ -1,46 +1,57 @@
 import * as React from 'react';
 import {FC, useCallback} from "react";
 import {AlignItems, JustifyContent, Row} from "@/toucanui/atoms/grid";
-import NavButton from "@/toucanui/atoms/navButton";
-import {FiList, FiSend} from "react-icons/all";
-import { useHistory } from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {Title} from "@/toucanui/atoms/typography";
 import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
 import brandIcon from '~/assets/brandIcon.png';
+import {FiSend, MdList, MdSend} from "react-icons/all";
+import styled from "styled-components";
 
-const SidebarNavigation: FC = () => {
-  const history = useHistory();
+const SidebarLinks = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 30px;
+  color: #ccc;
+  
+  a {
+    transform: translateY(6%);
+    transition: 0.3s all ease-in-out;
+    
+    &:hover {
+      color: #fff;
+      transform: translateY(5%) scale(1.1);
+    }
+  }
+`;
 
-  const { pathname } = history.location;
+const SidebarNavigation: FC = () =>
+  (
+    <Row justifyContent={JustifyContent.FlexEnd} style={{height: '100%', overflow: 'hidden'}}
+         alignItems={AlignItems.Center}>
+      <Spacer left={Padding.Normal}/>
+      <img src={brandIcon} height="80%"/>
 
-  const goTasks = useCallback(() => {
-    history.push('/tasks');
-  }, []);
-
-  const goSubmissions = useCallback(() => {
-    history.push('/submissions');
-  }, []);
-
-  return (
-    <Row justifyContent={JustifyContent.FlexEnd} style={{ height: '100%', overflow: 'hidden' }} alignItems={AlignItems.Center}>
-      <Spacer left={Padding.Normal} />
-      <img src={brandIcon} height="80%" />
-
-      <Spacer left={Padding.Normal} />
+      <Spacer left={Padding.Normal}/>
       <Title>Toucan</Title>
 
-      <div style={{marginLeft: 'auto'}} />
+      <div style={{marginLeft: 'auto'}}/>
 
-      <NavButton variant="darkDarken" onClick={goSubmissions}>
-        <FiSend/>
-      </NavButton>
+      <SidebarLinks>
+        <Link to="/submissions">
+          <MdSend/>
+        </Link>
 
-      <NavButton variant="darkDarken" onClick={goTasks}>
-        <FiList />
-      </NavButton>
+        <Spacer left={Padding.Medium}/>
+
+        <Link to="/tasks">
+          <MdList/>
+        </Link>
+
+        <Spacer left={Padding.Medium}/>
+      </SidebarLinks>
     </Row>
-  )
-};
+  );
 
 export default SidebarNavigation;

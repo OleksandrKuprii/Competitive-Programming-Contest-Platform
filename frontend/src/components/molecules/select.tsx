@@ -8,7 +8,7 @@ const animatedComponents = makeAnimated();
 const customStyles = {
   menu: (provided: any) => ({
     ...provided,
-    zIndex: 999,
+    zIndex: 999999
   }),
   control: (provided: any) => ({
     ...provided,

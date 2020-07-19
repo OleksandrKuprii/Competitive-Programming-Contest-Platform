@@ -146,8 +146,8 @@ def requires_auth(f):
                                      status=401)
 
             # Check if user is registered in the database
-            if not check_registration(kwargs['user_info']['sub']):
-                return json_response(status=401)
+            # if not check_registration(kwargs['user_info']['sub']):
+            #     return json_response(status=401)
 
             return f(*args, **kwargs)
         return json_response({"code": "invalid_header",
@@ -496,7 +496,7 @@ async def update_profile(request, **kwargs):
         if await user.check_registration(user_id, conn):
             await user.update_profile(user_id, body, conn)
         else:
-            if {'email', 'nickname', 'name'} not in set(body):
+            if not {'email', 'nickname', 'name'}.issubset(body.keys()):
                 return Response(status=400)
             await user.register_user(user_id, body, conn)
 

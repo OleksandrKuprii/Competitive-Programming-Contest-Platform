@@ -5,19 +5,23 @@ import TaskHeading from "@/organisms/contextualHeadings/task";
 import {AlignItems, JustifyContent, Row} from "@/toucanui/atoms/grid";
 import { Switch, Route } from 'react-router-dom';
 import EditProfileHeading from "@/organisms/contextualHeadings/editProfile";
+import SubmissionHeading from "@/organisms/contextualHeadings/submission";
 
 
 const ContextualPageHeading = () =>
   (
     <Switch>
       <Route path="/tasks" exact>
-        <TasksHeading/>
+        <TasksHeading />
       </Route>
       <Route path="/task/view/:id">
-        <TaskHeading/>
+        <TaskHeading />
       </Route>
       <Route path="/edit/profile">
         <EditProfileHeading />
+      </Route>
+      <Route path="/submission/view/:id">
+        <SubmissionHeading />
       </Route>
     </Switch>
   );
