@@ -2,7 +2,7 @@ import * as React from 'react';
 import {FC, memo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Col, Grid, Row, JustifyContent} from '@/toucanui/atoms/grid';
-import Table from '@/molecules/table';
+import { Table, TableCol } from '@/toucanui/molecules/table';
 import CodeViewer from '@/molecules/codeViewer';
 import Result from '@/atoms/result';
 import {Text, Title, TextAlign, FontWeight} from '@/toucanui/atoms/typography';
@@ -26,37 +26,31 @@ const SubmissionPage: FC<SubmissionPageProps> = ({submission}) => {
       <Grid>
         {submission.tests && <>
           <Row>
-            <Table shrink>
-              <thead>
-              <tr>
-                <th>#</th>
-                <th>{t('headers.result')}</th>
-                <th>{t('headers.cpuTime')}</th>
-                <th>{t('headers.realtime')}</th>
-              </tr>
-              </thead>
+            <Table cols={4}>
+              <TableCol header>#</TableCol>
+              <TableCol header>{t('headers.result')}</TableCol>
+              <TableCol header>{t('headers.cpuTime')}</TableCol>
+              <TableCol header>{t('headers.realtime')}</TableCol>
 
-              <tbody>
               {submission.tests.map((test, i) => (
                 // TODO: fix this
                 // eslint-disable-next-line react/no-array-index-key
-                <tr key={i}>
-                  <td>{i + 1}</td>
-                  <td>
+                <React.Fragment key={i}>
+                  <TableCol>{i + 1}</TableCol>
+                  <TableCol>
                     <Result
                       points={test.points}
                       status={[test.status]}
                     />
-                  </td>
-                  <td>
+                  </TableCol>
+                  <TableCol>
                     {test.cpuTime || '-'}
-                  </td>
-                  <td>
+                  </TableCol>
+                  <TableCol>
                     {test.realTime || '-'}
-                  </td>
-                </tr>
+                  </TableCol>
+                </React.Fragment>
               ))}
-              </tbody>
             </Table>
           </Row>
 

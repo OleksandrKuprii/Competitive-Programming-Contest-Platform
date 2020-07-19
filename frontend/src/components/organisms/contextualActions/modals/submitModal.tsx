@@ -42,10 +42,11 @@ const languageOptions = languages.map(language => ({label: language, value: lang
 interface SubmitModalProps {
   onClose: () => any;
   taskId: string;
+  show: boolean;
 }
 
 
-const SubmitModal: FC<SubmitModalProps> = ({onClose, taskId}) => {
+const SubmitModal: FC<SubmitModalProps> = ({onClose, taskId, show }) => {
   const [uploaded, setUploaded] = useState(false);
 
   const code = useStoreState(state => state.solutionSubmission.code);
@@ -66,6 +67,7 @@ const SubmitModal: FC<SubmitModalProps> = ({onClose, taskId}) => {
 
   return (
     <Modal
+      show={show}
       title="Submit"
       onClose={onClose}
       wide

@@ -1,5 +1,6 @@
-import { action } from 'easy-peasy';
+import {action, computed} from 'easy-peasy';
 import {FilterAndSortModel, Result, SortBy} from '~/typings/models';
+import shallowEqual from "shallowequal";
 
 const defaultFilters = {
   difficultyRange: [1, 10],
@@ -36,10 +37,16 @@ const filterAndSortModel: FilterAndSortModel = {
     state.results = [...defaultFilters.results];
   }),
 
-  selectedSortBy: action((state, { sortBy, order }) => {
+  selectedSortBy: action((state, {sortBy, order}) => {
     state.sortBy = sortBy;
     state.order = order;
   }),
+
+  filtersApplied: computed((state) => (
+    !shallowEqual(state.difficultyRange, defaultFilters.difficultyRange) ||
+    !shallowEqual(state.categories, defaultFilters.categories) ||
+    !shallowEqual(state.results, defaultFilters.results)
+  ))
 };
 
 export default filterAndSortModel;

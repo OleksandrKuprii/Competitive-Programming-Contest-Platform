@@ -9,16 +9,17 @@ import {allColors} from "~/mixins/color";
 import Checkbox from "@/toucanui/atoms/checkbox";
 import {Result} from "~/typings/models";
 import Modal from "@/molecules/modal";
-import Category from "~/typings/entities/category";
 import {useStoreActions, useStoreState} from "~/hooks/store";
 
 
 interface FiltersModalProps {
   onClose: () => any;
+  show: boolean;
 }
 
 
-const FiltersModal: FC<FiltersModalProps> = ({ onClose }) => {
+const FiltersModal: FC<FiltersModalProps> = ({onClose, show}) => {
+  const filtersApplied = useStoreState(state => state.filterAndSort.filtersApplied);
   const categories = useStoreState(state => state.task.categories)
   const selectedCategories = useStoreState(state => state.filterAndSort.categories)
   const difficultyRange = useStoreState(state => state.filterAndSort.difficultyRange)
@@ -30,10 +31,11 @@ const FiltersModal: FC<FiltersModalProps> = ({ onClose }) => {
   const toggleResult = useStoreActions(actions => actions.filterAndSort.toggledResult);
 
   return (
-    <Modal title="Filters" onClose={onClose} additionalActions={[{
+    <Modal show={show} title="Filters" onClose={onClose} additionalActions={[{
       label: 'Clear all',
       onClick: () => onClearAll(),
       variant: 'light',
+      disabled: !filtersApplied
     }]}>
       <Select
         isMulti

@@ -38,7 +38,7 @@ const TaskActions = () => {
         <Button onClick={onFontDeltaDown as any}>A-</Button>
       </ButtonGroup>
 
-      {showModal && <SubmitModal onClose={closeModal} taskId={id} />}
+      <SubmitModal show={showModal} onClose={closeModal} taskId={id} />
     </>
   );
 };

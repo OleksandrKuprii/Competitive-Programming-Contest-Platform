@@ -49,6 +49,8 @@ export interface FilterAndSortModel {
   clearedFilters: Action<FilterAndSortModel>;
 
   selectedSortBy: Action<FilterAndSortModel, { sortBy: SortBy; order: number }>;
+
+  filtersApplied: Computed<FilterAndSortModel, boolean, StoreModel>;
 }
 
 export interface LoadingModel {

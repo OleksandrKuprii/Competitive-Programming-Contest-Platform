@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {FC} from 'react';
 import {useTranslation} from 'react-i18next';
-import Table from '@/molecules/table';
 import Difficulty from '@/atoms/difficulty';
 import SmallRatingChart from '@/molecules/smallRatingChart';
 import WithLoading from '@/templates/withLoading';
@@ -15,6 +14,9 @@ import {useStoreActions, useStoreState} from '~/hooks/store';
 import {Result as ResultEnum, SortBy} from '~/typings/models';
 import {Link} from "react-router-dom";
 import LinkButton from "@/toucanui/atoms/linkButton";
+import { Table, TableCol } from '@/toucanui/molecules/table';
+import Spacer from "@/toucanui/atoms/spacer";
+import {Padding} from "~/mixins/padding";
 
 const TasksPage: FC = () => {
   const {t} = useTranslation();
@@ -43,30 +45,28 @@ const TasksPage: FC = () => {
   return (
     <Page>
       <WithLoading loading={tasksLoading} loadingNode={<LoadingPage/>}>
-        <Table>
-          <thead>
-          <tr>
-            <th>{t('headers.name')}</th>
-            <th>{t('headers.category')}</th>
-            <th style={{display: 'flex', verticalAlign: 'center'}}>
-              {t('headers.difficulty')}
-              <SortControl
-                onChange={(o) => {
-                  if (o === 0) {
-                    selectedSortBy({sortBy: SortBy.publishedAt, order: -1});
-                    return;
-                  }
+        <Table cols={5}>
+          <TableCol header>{t('headers.name')}</TableCol>
+          <TableCol header>{t('headers.category')}</TableCol>
+          <TableCol header>
+            {t('headers.difficulty')}
 
-                  selectedSortBy({sortBy: SortBy.difficulty, order: o});
-                }}
-                active={sortBy === 'difficulty' ? order : 0}
-              />{' '}
-            </th>
-            <th>{t('headers.rating')}</th>
-            <th>{t('headers.result')}</th>
-          </tr>
-          </thead>
-          <tbody>
+            <Spacer left={Padding.Normal} />
+
+            <SortControl
+              onChange={(o) => {
+                if (o === 0) {
+                  selectedSortBy({sortBy: SortBy.publishedAt, order: -1});
+                  return;
+                }
+
+                selectedSortBy({sortBy: SortBy.difficulty, order: o});
+              }}
+              active={sortBy === 'difficulty' ? order : 0}
+            />{' '}
+          </TableCol>
+          <TableCol header>{t('headers.rating')}</TableCol>
+          <TableCol header>{t('headers.result')}</TableCol>
           <DataFilter
             tests={[
               ({difficulty}) =>
@@ -119,11 +119,11 @@ const TasksPage: FC = () => {
                          status,
                          submissionId,
                        }) => (
-                        <tr key={id}>
-                          <td style={{maxWidth: 200, overflow: 'hidden'}}>
+                        <React.Fragment key={id}>
+                          <TableCol>
                             <Link to={`/task/view/${id}`}>{name}</Link>
-                          </td>
-                          <td>
+                          </TableCol>
+                          <TableCol>
                             {(categoryId && categoryName) && <LinkButton
                               onClick={() => {
                                 selectedCategoriesAction([
@@ -133,14 +133,14 @@ const TasksPage: FC = () => {
                             >
                               {categoryName}
                             </LinkButton>}
-                          </td>
-                          <td>
+                          </TableCol>
+                          <TableCol>
                             {difficulty && <Difficulty difficulty={difficulty}/>}
-                          </td>
-                          <td>
+                          </TableCol>
+                          <TableCol>
                             {rating && <SmallRatingChart rating={rating}/>}
-                          </td>
-                          <td>
+                          </TableCol>
+                          <TableCol>
                             {(submissionId && status && points) &&
                             <Link
                               to={`/submission/view/${submissionId}`}
@@ -151,8 +151,8 @@ const TasksPage: FC = () => {
                               />
                             </Link>
                             }
-                          </td>
-                        </tr>
+                          </TableCol>
+                        </React.Fragment>
                       ),
                     )
                   }
@@ -160,7 +160,6 @@ const TasksPage: FC = () => {
               </>
             )}
           </DataFilter>
-          </tbody>
         </Table>
       </WithLoading>
     </Page>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {FC} from 'react';
 import {useTranslation} from 'react-i18next';
-import Table from '@/molecules/table';
+import { Table, TableCol } from '@/toucanui/molecules/table';
 import HtmlTextSection from '@/molecules/htmlTextSection';
 import TaskFromURL from '@/providers/taskFromURL';
 import TaskDescriptionSections from '@/providers/taskDescriptionSections';
@@ -12,10 +12,10 @@ import {Padding} from "~/mixins/padding";
 import Paper from '@/toucanui/atoms/paper';
 import {useStoreState} from "~/hooks/store";
 
-const Td = styled.td`
-  vertical-align: top;
-  white-space: pre-line;
-`;
+// const Td = styled.td`
+//   vertical-align: top;
+//   white-space: pre-line;
+// `;
 
 const TaskPage: FC = () => {
   const {t} = useTranslation();
@@ -48,21 +48,15 @@ const TaskPage: FC = () => {
               <>
                 <Spacer top={Padding.Large}/>
 
-                <Table>
-                  <thead>
-                  <tr>
-                    <th>{t('headers.input')}</th>
-                    <th>{t('headers.output')}</th>
-                  </tr>
-                  </thead>
-                  <tbody>
+                <Table cols={2}>
+                  <TableCol header>{t('headers.input')}</TableCol>
+                  <TableCol header>{t('headers.output')}</TableCol>
                   {task.examples.map((example) => (
-                    <tr key={example.input + example.output}>
-                      <Td>{example.input}</Td>
-                      <Td>{example.output}</Td>
-                    </tr>
+                    <React.Fragment key={example.input + example.output}>
+                      <TableCol>{example.input}</TableCol>
+                      <TableCol>{example.output}</TableCol>
+                    </React.Fragment>
                   ))}
-                  </tbody>
                 </Table>
               </>
               }

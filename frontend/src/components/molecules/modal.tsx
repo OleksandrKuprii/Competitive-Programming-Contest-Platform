@@ -1,21 +1,19 @@
 import * as React from 'react';
-import {FC, ReactNode} from 'react';
+import {FC, ReactNode, useCallback, useState} from 'react';
 import styled, {css, keyframes} from "styled-components";
 import Box from "@/toucanui/atoms/box";
-import Fade from "@/toucanui/animations/fade";
-import {TextAlign, Title} from "@/toucanui/atoms/typography";
+import {Title} from "@/toucanui/atoms/typography";
 import {Padding} from "~/mixins/padding";
 import {majorFocusShadow} from "~/mixins/shadow";
 import Spacer from "@/toucanui/atoms/spacer";
 import HorizontalRule from "@/toucanui/atoms/horizontalRule";
 import Button from "@/toucanui/atoms/button";
-import {MdClose} from "react-icons/all";
 import {AlignItems, Grid, Row} from "@/toucanui/atoms/grid";
 import useKeyPressed from "~/hooks/useKeyPressed";
 
 const appear = keyframes`
   from {
-    transform: translateX(-50%) translateY(-100%) scale(0.9);
+    transform: translateX(-50%) translateY(-100%) scale(0.6);
     opacity: 0;
   }
   
@@ -25,7 +23,20 @@ const appear = keyframes`
   }
 `;
 
-const ModalContainer = styled(Box)<{ wide?: boolean }>`
+const disappear = keyframes`
+  from {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0) scale(0.6);
+  }
+`;
+
+const ModalContainer = styled(Box)<{ wide?: boolean, show: boolean, hadClosed: boolean }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -43,8 +54,14 @@ const ModalContainer = styled(Box)<{ wide?: boolean }>`
   overflow: visible;
   
   ${majorFocusShadow};
-  animation: 0.3s ease-out ${appear};
-  transition: 0.3s flex ease-in-out;
+  
+  ${props => props.show ? css`
+    animation: 0.2s linear ${appear};
+  ` : css`
+    ${props.hadClosed && css`animation: 0.2s linear ${disappear}`};
+    visibility: hidden;
+    opacity: 0;
+  `};
 `;
 
 const Dimmer = styled.div`
@@ -72,24 +89,35 @@ interface ModalProps {
   title: string;
 
   onClose: () => any;
+  show: boolean;
 
   additionalActions?: ModalAction[];
 
   wide?: boolean;
 }
 
-const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions, wide}) => {
+const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions, wide, show}) => {
+  const [hadClosed, setHadClosed] = useState(false);
+
+  const closeCallback = useCallback(() => {
+    if (!hadClosed) {
+      setHadClosed(true);
+    }
+
+    onClose();
+  }, [hadClosed]);
+
   const escPressed = useKeyPressed('Escape');
 
   if (escPressed) {
-    onClose();
+    closeCallback();
   }
 
   return (
     <>
-      <Dimmer onClick={onClose}/>
+      {show && <Dimmer onClick={closeCallback}/>}
 
-      <ModalContainer wide={wide}>
+      <ModalContainer wide={wide} show={show} hadClosed={hadClosed}>
         <Grid>
           <Box style={{padding: `${Padding.Normal}px ${Padding.Medium}px`}}>
             <Row alignItems={AlignItems.Center}>
@@ -111,7 +139,7 @@ const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions, wid
 
           <Box padding={Padding.Medium}>
             <Row>
-              {additionalActions && additionalActions.map(({onClick, label, variant, disabled }) => (
+              {additionalActions && additionalActions.map(({onClick, label, variant, disabled}) => (
                 <React.Fragment key={label}>
                   <Button variant={variant} onClick={onClick} disabled={disabled}>{label}</Button>
                   <Spacer left={Padding.Normal}/>
@@ -120,7 +148,7 @@ const Modal: FC<ModalProps> = ({children, title, onClose, additionalActions, wid
 
               {additionalActions && <div style={{margin: 'auto'}}/>}
 
-              <Button variant="primary" onClick={onClose}>Close</Button>
+              <Button variant="primary" onClick={closeCallback}>Close</Button>
             </Row>
           </Box>
         </Grid>
