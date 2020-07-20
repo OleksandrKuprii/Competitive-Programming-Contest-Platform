@@ -3,13 +3,13 @@ set -e
 
 aws sqs create-queue\
     --queue-name submissions\
-    --endpoint-url="$SQS_ENDPOINT"
+    --endpoint-url="$LOCALSTACK_EDGE"
 
 aws s3 mb s3://submissions\
-    --endpoint-url="$S3_ENDPOINT"
+    --endpoint-url="$LOCALSTACK_EDGE"
 
 aws s3 mb s3://tests\
-    --endpoint-url="$S3_ENDPOINT"
+    --endpoint-url="$LOCALSTACK_EDGE"
 
 aws s3 mb s3://tasks\
-    --endpoint-url="$S3_ENDPOINT"
+    --endpoint-url="$LOCALSTACK_EDGE"
