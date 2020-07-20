@@ -96,6 +96,7 @@ def requires_scope(required_scope, request):
 
 def requires_auth(f):
     """Determine if the Access Token is valid."""
+    url_ignore_registration = {'http://localhost:4000/profile/my'}
 
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -146,8 +147,9 @@ def requires_auth(f):
                                      status=401)
 
             # Check if user is registered in the database
-            # if not check_registration(kwargs['user_info']['sub']):
-            #     return json_response(status=401)
+            if str(request.url) not in url_ignore_registration:
+                if not check_registration(kwargs['user_info']['sub']):
+                    return json_response(status=401)
 
             return f(*args, **kwargs)
         return json_response({"code": "invalid_header",
@@ -501,6 +503,7 @@ async def update_profile(request, **kwargs):
             await user.register_user(user_id, body, conn)
 
             # Update the list of registered users after adding new one to the database
+            global registered_users
             registered_users.add(user_id)
 
     return Response(status=200)
