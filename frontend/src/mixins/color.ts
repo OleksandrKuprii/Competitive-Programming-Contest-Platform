@@ -14,6 +14,7 @@ export const allColors: ColorTable = (() => {
     primary:   '#2f6690',
     danger:    '#d62828',
     warning:   '#ee964b',
+    success:   '#2FBF71',
     info:      '#cce0ff',
   });
 

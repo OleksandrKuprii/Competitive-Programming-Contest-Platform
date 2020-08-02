@@ -5,17 +5,11 @@ import { Table, TableCol } from '@/toucanui/molecules/table';
 import HtmlTextSection from '@/molecules/htmlTextSection';
 import TaskFromURL from '@/providers/taskFromURL';
 import TaskDescriptionSections from '@/providers/taskDescriptionSections';
-import styled from 'styled-components';
 import Page from '@/toucanui/templates/page';
 import Spacer from "@/toucanui/atoms/spacer";
 import {Padding} from "~/mixins/padding";
 import Paper from '@/toucanui/atoms/paper';
 import {useStoreState} from "~/hooks/store";
-
-// const Td = styled.td`
-//   vertical-align: top;
-//   white-space: pre-line;
-// `;
 
 const TaskPage: FC = () => {
   const {t} = useTranslation();

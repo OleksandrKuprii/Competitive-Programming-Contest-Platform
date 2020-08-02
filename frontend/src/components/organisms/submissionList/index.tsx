@@ -28,7 +28,7 @@ const SubmissionList = ({submissions}: { submissions: Submission[] }) => {
             </TableCol>
             <TableCol>{language}</TableCol>
             <TableCol>
-              {(status && points) && <Result status={status} points={points}/>}
+              {(status && points !== undefined) && <Result status={status} points={points}/>}
             </TableCol>
             <TableCol>
               <PrettyDate timestamp={submitted}/>

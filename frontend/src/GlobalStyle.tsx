@@ -52,6 +52,7 @@ const GlobalStyle = createGlobalStyle`
   ::-webkit-scrollbar, ::-webkit-scrollbar-corner
   {
       width: 12px;
+      height: 12px;
       background-color: transparent;
   }
 

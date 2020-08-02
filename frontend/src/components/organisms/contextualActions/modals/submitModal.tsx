@@ -75,6 +75,7 @@ const SubmitModal: FC<SubmitModalProps> = ({onClose, taskId, show }) => {
         [
           {
             onClick: () => {
+              onClose();
               submit(taskId);
             },
             label: 'Submit',

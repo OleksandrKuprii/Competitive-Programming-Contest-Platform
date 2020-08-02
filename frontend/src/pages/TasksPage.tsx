@@ -141,7 +141,7 @@ const TasksPage: FC = () => {
                             {rating && <SmallRatingChart rating={rating}/>}
                           </TableCol>
                           <TableCol>
-                            {(submissionId && status && points) &&
+                            {(submissionId && status && points !== undefined) &&
                             <Link
                               to={`/submission/view/${submissionId}`}
                             >

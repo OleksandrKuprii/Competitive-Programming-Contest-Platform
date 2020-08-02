@@ -33,23 +33,21 @@ const WithNotifications: FC<WithNotificationsProps> = ({ children }) => {
           position: 'fixed',
           bottom: 0,
           right: 0,
-          zIndex: 9999,
+          zIndex: 99,
           padding: 40,
           width: 320,
           height: 'auto',
           flexDirection: 'column-reverse',
         }}
       >
-        <TransitionGroup className="notifications">
-          {notifications.map((notification) => (
-            <Fade key={notification.id} in>
-              <NotificationToast
-                notification={notification}
-                onDismiss={onDismiss}
-              />
-            </Fade>
-          ))}
-        </TransitionGroup>
+        {notifications.map((notification) => (
+          <Fade key={notification.id} in>
+            <NotificationToast
+              notification={notification}
+              onDismiss={onDismiss}
+            />
+          </Fade>
+        ))}
       </Grid>
     </>
   );

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {FC, memo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Col, Grid, Row, JustifyContent} from '@/toucanui/atoms/grid';
-import { Table, TableCol } from '@/toucanui/molecules/table';
+import {Table, TableCol} from '@/toucanui/molecules/table';
 import CodeViewer from '@/molecules/codeViewer';
 import Result from '@/atoms/result';
 import {Text, Title, TextAlign, FontWeight} from '@/toucanui/atoms/typography';
@@ -44,10 +44,10 @@ const SubmissionPage: FC<SubmissionPageProps> = ({submission}) => {
                     />
                   </TableCol>
                   <TableCol>
-                    {test.cpuTime || '-'}
+                    {(test.cpuTime !== null && test.cpuTime !== undefined) ? `${test.cpuTime}ms` : '-'}
                   </TableCol>
                   <TableCol>
-                    {test.realTime || '-'}
+                    {(test.realTime !== null && test.realTime !== undefined) ? `${test.realTime}ms` : '-'}
                   </TableCol>
                 </React.Fragment>
               ))}
@@ -75,7 +75,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({submission}) => {
         <Spacer top={Padding.Medium}/>
 
         {(submission.language && submission.code) && (
-          <div style={{ height: 500 }}>
+          <div style={{height: 500}}>
             <CodeViewer language={submission.language}>
               {submission.code}
             </CodeViewer>
