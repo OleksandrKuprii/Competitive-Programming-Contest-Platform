@@ -23,7 +23,7 @@ logging.basicConfig(filename='runner.log',
 
 completed_tests = {}
 
-sqs_endpoint = os.getenv('LOCAlSTACK_EDGE')
+sqs_endpoint = os.getenv('LOCALSTACK_EDGE')
 
 
 async def main():
