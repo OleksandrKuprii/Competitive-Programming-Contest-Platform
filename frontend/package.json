@@ -21,6 +21,8 @@
     "highlight.js": "^10.1.2",
     "node-fetch": "^2.6.0",
     "polka": "next",
+    "prettier": "^2.1.1",
+    "prettier-plugin-svelte": "^1.2.0",
     "sirv": "^1.0.0"
   },
   "devDependencies": {
