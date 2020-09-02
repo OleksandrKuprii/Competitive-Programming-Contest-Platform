@@ -456,7 +456,8 @@ async def get_my_profile(request, **kwargs):
             token = request.headers['Authorization']
 
             try:
-                async with session.get('https://' + AUTH0_DOMAIN + '/userinfo', headers={'Authorization': token}) as resp:
+                async with session.get('https://' + AUTH0_DOMAIN + '/userinfo',
+                                       headers={'Authorization': token}) as resp:
                     auth0_user_info = json.loads(await resp.read())
 
                     keys = ('nickname', 'name', 'locale', 'picture')

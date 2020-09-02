@@ -15,6 +15,7 @@ import storage
 
 sqs_endpoint = os.getenv('LOCALSTACK_EDGE')
 
+
 async def add_submission(user_submission: UserSubmission, conn):
     """Get submission from API and communicates with database and storage.
 
