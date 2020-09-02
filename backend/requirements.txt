@@ -2,6 +2,6 @@
 aioboto3
 asyncpg
 docker
-aiohttp[speedups]
+aiohttp[speedups]==3.6.0
 aiohttp_cors
 python-jose

@@ -7,8 +7,8 @@ import re
 from datetime import datetime
 from functools import wraps
 
-from aiohttp import web
-from aiohttp.web import Application, Response, _run_app, json_response, Request
+from aiohttp import web, ClientSession
+from aiohttp.web import Application, Response, _run_app, json_response
 
 import aiohttp_cors
 
@@ -16,8 +16,6 @@ from asyncpg.pool import Pool
 
 import jose
 from jose import jwt
-
-from six.moves.urllib.request import urlopen
 
 import database
 import submission
@@ -37,8 +35,7 @@ logging.basicConfig(filename='api.log',
                     format='%(asctime)s %(message)s',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
-json_url = urlopen('https://' + AUTH0_DOMAIN + "/.well-known/jwks.json")
-jwks = json.loads(json_url.read())
+session = None
 
 pool: Pool
 registered_users: set
@@ -458,33 +455,33 @@ async def get_my_profile(request, **kwargs):
         else:
             token = request.headers['Authorization']
 
-            req = Request('https://' + AUTH0_DOMAIN + '/userinfo')
-            req.add_header('Authorization', token)
-            resp = urlopen(req)
+            try:
+                async with session.get('https://' + AUTH0_DOMAIN + '/userinfo', headers={'Authorization': token}) as resp:
+                    auth0_user_info = json.loads(await resp.read())
 
-            auth0_user_info = json.loads(resp.read())
+                    keys = ('nickname', 'name', 'locale', 'picture')
+                    user_info = {}
 
-            keys = ('nickname', 'name', 'locale', 'picture')
-            user_info = {}
+                    for k in keys:
+                        try:
+                            user_info[k] = auth0_user_info[k]
+                        except KeyError:
+                            pass
 
-            for k in keys:
-                try:
-                    user_info[k] = auth0_user_info[k]
-                except KeyError:
-                    pass
-
-            if auth0_user_info['email_verified']:
-                return json_response({
-                    'registered': False,
-                    'email_verified': True,
-                    'info': user_info
-                })
-            else:
-                return json_response({
-                    'registered': False,
-                    'email_verified': False,
-                    'info': user_info
-                })
+                    if auth0_user_info['email_verified']:
+                        return json_response({
+                            'registered': False,
+                            'email_verified': True,
+                            'info': user_info
+                        })
+                    else:
+                        return json_response({
+                            'registered': False,
+                            'email_verified': False,
+                            'info': user_info
+                        })
+            except Exception as e:
+                print(e)
 
 
 @routes.post('/profile/my')
@@ -537,6 +534,13 @@ for route in app.router.routes():
 
 async def main():
     """Run api."""
+    global session
+    session = ClientSession()
+
+    global jwks
+    async with session.get('https://' + AUTH0_DOMAIN + '/.well-known/jwks.json') as resp:
+        jwks = json.loads(await resp.read())
+
     global pool
     pool = await database.establish_connection_from_env()
 
