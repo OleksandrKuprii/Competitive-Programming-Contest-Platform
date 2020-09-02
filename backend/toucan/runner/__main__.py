@@ -23,6 +23,8 @@ logging.basicConfig(filename='runner.log',
 
 completed_tests = {}
 
+sqs_endpoint = os.getenv('LOCALSTACK_EDGE')
+
 
 async def main():
     """Start runner."""
@@ -33,7 +35,7 @@ async def main():
     for _ in range(5):
         Thread(target=worker, args=(queue,completed_tests)).start()
 
-    async with aioboto3.resource('sqs', endpoint_url=os.getenv('SQS_ENDPOINT')) as sqs:
+    async with aioboto3.resource('sqs', endpoint_url=sqs_endpoint) as sqs:
         submission_queue = await sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
 
         while True:

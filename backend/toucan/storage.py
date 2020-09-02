@@ -15,7 +15,7 @@ LOCAL_STORAGE_ROOT = os.getenv('LOCAL_STORAGE_ROOT')
 
 assert LOCAL_STORAGE_ROOT is not None
 
-S3_ENDPOINT = os.getenv('S3_ENDPOINT')
+S3_ENDPOINT = os.getenv('LOCALSTACK_EDGE')
 
 assert S3_ENDPOINT is not None
 

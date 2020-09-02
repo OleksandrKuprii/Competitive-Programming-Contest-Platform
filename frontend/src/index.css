@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+code, code * {
+  font-family: 'Source Code Pro', monospace !important;
+}
+
+td, th {
+	@apply px-5 border-r-2 border-l-2 border-gray-400;
+}
+
+td {
+	@apply py-2 border-b border-gray-400;
+}
+
+th {
+	@apply py-1 text-sm text-left bg-gray-800 text-white;
+}

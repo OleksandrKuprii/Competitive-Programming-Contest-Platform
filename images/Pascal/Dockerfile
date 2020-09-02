@@ -1,3 +1,3 @@
-FROM debian:10-slim
+FROM debian:stretch-slim
 
 RUN apt-get update && apt-get install -y fp-compiler

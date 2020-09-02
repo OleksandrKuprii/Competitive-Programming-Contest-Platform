@@ -13,6 +13,9 @@ from dataclass import (SubmissionToRunner, SubmissionToStorage, UserSubmission)
 import storage
 
 
+sqs_endpoint = os.getenv('LOCALSTACK_EDGE')
+
+
 async def add_submission(user_submission: UserSubmission, conn):
     """Get submission from API and communicates with database and storage.
 
@@ -47,10 +50,7 @@ async def add_submission(user_submission: UserSubmission, conn):
                                               memory_limit)
 
     # Add submission to the queue
-    async with aioboto3.resource('sqs', endpoint_url=os.getenv(
-            'SQS_ENDPOINT')) \
-            as sqs:
-
+    async with aioboto3.resource('sqs', endpoint_url=sqs_endpoint) as sqs:
         queue = await sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
 
         await queue.send_message(

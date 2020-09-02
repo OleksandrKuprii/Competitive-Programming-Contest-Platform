@@ -216,7 +216,7 @@ async def get_task(alias: str, conn: Connection) -> dict:
             '''SELECT tasks.name as task_name, tasks.alias as
                 task_alias, wall_time_limit, cpu_time_limit, memory_limit,
                 main, input_format, output_format, custom_sections,
-                category, categories.name
+                category, categories.name, difficulty
                FROM coreschema.tasks as tasks
                JOIN coreschema.task_descriptions as task_desc
                ON tasks.alias = task_desc.alias
