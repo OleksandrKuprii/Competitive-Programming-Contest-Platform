@@ -31,10 +31,6 @@
 		@apply block pb-5 font-bold text-sm;
 	}
 
-	.birthdaySelect label:not(:last-child) {
-		@apply mr-5;
-	}
-
 	input,
 	textarea {
 		@apply block shadow px-5 py-2 rounded border mt-1;

@@ -7,6 +7,8 @@ import { auth } from 'express-openid-connect'
 import bodyParser from 'body-parser'
 import fetch from 'node-fetch'
 
+import credentials from './credentials';
+
 const { PORT, NODE_ENV } = process.env
 const dev = NODE_ENV === 'development'
 
@@ -19,8 +21,7 @@ express()
 		sirv('static', { dev }),
 		cookieSession({
 			name: 'session',
-			keys: ['Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw'],
-			// Sets the session cookie to expire after 7 days.
+			keys: credentials.cookieSession.secret,
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		})
 	)
@@ -28,16 +29,16 @@ express()
 		auth({
 			authorizationParams: {
 				response_type: 'code id_token',
-				audience: 'toucan-api',
+				audience: credentials.auth0.audience,
 			},
 			required: false,
 			auth0Logout: true,
-			baseURL: 'http://localhost:3000',
-			issuerBaseURL: 'https://dev-gly-dk66.eu.auth0.com',
-			clientID: 'w5IiSiIhAoOW8dQvAATlvbaS2eP47H0Q',
-			clientSecret: 'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
+			baseURL: credentials.auth0.baseURL,
+			issuerBaseURL: credentials.auth0.issuerBaseURL,
+			clientID: credentials.auth0.clientID,
+			clientSecret: credentials.auth0.clientSecret,
 			appSession: {
-				secret: 'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
+				secret: credentials.appSession.secret,
 			},
 			redirectUriPath: '/callback',
 			handleCallback: async function (req, res, next) {

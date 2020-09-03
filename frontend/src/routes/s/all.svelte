@@ -1,5 +1,9 @@
 <script context="module">
-	export async function preload() {
+	export async function preload(page, session) {
+		if (session.isAuthenticated !== true) {
+			return this.redirect(301, '/login');
+		}
+		
 		const response = await this.fetch('/s/all.json')
 		const submissions = await response.json()
 
