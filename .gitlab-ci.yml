@@ -26,4 +26,5 @@ test-frontend:
     - cd frontend
     - yarn
     - yarn lint
+    - yarn style
 
