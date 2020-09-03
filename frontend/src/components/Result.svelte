@@ -1,9 +1,8 @@
 <script>
-	export let points
-	export let status
+	export let points = 0
+	export let status = 'Unknown'
 
-	$: totalStatus =
-		points + ' ' + (Array.isArray(status) ? status.join(' ') : status)
+	$: totalStatus = points + ' ' + (Array.isArray(status) ? status.join(' ') : status)
 
 	let totalStatusColor
 

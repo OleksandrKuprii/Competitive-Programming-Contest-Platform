@@ -28,21 +28,10 @@
 	</thead>
 	<tbody>
 		{#each submissions as submission (submission.id)}
-			<tr
-				class="hover:bg-gray-300 cursor-pointer"
-				on:click="{() => goto(`/s/${submission.id}`)}"
-			>
+			<tr class="hover:bg-gray-300 cursor-pointer" on:click="{() => goto(`/s/${submission.id}`)}">
+				<td>{submission.id} <span class="font-bold text-sm text-gray-600">[{submission.name}]</span></td>
 				<td>
-					{submission.id}
-					<span
-						class="font-bold text-sm text-gray-600"
-					>[{submission.name}]</span>
-				</td>
-				<td>
-					<Result
-						points="{submission.result.points}"
-						status="{submission.result.status}"
-					/>
+					<Result points="{submission.result.points}" status="{submission.result.status}" />
 				</td>
 			</tr>
 		{/each}

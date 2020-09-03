@@ -6,5 +6,6 @@
   "svelteStrictMode": true,
   "svelteBracketNewLine": true,
   "svelteIndentScriptAndStyle": true,
-  "useTabs": true
+  "useTabs": true,
+  "printWidth": 120
 }

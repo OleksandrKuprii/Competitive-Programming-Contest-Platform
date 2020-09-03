@@ -68,8 +68,7 @@
 	<title>Submission #{submission.id}</title>
 </svelte:head><a
 	rel="prefetch"
-	class="block w-full bg-red-200 rounded px-5 py-2 mb-5 font-bold
-		hover:bg-red-500"
+	class="block w-full bg-red-200 rounded px-5 py-2 mb-5 font-bold hover:bg-red-500"
 	href="{`/t/${submission.alias}`}"
 >
 	Return to the task page (ESC)
@@ -77,9 +76,7 @@
 
 <svelte:window on:keydown="{handleKeydown}" />
 <div class="flex items-center">
-	<h1 class="text-3xl font-light">
-		Submission #{submission.id} for {submission.name}
-	</h1>
+	<h1 class="text-3xl font-light">Submission #{submission.id} for {submission.name}</h1>
 	<span class="font-bold ml-5 uppercase">[{submission.lang}]</span>
 </div>
 
@@ -87,10 +84,7 @@
 	<h3 class="text-lg">Running ...</h3>
 {:else}
 	<h3 class="text-lg">
-		Total: <strong><Result
-				points="{submission.result.points}"
-				status="{submission.result.status}"
-			/></strong>
+		Total: <strong><Result points="{submission.result.points}" status="{submission.result.status}" /></strong>
 	</h3>
 {/if}
 
@@ -119,9 +113,7 @@
 	</table>
 
 	<div class="lg:w-1/2 w-full mt-5 lg:mt-0">
-		<pre
-			class="border code-preview rounded overflow-auto"
-		>
+		<pre class="border code-preview rounded overflow-auto">
             {#if submission.code}
 				<code
 					class="{`language-${getGeneralLanguageName(submission.lang)}`}"

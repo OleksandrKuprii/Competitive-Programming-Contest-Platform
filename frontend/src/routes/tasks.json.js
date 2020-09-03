@@ -1,13 +1,9 @@
 import fetch from 'node-fetch'
 
-export async function get(req, res, next) {
+export async function get(req, res) {
 	let response
 
-	if (
-		req.session.isAuthenticated === true &&
-		req.session.userData !== undefined &&
-		req.session.userData.registered
-	) {
+	if (req.session.isAuthenticated === true && req.session.userData !== undefined && req.session.userData.registered) {
 		const tokenSet = req.openid.makeTokenSet(req.session.openidTokens)
 
 		const { access_token, token_type } = tokenSet

@@ -1,5 +1,5 @@
 <script context="module">
-	export async function preload(page, session) {
+	export async function preload() {
 		const response = await this.fetch('/tasks.json')
 
 		const tasks = await response.json()
@@ -28,10 +28,7 @@
 	</thead>
 	<tbody>
 		{#each tasks as task (task.alias)}
-			<tr
-				class="hover:bg-gray-300 cursor-pointer"
-				on:click="{() => goto(`/t/${task.alias}`)}"
-			>
+			<tr class="hover:bg-gray-300 cursor-pointer" on:click="{() => goto(`/t/${task.alias}`)}">
 				<td>{task.name}</td>
 				<td>{task.category.name}</td>
 				<td>{task.difficulty}/10</td>

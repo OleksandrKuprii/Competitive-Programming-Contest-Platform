@@ -19,9 +19,7 @@ express()
 		sirv('static', { dev }),
 		cookieSession({
 			name: 'session',
-			keys: [
-				'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
-			],
+			keys: ['Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw'],
 			// Sets the session cookie to expire after 7 days.
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		})
@@ -37,11 +35,9 @@ express()
 			baseURL: 'http://localhost:3000',
 			issuerBaseURL: 'https://dev-gly-dk66.eu.auth0.com',
 			clientID: 'w5IiSiIhAoOW8dQvAATlvbaS2eP47H0Q',
-			clientSecret:
-				'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
+			clientSecret: 'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
 			appSession: {
-				secret:
-					'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
+				secret: 'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
 			},
 			redirectUriPath: '/callback',
 			handleCallback: async function (req, res, next) {
@@ -63,14 +59,11 @@ express()
 
 		if (req.isAuthenticated()) {
 			try {
-				const response = await fetch(
-					'http://localhost:4000/profile/my',
-					{
-						headers: {
-							Authorization: token_type + ' ' + access_token,
-						},
-					}
-				)
+				const response = await fetch('http://localhost:4000/profile/my', {
+					headers: {
+						Authorization: token_type + ' ' + access_token,
+					},
+				})
 
 				const body = await response.json()
 
