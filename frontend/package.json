@@ -14,6 +14,11 @@
     "cy:open": "cypress open",
     "test": "run-p --race dev cy:run"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn prettier && yarn lint"
+    }
+  },
   "dependencies": {
     "body-parser": "^1.19.0",
     "compression": "^1.7.1",
@@ -36,6 +41,7 @@
     "@rollup/plugin-replace": "^2.2.0",
     "eslint": "^7.8.1",
     "eslint-plugin-svelte3": "^2.7.3",
+    "husky": "^4.2.5",
     "npm-run-all": "^4.1.5",
     "postcss-cli": "^7.1.1",
     "prettier": "^2.1.1",
