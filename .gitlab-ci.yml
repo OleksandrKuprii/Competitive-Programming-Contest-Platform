@@ -23,6 +23,7 @@ test-frontend:
       - frontend/src/node_modules
       - frontend/.yarn
   script:
+    - cd frontend
     - yarn
     - yarn lint
 
