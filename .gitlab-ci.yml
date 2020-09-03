@@ -13,3 +13,18 @@ test-backend:
     - pip install tox
     - cd backend
     - tox
+
+test-frontend:
+  image: node:current-alpine
+  stage: test
+  cache:
+    paths:
+      - frontend/node_modules
+      - frontend/src/node_modules
+      - frontend/.yarn
+  script:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+    - yarn
+    - yarn lint
+
