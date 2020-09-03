@@ -16,7 +16,7 @@ npm install -g yarn
 	yarn dev
 	```
 - how to lint/prettify code
-	(pretty optional because husky does this job before letting you to commit stuff)
+	(pretty optional because husky does this job before it lets you commit stuff)
 	```shell
 	yarn lint - runs ESLint
 	yarn prettier - runs Prettier
