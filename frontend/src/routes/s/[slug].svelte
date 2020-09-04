@@ -47,6 +47,8 @@
 		codePreview.innerHTML = submission.code
 		hljs.highlightBlock(codePreview)
 	})
+	
+	const headers = ['#', 'Result', 'CPU time', 'Wall time'];
 </script>
 
 <style>
@@ -89,13 +91,13 @@
 {/if}
 
 <div class="flex flex-wrap lg:flex-no-wrap mt-5 justify-around">
-	<Table headers={['#', 'Result', 'CPU time', 'Wall time']} dense={true}>
+	<Table {headers} dense={true}>
 		{#each submission.tests as test, i}
 			<tr>
-				<td>{i + 1}</td>
-				<td>{test.points} {test.status}</td>
-				<td>{test.cpu_time || '-'}</td>
-				<td>{test.wall_time || '-'}</td>
+				<td data-label={headers[0]}>{i + 1}</td>
+				<td data-label={headers[1]}><Result points={test.points} status={test.status} /></td>
+				<td data-label={headers[2]}>{test.cpu_time || '-'}</td>
+				<td data-label={headers[3]}>{test.wall_time || '-'}</td>
 			</tr>
 		{/each}
 	</Table>

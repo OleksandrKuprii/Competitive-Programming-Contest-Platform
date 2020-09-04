@@ -16,6 +16,8 @@
 
 	import Table from '@/Table.svelte'
 	import Result from '@/Result.svelte'
+	
+	const headers = ['Identifier', 'Result'];
 
 	export let submissions
 </script>
@@ -24,11 +26,11 @@
 	<title>Submissions</title>
 </svelte:head>
 
-<Table headers={['Identifier', 'Result']}>
+<Table {headers}>
 	{#each submissions as submission (submission.id)}
 		<tr on:click="{() => goto(`/s/${submission.id}`)}">
-			<td>{submission.id} <span class="font-bold text-sm text-gray-600">[{submission.name}]</span></td>
-			<td>
+			<td data-label={headers[0]}>{submission.id} <span class="font-bold text-sm text-gray-600">[{submission.name}]</span></td>
+			<td data-label={headers[1]}>
 				<Result points="{submission.result.points}" status="{submission.result.status}" />
 			</td>
 		</tr>

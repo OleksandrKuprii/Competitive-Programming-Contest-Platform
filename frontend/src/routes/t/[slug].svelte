@@ -129,9 +129,9 @@
 		<div class="lg:w-1/2">
 			<input type="file" required class="hidden" id="file-input" bind:files />
 			{#if files.length === 0}
-				<label for="file-input" class="bg-red-600 border-red-500"> Select file </label>
+				<label for="file-input" class="bg-red-600 border-red-500 mdMax:mt-5"> Select file </label>
 			{:else}
-				<label for="file-input" class="bg-green-600 border-green-500">
+				<label for="file-input" class="bg-green-600 border-green-500 mdMax:mt-5">
 					Selected <strong>"{files[0].name}"</strong>
 				</label>
 			{/if}
