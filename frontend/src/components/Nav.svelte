@@ -6,8 +6,12 @@
 </script>
 
 <style>
+	* {
+		white-space: nowrap;
+	}
+
 	a {
-		@apply block my-2 text-gray-500;
+		@apply block text-gray-500 py-3;
 	}
 
 	a.sign-out {
@@ -15,25 +19,41 @@
 	}
 
 	a[aria-current] {
-		@apply text-white font-bold;
+		@apply text-primary-500 font-bold;
 	}
 
-	@screen lg {
+	@screen md {
 		a {
-			@apply my-0;
+			@apply h-16 flex items-center px-5 pb-0 pt-1 border-b-4 border-gray-800 m-0;
+		}
+
+		a:hover {
+			@apply text-primary-600 border-primary-600;
+		}
+
+		a.sign-out {
+			@apply border-red-700;
+		}
+
+		a.sign-out:hover {
+			@apply text-white bg-red-700;
+		}
+
+		a[aria-current] {
+			@apply border-primary-500;
 		}
 	}
 </style>
 
-<nav class="bg-gray-900 text-white shadow py-3 md:fixed top-0 left-0 w-full">
-	<div class="container mx-auto flex flex-col md:flex-row items-center">
-		<div class="text-xl font-black mr-5 flex items-center justify-center">
+<nav class="bg-gray-900 text-white shadow md:fixed top-0 left-0 w-full">
+	<div class="container mx-auto flex flex-col md:flex-row items-center px-5">
+		<div class="text-xl font-black mr-5 flex items-center justify-center cursor-default mdMax:pt-5">
 			<img src="/logo.png" alt="Logo" class="h-10 mr-2" /> Toucan
 		</div>
 
 		<div class="mb-5 lg:mb-0"></div>
 
-		<div class="w-full flex-col md:flex-row flex justify-around items-center md:max-w-xs">
+		<div class="flex-col md:flex-row flex items-center md:pl-10">
 			<a rel="prefetch" href="/" aria-current="{'/' === $page.path ? 'page' : undefined}"> Tasks </a>
 
 			<a rel="prefetch" href="/s/all" aria-current="{'/s/all' === $page.path ? 'page' : undefined}">
@@ -48,11 +68,13 @@
 		{#if $session.isAuthenticated === false}
 			<a href="/login"> Sign in </a>
 		{:else if $session.isAuthenticated === true}
-			{#if $session.user !== undefined && $session.user.registered === true}
-				<p class="mr-2 text-sm">Logged in as <strong>{$session.user.info.nickname}</strong></p>
-			{/if}
+			<div class="flex items-center">
+				{#if $session.user !== undefined && $session.user.registered === true}
+					<p class="mr-2 md:mr-5 text-sm">Logged in as <strong>{$session.user.info.nickname}</strong></p>
+				{/if}
 
-			<a href="/logout" class="sign-out"> Sign out </a>
+				<a href="/logout" class="sign-out">Sign out</a>
+			</div>
 		{/if}
 	</div>
 </nav>

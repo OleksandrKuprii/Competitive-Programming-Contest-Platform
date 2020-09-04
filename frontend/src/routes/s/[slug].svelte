@@ -22,8 +22,10 @@
 
 	export let submission
 
-	import Result from '../../components/Result.svelte'
-	import getGeneralLanguageName from '../../utils/getGeneralLanguageName'
+	import Table from '@/Table.svelte'
+	import Result from '@/Result.svelte'
+	
+	import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
 
 	function handleKeydown({ keyCode }) {
 		// ESC
@@ -45,8 +47,6 @@
 		codePreview.innerHTML = submission.code
 		hljs.highlightBlock(codePreview)
 	})
-
-	$: console.log(submission)
 </script>
 
 <style>
@@ -89,28 +89,16 @@
 {/if}
 
 <div class="flex flex-wrap lg:flex-no-wrap mt-5 justify-around">
-	<table class="table-auto w-full lg:w-auto" class:loading="{running}">
-		<thead>
+	<Table headers={['#', 'Result', 'CPU time', 'Wall time']} dense={true}>
+		{#each submission.tests as test, i}
 			<tr>
-				<th>#</th>
-				<th>Status</th>
-				<th>CPU time (ms)</th>
-				<th>Wall time (ms)</th>
+				<td>{i + 1}</td>
+				<td>{test.points} {test.status}</td>
+				<td>{test.cpu_time || '-'}</td>
+				<td>{test.wall_time || '-'}</td>
 			</tr>
-		</thead>
-		<tbody>
-			{#if submission.tests}
-				{#each submission.tests as test, i}
-					<tr>
-						<td>{i + 1}</td>
-						<td>{test.points} {test.status}</td>
-						<td>{test.cpu_time || '-'}</td>
-						<td>{test.wall_time || '-'}</td>
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-	</table>
+		{/each}
+	</Table>
 
 	<div class="lg:w-1/2 w-full mt-5 lg:mt-0">
 		<pre class="border code-preview rounded overflow-auto">

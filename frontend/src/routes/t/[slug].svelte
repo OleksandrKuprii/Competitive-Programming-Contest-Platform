@@ -13,7 +13,9 @@
 	export let task
 
 	import hljs from 'highlight.js'
-	import getGeneralLanguageName from '../../utils/getGeneralLanguageName'
+	import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
+	
+	import Button from '@/Button.svelte';
 
 	const sections = [
 		{ text: task.main },
@@ -134,7 +136,9 @@
 				</label>
 			{/if}
 		</div>
-
-		<input type="submit" value="Submit" class="px-5 py-2 text-black rounded mt-5" />
+	
+		<div class="mt-5">
+			<Button value="Submit" formSubmit />
+		</div>
 	</div>
 </form>

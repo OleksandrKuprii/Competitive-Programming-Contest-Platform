@@ -7,6 +7,8 @@ import { terser } from 'rollup-plugin-terser'
 import config from 'sapper/config/rollup.js'
 import pkg from './package.json'
 import postcss from 'svelte-preprocess-postcss'
+import alias from '@rollup/plugin-alias'
+import path from 'path'
 
 const mode = process.env.NODE_ENV
 const dev = mode === 'development'
@@ -15,6 +17,15 @@ const legacy = !!process.env.SAPPER_LEGACY_BUILD
 const preprocess = {
 	style: postcss(),
 }
+
+const projectRootDir = path.resolve(__dirname)
+
+const aliasPlugin = alias({
+  entries: [
+    { find: '@', replacement: path.resolve(projectRootDir, 'src', 'components') },
+    { find: '~', replacement: path.resolve(projectRootDir, 'src') },
+  ]
+})
 
 const onwarn = (warning, onwarn) =>
 	(warning.code === 'MISSING_EXPORT' && /'preload'/.test(warning.message)) ||
@@ -71,6 +82,7 @@ export default {
 				terser({
 					module: true,
 				}),
+			aliasPlugin,
 		],
 
 		preserveEntrySignatures: false,
@@ -95,6 +107,7 @@ export default {
 				dedupe: ['svelte'],
 			}),
 			commonjs(),
+			aliasPlugin,
 		],
 		external: Object.keys(pkg.dependencies).concat(
 			require('module').builtinModules

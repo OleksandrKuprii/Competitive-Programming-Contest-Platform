@@ -1,17 +1,23 @@
 <script>
-	export let points = 0
-	export let status = 'Unknown'
+	export let points
+	export let status
 
-	$: totalStatus = points + ' ' + (Array.isArray(status) ? status.join(' ') : status)
+	$: isDefined = Number.isInteger(points) && status !== undefined
 
-	let totalStatusColor
+	$: totalStatus = isDefined ? points + ' ' + (Array.isArray(status) ? status.join(' ') : status) : ''
 
-	$: if (points < 100 && points > 0) {
-		totalStatusColor = 'text-orange-500'
-	} else if (points === 100) {
-		totalStatusColor = 'text-green-500'
-	} else if (points === 0) {
-		totalStatusColor = 'text-red-500'
+	let totalStatusColor = ''
+
+	$: if (isDefined) {
+		if (points < 100 && points > 0) {
+			totalStatusColor = 'text-orange-500'
+		} else if (points === 100) {
+			totalStatusColor = 'text-green-500'
+		} else if (points === 0) {
+			totalStatusColor = 'text-red-500'
+		} else {
+			totalStatusColor = ''
+		}
 	} else {
 		totalStatusColor = ''
 	}

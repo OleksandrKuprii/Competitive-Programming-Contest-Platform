@@ -2,7 +2,7 @@
 	import { stores } from '@sapper/app'
 	const { session } = stores()
 
-	import Nav from '../components/Nav.svelte'
+	import Nav from '@/Nav.svelte'
 
 	$: showAlert =
 		$session.isAuthenticated === true && $session.user !== undefined && $session.user.registered === false
@@ -10,7 +10,7 @@
 
 <Nav />
 
-<main class="container mx-auto mb-32 px-2" id="main">
+<main class="container mx-auto mb-32 overflow-x-hidden px-5" id="main">
 	<div class="mb-5"></div>
 
 	{#if showAlert}

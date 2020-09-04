@@ -11,7 +11,7 @@
 <script>
 	import { onMount } from 'svelte'
 	import { stores } from '@sapper/app'
-	import { setCookie, getCookie } from '../../utils/cookie'
+	import { setCookie, getCookie } from '~/utils/cookie'
 
 	const { session } = stores()
 

@@ -15,15 +15,3 @@ html {
 code, code * {
   font-family: 'Source Code Pro', monospace !important;
 }
-
-td, th {
-	@apply px-5 border-r-2 border-l-2 border-gray-400;
-}
-
-td {
-	@apply py-2 border-b border-gray-400;
-}
-
-th {
-	@apply py-1 text-sm text-left bg-gray-800 text-white;
-}
