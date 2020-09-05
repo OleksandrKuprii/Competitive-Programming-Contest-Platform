@@ -17,11 +17,14 @@ export async function get(req, res, next) {
 		return
 	}
 
-	const response = await fetch('http://localhost:4000/submissions?offset=0&number=50', {
-		headers: {
-			Authorization: token_type + ' ' + access_token,
-		},
-	})
+	const response = await fetch(
+		'http://localhost:4000/submissions?offset=0&number=50',
+		{
+			headers: {
+				Authorization: token_type + ' ' + access_token,
+			},
+		}
+	)
 
 	const submissions = await response.json()
 

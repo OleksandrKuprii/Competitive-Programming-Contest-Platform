@@ -27,17 +27,17 @@
             "error",
             "unix"
         ],
-        "quotes": [
-            "error",
-            "single"
-        ],
         "semi": [
             "error",
             "never"
         ],
         "max-len": [
             "error",
-            80
-        ]
+            100
+        ],
+				"no-mixed-spaces-and-tabs": [
+					"warn",
+					"smart-tabs"
+				]
     }
 }

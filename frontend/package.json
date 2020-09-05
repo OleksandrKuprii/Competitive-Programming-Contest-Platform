@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "sapper dev",
     "style": "postcss src/index.css -o ./static/style.bundled.css",
-    "prettier": "prettier src/**/*.js src/**/*.json.js src/**/*.svelte -w",
-    "lint": "eslint src/**/*.js src/**/*.json.js src/**/*.svelte",
+    "prettier": "prettier src/**/* -w",
+    "lint": "eslint src/**/*.{js,svelte}",
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",
     "start": "node __sapper__/build",

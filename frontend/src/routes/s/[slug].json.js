@@ -11,11 +11,14 @@ export async function get(req, res, next) {
 		return
 	}
 
-	const response = await fetch(`http://localhost:4000/submission/${req.params.slug}`, {
-		headers: {
-			Authorization: token_type + ' ' + access_token,
-		},
-	})
+	const response = await fetch(
+		`http://localhost:4000/submission/${req.params.slug}`,
+		{
+			headers: {
+				Authorization: token_type + ' ' + access_token,
+			},
+		}
+	)
 
 	if (response.status !== 200) {
 		res.status(response.status)

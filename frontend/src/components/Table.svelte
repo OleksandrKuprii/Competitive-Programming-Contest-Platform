@@ -17,7 +17,7 @@
 		}
 
 		:global(table tr) {
-			@apply block w-full mb-5 p-3 border shadow bg-gray-100;
+			@apply block w-full mb-5 p-3 border shadow rounded-md;
 		}
 
 		:global(table td) {

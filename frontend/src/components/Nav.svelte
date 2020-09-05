@@ -89,7 +89,7 @@
 		{:else if $session.isAuthenticated === true}
 			<div class="flex items-center">
 				{#if $session.user !== undefined && $session.user.registered === true}
-					<p class="mr-2 md:mr-5 text-sm">
+					<p class="mr-2 md:mr-5 text-sm lgMax:hidden">
 						Logged in as <strong>{$session.user.info.nickname}</strong>
 					</p>
 				{/if}
