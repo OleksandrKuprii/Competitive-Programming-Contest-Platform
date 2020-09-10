@@ -1,5 +1,5 @@
 <script context="module">
-	export async function preload(page, session) {
+	export async function preload(page) {
 		const { slug } = page.params
 
 		const response = await this.fetch(`http://localhost:4000/task/${slug}`)
@@ -14,8 +14,8 @@
 
 	import hljs from 'highlight.js'
 	import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
-	
-	import Button from '@/Button.svelte';
+
+	import Button from '@/Button.svelte'
 
 	const sections = [
 		{ text: task.main },
@@ -41,7 +41,11 @@
 			.then((x) => (code = x))
 			.then(() => {
 				rehightlight()
-				window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight)
+				window.scrollTo(
+					0,
+					document.body.scrollHeight ||
+						document.documentElement.scrollHeight
+				)
 			})
 	}
 
@@ -104,8 +108,14 @@
     </pre>
 {/if}
 
-<form class="mt-10 bg-black bg-opacity-75 rounded text-white pb-10 pt-5" method="post">
-	<div class="lg:w-1/2 sm:w-2/5 w-4/5 mx-auto flex lg:flex-row flex-col lg:flex-wrap">
+<form
+	class="mt-10 bg-black bg-opacity-75 rounded text-white pb-10 pt-5"
+	method="post"
+>
+	<div
+		class="lg:w-1/2 sm:w-2/5 w-4/5 mx-auto flex lg:flex-row flex-col
+			lg:flex-wrap"
+	>
 		<p class="py-5 block text-lg w-full">Submit solution</p>
 
 		<div class="w-1/2">
@@ -127,16 +137,30 @@
 		<input type="hidden" name="code" bind:value="{code}" />
 
 		<div class="lg:w-1/2">
-			<input type="file" required class="hidden" id="file-input" bind:files />
+			<input
+				type="file"
+				required
+				class="hidden"
+				id="file-input"
+				bind:files
+			/>
 			{#if files.length === 0}
-				<label for="file-input" class="bg-red-600 border-red-500 mdMax:mt-5"> Select file </label>
+				<label
+					for="file-input"
+					class="bg-red-600 border-red-500 mdMax:mt-5"
+				>
+					Select file
+				</label>
 			{:else}
-				<label for="file-input" class="bg-green-600 border-green-500 mdMax:mt-5">
+				<label
+					for="file-input"
+					class="bg-green-600 border-green-500 mdMax:mt-5"
+				>
 					Selected <strong>"{files[0].name}"</strong>
 				</label>
 			{/if}
 		</div>
-	
+
 		<div class="mt-5">
 			<Button value="Submit" formSubmit />
 		</div>

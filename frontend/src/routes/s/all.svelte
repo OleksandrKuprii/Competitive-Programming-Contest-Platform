@@ -1,9 +1,9 @@
 <script context="module">
 	export async function preload(page, session) {
 		if (session.isAuthenticated !== true) {
-			return this.redirect(301, '/login');
+			return this.redirect(301, '/login')
 		}
-		
+
 		const response = await this.fetch('/s/all.json')
 		const submissions = await response.json()
 
@@ -16,8 +16,9 @@
 
 	import Table from '@/Table.svelte'
 	import Result from '@/Result.svelte'
-	
-	const headers = ['Identifier', 'Result'];
+	import FallbackMessage from '@/FallbackMessage.svelte'
+
+	const headers = ['Identifier', 'Result']
 
 	export let submissions
 </script>
@@ -26,13 +27,28 @@
 	<title>Submissions</title>
 </svelte:head>
 
-<Table {headers}>
-	{#each submissions as submission (submission.id)}
-		<tr on:click="{() => goto(`/s/${submission.id}`)}">
-			<td data-label={headers[0]}>{submission.id} <span class="font-bold text-sm text-gray-600">[{submission.name}]</span></td>
-			<td data-label={headers[1]}>
-				<Result points="{submission.result.points}" status="{submission.result.status}" />
-			</td>
-		</tr>
-	{/each}
-</Table>
+{#if submissions.length > 0}
+	<Table headers="{headers}">
+		{#each submissions as submission (submission.id)}
+			<tr on:click="{() => goto(`/s/${submission.id}`)}">
+				<td data-label="{headers[0]}">
+					{submission.id}
+					<span
+						class="font-bold text-sm text-gray-600"
+					>[{submission.name}]</span>
+				</td>
+				<td data-label="{headers[1]}">
+					<Result
+						points="{submission.result.points}"
+						status="{submission.result.status}"
+					/>
+				</td>
+			</tr>
+		{/each}
+	</Table>
+{:else}
+	<FallbackMessage
+		title="Such an empty place!"
+		subtitle="Submit some task solutions to see if something changes."
+	/>
+{/if}

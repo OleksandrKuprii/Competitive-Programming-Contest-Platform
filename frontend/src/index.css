@@ -5,13 +5,14 @@
 @tailwind utilities;
 
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 * {
-  font-family: 'Roboto', sans-serif !important;
+	font-family: 'Roboto', sans-serif !important;
 }
 
-code, code * {
-  font-family: 'Source Code Pro', monospace !important;
+code,
+code * {
+	font-family: 'Source Code Pro', monospace !important;
 }

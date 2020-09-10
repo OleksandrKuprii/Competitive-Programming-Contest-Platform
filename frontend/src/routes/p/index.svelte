@@ -9,9 +9,9 @@
 </script>
 
 <script>
-	import { onMount } from 'svelte'
 	import { stores } from '@sapper/app'
-	import { setCookie, getCookie } from '~/utils/cookie'
+
+	import Button from '@/Button.svelte'
 
 	const { session } = stores()
 
@@ -44,22 +44,61 @@
 	input:invalid {
 		@apply border-red-500 border-2;
 	}
+
+	form > div {
+		@apply flex justify-between;
+	}
+
+	@screen smMax {
+		form > div {
+			@apply block;
+		}
+	}
+
+	@screen sm {
+		.gaps > label:not(:last-child) {
+			@apply mr-2;
+		}
+	}
 </style>
 
 <svelte:head>
 	<title>My profile</title>
 </svelte:head>
-<form class="xl:w-3/5 lg:w-3/4 mx-auto" method="post" action="/p" on:submit="{handleSubmit}">
-	<div class="lg:flex lg:justify-between lg:flex-wrap w-full">
-		<label> Username <input bind:value="{draft.nickname}" name="username" required /> </label>
-		<label> Email <input bind:value="{draft.email}" type="email" name="email" required /> </label>
-		<label> Fullname <input bind:value="{draft.name}" name="fullname" required /> </label>
-		<label> Country <input bind:value="{draft.country}" name="country" /> </label>
-		<label> City <input bind:value="{draft.city}" name="city" /> </label>
-		<label> School <input bind:value="{draft.school}" name="school" /> </label>
-		<label> Birthday <input bind:value="{draft.birthday}" type="date" name="birthday" /> </label>
-	</div>
-	<label> Bio <textarea bind:value="{draft.bio}" name="bio"></textarea> </label>
 
-	<input type="submit" value="Submit" />
+<form
+	class="mx-auto flex flex-col"
+	style="max-width: 500px"
+	method="post"
+	action="/p"
+	on:submit="{handleSubmit}"
+>
+	<div>
+		<label>
+			Username <input bind:value="{draft.nickname}" name="username" required />
+		</label>
+		<label>
+			Email <input bind:value="{draft.email}" type="email" name="email" required />
+		</label>
+	</div>
+	<label>
+		Fullname <input bind:value="{draft.name}" name="fullname" required />
+	</label>
+	<div class="gaps">
+		<label>
+			Country <input bind:value="{draft.country}" name="country" />
+		</label>
+		<label> City <input bind:value="{draft.city}" name="city" /> </label>
+		<label>
+			School <input bind:value="{draft.school}" name="school" />
+		</label>
+	</div>
+	<label>
+		Birthday <input bind:value="{draft.birthday}" type="date" name="birthday" />
+	</label>
+	<label>
+		Bio <textarea bind:value="{draft.bio}" name="bio"></textarea>
+	</label>
+
+	<Button value="Submit" formSubmit />
 </form>

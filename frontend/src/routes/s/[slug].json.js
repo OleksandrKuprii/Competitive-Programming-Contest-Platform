@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-export async function get(req, res, next) {
+export async function get(req, res) {
 	const tokenSet = req.openid.makeTokenSet(req.session.openidTokens)
 
 	const { access_token, token_type } = tokenSet
@@ -11,11 +11,14 @@ export async function get(req, res, next) {
 		return
 	}
 
-	const response = await fetch(`http://localhost:4000/submission/${req.params.slug}`, {
-		headers: {
-			Authorization: token_type + ' ' + access_token,
-		},
-	})
+	const response = await fetch(
+		`http://localhost:4000/submission/${req.params.slug}`,
+		{
+			headers: {
+				Authorization: token_type + ' ' + access_token,
+			},
+		}
+	)
 
 	if (response.status !== 200) {
 		res.status(response.status)

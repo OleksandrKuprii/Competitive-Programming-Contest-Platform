@@ -4,7 +4,9 @@
 
 	$: isDefined = Number.isInteger(points) && status !== undefined
 
-	$: totalStatus = isDefined ? points + ' ' + (Array.isArray(status) ? status.join(' ') : status) : ''
+	$: totalStatus = isDefined
+		? points + ' ' + (Array.isArray(status) ? status.join(' ') : status)
+		: ''
 
 	let totalStatusColor = ''
 

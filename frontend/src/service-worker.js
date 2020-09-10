@@ -1,4 +1,4 @@
-import { timestamp, files, shell, routes } from '@sapper/service-worker'
+import { timestamp, files, shell } from '@sapper/service-worker'
 
 const ASSETS = `cache${timestamp}`
 
@@ -32,9 +32,8 @@ self.addEventListener('activate', (event) => {
 })
 
 self.addEventListener('fetch', (event) => {
-	return
-	
-	if (event.request.method !== 'GET' || event.request.headers.has('range')) return
+	if (event.request.method !== 'GET' || event.request.headers.has('range'))
+		return
 
 	const url = new URL(event.request.url)
 
@@ -42,7 +41,11 @@ self.addEventListener('fetch', (event) => {
 	if (!url.protocol.startsWith('http')) return
 
 	// ignore dev server requests
-	if (url.hostname === self.location.hostname && url.port !== self.location.port) return
+	if (
+		url.hostname === self.location.hostname &&
+		url.port !== self.location.port
+	)
+		return
 
 	// always serve static files and bundler-generated assets from cache
 	if (url.host === self.location.host && cached.has(url.pathname)) {
