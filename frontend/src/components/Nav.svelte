@@ -5,7 +5,7 @@
 	const { session } = stores()
 </script>
 
-<style>
+<style lang="postcss">
 	* {
 		white-space: nowrap;
 	}

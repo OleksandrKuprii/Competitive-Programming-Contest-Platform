@@ -3,7 +3,7 @@
 	export let value
 </script>
 
-<style>
+<style lang="postcss">
 	.button {
 		@apply block shadow uppercase text-sm font-bold px-5 py-2 rounded bg-gray-100 text-black;
 	}

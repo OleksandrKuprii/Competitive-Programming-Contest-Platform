@@ -4,7 +4,7 @@
 	export let dense = false
 </script>
 
-<style>
+<style lang="postcss">
 	@screen smMax {
 		thead {
 			clip: rect(0 0 0 0);

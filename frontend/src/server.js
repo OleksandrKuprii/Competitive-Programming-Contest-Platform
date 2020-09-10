@@ -7,7 +7,7 @@ import { auth } from 'express-openid-connect'
 import bodyParser from 'body-parser'
 import fetch from 'node-fetch'
 
-import credentials from './credentials';
+import credentials from './credentials'
 
 const { PORT, NODE_ENV } = process.env
 const dev = NODE_ENV === 'development'
@@ -60,11 +60,14 @@ express()
 
 		if (req.isAuthenticated()) {
 			try {
-				const response = await fetch('http://localhost:4000/profile/my', {
-					headers: {
-						Authorization: token_type + ' ' + access_token,
-					},
-				})
+				const response = await fetch(
+					'http://localhost:4000/profile/my',
+					{
+						headers: {
+							Authorization: token_type + ' ' + access_token,
+						},
+					}
+				)
 
 				const body = await response.json()
 

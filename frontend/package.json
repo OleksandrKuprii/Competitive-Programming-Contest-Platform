@@ -1,11 +1,13 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "toucan-frontend",
+  "description": "Frontend",
+  "private": "true",
   "version": "0.0.1",
+  "license": "proprietary",
   "scripts": {
     "dev": "sapper dev",
     "style": "postcss src/index.css -o ./static/style.bundled.css",
-    "prettier": "prettier src/**/* -w",
+    "prettier": "prettier src/**/*.{js,svelte} -w",
     "lint": "eslint src/**/*.{js,svelte}",
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",
