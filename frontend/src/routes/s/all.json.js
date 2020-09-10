@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-export async function get(req, res, next) {
+export async function get(req, res) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login')
 		res.end()

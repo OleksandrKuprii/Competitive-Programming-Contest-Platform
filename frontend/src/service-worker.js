@@ -1,4 +1,4 @@
-import { timestamp, files, shell, routes } from '@sapper/service-worker'
+import { timestamp, files, shell } from '@sapper/service-worker'
 
 const ASSETS = `cache${timestamp}`
 
@@ -32,8 +32,6 @@ self.addEventListener('activate', (event) => {
 })
 
 self.addEventListener('fetch', (event) => {
-	return
-
 	if (event.request.method !== 'GET' || event.request.headers.has('range'))
 		return
 

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-export async function get(req, res, next) {
+export async function get(req, res) {
 	const tokenSet = req.openid.makeTokenSet(req.session.openidTokens)
 
 	const { access_token, token_type } = tokenSet
