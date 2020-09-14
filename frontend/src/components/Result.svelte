@@ -25,4 +25,4 @@
 	}
 </script>
 
-<span class="{totalStatusColor}">{totalStatus}</span>
+<span class={totalStatusColor}>{totalStatus}</span>

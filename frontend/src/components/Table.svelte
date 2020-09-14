@@ -1,9 +1,3 @@
-<script>
-	export let headers
-	export let tableAuto = true
-	export let dense = false
-</script>
-
 <style lang="postcss">
 	@screen smMax {
 		thead {
@@ -71,7 +65,13 @@
 	}
 </style>
 
-<table class:table-auto="{tableAuto}" class:dense>
+<script>
+	export let headers
+	export let tableAuto = true
+	export let dense = false
+</script>
+
+<table class:table-auto={tableAuto} class:dense>
 	<thead>
 		<tr>
 			{#each headers as header}

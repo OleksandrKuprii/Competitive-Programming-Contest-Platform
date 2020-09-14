@@ -9,7 +9,7 @@
 </script>
 
 <script>
-	import TaskList from '@/TaskList.svelte'
+	import TaskList from '@/TaskList/index.svelte'
 
 	export let tasks
 </script>
@@ -18,4 +18,4 @@
 	<title>Tasks</title>
 </svelte:head>
 
-<TaskList tasks="{tasks}" />
+<TaskList {tasks} />

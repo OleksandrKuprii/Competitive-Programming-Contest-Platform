@@ -20,7 +20,7 @@
 	<title>{status}</title>
 </svelte:head>
 
-<FallbackMessage title="{title}" subtitle="{subtitle}" />
+<FallbackMessage {title} {subtitle} />
 
 {#if dev && error.stack}
 	<pre>{error.stack}</pre>

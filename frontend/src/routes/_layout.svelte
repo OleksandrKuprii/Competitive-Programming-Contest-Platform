@@ -6,14 +6,14 @@
 
 	$: showAlert =
 		$session.isAuthenticated === true &&
-		$session.user !== undefined &&
+		$session.user &&
 		$session.user.registered === false
 </script>
 
 <Nav />
 
 <main class="container mx-auto mb-32 overflow-x-hidden px-5" id="main">
-	<div class="mb-5"></div>
+	<div class="mb-5" />
 
 	{#if showAlert}
 		<a
@@ -32,7 +32,7 @@
 		</a>
 	{/if}
 
-	<div class="mb-5"></div>
+	<div class="mb-5" />
 
 	<slot />
 </main>

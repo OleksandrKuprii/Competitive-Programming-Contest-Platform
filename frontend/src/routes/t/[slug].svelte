@@ -1,3 +1,22 @@
+<style>
+	label {
+		@apply block;
+	}
+
+	label[for='file-input'] {
+		@apply cursor-pointer px-5 py-2 border-2 rounded;
+	}
+
+	.code-preview {
+		max-height: 347px;
+	}
+
+	.code-preview code {
+		overflow: hidden;
+		width: fit-content;
+	}
+</style>
+
 <script context="module">
 	export async function preload(page) {
 		const { slug } = page.params
@@ -65,25 +84,6 @@
 	]
 </script>
 
-<style>
-	label {
-		@apply block;
-	}
-
-	label[for='file-input'] {
-		@apply cursor-pointer px-5 py-2 border-2 rounded;
-	}
-
-	.code-preview {
-		max-height: 347px;
-	}
-
-	.code-preview code {
-		overflow: hidden;
-		width: fit-content;
-	}
-</style>
-
 <h1 class="text-3xl font-light">{task.name}</h1>
 <div class="text-gray-700 font-bold text-sm">
 	<p>Difficulty: {task.difficulty}/10</p>
@@ -102,9 +102,9 @@
 {#if code}
 	<pre class="border code-preview rounded overflow-auto mt-10">
         <code
-			class="{`language-${getGeneralLanguageName(language)}`}"
+			class={`language-${getGeneralLanguageName(language)}`}
 			id="code-preview"
-		></code>
+		/>
     </pre>
 {/if}
 
@@ -124,17 +124,17 @@
 					<input
 						type="radio"
 						name="lang"
-						value="{languageOption.value}"
-						bind:group="{language}"
+						value={languageOption.value}
+						bind:group={language}
 						required
-						on:change="{rehightlight}"
+						on:change={rehightlight}
 					/>
 					{languageOption.name}
 				</label>
 			{/each}
 		</div>
 
-		<input type="hidden" name="code" bind:value="{code}" />
+		<input type="hidden" name="code" bind:value={code} />
 
 		<div class="lg:w-1/2">
 			<input

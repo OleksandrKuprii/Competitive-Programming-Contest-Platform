@@ -1,10 +1,3 @@
-<script>
-	import { stores } from '@sapper/app'
-	const { page } = stores()
-
-	const { session } = stores()
-</script>
-
 <style lang="postcss">
 	* {
 		white-space: nowrap;
@@ -45,7 +38,17 @@
 	}
 </style>
 
-<nav class="bg-gray-900 text-white shadow md:fixed top-0 left-0 w-full">
+<script>
+	import { stores } from '@sapper/app'
+	const { page } = stores()
+
+	const { session } = stores()
+</script>
+
+<nav
+	class="bg-gray-900 text-white shadow md:fixed top-0 left-0 w-full"
+	style="z-index: 9999"
+>
 	<div class="container mx-auto flex flex-col md:flex-row items-center px-5">
 		<div
 			class="text-xl font-black mr-5 flex items-center justify-center
@@ -54,13 +57,13 @@
 			<img src="/logo.png" alt="Logo" class="h-10 mr-2" /> Toucan
 		</div>
 
-		<div class="mb-5 lg:mb-0"></div>
+		<div class="mb-5 lg:mb-0" />
 
 		<div class="flex-col md:flex-row flex items-center md:pl-10">
 			<a
 				rel="prefetch"
 				href="/"
-				aria-current="{'/' === $page.path ? 'page' : undefined}"
+				aria-current={'/' === $page.path ? 'page' : undefined}
 			>
 				Tasks
 			</a>
@@ -68,7 +71,7 @@
 			<a
 				rel="prefetch"
 				href="/s/all"
-				aria-current="{'/s/all' === $page.path ? 'page' : undefined}"
+				aria-current={'/s/all' === $page.path ? 'page' : undefined}
 			>
 				Submissions
 			</a>
@@ -76,13 +79,13 @@
 			<a
 				rel="prefetch"
 				href="/p"
-				aria-current="{'/p' === $page.path ? 'page' : undefined}"
+				aria-current={'/p' === $page.path ? 'page' : undefined}
 			>
 				Profile
 			</a>
 		</div>
 
-		<div class="md:mr-auto"></div>
+		<div class="md:mr-auto" />
 
 		{#if $session.isAuthenticated === false}
 			<a href="/login"> Sign in </a>
@@ -100,4 +103,4 @@
 	</div>
 </nav>
 
-<div class="md:h-16"></div>
+<div class="md:h-16" />

@@ -18,15 +18,22 @@ export async function get(req, res) {
 			return
 		}
 
-		response = await fetch('http://localhost:4000/tasks/auth', {
-			headers: {
-				Authorization: token_type + ' ' + access_token,
-			},
-		})
+		response = await fetch(
+			'http://localhost:4000/tasks/auth?number=999&offset=0',
+			{
+				headers: {
+					Authorization: token_type + ' ' + access_token,
+				},
+			}
+		)
 	} else {
-		response = await fetch('http://localhost:4000/tasks')
+		response = await fetch(
+			'http://localhost:4000/tasks?number=999&offset=0'
+		)
 	}
 
-	res.json(await response.json())
+	const tasks = await response.json()
+
+	res.json(tasks)
 	res.end()
 }

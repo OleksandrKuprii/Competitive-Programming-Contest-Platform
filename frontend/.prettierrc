@@ -3,9 +3,9 @@
   "tabWidth": 4,
   "semi": false,
   "singleQuote": true,
-  "svelteStrictMode": true,
   "svelteBracketNewLine": true,
   "svelteIndentScriptAndStyle": true,
   "useTabs": true,
-  "printWidth": 80
+  "printWidth": 80,
+  "svelteSortOrder" : "styles-scripts-markup"
 }

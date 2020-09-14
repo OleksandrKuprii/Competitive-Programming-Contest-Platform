@@ -82,6 +82,8 @@ express()
 	.use((req, res, next) => {
 		return sapper.middleware({
 			session: () => {
+				console.log(req.isAuthenticated())
+
 				return {
 					isAuthenticated: req.isAuthenticated(),
 					user: req.session.userData,

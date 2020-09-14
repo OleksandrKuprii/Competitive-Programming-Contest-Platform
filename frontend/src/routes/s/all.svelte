@@ -28,19 +28,19 @@
 </svelte:head>
 
 {#if submissions.length > 0}
-	<Table headers="{headers}">
+	<Table {headers}>
 		{#each submissions as submission (submission.id)}
-			<tr on:click="{() => goto(`/s/${submission.id}`)}">
-				<td data-label="{headers[0]}">
+			<tr on:click={() => goto(`/s/${submission.id}`)}>
+				<td data-label={headers[0]}>
 					{submission.id}
 					<span
 						class="font-bold text-sm text-gray-600"
 					>[{submission.name}]</span>
 				</td>
-				<td data-label="{headers[1]}">
+				<td data-label={headers[1]}>
 					<Result
-						points="{submission.result.points}"
-						status="{submission.result.status}"
+						points={submission.result.points}
+						status={submission.result.status}
 					/>
 				</td>
 			</tr>
