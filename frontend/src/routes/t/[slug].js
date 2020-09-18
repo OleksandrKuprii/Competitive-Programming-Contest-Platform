@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import backendURI from '~/utils/backendURI'
 
 export async function post(req, res) {
 	if (!req.isAuthenticated()) {
@@ -17,7 +18,7 @@ export async function post(req, res) {
 		return
 	}
 
-	const response = await fetch(`http://localhost:4000/submission`, {
+	const response = await fetch(`${backendURI}/submission`, {
 		method: 'POST',
 		headers: {
 			Authorization: token_type + ' ' + access_token,

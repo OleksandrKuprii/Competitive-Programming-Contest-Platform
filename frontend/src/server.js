@@ -7,6 +7,7 @@ import { auth } from 'express-openid-connect'
 import bodyParser from 'body-parser'
 import fetch from 'node-fetch'
 
+import env from './env'
 import credentials from './credentials'
 
 const { PORT, NODE_ENV } = process.env
@@ -61,7 +62,7 @@ express()
 		if (req.isAuthenticated()) {
 			try {
 				const response = await fetch(
-					'http://localhost:4000/profile/my',
+					`${env.backendURIInternal}/profile/my`,
 					{
 						headers: {
 							Authorization: token_type + ' ' + access_token,

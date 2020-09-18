@@ -1,0 +1,6 @@
+node_modules
+__sapper__
+yarn-error.log
+README.md
+src/env.js
+src/credentials.js

@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import backendURI from '~/utils/backendURI'
 
 export async function get(req, res) {
 	const tokenSet = req.openid.makeTokenSet(req.session.openidTokens)
@@ -12,7 +13,7 @@ export async function get(req, res) {
 	}
 
 	const response = await fetch(
-		`http://localhost:4000/submission/${req.params.slug}`,
+		`${backendURI}/submission/${req.params.slug}`,
 		{
 			headers: {
 				Authorization: token_type + ' ' + access_token,
