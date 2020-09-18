@@ -2,8 +2,6 @@
 import asyncio
 import logging
 
-import aioboto3
-import os
 import json
 from queue import Queue
 from threading import Thread

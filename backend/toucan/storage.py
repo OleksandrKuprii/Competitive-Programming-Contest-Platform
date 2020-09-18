@@ -77,7 +77,7 @@ async def download_submission_code(submission_id: int, lang: str) -> str:
     """Download submission code and return path to local file."""
     ext = await get_extension_by_lang(lang)
 
-    path = f'{LOCAL_STORAGE_ROOT}/submissions/{submission_id}.{ext}'
+    path = f'{storage_root}/submissions/{submission_id}.{ext}'
 
     async with resource("s3") as s3:
         await (await s3.Bucket(submissions_bucket)).download_file(str(

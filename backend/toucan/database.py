@@ -1,6 +1,5 @@
 """Handles database logic."""
 import json
-import os
 from typing import List, Optional
 
 import asyncpg
