@@ -1,4 +1,4 @@
-"""Development env"""
+"""Development env."""
 import aioboto3
 
 postgres_host = "localhost"
@@ -17,5 +17,5 @@ storage_root = "../_storage"
 
 
 def resource(res):
-    """Abstracts aioboto3 resource to hide endpoint_url"""
+    """Abstracts aioboto3 resource to hide endpoint_url."""
     return aioboto3.resource(res, endpoint_url=aws_endpoint)
