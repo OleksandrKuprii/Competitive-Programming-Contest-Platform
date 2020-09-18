@@ -8,40 +8,16 @@ from asyncpg.pool import Pool
 from asyncpg.connection import Connection
 
 from dataclass import ResultToDB, UserSubmission
+from env import postgres_host, postgres_user, postgres_password, postgres_db
 
 
 async def establish_connection_from_env() -> Pool:
     """Establish connection using environment variables."""
-    if 'PG_CONN' in os.environ:
-        return await establish_connection(os.getenv(
-            'POSTGRES_CONNECTION_STRING'))
-    else:
-        return await establish_connection_params(
-            host=os.getenv('POSTGRES_HOST', 'localhost'),
-            user=os.getenv('POSTGRES_USER'),
-            password=os.getenv('POSTGRES_PASSWORD'),
-            database=os.getenv('POSTGRES_DB'))
-
-
-async def establish_connection(connection_string: str) -> Pool:
-    """Establish connection to the database.
-
-    Parameters
-    ----------
-    connection_string : str
-    """
-    return await asyncpg.create_pool(connection_string)
-
-
-async def establish_connection_params(**kwargs: object) -> Pool:
-    """Establish connection to the database.
-
-    Parameters
-    ----------
-    **kwargs : dict
-        The parameters that set the connection
-    """
-    return await asyncpg.create_pool(**kwargs)
+    return await asyncpg.create_pool(
+        host=postgres_host,
+        user=postgres_user,
+        password=postgres_password,
+        database=postgres_db)
 
 
 async def get_points_for_test(test_id: int, conn: Connection) -> int:

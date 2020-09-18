@@ -13,6 +13,7 @@ import storage
 from runner.worker import worker
 from runner.configs import compiler_configs
 from runner.compiler import compile, compilation_error
+from env import resource, submissions_queue_url
 
 
 logging.basicConfig(filename='runner.log',
@@ -22,8 +23,6 @@ logging.basicConfig(filename='runner.log',
                     datefmt='%d/%m/%Y %H:%M:%S')
 
 completed_tests = {}
-
-sqs_endpoint = os.getenv('LOCALSTACK_EDGE')
 
 
 async def main():
@@ -35,8 +34,8 @@ async def main():
     for _ in range(5):
         Thread(target=worker, args=(queue,completed_tests)).start()
 
-    async with aioboto3.resource('sqs', endpoint_url=sqs_endpoint) as sqs:
-        submission_queue = await sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
+    async with resource('sqs') as sqs:
+        submission_queue = await sqs.Queue(submissions_queue_url)
 
         while True:
             messages = await submission_queue.receive_messages(WaitTimeSeconds=20)

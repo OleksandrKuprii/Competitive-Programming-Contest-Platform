@@ -1,19 +1,14 @@
 """Handles submission logic."""
 import dataclasses
 import json
-import os
 from typing import List
-
-import aioboto3
 
 import database
 
 from dataclass import (SubmissionToRunner, SubmissionToStorage, UserSubmission)
 
 import storage
-
-
-sqs_endpoint = os.getenv('LOCALSTACK_EDGE')
+from env import resource, submissions_queue_url
 
 
 async def add_submission(user_submission: UserSubmission, conn):
@@ -50,8 +45,8 @@ async def add_submission(user_submission: UserSubmission, conn):
                                               memory_limit)
 
     # Add submission to the queue
-    async with aioboto3.resource('sqs', endpoint_url=sqs_endpoint) as sqs:
-        queue = await sqs.Queue(os.getenv('SUBMISSIONS_QUEUE_URL'))
+    async with resource('sqs') as sqs:
+        queue = await sqs.Queue(submissions_queue_url)
 
         await queue.send_message(
             MessageBody=json.dumps(dataclasses.asdict(submission_to_runner)))
