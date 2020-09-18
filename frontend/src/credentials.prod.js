@@ -4,7 +4,7 @@ export default {
 		clientSecret:
 			'Qa9NKG8whyEDd-dH3xxegQGp_3zPzZc5xUdHspu0XIZeQusmHENAAde4K6Ks8iuw',
 		audience: 'toucan-api',
-		baseURL: 'http://localhost:3000',
+		baseURL: 'http://35.238.74.141',
 		issuerBaseURL: 'https://dev-gly-dk66.eu.auth0.com',
 	},
 	appSession: {

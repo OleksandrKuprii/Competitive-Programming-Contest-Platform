@@ -7,7 +7,7 @@ import { auth } from 'express-openid-connect'
 import bodyParser from 'body-parser'
 import fetch from 'node-fetch'
 
-import env from './env'
+import { backendURI } from './env'
 import credentials from './credentials'
 
 const { PORT, NODE_ENV } = process.env
@@ -24,9 +24,7 @@ express()
 			name: 'session',
 			keys: credentials.cookieSession.secret,
 			maxAge: 7 * 24 * 60 * 60 * 1000,
-		})
-	)
-	.use(
+		}),
 		auth({
 			authorizationParams: {
 				response_type: 'code id_token',
@@ -41,57 +39,65 @@ express()
 			appSession: {
 				secret: credentials.appSession.secret,
 			},
-			redirectUriPath: '/callback',
-			handleCallback: async function (req, res, next) {
-				req.session.openidTokens = req.openidTokens
-
+			handleCallback: async (req, res, next) => {
+				const { token_type, access_token } = req.openid.makeTokenSet(
+					req.openidTokens
+				)
+				req.session.token = `${token_type} ${access_token}`
 				next()
 			},
-		})
-	)
-	.use(async (req, res, next) => {
-		const tokenSet = req.openid.makeTokenSet(req.session.openidTokens)
-
-		const { access_token, token_type } = tokenSet
-
-		if (!access_token) {
-			next()
-			return
-		}
-
-		if (req.isAuthenticated()) {
-			try {
-				const response = await fetch(
-					`${env.backendURIInternal}/profile/my`,
-					{
-						headers: {
-							Authorization: token_type + ' ' + access_token,
-						},
-					}
-				)
-
-				const body = await response.json()
-
-				req.session.userData = body
-			} catch (e) {
-				// console.log(e)
-			}
-		}
-
-		next()
-	})
-	.use((req, res, next) => {
-		return sapper.middleware({
-			session: () => {
-				console.log(req.isAuthenticated())
-
-				return {
-					isAuthenticated: req.isAuthenticated(),
+		}),
+		profileDataMiddleware,
+		loggerMiddleware,
+		(req, res, next) =>
+			sapper.middleware({
+				session: () => ({
+					isAuthenticated: req.session.isAuthenticated,
 					user: req.session.userData,
-				}
-			},
-		})(req, res, next)
-	})
+					token: req.session.token,
+				}),
+			})(req, res, next)
+	)
 	.listen(PORT, (err) => {
 		if (err) console.log('error', err)
 	})
+
+async function profileDataMiddleware(req, res, next) {
+	if (!req.session.token) {
+		next()
+		return
+	}
+
+	if (!(req.session.isAuthenticated = req.isAuthenticated())) {
+		req.session.token = undefined
+		req.session.user = undefined
+		next()
+		return
+	}
+
+	const headers = { Authorization: req.session.token }
+
+	try {
+		const response = await fetch(`${backendURI}/profile/my`, { headers })
+
+		const body = await response.json()
+
+		req.session.userData = body
+	} catch (e) {
+		console.log(e)
+		res.end(e)
+		return
+	}
+
+	next()
+}
+
+function loggerMiddleware(req, res, next) {
+	console.log(
+		req.session.isAuthenticated,
+		req.session.userData,
+		req.session.token
+	)
+
+	next()
+}

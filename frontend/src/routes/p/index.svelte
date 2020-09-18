@@ -1,65 +1,65 @@
 <style>
-	label {
-		@apply block pb-5 font-bold text-sm;
-	}
+label {
+	@apply block pb-5 font-bold text-sm;
+}
 
-	input,
-	textarea {
-		@apply block shadow px-5 py-2 rounded border mt-1;
-	}
+input,
+textarea {
+	@apply block shadow px-5 py-2 rounded border mt-1;
+}
 
-	input:not([type='submit']),
-	textarea {
-		@apply w-full;
-	}
+input:not([type='submit']),
+textarea {
+	@apply w-full;
+}
 
-	input:invalid {
-		@apply border-red-500 border-2;
-	}
+input:invalid {
+	@apply border-red-500 border-2;
+}
 
+form > div {
+	@apply flex justify-between;
+}
+
+@screen smMax {
 	form > div {
-		@apply flex justify-between;
+		@apply block;
 	}
+}
 
-	@screen smMax {
-		form > div {
-			@apply block;
-		}
+@screen sm {
+	.gaps > label:not(:last-child) {
+		@apply mr-2;
 	}
-
-	@screen sm {
-		.gaps > label:not(:last-child) {
-			@apply mr-2;
-		}
-	}
+}
 </style>
 
 <script context="module">
-	export async function preload(page, session) {
-		if (session.isAuthenticated !== true) {
-			return this.redirect(301, '/login')
-		}
-
-		return {}
+export async function preload(page, session) {
+	if (session.isAuthenticated !== true) {
+		return this.redirect(301, '/login')
 	}
+
+	return {}
+}
 </script>
 
 <script>
-	import { stores } from '@sapper/app'
+import { stores } from '@sapper/app'
 
-	import Button from '@/Button.svelte'
+import Button from '@/Button.svelte'
 
-	const { session } = stores()
+const { session } = stores()
 
-	$: userInfo = $session.user ? $session.user.info : {}
+$: userInfo = $session.user ? $session.user.info : {}
 
-	let draft
+let draft
 
-	$: if (draft === undefined && userInfo !== undefined) {
-		draft = { ...userInfo }
-	}
+$: if (draft === undefined && userInfo !== undefined) {
+	draft = { ...userInfo }
+}
 
-	function handleSubmit() {}
+function handleSubmit() {}
 </script>
 
 <svelte:head>

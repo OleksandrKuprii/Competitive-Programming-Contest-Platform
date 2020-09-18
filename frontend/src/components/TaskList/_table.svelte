@@ -1,15 +1,15 @@
 <script>
-	export let tasks
+export let tasks
 
-	import { stores, goto } from '@sapper/app'
-	const { session } = stores()
+import { stores, goto } from '@sapper/app'
+const { session } = stores()
 
-	import Table from '@/Table.svelte'
-	import Result from '@/Result.svelte'
+import Table from '@/Table.svelte'
+import Result from '@/Result.svelte'
 
-	$: headers = ['Name', 'Category', 'Difficulty'].concat(
-		$session.isAuthenticated ? ['Best last result'] : []
-	)
+$: headers = ['Name', 'Category', 'Difficulty'].concat(
+	$session.isAuthenticated ? ['Best last result'] : []
+)
 </script>
 
 <Table {headers}>

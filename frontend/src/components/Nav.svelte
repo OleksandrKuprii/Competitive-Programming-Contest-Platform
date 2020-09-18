@@ -1,48 +1,48 @@
 <style lang="postcss">
-	* {
-		white-space: nowrap;
+* {
+	white-space: nowrap;
+}
+
+a {
+	@apply block text-gray-500 py-3;
+}
+
+a.sign-out {
+	@apply text-red-500;
+}
+
+a[aria-current] {
+	@apply text-primary-500 font-bold;
+}
+
+@screen md {
+	a {
+		@apply h-16 flex items-center px-5 pb-0 pt-1 border-b-4 border-gray-800 m-0;
 	}
 
-	a {
-		@apply block text-gray-500 py-3;
+	a:hover {
+		@apply text-primary-600 border-primary-600;
 	}
 
 	a.sign-out {
-		@apply text-red-500;
+		@apply border-red-700;
+	}
+
+	a.sign-out:hover {
+		@apply text-white bg-red-700;
 	}
 
 	a[aria-current] {
-		@apply text-primary-500 font-bold;
+		@apply border-primary-500;
 	}
-
-	@screen md {
-		a {
-			@apply h-16 flex items-center px-5 pb-0 pt-1 border-b-4 border-gray-800 m-0;
-		}
-
-		a:hover {
-			@apply text-primary-600 border-primary-600;
-		}
-
-		a.sign-out {
-			@apply border-red-700;
-		}
-
-		a.sign-out:hover {
-			@apply text-white bg-red-700;
-		}
-
-		a[aria-current] {
-			@apply border-primary-500;
-		}
-	}
+}
 </style>
 
 <script>
-	import { stores } from '@sapper/app'
-	const { page } = stores()
+import { stores } from '@sapper/app'
+const { page } = stores()
 
-	const { session } = stores()
+const { session } = stores()
 </script>
 
 <nav

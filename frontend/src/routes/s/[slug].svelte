@@ -1,69 +1,74 @@
 <style>
-	.loading {
-		animation: 1s loading ease-in-out infinite;
-	}
+.loading {
+	animation: 1s loading ease-in-out infinite;
+}
 
-	@keyframes loading {
-		from {
-			opacity: 1;
-		}
-		to {
-			opacity: 0.5;
-		}
+@keyframes loading {
+	from {
+		opacity: 1;
 	}
+	to {
+		opacity: 0.5;
+	}
+}
 </style>
 
 <script context="module">
-	export async function preload(page, session) {
-		if (session.isAuthenticated !== true) {
-			return this.redirect(301, '/login')
-		}
+import requiresAuth from '~/utils/requiresAuth'
+import { backendURI } from '~/env'
 
-		if (!session.user || session.user.registered !== true) {
-			return this.redirect(301, '/p')
-		}
+export async function preload(page, session) {
+	const result = await requiresAuth(this.fetch, session, (fetch) =>
+		fetch(`${backendURI}/submission/${page.params.slug}`)
+	)
 
-		const response = await this.fetch(`/s/${page.params.slug}.json`)
-		const submission = await response.json()
-
-		return { submission: { ...submission, id: page.params.slug } }
+	if (!result.error) {
+		return { submission: { ...result.json, id: page.params.slug } }
 	}
+
+	switch (result.error.type) {
+		case 'unauthorized':
+			return this.redirect('/login')
+		default:
+			console.log(result.error)
+	}
+}
 </script>
 
 <script>
-	import { onMount } from 'svelte'
-	import { goto } from '@sapper/app'
-	import hljs from 'highlight.js'
+import { onMount } from 'svelte'
+import { goto } from '@sapper/app'
+import hljs from 'highlight.js'
 
-	export let submission
+export let submission
 
-	import Table from '@/Table.svelte'
-	import Result from '@/Result.svelte'
+import Table from '@/Table.svelte'
+import Result from '@/Result.svelte'
 
-	import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
+import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
 
-	function handleKeydown({ keyCode }) {
-		// ESC
-		if (keyCode === 27) {
-			goto(`/t/${submission.alias}`)
-		}
+function handleKeydown({ keyCode }) {
+	// ESC
+	if (keyCode === 27) {
+		goto(`/t/${submission.alias}`)
 	}
+}
 
-	$: running = submission.tests_count !== submission.tests.length
+$: running = submission.tests_count !== submission.tests.length
 
-	$: if (process.browser && running) {
-		setTimeout(() => {
-			document.location.reload()
-		}, 3000)
-	}
+$: if (process.browser && running) {
+	setTimeout(() => {
+		document.location.reload()
+	}, 3000)
+}
 
-	onMount(() => {
-		const codePreview = document.getElementById('code-preview')
-		codePreview.innerHTML = submission.code
-		hljs.highlightBlock(codePreview)
-	})
+onMount(() => {
+	const codePreview = document.getElementById('code-preview')
+	codePreview.innerHTML = submission.code
+	hljs.highlightBlock(codePreview)
+})
 
-	const headers = ['#', 'Result', 'CPU time', 'Wall time']
+const headers = ['#', 'Result', 'CPU time', 'Wall time']
 </script>
 
 <svelte:head>

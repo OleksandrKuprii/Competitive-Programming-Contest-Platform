@@ -1,6 +1,6 @@
 <script>
-	export let title
-	export let subtitle
+export let title
+export let subtitle
 </script>
 
 <p class="font-black text-gray-700 text-6xl">{title}</p>

@@ -1,26 +1,35 @@
 <script context="module">
-	export async function preload(page, session) {
-		if (session.isAuthenticated !== true) {
-			return this.redirect(301, '/login')
-		}
+import requiresAuth from '~/utils/requiresAuth'
+import { backendURI } from '~/env'
 
-		const response = await this.fetch('/s/all.json')
-		const submissions = await response.json()
+export async function preload(page, session) {
+	const result = await requiresAuth(this.fetch, session, (fetch) =>
+		fetch(`${backendURI}/submissions?offset=0&number=50`)
+	)
 
-		return { submissions }
+	if (!result.error) {
+		return { submissions: result.json }
 	}
+
+	switch (result.error.type) {
+		case 'unauthorized':
+			return this.redirect('/login')
+		default:
+			console.log(result.error)
+	}
+}
 </script>
 
 <script>
-	import { goto } from '@sapper/app'
+import { goto } from '@sapper/app'
 
-	import Table from '@/Table.svelte'
-	import Result from '@/Result.svelte'
-	import FallbackMessage from '@/FallbackMessage.svelte'
+import Table from '@/Table.svelte'
+import Result from '@/Result.svelte'
+import FallbackMessage from '@/FallbackMessage.svelte'
 
-	const headers = ['Identifier', 'Result']
+const headers = ['Identifier', 'Result']
 
-	export let submissions
+export let submissions
 </script>
 
 <svelte:head>

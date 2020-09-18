@@ -19,10 +19,6 @@
         }
     ],
     "rules": {
-        "indent": [
-            "error",
-            "tab"
-        ],
         "linebreak-style": [
             "error",
             "unix"
@@ -35,9 +31,9 @@
             "error",
             100
         ],
-				"no-mixed-spaces-and-tabs": [
-					"warn",
-					"smart-tabs"
-				]
+        "no-mixed-spaces-and-tabs": [
+            "warn",
+            "smart-tabs"
+        ]
     }
 }

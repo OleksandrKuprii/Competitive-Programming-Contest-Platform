@@ -1,44 +1,44 @@
 <style lang="postcss">
-	label {
-		@apply pb-5 flex flex-col;
-	}
+label {
+	@apply pb-5 flex flex-col;
+}
 
-	input {
-		@apply border border-gray-400 rounded px-2 py-1;
-		width: 75px;
-		outline: none;
-	}
+input {
+	@apply border border-gray-400 rounded px-2 py-1;
+	width: 75px;
+	outline: none;
+}
 
-	input:not(:invalid):focus,
-	input:not(:invalid):hover {
-		@apply border-gray-900;
-	}
+input:not(:invalid):focus,
+input:not(:invalid):hover {
+	@apply border-gray-900;
+}
 
-	input:invalid {
-		@apply border-red-500;
-	}
+input:invalid {
+	@apply border-red-500;
+}
 </style>
 
 <script>
-	export let difficultyMin, difficultyMax
+export let difficultyMin, difficultyMax
 
-	let min = difficultyMin
-	let max = difficultyMax
+let min = difficultyMin
+let max = difficultyMax
 
-	$: min = Number(min)
-	$: max = Number(max)
+$: min = Number(min)
+$: max = Number(max)
 
-	$: error =
-		!Number.isInteger(min) ||
-		!Number.isInteger(max) ||
-		min > max ||
-		min < 1 ||
-		max > 10
+$: error =
+	!Number.isInteger(min) ||
+	!Number.isInteger(max) ||
+	min > max ||
+	min < 1 ||
+	max > 10
 
-	$: if (!error) {
-		difficultyMin = min
-		difficultyMax = max
-	}
+$: if (!error) {
+	difficultyMin = min
+	difficultyMax = max
+}
 </script>
 
 <div>

@@ -1,59 +1,59 @@
 <style lang="postcss">
-	label {
-		@apply select-none inline-block w-full;
-	}
+label {
+	@apply select-none inline-block w-full;
+}
 
-	input[type='checkbox'] {
-		@apply appearance-none block;
-	}
+input[type='checkbox'] {
+	@apply appearance-none block;
+}
 
-	input[type='checkbox']:checked ~ label > .checked {
-		display: inline-block;
-	}
+input[type='checkbox']:checked ~ label > .checked {
+	display: inline-block;
+}
 
-	input[type='checkbox']:checked ~ label > .unchecked {
-		display: none;
-	}
+input[type='checkbox']:checked ~ label > .unchecked {
+	display: none;
+}
 </style>
 
 <script>
-	import { onMount } from 'svelte'
+import { onMount } from 'svelte'
 
-	export let categories
+export let categories
 
-	/** @type Set<string> */
-	export let selectedCategories
+/** @type Set<string> */
+export let selectedCategories
 
-	let height
-	let categoryListPadding = 0
+let height
+let categoryListPadding = 0
 
-	onMount(() => {
-		height = document.getElementById('categoryList').clientHeight
-	})
+onMount(() => {
+	height = document.getElementById('categoryList').clientHeight
+})
 
-	function scrollHandler() {
-		if (!height) return
+function scrollHandler() {
+	if (!height) return
 
-		if (window.scrollY + 200 > height + categoryListPadding) {
-			categoryListPadding = window.scrollY + 200 - height
-		}
-
-		if (window.scrollY < categoryListPadding) {
-			categoryListPadding = window.scrollY
-		}
+	if (window.scrollY + 200 > height + categoryListPadding) {
+		categoryListPadding = window.scrollY + 200 - height
 	}
 
-	function changeHandler(key) {
-		return function () {
-			if (selectedCategories.has(key)) {
-				selectedCategories.delete(key)
-			} else {
-				selectedCategories.add(key)
-			}
-
-			selectedCategories = selectedCategories
-		}
+	if (window.scrollY < categoryListPadding) {
+		categoryListPadding = window.scrollY
 	}
+}
+
+function changeHandler(key) {
+	return function () {
+		if (selectedCategories.has(key)) {
+			selectedCategories.delete(key)
+		} else {
+			selectedCategories.add(key)
+		}
+
+		selectedCategories = selectedCategories
+	}
+}
 </script>
 
 <svelte:window on:scroll={scrollHandler} />

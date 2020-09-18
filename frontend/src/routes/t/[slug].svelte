@@ -1,87 +1,88 @@
-<style>
-	label {
-		@apply block;
-	}
+<style lang="postcss">
+label {
+	@apply block;
+}
 
-	label[for='file-input'] {
-		@apply cursor-pointer px-5 py-2 border-2 rounded;
-	}
+label[for='file-input'] {
+	@apply cursor-pointer px-5 py-2 border-2 rounded;
+}
 
-	.code-preview {
-		max-height: 347px;
-	}
+.code-preview {
+	max-height: 347px;
+}
 
-	.code-preview code {
-		overflow: hidden;
-		width: fit-content;
-	}
+.code-preview code {
+	overflow: hidden;
+	width: fit-content;
+}
 </style>
 
 <script context="module">
-	export async function preload(page) {
-		const { slug } = page.params
+import { backendURI } from '~/env'
 
-		const response = await this.fetch(`http://localhost:4000/task/${slug}`)
-		const task = await response.json()
+export async function preload(page) {
+	const { slug } = page.params
 
-		return { task }
-	}
+	const response = await this.fetch(`${backendURI}/task/${slug}`)
+	const task = await response.json()
+
+	return { task }
+}
 </script>
 
 <script>
-	export let task
+export let task
 
-	import hljs from 'highlight.js'
-	import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
+import hljs from 'highlight.js'
+import getGeneralLanguageName from '~/utils/getGeneralLanguageName'
 
-	import Button from '@/Button.svelte'
+import Button from '@/Button.svelte'
 
-	const sections = [
-		{ text: task.main },
-		{ name: 'Input format', text: task.input_format },
-		{ name: 'Output format', text: task.output_format },
-	].concat(
-		Object.entries(task.custom_sections).map(([name, text]) => ({
-			name,
-			text,
-		}))
-	)
+const sections = [
+	{ text: task.main },
+	{ name: 'Input format', text: task.input_format },
+	{ name: 'Output format', text: task.output_format },
+].concat(
+	Object.entries(task.custom_sections).map(([name, text]) => ({
+		name,
+		text,
+	}))
+)
 
-	let files = []
-	let code
+let files = []
+let code
 
-	let language = 'python3'
+let language = 'python3'
 
-	$: if (files.length === 0) {
-		code = undefined
-	} else {
-		files[0]
-			.text()
-			.then((x) => (code = x))
-			.then(() => {
-				rehightlight()
-				window.scrollTo(
-					0,
-					document.body.scrollHeight ||
-						document.documentElement.scrollHeight
-				)
-			})
-	}
+$: if (files.length === 0) {
+	code = undefined
+} else {
+	files[0]
+		.text()
+		.then((x) => (code = x))
+		.then(() => {
+			rehightlight()
+			window.scrollTo(
+				0,
+				document.body.scrollHeight ||
+					document.documentElement.scrollHeight
+			)
+		})
+}
 
-	function rehightlight() {
-		console.log('HI')
-		const block = document.getElementById('code-preview')
-		block.innerHTML = code
-		hljs.highlightBlock(block)
-	}
+function rehightlight() {
+	const block = document.getElementById('code-preview')
+	block.innerHTML = code
+	hljs.highlightBlock(block)
+}
 
-	const languageOptions = [
-		{ value: 'python3', name: 'Python3' },
-		{ value: 'python2', name: 'Python2' },
-		{ value: 'c++', name: 'C++' },
-		{ value: 'c', name: 'C' },
-		{ value: 'pascal', name: 'Pascal' },
-	]
+const languageOptions = [
+	{ value: 'python3', name: 'Python3' },
+	{ value: 'python2', name: 'Python2' },
+	{ value: 'c++', name: 'C++' },
+	{ value: 'c', name: 'C' },
+	{ value: 'pascal', name: 'Pascal' },
+]
 </script>
 
 <h1 class="text-3xl font-light">{task.name}</h1>

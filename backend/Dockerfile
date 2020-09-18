@@ -3,7 +3,7 @@ WORKDIR /usr/app
 
 RUN apk add gcc g++ python3-dev libffi-dev
 
-COPY prodAWSconfig $HOME/.aws
+COPY prodAWSconfig /root/.aws
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt

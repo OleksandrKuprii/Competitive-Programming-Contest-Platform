@@ -1,13 +1,13 @@
 <script>
-	import { stores } from '@sapper/app'
-	const { session } = stores()
+import { stores } from '@sapper/app'
+const { session } = stores()
 
-	import Nav from '@/Nav.svelte'
+import Nav from '@/Nav.svelte'
 
-	$: showAlert =
-		$session.isAuthenticated === true &&
-		$session.user &&
-		$session.user.registered === false
+$: showAlert =
+	$session.isAuthenticated === true &&
+	$session.user &&
+	$session.user.registered === false
 </script>
 
 <Nav />

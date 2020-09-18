@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import backendURI from '~/utils/backendURI'
+import { backendURI } from '~/env'
 
 export async function post(req, res) {
 	if (!req.isAuthenticated()) {
