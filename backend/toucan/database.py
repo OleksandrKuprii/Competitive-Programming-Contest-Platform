@@ -125,6 +125,7 @@ async def add_submission(submission_to_db: UserSubmission, conn: Connection) \
     alias = submission_to_db.alias
     date = submission_to_db.timestamp
     lang = submission_to_db.lang
+    tournament_id = submission_to_db.tournament_id
 
     async with conn.transaction():
         # Getting task id by alias from tasks table
@@ -138,10 +139,10 @@ async def add_submission(submission_to_db: UserSubmission, conn: Connection) \
 
         # Inserting submission to submission table and getting its id
         res = await conn.fetch(
-            'INSERT INTO coreschema.submissions'
-            '(published_at, user_id, task_id,'
-            'lang, status) VALUES ($1, $2, $3, $4, $5) RETURNING id', date,
-            user_id, task_id, lang, 'Received')
+            '''INSERT INTO coreschema.submissions
+            (published_at, user_id, task_id,
+            lang, status, tournament_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id''', date,
+            user_id, task_id, lang, 'Received', tournament_id)
 
     return res[0]['id'], task_id
 
@@ -386,7 +387,7 @@ async def update_task_bests(submission_id: int, conn: Connection) -> None:
                            submission_id)
 
 
-async def get_submissions(user_id: str, number: int, offset: int,
+async def get_submissions(user_id: str, number: int, offset: int, tournament_id: int,
                           conn: Connection) -> List[dict]:
     """Get submissions.
 
@@ -418,10 +419,10 @@ async def get_submissions(user_id: str, number: int, offset: int,
                FROM coreschema.submissions
                LEFT JOIN coreschema.tasks
                ON tasks.id = task_id
-               WHERE user_id = $1
+               WHERE user_id = $1 AND tournament_id = $4
                ORDER BY id DESC
                LIMIT $2 OFFSET $3;''',
-            user_id, number, offset)
+            user_id, number, offset, tournament_id)
 
     submissions = []
 

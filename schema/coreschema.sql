@@ -1,5 +1,12 @@
 create schema if not exists coreschema;
 
+create table if not exists coreschema.tournaments
+(
+    id serial primary key,
+    info varchar,
+    participants integer[]
+);
+
 create table if not exists coreschema.categories (
     id serial primary key,
     alias varchar(50) unique,
@@ -62,7 +69,8 @@ create table if not exists coreschema.submissions (
     user_id varchar(50) references coreschema.users(id),
     lang varchar(50),
     task_id int references coreschema.tasks(id),
-    status varchar(50)
+    status varchar(50),
+    tournament_id int references coreschema.tournaments(id)
 );
 
 create table if not exists coreschema.tests (
@@ -97,7 +105,6 @@ create table if not exists coreschema.task_statistic
 	partial int,
 	zero int
 );
-
 
 CREATE OR REPLACE FUNCTION coreschema.modify_task_best(integer)
 RETURNS integer

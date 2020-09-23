@@ -82,6 +82,7 @@ class UserSubmission:
     timestamp: datetime
     lang: str
     code: str
+    tournament_id: int
 
 
 @dataclass

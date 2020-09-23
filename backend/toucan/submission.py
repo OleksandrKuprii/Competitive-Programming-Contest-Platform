@@ -19,15 +19,13 @@ async def add_submission(user_submission: UserSubmission, conn):
     user_submission : UserSubmission
     """
     # Adds submission to database
-    submission_id, task_id = await database.add_submission(user_submission,
-                                                           conn)
+    submission_id, task_id = await database.add_submission(user_submission, conn)
 
     # Gets ids of all test for this task from database
     test_ids = await database.get_test_ids(task_id, conn)
 
     # Creates SubmissionToStorage object
-    submission_to_storage = SubmissionToStorage(submission_id,
-                                                user_submission.code)
+    submission_to_storage = SubmissionToStorage(submission_id, user_submission.code)
 
     # Adds code to the storage
     await storage.add_code(submission_to_storage)
@@ -39,10 +37,8 @@ async def add_submission(user_submission: UserSubmission, conn):
     memory_limit = limits['memory_limit']
 
     # Creates SubmissionToRunner object
-    submission_to_runner = SubmissionToRunner(submission_id, test_ids,
-                                              user_submission.lang,
-                                              wall_time_limit, cpu_time_limit,
-                                              memory_limit)
+    submission_to_runner = SubmissionToRunner(submission_id, test_ids, user_submission.lang,
+                                              wall_time_limit, cpu_time_limit, memory_limit)
 
     # Add submission to the queue
     async with resource('sqs') as sqs:
@@ -54,7 +50,7 @@ async def add_submission(user_submission: UserSubmission, conn):
     return submission_id
 
 
-async def get_all(user_id: str, number: int, offset: int, conn) -> dict:
+async def get_all(user_id: str, number: int, offset: int, tournament_id: int, conn) -> dict:
     """Get {number} submissions from database for specific user.
 
     Parameters
@@ -72,12 +68,11 @@ async def get_all(user_id: str, number: int, offset: int, conn) -> dict:
         The dictionary of all submissions made by specific user
     """
     # Getting submissions from database
-    submissions = await database.get_submissions(user_id, number, offset, conn)
+    submissions = await database.get_submissions(user_id, number, offset, tournament_id, conn)
 
     for i in range(len(submissions)):
         # Getting result for each submission
-        submissions[i]['result'] = \
-            await get_result(submissions[i]['id'], user_id, conn)
+        submissions[i]['result'] = await get_result(submissions[i]['id'], user_id, conn)
 
     return submissions
 

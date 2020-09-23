@@ -25,7 +25,7 @@ from user import user
 
 routes = web.RouteTableDef()
 
-AUTH0_DOMAIN = 'dev-gly-dk66.eu.auth0.com'
+AUTH0_DOMAIN = 'touncandev.eu.auth0.com'
 API_IDENTIFIER = 'toucan-api'
 ALGORITHMS = ["RS256"]
 
@@ -356,15 +356,18 @@ async def get_submissions(request, **kwargs):
     user_info = kwargs['user_info']
 
     if list(params.values()).count('') or \
-            ('number' not in list(params.keys()) or 'offset' not in list(params.keys())):
+            ('number' not in list(params.keys()) or
+             'offset' not in list(params.keys()) or
+             'tournament_id' not in list(params.keys())):
         return Response(status=400)
 
     user_id = user_info['sub']
     number = int(params.get('number'))
     offset = int(params.get('offset'))
+    tournament_id = int(params.get('tournament_id'))
 
     async with pool.acquire() as conn:
-        submissions = await submission.get_all(user_id, number, offset, conn)
+        submissions = await submission.get_all(user_id, number, offset, tournament_id, conn)
 
     return json_response(submissions)
 
