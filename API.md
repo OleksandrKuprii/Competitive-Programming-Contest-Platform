@@ -1,4 +1,4 @@
-####POST `/submission`
+#### POST `/submission`
 `Header` Authorization Bearer \<token>
 
 `Request`
@@ -32,7 +32,7 @@ The submitted file is bigger than 64 KB.
 ```
 <hr>
 
-####GET `/tasks`
+#### GET `/tasks`
 `Params` 
 
 number: int - required
@@ -109,13 +109,13 @@ result = 15, 24-47, zero, full, partial, null
 ```
 <hr>
 
-####GET `/tasks/auth`
+#### GET `/tasks/auth`
 Identical to GET `/tasks` but requires authorization
 
 `Header` Authorization Bearer \<token>
 <hr>
 
-####GET `/task/{alias}`
+#### GET `/task/{alias}`
 `Response`
 ```
 200 OK
@@ -158,7 +158,7 @@ There is not task for with this alias
 ```
 <hr>
 
-####GET `/task/auth/{alias}`
+#### GET `/task/auth/{alias}`
 Identical to GET `/task/{alias}` but requires authorization
 
 `Header` Authorization Bearer \<token>
@@ -211,7 +211,7 @@ Irregular params
 ```
 <hr>
 
-####GET `/submission/{id}`
+#### GET `/submission/{id}`
 `Header` Authorization Bearer \<token>
 
 `Response`
@@ -255,7 +255,7 @@ Irregular params
 ```
 <hr>
 
-####GET `/result/{submission_id}`
+#### GET `/result/{submission_id}`
 `Header` Authorization Bearer \<token>
 
 `Response`
@@ -270,7 +270,7 @@ Irregular params
 ```
 <hr>
 
-####GET `/test_results/{submission_id}`
+#### GET `/test_results/{submission_id}`
 `Header` Authorization Bearer \<token>
 
 `Response`
@@ -300,7 +300,7 @@ Irregular params
 ```
 <hr>
 
-####GET `/profile/{nickname}`
+#### GET `/profile/{nickname}`
 `Header` Authorization Bearer \<token>
 `Response`
 ```
@@ -326,7 +326,7 @@ There is not user with this nickname
 ```
 <hr>
 
-####GET `/check_nickname/{nickname}`
+#### GET `/check_nickname/{nickname}`
 `Header` Authorization Bearer \<token>
 `Response`
 ```
@@ -345,7 +345,7 @@ This nickname does not exist
 ```
 <hr>
 
-####GET `/profile/my`
+#### GET `/profile/my`
 `Header` Authorization Bearer \<token>
 `Response`
 ```
